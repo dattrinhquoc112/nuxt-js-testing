@@ -1,0 +1,17 @@
+@mixin media($point) {
+  @if $point == 'xs' {
+    @media (max-width: 320px) {
+      @content
+    }
+  };
+  @if $point == 'sm' {
+    @media (min-width: 321px) and (max-width: 768px) {
+      @content
+    }
+  };
+  @if $point == 'md' {
+    @media (min-width: 769px) and (max-width: 1024px) {
+      @content
+    }
+  };
+}

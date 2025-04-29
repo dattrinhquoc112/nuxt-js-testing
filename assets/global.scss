@@ -1,0 +1,7 @@
+@use 'variables.scss' as *;
+@forward 'variables.scss';
+@forward 'media_query';
+
+body, div, span, p, h1, h2, h3, h4, h5, h6, pre, a, button, input, select {
+  font-family: Avenir, Helvetica, Arial, 微軟正黑體, sans-serif
+};

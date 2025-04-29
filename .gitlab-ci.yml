@@ -1,0 +1,178 @@
+default:
+  timeout: 1 hour
+
+variables:
+  HELM_APP_CHART_PROJECT_ID: 1799
+  BASE_HELM_APP_CHART_VERSION: 0.0.14 # 要使用的 Helm Chart 版本. https://gitlab.gamania.com/bdds/alice/sre/app-helm-chart/-/tags
+  BASE_HELM_APP_CHART: alice-app
+  APP_VERSION: v1.0
+  IMAGE_TAG: ${APP_VERSION}.${CI_PIPELINE_IID}
+  ## TODO: rename to landing
+  IMAGE_NAME: ${CI_JOB_STAGE}-aiaas-platform-frontend-v2
+
+stages:
+  - code-review
+  - dev
+  - uat
+  - prod
+
+.deploy-image:
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: ['']
+  before_script:
+    - echo ${GOOGLE_APPLICATION_CREDENTIALS}
+    - echo ${GAR_HOST}
+    - echo ${GAR_PROJECT_ID}
+    - echo ${GAR_REPOSITORY}
+    - echo ${IMAGE_NAME}
+    - echo ${IMAGE_TAG}
+  script:
+    - >
+      /kaniko/executor
+      --context "${CI_PROJECT_DIR}"
+      --dockerfile "./Dockerfile"
+      --destination "${GAR_HOST}/${GAR_PROJECT_ID}/${GAR_REPOSITORY}/${IMAGE_NAME}:${IMAGE_TAG}"
+      --build-arg BUILD_ENV=${BUILD_ENV}
+      --cache=true
+  tags:
+    - shared-runners-no-root
+
+.rollout:
+  image: registry.gamania.com/bdds/alice/custom-image/base-deployer-helm:d434ebfb
+  before_script:
+    - export PATH=/google-cloud-sdk/bin/:$PATH
+    - gcloud auth activate-service-account --key-file ${GCP_SA_KEY_FOR_GIT_CICD}
+    - gcloud container clusters get-credentials ${GKE_CLUSTER_NAME} --region ${GKE_REGION} --project ${GCLOUD_PROJECT_ID}
+    - helm repo add --username gitlab-ci-token --password ${CI_JOB_TOKEN} bdds-app ${CI_API_V4_URL}/projects/${HELM_APP_CHART_PROJECT_ID}/packages/helm/stable
+  script:
+    - |
+      helm upgrade ${RELEASE_NAME} bdds-app/${BASE_HELM_APP_CHART} \
+      --version=${BASE_HELM_APP_CHART_VERSION} \
+      --values=${CHAR_VALUES_FILE} \
+      --namespace=${RELEASE_NS} \
+      --set nameOverride=${RELEASE_NAME} \
+      --set fullnameOverride=${RELEASE_NAME} \
+      --set image.repository=${GAR_HOST}/${GAR_PROJECT_ID}/${GAR_REPOSITORY}/${IMAGE_NAME} \
+      --set image.tag=${IMAGE_TAG} \
+      --install --wait
+  tags:
+    - shared-runners-no-root
+
+ai-code-review:
+  stage: code-review
+  image:
+    name: codiumai/pr-agent:0.24
+    entrypoint: ['']
+  allow_failure: true
+  needs: [] # run parallel
+  tags:
+    - shared-runners-no-root
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  variables: # ref: https://github.com/Codium-ai/pr-agent/blob/main/pr_agent/settings/configuration.toml
+    MR_URL: '$CI_MERGE_REQUEST_PROJECT_URL/merge_requests/$CI_MERGE_REQUEST_IID'
+    config__git_provider: 'gitlab'
+    gitlab__url: '$CI_SERVER_URL'
+  before_script:
+    - cat ${CODIUMAI_SECRET_CONFIG} > /app/pr_agent/settings/.secrets.toml
+    - cd /app
+  script:
+    - echo "MR_URL=$MR_URL"
+    - python -m pr_agent.cli --pr_url="$MR_URL" describe
+    - python -m pr_agent.cli --pr_url="$MR_URL" review
+    - python -m pr_agent.cli --pr_url="$MR_URL" improve
+
+deploy-image-dev:
+  extends: .deploy-image
+  stage: dev
+  environment: DEV
+  variables:
+    GOOGLE_APPLICATION_CREDENTIALS: $GCP_DEV_SA_KEY_FOR_GIT_CICD
+    BUILD_ENV: dev
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+    - if: $CI_COMMIT_TAG =~ /DEV/
+    - if: '$CI_COMMIT_BRANCH == "dev"'
+      changes:
+        - '**/*'
+
+rollout-dev:
+  extends: .rollout
+  stage: dev
+  environment: DEV
+  variables:
+    GKE_REGION: ${GKE_DEV_REGION}
+    GCLOUD_PROJECT_ID: ${GCP_DEV_PROJECT_ID}
+    GKE_CLUSTER_NAME: ${GKE_DEV_CLUSTER_NAME}
+    GCP_SA_KEY_FOR_GIT_CICD: $GCP_DEV_SA_KEY_FOR_GIT_CICD
+    RELEASE_NAME: aiaas-platform-frontend-v2
+    RELEASE_NS: aiaas-platform
+    CHAR_VALUES_FILE: ./chart/app/values-dev.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+    - if: $CI_COMMIT_TAG =~ /DEV/
+    - if: $CI_COMMIT_BRANCH == "dev"
+      changes:
+        - '**/*'
+  needs:
+    - deploy-image-dev
+# deploy-image-uat:
+#   extends: .deploy-image
+#   stage: uat
+#   environment: UAT
+#   variables:
+#     GOOGLE_APPLICATION_CREDENTIALS: $GCP_UAT_SA_KEY_FOR_GIT_CICD
+#     BUILD_ENV: uat
+#   rules:
+#     - if: $CI_COMMIT_TAG =~ /UAT/
+#     - if: $CI_COMMIT_BRANCH == "main"
+#   needs: []
+
+# rollout-uat:
+#   extends: .rollout
+#   stage: uat
+#   environment: UAT
+#   variables:
+#     GKE_REGION: ${GKE_UAT_REGION}
+#     GCLOUD_PROJECT_ID: ${GCP_UAT_PROJECT_ID}
+#     GKE_CLUSTER_NAME: ${GKE_UAT_CLUSTER_NAME}
+#     GCP_SA_KEY_FOR_GIT_CICD: $GCP_UAT_SA_KEY_FOR_GIT_CICD
+#     RELEASE_NAME: aiaas-platform-frontend
+#     RELEASE_NS: aiaas-platform
+#     CHAR_VALUES_FILE: ./chart/app/values-uat.yaml
+#   rules:
+#     - if: $CI_COMMIT_TAG =~ /UAT/
+#     - if: $CI_COMMIT_BRANCH == "main"
+#   needs:
+#     - deploy-image-uat
+#deploy-image-prod:
+#  extends: .deploy-image
+#  stage: prod
+#  environment: PROD
+#  variables:
+#    GOOGLE_APPLICATION_CREDENTIALS: $GCP_PROD_SA_KEY_FOR_GIT_CICD
+#    BUILD_ENV: prod
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "main"
+#      when: manual
+
+# TODO: open when needed
+# rollout-prod:
+#   extends: .rollout
+#   stage: prod
+#   environment: PROD
+#   variables:
+#     GKE_REGION: ${GKE_PROD_REGION}
+#     GCLOUD_PROJECT_ID: ${GCP_PROD_PROJECT_ID}
+#     GKE_CLUSTER_NAME: ${GKE_PROD_CLUSTER_NAME}
+#     GCP_SA_KEY_FOR_GIT_CICD: $GCP_PROD_SA_KEY_FOR_GIT_CICD
+#     RELEASE_NAME: vyin-ui-kit
+#     RELEASE_NS: aiaas-platform
+#     CHAR_VALUES_FILE: ./chart/app/values-prod.yaml
+#   rules:
+#     - if: $CI_COMMIT_BRANCH == "main"
+#   needs:
+#     - deploy-image-prod

@@ -1,93 +1,190 @@
 # aiaas-landing-frontend
 
+Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
 
+## About UI Framework
 
-## Getting started
+Use Vyin-ai-ui-kit
 
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
+1. Doc dev : https://dev-ui-kit-aiaas-platform.vyin.ai/
 
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
+## Setup
 
-## Add your files
+### Environment
 
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+    node: 20.18.2
 
+Make sure to install the dependencies (required the first time you start)
+
+```bash
+1. Run npm install to install dependencies.
+
+2. Use the .env file for local environment configuration.
 ```
-cd existing_repo
-git remote add origin https://gitlab.gamania.com/bdds/alice/landing/aiaas-landing-frontend.git
-git branch -M main
-git push -uf origin main
+
+## Development Server
+
+Start the development server on http://localhost:3000
+
+```bash
+npm run dev
 ```
 
-## Integrate with your tools
+## Production
 
-- [ ] [Set up project integrations](https://gitlab.gamania.com/bdds/alice/landing/aiaas-landing-frontend/-/settings/integrations)
+Build the application for production:
 
-## Collaborate with your team
+```bash
+npm run build
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+Locally preview production build:
 
-## Test and Deploy
+```bash
+npm run preview
+```
 
-Use the built-in continuous integration in GitLab.
+Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing (SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+## About environment variables
 
-***
+### Dev
 
-# Editing this README
+1. use `.env` to local development
+2. set environment variables in `.env` file like:
+   ```
+   NUXT_...=... // private variable (using server side)
+   NUXT_PUBLIC_...=... // public variable (using client side)
+   ```
+3. init variables key in nuxt.config.ts
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thanks to [makeareadme.com](https://www.makeareadme.com/) for this template.
+   ```typescript
+   // nuxt.config.ts
 
-## Suggestions for a good README
+   runtimeConfig: {
+     somePrivateKey: '', // mapping NUXT_SOME_PRIVATE_KEY
+     public: {
+       somePublicKey: '', // mapping NUXT_PUBLIC_SOME_PUBLIC_KEY
+     },
+   },
+   ```
 
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+4. npm run dev, variables will be injected
 
-## Name
-Choose a self-explaining name for your project.
+### Publish (build)
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+1. npm run build
+2. runtime inject variables
+   ```
+   // on terminal
+   node .output/server/index.mjs NUXT_PUBLIC_SOME_PUBLIC_KEY=publicKey NUXT_SOME_PRIVATE_KEY=privateKey ...
+   ```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+#### can visit [Nuxt 3 Runtime Config](https://nuxt.com/docs/guide/going-further/runtime-config) find more detail
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+## About extend "window"
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+You can extend the global Window interface in global.d.ts like this:
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```typescript
+// global.d.ts
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+export {};
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+declare global {
+  interface Window {
+    thirdPartyLib: any;
+    ...
+  }
+}
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+then you can use it in project
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
+```typescript
+// *.ts, *.vue
 
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
+let sdk = window.thirdPartyLib; // ok now
+```
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+## robots
 
-## License
-For open source projects, say how it is licensed.
+This configuration controls the crawling behavior of search engines using the [Nuxt Robots Module](https://nuxt.com/modules/robots).
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+```typescript
+// nuxt.config.ts
+
+robots: {
+  rules: {
+    UserAgent: '*',
+    Disallow: process.env.NUXT_NODE_ENV === 'prod' ? '' : '/',
+  },
+},
+```
+
+## security
+
+This configuration enhances the security settings for your application by applying several security measures to protect against common web vulnerabilities. ([Nuxt Security Module](https://nuxt.com/modules/security))
+
+Previous security-related issues can be referenced in the document ([前後端資安風險](https://gamania-group.atlassian.net/wiki/spaces/BP/pages/672366827)).
+
+```typescript
+// nuxt.config.ts
+
+security: {
+  rateLimiter: {
+    tokensPerInterval: 1000,
+    interval: '1000',
+  },
+  headers: {
+    crossOriginEmbedderPolicy: 'unsafe-none',
+    crossOriginOpenerPolicy: 'same-origin-allow-popups',
+    crossOriginResourcePolicy: 'same-origin',
+    contentSecurityPolicy: {
+      'default-src': ["'self'"],
+      'script-src': ["'self'", "'unsafe-inline'", "'nonce-{{nonce}}'"],
+      'connect-src': [
+        "'self'",
+        ...(process.env.NUXT_NODE_ENV === 'local'
+          ? ['ws:', 'http://localhost:3000']
+          : []),
+        process.env.NUXT_PUBLIC_API_HOST as 'string',
+      ],
+      'img-src': ["'self'"],
+      'object-src': ["'none'"],
+      'frame-src': ["'self'"],
+      'frame-ancestors': ["'none'"],
+      'worker-src': ["'self'"],
+    },
+    xContentTypeOptions: 'nosniff',
+    xXSSProtection: '1; mode=block',
+  },
+},
+```
+
+## i18n
+
+This configuration handles the internationalization (i18n) setup for your application, enabling support for multiple languages and managing translations. ([Nuxt I18n Module](https://nuxt.com/modules/i18n))
+
+```typescript
+// nuxt.config.ts
+
+i18n: {
+  locales: [
+    {
+      code: 'zh-TW',
+      name: '中文 - 台灣',
+      file: 'zh-TW.json',
+    },
+  ],
+  defaultLocale: 'zh-TW',
+  langDir: 'locales/',
+}
+```
+
+### Recommended Extensions (VSCode)
+
+- [Vue Language Features (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
+- [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin)
+- [Prettier - Code formatter](https://marketplace.visualstudio.com/items?itemName=esbenp.prettier-vscode)
+- [Prettier ESLint](https://marketplace.visualstudio.com/items?itemName=rvest.vs-code-prettier-eslint)
