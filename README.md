@@ -4,11 +4,15 @@ Look at the [Nuxt 3 documentation](https://nuxt.com/docs/getting-started/introdu
 
 ## About This Project
 
-    1. This project consists of two parts: the Landing Editor and the Landing Event Page (i.e., the page shown after the editor publishes).
+    1. This project consists of two parts:
+    	- the Landing Editor
+    	- the Landing Event Page (i.e., the page shown after the editor publishes).
 
     2. Routing Structure:
-    		- Root: page/index -> Represents the Landing Editor.
-    		- Event: page/event -> Represents the Landing Event Page.
+    	- Root: page/index -> Represents the Landing Editor.
+    	- Event: page/event -> Represents the Landing Event Page.
+
+#### Note： All asset types (e.g., CSS) should clearly differentiate between the editor and the event page.
 
 ## About UI Framework
 
