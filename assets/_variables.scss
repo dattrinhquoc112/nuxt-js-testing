@@ -98,11 +98,13 @@ $system-success-success-hover: rgba(88, 192, 128, 1);
 $system-success-success-click: rgba(109, 200, 144, 1);
 
 $gradient-ai: linear-gradient(66.18deg, #0078d8 15.31%, #ff2cf0 84.69%);
-$gradient-rainbow: linear-gradient(90deg,
-        #0091ff 0%,
-        #1edd00 33%,
-        #ffdd6f 66%,
-        #ff2cf0 100%);
+$gradient-rainbow: linear-gradient(
+  90deg,
+  #0091ff 0%,
+  #1edd00 33%,
+  #ffdd6f 66%,
+  #ff2cf0 100%
+);
 $gradient-blue-green: linear-gradient(90deg, #0091ff 0%, #1edd00 100%);
 $gradient-green-yellow: linear-gradient(90deg, #1edd00 0%, #ffdd6f 100%);
 $gradient-yellow-pink: linear-gradient(90deg, #ffdd6f 0%, #ff2cf0 100%);
