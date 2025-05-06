@@ -4,6 +4,35 @@ import { MethodEnum, type Payload } from '@/stores/interface/api';
 
 export const useApiStore = defineStore('api', () => {
   const authStore = useAuthStore();
+  const route = useRoute();
+  const { $i18n } = useNuxtApp();
+  const { t } = $i18n;
+
+  const handleError = (error: any) => {
+    const message = getMessageErrorBackend(error, t) || error?.data?.message;
+    const pathNotAllow = ['/auth', '/auth/'];
+
+    switch (error?.data?.statusCode) {
+      case HTTP_ERRORS.UNAUTHORIZED:
+        if (!pathNotAllow.includes(route.path)) {
+          window.VIUIKit.VIMessage({
+            title: message,
+            width: '348px',
+            type: 'error',
+          });
+          navigateTo('/auth/logout');
+        }
+        break;
+      default:
+        window.VIUIKit.VIMessage({
+          title: message,
+          width: '348px',
+          type: 'error',
+        });
+        break;
+    }
+  };
+
   async function apiRequest<ResponseDataType>(payload: Payload) {
     let { headers } = payload;
     if (payload.auth) {
@@ -15,13 +44,26 @@ export const useApiStore = defineStore('api', () => {
 
     try {
       let response = null;
-      if (payload?.proxy) {
-        response = await $fetch<ResponseDataType>('/api/call', {
+      if (payload?.proxyCustom && payload.endpoint) {
+        response = await $fetch<any>(`/client/api${payload.endpoint}`, {
+          method: payload.method,
+          body: {
+            ...payload,
+            headers,
+          },
+        });
+      } else if (payload?.proxy) {
+        response = await $fetch<ResponseDataType>('/client/api/call', {
           method: MethodEnum.POST,
           body: {
             ...payload,
             headers,
           },
+        });
+      } else {
+        response = await requestHelper<ResponseDataType>({
+          ...payload,
+          headers,
         });
       }
       if (payload?.isServerSide) {
@@ -35,16 +77,11 @@ export const useApiStore = defineStore('api', () => {
             Authorization: token,
           },
         });
-      } else {
-        response = await requestHelper<ResponseDataType>({
-          ...payload,
-          headers,
-        });
       }
       return response;
-    } catch (e) {
-      console.log(e);
-      throw e;
+    } catch (error) {
+      handleError(error);
+      throw error;
     }
   }
 

@@ -1,4 +1,9 @@
 export interface RequestLoginPayload {
-  user_name: string;
+  identifier: string;
   password: string;
+}
+export interface RequestResetPasswordPayload {
+  otpVerificationId: string;
+  code: string;
+  newPassword: string;
 }

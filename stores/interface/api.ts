@@ -23,4 +23,8 @@ export interface Payload {
   extra?: string;
   proxy?: boolean;
   isServerSide?: boolean;
+  proxyCustom?: boolean;
+  credentials?: string;
+  paramsString?: string;
+  redirect?: RequestRedirect | undefined;
 }
