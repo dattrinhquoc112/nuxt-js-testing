@@ -1,9 +1,6 @@
 <template>
-  <div />
+  <LayoutEditor />
 </template>
-
 <script setup lang="ts">
-definePageMeta({
-  layout: 'app',
-});
+import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 </script>
