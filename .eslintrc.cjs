@@ -44,5 +44,9 @@ module.exports = {
     'no-console': 'off',
     'vue/multi-word-component-names': 'off',
     'no-underscore-dangle': 'off',
+    'no-plusplus': 'off',
+    'no-empty': 'off',
+    'import/prefer-default-export': 'off',
+    'consistent-return': 'off',
   },
 };

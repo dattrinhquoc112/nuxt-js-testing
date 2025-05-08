@@ -4,8 +4,20 @@ export default defineNuxtConfig({
     serverSideTokenKey: process.env.VITE_APP_CRYPTO_KEY,
     serverSideTokenIV: process.env.VITE_APP_CRYPTO_IV,
     serverSideExpireTime: process.env.VITE_APP_CRYPTO_EXPIRE_TIME,
+    apiClientId: process.env.NUXT_API_CLIENT_ID,
+    apiCode: process.env.NUXT_API_CODE,
+    apiScope: process.env.NUXT_API_SCOPE,
+    apiRedirectUri: process.env.NUXT_API_REDIRECT_URI,
+    apiState: process.env.NUXT_API_STATE,
+    apiNonce: process.env.NUXT_API_NONCE,
+    apiChallengeMethod: process.env.NUXT_API_CHALLENGE_METHOD,
+    apiGrantType: process.env.NUXT_API_GRANT_TYPE,
+    apiClientSecret: process.env.NUXT_API_CLIENT_SECRET,
     public: {
+      timeRefreshSessionId: process.env.NUXT_TIME_REFRESH_SESSION_ID,
+      apiRedirectUri: process.env.NUXT_API_REDIRECT_URI,
       apiHost: process.env.NUXT_PUBLIC_API_HOST,
+      contactLink: process.env.NUXT_PUBLIC_CONTACT_LINK,
     },
   },
 
@@ -17,6 +29,26 @@ export default defineNuxtConfig({
       },
       meta: [
         { name: 'version', content: process.env.NUXT_GIT_TAG || 'unknown' },
+      ],
+      link: [
+        { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        {
+          rel: 'preconnect',
+          href: 'https://fonts.gstatic.com',
+          crossorigin: 'anonymous',
+        },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@100..900&display=swap',
+        },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Unbounded:wght@200..900&display=swap',
+        },
+        {
+          rel: 'stylesheet',
+          href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Unbounded:wght@200..900&display=swap',
+        },
       ],
     },
   },
@@ -61,10 +93,17 @@ export default defineNuxtConfig({
           ...(process.env.NUXT_NODE_ENV === 'local'
             ? ['ws:', 'http://localhost:3000']
             : []),
-          process.env.NUXT_PUBLIC_API_HOST as 'string',
           import.meta.env.VITE_APP_UI_KIT_LINK,
+          import.meta.env.NUXT_PUBLIC_API_HOST,
+          import.meta.env.NUXT_API_URL_UPLOAD,
         ],
-        'img-src': ["'self'"],
+        'img-src': [
+          "'self'",
+          'data:',
+          'blob:',
+          import.meta.env.NUXT_API_URL_GET_AVATAR,
+          'https://content.voiceclone.dev.vyin.ai',
+        ],
         'object-src': ["'none'"],
         'frame-src': ["'self'"],
         'frame-ancestors': ["'none'"],
@@ -77,11 +116,17 @@ export default defineNuxtConfig({
 
   // NOTE: i18n setting
   i18n: {
+    strategy: 'no_prefix',
     locales: [
       {
         code: 'zh-TW',
-        name: '中文 - 台灣',
+        name: '繁體中文',
         file: 'zh-TW.json',
+      },
+      {
+        code: 'en-US',
+        name: 'English',
+        file: 'en.json',
       },
     ],
     defaultLocale: 'zh-TW',
@@ -92,13 +137,13 @@ export default defineNuxtConfig({
     typeCheck: true,
   },
 
-  css: ['normalize.css'],
+  css: ['normalize.css', '@/assets/global.scss'],
 
   vite: {
     css: {
       preprocessorOptions: {
         scss: {
-          additionalData: '@use "@/assets/global.scss" as *;',
+          additionalData: '@use "@/assets/style.scss" as *;',
         },
       },
     },
