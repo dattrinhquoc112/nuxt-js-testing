@@ -1,80 +1,228 @@
 import { defineStore } from 'pinia';
-import { setCookie, deleteCookie } from '@/utils/storageHelper';
 import { useApiStore } from '@/stores/api';
-import { auth as authRequest } from '@/stores/entity/request';
-import { auth as authResponse } from '@/stores/entity/response';
 import type { CustomJwtPayload } from '@/interface/JwtPayload';
-import type { RequestLoginPayload } from '@/stores/interface/requestSerialize/auth';
-import type { LoginResponseData } from '@/stores/interface/response/auth';
+import type {
+  RequestLoginPayload,
+  RequestResetPasswordPayload,
+} from '@/stores/interface/request/auth';
+import type { EmailRegistrationResponse } from '@/stores/interface/response/auth';
+import type { UserInfo } from '@/stores/interface/userInfo';
+import { KEY_LOCAL_STORAGE } from '@/utils/constants';
 import { MethodEnum } from './interface/api';
-
-const namespace = '/draft';
+import type {
+  IUsersRegisterRequest,
+  RequestUpdatePayload,
+} from './interface/request/shared';
+import type {
+  IForgotPasswordResponse,
+  IPresignedUrl,
+} from './interface/response/share';
 
 export const useAuthStore = defineStore('auth', () => {
   const apiStore = useApiStore();
+  const { $i18n } = useNuxtApp();
+  const { t } = $i18n;
 
+  const userInfo = reactive<UserInfo>({
+    email: '',
+    name: '',
+  });
   const token = ref('');
-  const jwtPayload = ref<CustomJwtPayload | null>(null);
-  const isAuthenticated = ref(false);
+
   const userLoginRequesting = ref(false);
-  function userLoginSuccess(data: LoginResponseData) {
-    token.value = data.token;
-    jwtPayload.value = new authResponse.AuthToken(data.token).deserialize();
-    isAuthenticated.value = true;
-    setCookie('token', data.token, {
-      expires: new Date(jwtPayload.value.exp),
+
+  function setUserInfo(info: UserInfo) {
+    userInfo.email = info.email;
+    userInfo.name = info.name;
+  }
+
+  function getAuthenticatedStatus() {
+    return getCookie(KEY_LOCAL_STORAGE.IS_AUTHENTICATED);
+  }
+
+  function getInfoUserFromCookie(): CustomJwtPayload | null {
+    return getDataFromCookie<CustomJwtPayload>(KEY_LOCAL_STORAGE.INFO_USER);
+  }
+
+  async function checkEmail(email: Record<string, string>) {
+    const response: EmailRegistrationResponse = await apiStore.apiRequest({
+      method: MethodEnum.GET,
+      endpoint: '/api/v1/users/registration-check',
+      params: email,
+    });
+    return response.data.registered;
+  }
+
+  async function getTemporaryToken({ code, state }: Record<string, string>) {
+    const data = { code, state };
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: '/oauth2/token',
+      data,
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      proxyCustom: true,
     });
   }
-  function userLoginFailed(e: Error) {
-    console.log(e);
+
+  function setSessionId() {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: '/oauth2/auth',
+      credentials: 'include',
+      proxyCustom: true,
+    });
   }
-  async function userLogin({ userName, password }: RequestLoginPayload) {
+
+  async function userLogin({ identifier, password }: RequestLoginPayload) {
     try {
       userLoginRequesting.value = true;
-      const response = await apiStore.apiRequest<LoginResponseData>({
+      const response = await apiStore.apiRequest({
         method: MethodEnum.POST,
-        endpoint: `${namespace}/login`,
-        data: new authRequest.UserLogin({
-          userName,
-          password,
-        }).serialize(),
-        proxy: true,
+        endpoint: '/auth/login',
+        data: { identifier, password },
+        credentials: 'include',
+        proxyCustom: true,
       });
-      userLoginSuccess(response);
+      if (response?.redirect) {
+        const urlDecode = new URL(response?.redirect);
+        navigateTo(`${urlDecode.pathname}${urlDecode.search}`);
+      } else if (response?.otpVerificationId) {
+        navigateTo(`/auth/check-otp/${response.otpVerificationId}`);
+        window.VIUIKit.VIMessage({
+          title: t('notification-status-action-send_email_success'),
+          width: '348px',
+        });
+      }
     } catch (e) {
-      userLoginFailed(new Error(JSON.stringify(e)));
+      return Promise.reject(e);
     } finally {
       userLoginRequesting.value = false;
     }
   }
-  // async function userLogin({
-  //   username,
-  //   password,
-  // }: {
-  //   username: string;
-  //   password: string;
-  // }) {
-  //   const response = await apiStore.apiRequest({
-  //     method: MethodEnum.POST,
-  //     endpoint: `${namespace}/login`,
-  //     fetchFunction: {
-  //       requesting: userLoginFetching,
-  //       success: userLoginSuccess,
-  //       error: userLoginFailed,
-  //     },
-  //     server: false,
-  //     body: new authRequest.UserLogin(username, password).serialize(),
-  //   });
-  //   return response;
-  // }
-  function userLogout() {
-    token.value = '';
-    jwtPayload.value = null;
-    isAuthenticated.value = false;
-    deleteCookie('token');
+
+  function register(data: IUsersRegisterRequest) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: '/api/v1/users',
+      data,
+      proxy: true,
+    });
   }
 
-  return { token, isAuthenticated, userLogin, userLogout };
+  function checkOtp(otpVerificationId: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.GET,
+      endpoint: `/api/v1/general/otp/${otpVerificationId}`,
+    });
+  }
+
+  function resendOtp(otpVerificationId: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/general/otp/${otpVerificationId}/resend`,
+      data: { otpVerificationId },
+      proxy: true,
+    });
+  }
+
+  function confirmEmail(data: object) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/users/confirm-email`,
+      data,
+      proxyCustom: true,
+    });
+  }
+
+  async function uploadAvatar(file: File) {
+    try {
+      const presignedUrl: IPresignedUrl = await apiStore.apiRequest({
+        method: MethodEnum.POST,
+        endpoint: `/api/v1/general/uploads?contentType=${file.type}&objectType=AVATAR`,
+        proxy: true,
+      });
+      if (presignedUrl.data.uploadUrl) {
+        await $fetch(presignedUrl.data.uploadUrl, {
+          method: 'PUT',
+          body: file,
+          headers: {
+            'Content-Type': file.type,
+          },
+        });
+        return presignedUrl.data.fileKey;
+      }
+      throw new Error('Not found pre-signed URL');
+    } catch (error) {}
+  }
+  function updateUser(payload: RequestUpdatePayload) {
+    return apiStore.apiRequest({
+      method: MethodEnum.PATCH,
+      endpoint: `/api/v1/users/${getInfoUserFromCookie()?.sub}`,
+      data: payload,
+      proxy: true,
+    });
+  }
+
+  function unLockAccount(data: object) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/users/unlock`,
+      data,
+      proxy: true,
+    });
+  }
+
+  function resetPassword(data: RequestResetPasswordPayload) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/users/reset-password`,
+      data,
+      proxy: true,
+    });
+  }
+
+  function sendOtpForgotPassword(email: string) {
+    return apiStore.apiRequest<IForgotPasswordResponse>({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/users/forget-password?email=${email}`,
+      proxy: true,
+    });
+  }
+
+  async function userLogout() {
+    try {
+      await apiStore.apiRequest({
+        method: MethodEnum.POST,
+        endpoint: '/auth/logout',
+        proxyCustom: true,
+      });
+      navigateTo('/auth');
+    } catch (error) {}
+  }
+
+  return {
+    token,
+    userLogin,
+    userLogout,
+    userInfo,
+    setUserInfo,
+    getTemporaryToken,
+    checkEmail,
+    setSessionId,
+    getAuthenticatedStatus,
+    register,
+    checkOtp,
+    resendOtp,
+    confirmEmail,
+    getInfoUserFromCookie,
+    updateUser,
+    uploadAvatar,
+    unLockAccount,
+    sendOtpForgotPassword,
+    resetPassword,
+  };
 });
 
 export default null;

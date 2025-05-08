@@ -6,4 +6,5 @@ export interface CustomJwtPayload extends JwtPayload {
   phone: string;
   iat: number;
   exp: number;
+  tenant_id?: string;
 }

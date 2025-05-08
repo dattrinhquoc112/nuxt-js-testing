@@ -12,6 +12,6 @@ export default <ResponseDataType>({
   $fetch(uri || `${baseURL}${endpoint}`, {
     headers,
     ...(method.toUpperCase() === MethodEnum.GET
-      ? { query: { ...params } }
-      : { method, body: { ...data } }),
+      ? { query: params }
+      : { method, body: data }),
   });

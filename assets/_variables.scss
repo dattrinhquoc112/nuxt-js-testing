@@ -1,8 +1,110 @@
 $green: #26d07c;
 $white: #ffffff;
-$whiteGray: #E4E7ED;
+$whiteGray: #e4e7ed;
 $darkgray: #999999;
 $gray: #606266;
 $darkRed: #d9001b;
-$blue: #4069D0;
+$blue: #4069d0;
 $lightBlue: #409eff;
+
+/* GLOBAL COLOR */
+$neutral-white-alpha-7: rgba(255, 255, 255, 0.07);
+$neutral-white-alpha-10: rgba(255, 255, 255, 0.1);
+$neutral-white-alpha-15: rgba(255, 255, 255, 0.15);
+$neutral-white-alpha-20: rgba(255, 255, 255, 0.2);
+$neutral-white-alpha-30: rgba(255, 255, 255, 0.3);
+$neutral-white-alpha-40: rgba(255, 255, 255, 0.4);
+$neutral-white-alpha-50: rgba(255, 255, 255, 0.5);
+$neutral-white-alpha-60: rgba(255, 255, 255, 0.6);
+$neutral-white-alpha-70: rgba(255, 255, 255, 0.7);
+$neutral-white-alpha-80: rgba(255, 255, 255, 0.8);
+$neutral-white-alpha-90: rgba(255, 255, 255, 0.9);
+$neutral-white-alpha-100: rgba(255, 255, 255, 1);
+
+$neutral-black-alpha-7: rgba(0, 0, 0, 0.07);
+$neutral-black-alpha-10: rgba(0, 0, 0, 0.1);
+$neutral-black-alpha-15: rgba(0, 0, 0, 0.15);
+$neutral-black-alpha-20: rgba(0, 0, 0, 0.2);
+$neutral-black-alpha-30: rgba(0, 0, 0, 0.3);
+$neutral-black-alpha-40: rgba(0, 0, 0, 0.4);
+$neutral-black-alpha-50: rgba(0, 0, 0, 0.5);
+$neutral-black-alpha-60: rgba(0, 0, 0, 0.6);
+$neutral-black-alpha-70: rgba(0, 0, 0, 0.7);
+$neutral-black-alpha-80: rgba(0, 0, 0, 0.8);
+$neutral-black-alpha-90: rgba(0, 0, 0, 0.9);
+$neutral-black-alpha-100: rgba(0, 0, 0, 1);
+
+$brand-blue-50: rgba(234, 241, 255, 1);
+$brand-blue-100: rgba(211, 228, 255, 1);
+$brand-blue-200: rgba(162, 201, 255, 1);
+$brand-blue-300: rgba(106, 174, 255, 1);
+$brand-blue-400-main: rgba(10, 147, 255, 1);
+$brand-blue-500: rgba(0, 120, 216, 1);
+$brand-blue-600: rgba(0, 95, 173, 1);
+$brand-blue-700: rgba(0, 71, 132, 1);
+$brand-blue-800: rgba(0, 49, 94, 1);
+$brand-blue-900: rgba(0, 28, 59, 1);
+
+$brand-green-50: rgba(202, 255, 178, 1);
+$brand-green-100: rgba(120, 255, 91, 1);
+$brand-green-200-main: rgba(30, 221, 0, 1);
+$brand-green-300: rgba(0, 199, 0, 1);
+$brand-green-400: rgba(0, 168, 0, 1);
+$brand-green-500: rgba(0, 139, 0, 1);
+$brand-green-600: rgba(0, 110, 0, 1);
+$brand-green-700: rgba(0, 83, 0, 1);
+$brand-green-800: rgba(0, 58, 0, 1);
+$brand-green-900: rgba(0, 34, 0, 1);
+
+$brand-navy-50: rgba(199, 231, 255, 1);
+$brand-navy-100: rgba(165, 203, 233, 1);
+$brand-navy-200: rgba(111, 149, 177, 1);
+$brand-navy-300: rgba(60, 98, 124, 1);
+$brand-navy-400: rgba(35, 75, 100, 1);
+$brand-navy-500: rgba(14, 58, 82, 1);
+$brand-navy-600: rgba(4, 52, 76, 1);
+$brand-navy-700: rgba(0, 30, 47, 1);
+$brand-navy-800: rgba(4, 17, 24, 1);
+$brand-navy-900-main: rgba(3, 12, 17, 1);
+
+$brand-magenta-50: rgba(255, 235, 248, 1);
+$brand-magenta-100: rgba(255, 214, 244, 1);
+$brand-magenta-200: rgba(255, 171, 238, 1);
+$brand-magenta-300: rgba(255, 119, 239, 1);
+$brand-magenta-400-main: rgba(255, 44, 240, 1);
+$brand-magenta-500: rgba(212, 0, 202, 1);
+$brand-magenta-600: rgba(171, 0, 164, 1);
+$brand-magenta-700: rgba(130, 0, 125, 1);
+$brand-magenta-800: rgba(92, 0, 88, 1);
+$brand-magenta-900: rgba(57, 0, 55, 1);
+
+$brand-dandelion-50: rgba(255, 240, 195, 1);
+$brand-dandelion-100: rgba(255, 221, 111, 1);
+$brand-dandelion-200: rgba(228, 196, 89, 1);
+$brand-dandelion-300: rgba(199, 169, 65, 1);
+$brand-dandelion-400: rgba(170, 142, 40, 1);
+$brand-dandelion-500: rgba(143, 117, 10, 1);
+$brand-dandelion-600: rgba(115, 92, 0, 1);
+$brand-dandelion-700: rgba(87, 69, 0, 1);
+$brand-dandelion-800: rgba(61, 47, 0, 1);
+$brand-dandelion-900: rgba(35, 27, 0, 1);
+
+$system-danger-danger: rgba(217, 58, 80, 1);
+$system-danger-danger-hover: rgba(225, 97, 115, 1);
+$system-danger-danger-click: rgba(228, 117, 132, 1);
+
+$system-success-success: rgba(46, 176, 96, 1);
+$system-success-success-hover: rgba(88, 192, 128, 1);
+$system-success-success-click: rgba(109, 200, 144, 1);
+
+$gradient-ai: linear-gradient(66.18deg, #0078d8 15.31%, #ff2cf0 84.69%);
+$gradient-rainbow: linear-gradient(
+  90deg,
+  #0091ff 0%,
+  #1edd00 33%,
+  #ffdd6f 66%,
+  #ff2cf0 100%
+);
+$gradient-blue-green: linear-gradient(90deg, #0091ff 0%, #1edd00 100%);
+$gradient-green-yellow: linear-gradient(90deg, #1edd00 0%, #ffdd6f 100%);
+$gradient-yellow-pink: linear-gradient(90deg, #ffdd6f 0%, #ff2cf0 100%);

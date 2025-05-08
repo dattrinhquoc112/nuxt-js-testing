@@ -26,12 +26,17 @@ Use Vyin-ai-ui-kit
 
     node: 20.18.2
 
-Make sure to install the dependencies (required the first time you start)
+Make sure to install the dependencies and cookie values (required the first time you start)
 
 ```bash
 1. Run npm install to install dependencies.
 
 2. Use the .env file for local environment configuration.
+
+3. Run the project aiaas-platform-client locally and log in to get/set cookie values in localhost. You can use the following methods：
+  - Manually set the cookie in aiaas-landing-frontend after logging in from dev environment to obtain the cookie.
+  - Run aiaas-platform-client locally and log in first to use aiaas-landing-frontend.
+  - Login and OTP flow doc：https://gitlab.gamania.com/bdds/alice/aiaas-platform/aiaas-platform-frontend-client/-/wikis/OTP-flowchart
 ```
 
 ## Development Server
