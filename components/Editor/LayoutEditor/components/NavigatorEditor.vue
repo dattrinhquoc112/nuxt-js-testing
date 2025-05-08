@@ -9,17 +9,25 @@
     >
       <template #first>
         <div class="editor-layout__left">
-          <vi-button
-            type="standard-subtle"
-            icon-before="ic_chevron_left"
-            no-text
+          <vi-icon
+            name="ic_chevron_left"
             size="24"
-            width="fit-content"
-            class="padding-0"
-          ></vi-button>
-          <vi-typography type="headline-xs" language-input="zh">
+            color="#fff"
+            class="editor-layout__left__back"
+          />
+          <vi-typography
+            type="headline-xs"
+            language-input="zh"
+            class="editor-layout__left__text"
+          >
             未命名專案
           </vi-typography>
+          <vi-icon
+            name="ic_chevron_down"
+            size="16"
+            color="#fff"
+            class="editor-layout__left__dropdown"
+          />
         </div>
       </template>
       <template #second>
@@ -28,43 +36,95 @@
             type="standard-subtle"
             icon-before="ic_step_back"
             no-text
+            @click="$emit('handleRedo')"
           ></vi-button>
           <vi-button
             type="standard-subtle"
             icon-before="ic_step_next"
             no-text
+            @click="$emit('handleUndo')"
           ></vi-button>
         </div>
       </template>
       <template #third>
         <div class="editor-layout__right">
-          <button class="button__switcher">
+          <div class="button__switcher">
             <vi-button
               type="standard-subtle"
               icon-before="ic_device_desktop"
               no-text
               size="24"
+              :class="{ active: activeDevice === DEVICES.destop }"
+              :text-color="activeDevice === DEVICES.destop ? '#030C11' : '#fff'"
+              @click="handleSwitchLayout(DEVICES.destop)"
             ></vi-button>
+
             <vi-button
               type="standard-subtle"
               icon-before="ic_device_mobile"
               no-text
               size="24"
+              :class="{ active: activeDevice === DEVICES.mobile }"
+              :text-color="activeDevice === DEVICES.mobile ? '#030C11' : '#fff'"
+              @click="handleSwitchLayout(DEVICES.mobile)"
             ></vi-button>
-          </button>
-          <vi-button icon-before="ic_play" no-text color="#fff" />
-          <vi-button width="fit-content" type="standard-primary">
-            儲存變更
+          </div>
+          <vi-button
+            icon-before="ic_play"
+            no-text
+            color="#fff"
+            @click="$emit('handlePlay')"
+          />
+          <vi-button
+            width="fit-content"
+            type="standard-primary"
+            @click="$emit('hanldeStoreChanges')"
+          >
+            <vi-typography
+              type="subtitle-large"
+              language-input="zh"
+              class="cursor-pointer"
+            >
+              儲存變更
+            </vi-typography>
           </vi-button>
-          <vi-button width="fit-content" type="standard-primary">
-            發布
+          <vi-button
+            width="fit-content"
+            type="standard-primary"
+            @click="$emit('handleRelease')"
+          >
+            <vi-typography
+              type="subtitle-large"
+              language-input="zh"
+              class="cursor-pointer"
+            >
+              發布
+            </vi-typography>
           </vi-button>
         </div>
       </template>
     </vi-navigation-top>
   </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const DEVICES = {
+  destop: 'desktop',
+  mobile: 'mobile',
+};
+const activeDevice = ref(DEVICES.destop);
+const emit = defineEmits<{
+  handleUndo: [];
+  handleRedo: [];
+  handleSwitchLayout: [mode: string];
+  handlePlay: [];
+  hanldeStoreChanges: [];
+  handleRelease: [];
+}>();
+const handleSwitchLayout = (device: string) => {
+  activeDevice.value = device;
+  emit('handleSwitchLayout', 'desktop');
+};
+</script>
 
 <style lang="scss" scoped>
 .padding-0 {
@@ -72,12 +132,17 @@
 }
 .editor-layout {
   height: 64px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+  border-bottom: 1px solid $neutral-white-alpha-7;
   &__left {
     display: flex;
     align-items: center;
-    gap: 8px;
     cursor: pointer;
+    &__back {
+      margin-right: 16px;
+    }
+    &__text {
+      margin-right: 8px;
+    }
   }
   &__center {
     width: 100%;
@@ -96,30 +161,41 @@
         cursor: pointer;
 
         &__switcher {
-          padding: 0px;
+          padding: 4px;
           display: flex;
           border-radius: 4px;
-          border: 1px solid rgba(255, 255, 255, 0.07);
-          background-color: rgba(255, 255, 255, 0.07);
+          border: 1px solid $neutral-white-alpha-7;
+          background-color: $neutral-white-alpha-7;
+          &span {
+            width: 100%;
+            height: 100%;
+          }
         }
         &__play {
           cursor: pointer;
           border-radius: 4px;
           padding: 8px;
-          border: 1px solid rgba(255, 255, 255, 0.07);
-          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid $neutral-white-alpha-7;
+          background: $neutral-white-alpha-10;
         }
         &__text {
           cursor: pointer;
           padding: 8px 16px;
           border-radius: 4px;
           border: none;
-          background: rgba(255, 255, 255, 0.9);
+          background: $neutral-white-alpha-90;
           color: #030c11;
         }
       }
     }
   }
+}
+.active {
+  background-color: white !important;
+  border-radius: 4px;
+}
+.cursor-pointer {
+  cursor: pointer;
 }
 :deep().navigation-item.leading {
   padding-top: 12px !important;
