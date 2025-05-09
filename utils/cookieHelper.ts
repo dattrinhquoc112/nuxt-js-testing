@@ -1,6 +1,8 @@
 import Cookies from 'js-cookie';
 import { type H3Event, setCookie as setCookieH3 } from 'h3';
-import type { IOauthToken } from '@/stores/interface/response/auth';
+import jwtDecode from '@/utils/jwtDecode';
+import { KEY_LOCAL_STORAGE } from '@/utils/constants';
+import type { IOauthToken } from '~/stores/interface/response/auth';
 
 interface CookieAttributes {
   expires?: number | Date;
@@ -67,7 +69,7 @@ function convertCookieObjectToString(
 }
 
 function getDataFromCookie<T>(name: string): T | null {
-  const cookies = document?.cookie
+  const cookies = document.cookie
     .split('; ')
     .reduce<string | null>((acc, cookie) => {
       const [key, value] = cookie.split('=');

@@ -63,7 +63,7 @@ export default defineNuxtRouteMiddleware(async (to) => {
       isAuthenticated === KEY_LOCAL_STORAGE.TOKEN_TENANT &&
       routeNotAllow.includes(to.path)
     ) {
-      return navigateTo('/dashboard');
+      return navigateTo('');
     }
   }
 });
