@@ -7,10 +7,10 @@
     />
     <div class="tooltip-container__desc">
       <vi-typography type="subtitle-large" language-input="zh">
-        Section
+        {{ $t('section') }}
       </vi-typography>
       <vi-typography type="body-small" language-input="zh" class="text-wrap">
-        提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色
+        {{ $t('section_desc') }}
       </vi-typography>
     </div>
   </div>

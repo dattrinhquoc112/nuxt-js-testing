@@ -264,5 +264,9 @@
   "error_fe-page-status-title_404_page_not_found": "404 Page not found",
   "error_fe-page-status-description_404_page_not_found": "We couldn't find what you're looking for.\nPlease check the URL or return to the homepage",
   "common-action-button-button_goto_vyinai": "Go to Vyin AI",
-  "error_fe-page-status-desktop_only": "For optimal experience and performance\nDesktop browsing only"
+  "error_fe-page-status-desktop_only": "For optimal experience and performance\nDesktop browsing only",
+  "storage_changes": "儲存變更",
+  "release": "發布",
+  "section": "Section",
+  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色"
 }

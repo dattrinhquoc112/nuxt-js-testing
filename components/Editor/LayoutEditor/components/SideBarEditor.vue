@@ -49,7 +49,7 @@
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
-const activeSidebarButton = ref(SIDEBAR_BUTTONS[0]);
+const activeSidebarButton = ref();
 </script>
 <style lang="scss" scoped>
 .sidebar-editor {
@@ -59,21 +59,18 @@ const activeSidebarButton = ref(SIDEBAR_BUTTONS[0]);
   display: flex;
   flex-direction: column;
   background-color: $neutral-white-alpha-7;
+  & .mt-auto {
+    margin-top: auto;
+  }
+  & .mt-4 {
+    margin-top: 4px;
+  }
 }
 .active {
   box-sizing: border-box;
   border-radius: 4px;
   border: 1px solid $neutral-white-alpha-10;
   background: $neutral-white-alpha-15 !important;
-}
-.mt-auto {
-  margin-top: auto;
-}
-.p-12 {
-  padding: 12px;
-}
-.mt-4 {
-  margin-top: 4px;
 }
 :deep() .typography.text-button {
   height: 32px !important;

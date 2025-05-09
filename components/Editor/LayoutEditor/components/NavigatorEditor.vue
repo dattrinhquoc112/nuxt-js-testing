@@ -85,7 +85,7 @@
               language-input="zh"
               class="cursor-pointer"
             >
-              儲存變更
+              {{ $t('storage_changes') }}
             </vi-typography>
           </vi-button>
           <vi-button
@@ -98,7 +98,7 @@
               language-input="zh"
               class="cursor-pointer"
             >
-              發布
+              {{ $t('release') }}
             </vi-typography>
           </vi-button>
         </div>
@@ -127,9 +127,6 @@ const handleSwitchLayout = (device: string) => {
 </script>
 
 <style lang="scss" scoped>
-.padding-0 {
-  padding: 0;
-}
 .editor-layout {
   height: 64px;
   border-bottom: 1px solid $neutral-white-alpha-7;
@@ -170,6 +167,10 @@ const handleSwitchLayout = (device: string) => {
             width: 100%;
             height: 100%;
           }
+          & .active {
+            background-color: white !important;
+            border-radius: 4px;
+          }
         }
         &__play {
           cursor: pointer;
@@ -190,10 +191,7 @@ const handleSwitchLayout = (device: string) => {
     }
   }
 }
-.active {
-  background-color: white !important;
-  border-radius: 4px;
-}
+
 .cursor-pointer {
   cursor: pointer;
 }

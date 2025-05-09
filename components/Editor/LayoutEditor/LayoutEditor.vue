@@ -44,9 +44,11 @@ defineEmits<{
   }
   &__container {
     display: flex;
+    background: rgba(3, 12, 17, 0.6);
   }
 }
 .bg-black {
-  background: #030c11;
+  background: $brand-navy-900-main;
+  width: 100%;
 }
 </style>
