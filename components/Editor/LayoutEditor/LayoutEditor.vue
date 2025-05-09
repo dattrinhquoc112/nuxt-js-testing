@@ -1,16 +1,18 @@
 <template>
-  <div class="editor__bg">
-    <NavigatorEditor
-      @handle-undo="$emit('handleUndo')"
-      @handle-redo="$emit('handleRedo')"
-      @handle-switcher-layout="$emit('handleSwitchLayout')"
-      @handle-play="$emit('handlePlay')"
-      @hanlde-store-changes="$emit('hanldeStoreChanges')"
-      @handle-release="$emit('handleRelease')"
-    />
-    <div class="editor__container">
-      <SideBarEditor />
-      <slot />
+  <div class="bg-black">
+    <div class="editor__bg">
+      <NavigatorEditor
+        @handle-undo="$emit('handleUndo')"
+        @handle-redo="$emit('handleRedo')"
+        @handle-switcher-layout="$emit('handleSwitchLayout')"
+        @handle-play="$emit('handlePlay')"
+        @hanlde-store-changes="$emit('hanldeStoreChanges')"
+        @handle-release="$emit('handleRelease')"
+      />
+      <div class="editor__container">
+        <SideBarEditor />
+        <slot />
+      </div>
     </div>
   </div>
 </template>
@@ -43,5 +45,8 @@ defineEmits<{
   &__container {
     display: flex;
   }
+}
+.bg-black {
+  background: #030c11;
 }
 </style>

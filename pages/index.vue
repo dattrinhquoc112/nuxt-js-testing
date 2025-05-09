@@ -11,6 +11,7 @@
 </template>
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
+import ToolTipSection from '@/components/Editor/ToolTipSection/ToolTipSection.vue';
 
 const handleEvent = () => {
   console.log('Event triggered');
