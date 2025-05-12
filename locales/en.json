@@ -1,5 +1,6 @@
 {
   "title": "Home - aiaas-platform-fronted-client",
+  "app-navigation-button-back": "Back to Home",
   "auth-signup-title-title_welcome": "Welcome to Vyin AI 👋",
   "auth-signup-title-subtitle_welcome": "The best way to create and manage your AI project",
   "auth-signup-title-title_email": "Enter your email to sign up or sign in",
@@ -264,5 +265,13 @@
   "error_fe-page-status-title_404_page_not_found": "404 Page not found",
   "error_fe-page-status-description_404_page_not_found": "We couldn't find what you're looking for.\nPlease check the URL or return to the homepage",
   "common-action-button-button_goto_vyinai": "Go to Vyin AI",
-  "error_fe-page-status-desktop_only": "For optimal experience and performance\nDesktop browsing only"
+  "error_fe-page-status-desktop_only": "For optimal experience and performance\nDesktop browsing only",
+  "project_list": "Project List",
+  "to_be_released": "To be released",
+  "not_started": "Not started",
+  "stared": "Started",
+  "last_edited": "Last edited",
+  "days_left_start": "{day} days left to start",
+  "create_web_application": "Create Web Application",
+  "search_project": "Search Project"
 }

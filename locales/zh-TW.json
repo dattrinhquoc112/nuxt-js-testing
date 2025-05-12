@@ -1,5 +1,6 @@
 {
   "title": "Home - aiaas-platform-fronted-client",
+  "app-navigation-button-back": "返回多租戶平台",
   "auth-signup-title-title_welcome": "歡迎來到 Vyin AI 👋",
   "auth-signup-title-subtitle_welcome": "最好的方式來管理AI項目",
   "auth-signup-title-title_email": "輸入您的電子郵件以註冊或登入",
@@ -264,5 +265,13 @@
   "error_fe-page-status-title_404_page_not_found": "404 Page not found",
   "error_fe-page-status-description_404_page_not_found": "很抱歉，找不到您要瀏覽的頁面。\n請檢查網址是否正確，或返回首頁",
   "common-action-button-button_goto_vyinai": "前往 Vyin AI 官網",
-  "error_fe-page-status-desktop_only": "為了最佳體驗與效能\n僅支援桌機瀏覽"
+  "error_fe-page-status-desktop_only": "為了最佳體驗與效能\n僅支援桌機瀏覽",
+  "project_list": "專案列表",
+  "to_be_released": "待發布",
+  "not_started": "未開始",
+  "stared": "已開始",
+  "last_edited": "最後編輯",
+  "days_left_start": "距離開始還有 {day} 天",
+  "create_web_application": "建立網頁應用",
+  "search_project": "搜尋專案"
 }
