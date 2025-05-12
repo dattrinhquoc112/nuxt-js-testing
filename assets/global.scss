@@ -10,7 +10,9 @@ html {
   max-width: 100%;
   margin: auto;
 }
-
+.text-wrap {
+  text-wrap: auto !important;
+}
 .app-container {
   display: flex;
   flex-direction: column;

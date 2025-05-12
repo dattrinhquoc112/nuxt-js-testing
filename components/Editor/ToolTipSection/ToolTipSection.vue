@@ -6,16 +6,18 @@
       class="tooltip-container__banner"
     />
     <div class="tooltip-container__desc">
-      <vi-typography type="subtitle-large" language-input="zh">
+      <vi-typography type="subtitle-large">
         {{ $t('section') }}
       </vi-typography>
-      <vi-typography type="body-small" language-input="zh" class="text-wrap">
+      <vi-typography type="body-small" class="text-wrap">
         {{ $t('section_desc') }}
       </vi-typography>
     </div>
   </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+const { locale } = useI18n();
+</script>
 
 <style lang="scss" scoped>
 .tooltip-container {
@@ -41,8 +43,5 @@
     margin-top: 16px;
     overflow-wrap: break-word;
   }
-}
-.text-wrap {
-  text-wrap: auto !important;
 }
 </style>

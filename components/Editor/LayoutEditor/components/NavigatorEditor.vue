@@ -15,11 +15,7 @@
             color="#fff"
             class="editor-layout__left__back"
           />
-          <vi-typography
-            type="headline-xs"
-            language-input="zh"
-            class="editor-layout__left__text"
-          >
+          <vi-typography type="headline-xs" class="editor-layout__left__text">
             未命名專案
           </vi-typography>
           <vi-icon
@@ -80,11 +76,7 @@
             type="standard-primary"
             @click="$emit('hanldeStoreChanges')"
           >
-            <vi-typography
-              type="subtitle-large"
-              language-input="zh"
-              class="cursor-pointer"
-            >
+            <vi-typography type="subtitle-large" class="cursor-pointer">
               {{ $t('storage_changes') }}
             </vi-typography>
           </vi-button>
@@ -93,11 +85,7 @@
             type="standard-primary"
             @click="$emit('handleRelease')"
           >
-            <vi-typography
-              type="subtitle-large"
-              language-input="zh"
-              class="cursor-pointer"
-            >
+            <vi-typography type="subtitle-large" class="cursor-pointer">
               {{ $t('release') }}
             </vi-typography>
           </vi-button>
@@ -111,6 +99,7 @@ const DEVICES = {
   destop: 'desktop',
   mobile: 'mobile',
 };
+const { locale } = useI18n();
 const activeDevice = ref(DEVICES.destop);
 const emit = defineEmits<{
   handleUndo: [];
