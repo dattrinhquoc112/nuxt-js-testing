@@ -184,7 +184,7 @@ const handleSwitchLayout = (device: string) => {
 .cursor-pointer {
   cursor: pointer;
 }
-:deep().navigation-item.leading {
+:deep(.navigation-item.leading) {
   padding-top: 12px !important;
   padding-bottom: 12px !important;
 }

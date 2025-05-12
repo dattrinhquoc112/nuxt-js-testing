@@ -72,16 +72,16 @@ const activeSidebarButton = ref();
   border: 1px solid $neutral-white-alpha-10;
   background: $neutral-white-alpha-15 !important;
 }
-:deep() .typography.text-button {
+:deep(.typography.text-button) {
   height: 32px !important;
 }
-:deep() .ui-kit-button.large.standard-subtle {
+:deep(.ui-kit-button.large.standard-subtle) {
   padding: 12px !important;
 }
-:deep() .vue3-ui-kit-tooltip-arrow.right.start {
+:deep(.vue3-ui-kit-tooltip-arrow.right.start) {
   display: none;
 }
-:deep() .vue3-ui-kit-tooltip-content.right.start {
+:deep(.vue3-ui-kit-tooltip-content.right.start) {
   padding: 0px;
   background-color: transparent !important;
 }
