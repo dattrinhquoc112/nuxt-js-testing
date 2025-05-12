@@ -264,5 +264,6 @@
   "error_fe-page-status-title_404_page_not_found": "404 Page not found",
   "error_fe-page-status-description_404_page_not_found": "We couldn't find what you're looking for.\nPlease check the URL or return to the homepage",
   "common-action-button-button_goto_vyinai": "Go to Vyin AI",
-  "error_fe-page-status-desktop_only": "For optimal experience and performance\nDesktop browsing only"
+  "error_fe-page-status-desktop_only": "For optimal experience and performance\nDesktop browsing only",
+  "planning-an-event-webpage-process": "規劃活動網頁流程"
 }

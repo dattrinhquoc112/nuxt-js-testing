@@ -264,5 +264,6 @@
   "error_fe-page-status-title_404_page_not_found": "404 Page not found",
   "error_fe-page-status-description_404_page_not_found": "很抱歉，找不到您要瀏覽的頁面。\n請檢查網址是否正確，或返回首頁",
   "common-action-button-button_goto_vyinai": "前往 Vyin AI 官網",
-  "error_fe-page-status-desktop_only": "為了最佳體驗與效能\n僅支援桌機瀏覽"
+  "error_fe-page-status-desktop_only": "為了最佳體驗與效能\n僅支援桌機瀏覽",
+  "planning-an-event-webpage-process": "規劃活動網頁流程"
 }
