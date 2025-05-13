@@ -84,7 +84,38 @@
             </div>
             <div class="wrapper-time-edit">
               <div class="time-edit">{{ item.editedAt }}</div>
-              <vi-icon name="ic_more" size="24" color="#fff" />
+              <div
+                class="action-container"
+                v-click-outside="() => onShowAction(item.id, false)"
+              >
+                <div
+                  class="action-btn"
+                  :class="{
+                    'action-btn-active': actionRef[item.id],
+                  }"
+                  @click="onShowAction(item.id, !actionRef[item.id])"
+                >
+                  <vi-icon name="ic_more" size="24" color="#fff" />
+                </div>
+                <div v-if="actionRef[item.id]" class="select-option">
+                  <div
+                    @click="() => onAction('edit', item.id)"
+                    class="action-item"
+                  >
+                    <vi-typography class="cursor-pointer" type="body-large">
+                      編輯
+                    </vi-typography>
+                  </div>
+                  <div
+                    @click="() => onAction('copy', item.id)"
+                    class="action-item"
+                  >
+                    <vi-typography class="cursor-pointer" type="body-large">
+                      複製
+                    </vi-typography>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -114,6 +145,7 @@ const model = reactive({
 });
 
 const listPage = ref<IProject[]>([]);
+const actionRef = reactive<{ [key: string]: boolean }>({});
 
 const fetchProjectList = debounce(async () => {
   loading.search = true;
@@ -121,6 +153,22 @@ const fetchProjectList = debounce(async () => {
   listPage.value = res.data;
   loading.search = false;
 }, 500);
+
+const onShowAction = (projectID: string, show = true) => {
+  actionRef[projectID] = show;
+};
+
+const onAction = (action = '', projectID = '') => {
+  switch (action) {
+    case 'edit':
+      break;
+    case 'copy':
+      break;
+    default:
+      break;
+  }
+  onShowAction(projectID, false);
+};
 
 onMounted(() => {
   fetchProjectList();
@@ -160,7 +208,6 @@ watch(
     border-radius: 8px;
     border: 1px solid $neutral-white-alpha-7;
     background: $neutral-white-alpha-7;
-    backdrop-filter: blur(5px);
     display: flex;
     width: 100%;
     gap: 16px;
@@ -211,6 +258,7 @@ watch(
         }
       }
       .wrapper-time-edit {
+        position: relative;
         margin-top: auto;
         display: flex;
         align-items: center;
@@ -237,6 +285,39 @@ watch(
     img {
       width: 80px;
       height: 80px;
+    }
+  }
+}
+.action-container {
+  position: relative;
+}
+.action-btn {
+  display: flex;
+  align-items: center;
+  color: $neutral-white-alpha-70;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 4px;
+}
+.action-btn:hover,
+.action-btn-active {
+  background-color: $neutral-white-alpha-15;
+}
+.select-option {
+  position: absolute;
+  top: 44px;
+  right: 0px;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid $neutral-white-alpha-15;
+  background-color: $brand-navy-900-main;
+  z-index: 20;
+  .action-item {
+    min-width: 180px;
+    padding: 8px 16px;
+    cursor: pointer;
+    &:hover {
+      background-color: $neutral-white-alpha-10;
     }
   }
 }

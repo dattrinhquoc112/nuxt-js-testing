@@ -1,4 +1,5 @@
 export interface IProject {
+  id: string;
   thumbnail: string;
   statusActive: string;
   titlePage: string;

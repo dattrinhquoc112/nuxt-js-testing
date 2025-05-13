@@ -17,6 +17,7 @@ export const useProjectStore = defineStore('project', () => {
     return {
       data: [
         {
+          id: 'item_1',
           thumbnail: new URL(
             '@/assets/images/demo/page_thumbnail.png',
             import.meta.url
@@ -29,6 +30,7 @@ export const useProjectStore = defineStore('project', () => {
           editedAt: '2025/01/01',
         },
         {
+          id: 'item_2',
           thumbnail: new URL(
             '@/assets/images/demo/page_thumbnail.png',
             import.meta.url
@@ -41,6 +43,7 @@ export const useProjectStore = defineStore('project', () => {
           editedAt: '2025/01/01',
         },
         {
+          id: 'item_3',
           thumbnail: new URL(
             '@/assets/images/demo/page_thumbnail.png',
             import.meta.url
@@ -53,6 +56,7 @@ export const useProjectStore = defineStore('project', () => {
           editedAt: '2025/01/01',
         },
         {
+          id: 'item_4',
           thumbnail: new URL(
             '@/assets/images/demo/page_thumbnail.png',
             import.meta.url
@@ -65,6 +69,7 @@ export const useProjectStore = defineStore('project', () => {
           editedAt: '2025/01/01',
         },
         {
+          id: 'item_5',
           thumbnail: new URL(
             '@/assets/images/demo/page_thumbnail.png',
             import.meta.url
