@@ -1,4 +1,10 @@
 <template>
+  <div class="guild-action" @click="isOpenTutorial = !isOpenTutorial">
+    <div class="guild-action__bg"></div>
+    <div class="guild-action__icon">
+      <vi-icon name="ic_guide" :size="24" color="#fff" />
+    </div>
+  </div>
   <div class="tutorial" v-if="isOpenTutorial">
     <vi-icon
       name="ic_close"
@@ -8,14 +14,30 @@
       @click="handleCloseTutorial"
     />
     <div class="tutorial__container">
-      <TutorialStep0 v-if="tutorialStep === 0" />
-      <TutorialStep1 v-if="tutorialStep === 1" />
-      <TutorialStep2 v-if="tutorialStep === 2" />
-      <TutorialStep3 v-if="tutorialStep === 3" />
+      <TutorialStep0
+        v-if="tutorialStep === STEPS.STEP_0"
+        :tutorial-type="tutorialType"
+      />
+      <TutorialStep1
+        v-if="tutorialStep === STEPS.STEP_1"
+        :tutorialType="tutorialType"
+      />
+      <TutorialStep2
+        v-if="tutorialStep === STEPS.STEP_2"
+        :tutorialType="tutorialType"
+      />
+      <TutorialStep3
+        v-if="tutorialStep === STEPS.STEP_3"
+        :tutorialType="tutorialType"
+      />
     </div>
     <div class="tutorial__actions">
       <div class="tutorial__actions__step">
-        <vi-typography type="caption-large-500" class="cursor-pointer">
+        <vi-typography
+          type="caption-large-500"
+          class="cursor-pointer"
+          v-if="tutorialStep !== STEPS.STEP_0"
+        >
           {{ `${tutorialStep} of ${TOTAL_STEP}` }}
         </vi-typography>
       </div>
@@ -23,42 +45,42 @@
         <vi-button
           type="standard-primary"
           width="fit-content"
-          @click="tutorialStep = 1"
-          v-if="tutorialStep === 0"
+          @click="tutorialStep = STEPS.STEP_1"
+          v-if="tutorialStep === STEPS.STEP_0"
         >
           <vi-typography type="subtitle-small" class="cursor-pointer">
-            開始
+            {{ $t('start') }}
           </vi-typography>
         </vi-button>
         <vi-button
           type="standard-subtle"
           width="fit-content"
           class="tutorial__actions__buttons--cancel"
-          v-if="tutorialStep !== 0 && tutorialStep !== 3"
+          v-if="tutorialStep !== STEPS.STEP_0 && tutorialStep !== STEPS.STEP_3"
           @click="handlePrevStep"
         >
           <vi-typography type="subtitle-small" class="cursor-pointer">
-            返回
+            {{ $t('return') }}
           </vi-typography></vi-button
         >
         <vi-button
           type="standard-primary"
           width="fit-content"
-          v-if="tutorialStep !== 0 && tutorialStep !== 3"
+          v-if="tutorialStep !== STEPS.STEP_0 && tutorialStep !== STEPS.STEP_3"
           @click="handleNextStep"
         >
           <vi-typography type="subtitle-small" class="cursor-pointer">
-            下一步
+            {{ $t('next-step') }}
           </vi-typography></vi-button
         >
         <vi-button
           type="standard-primary"
           width="fit-content"
-          @click="isOpenTutorial = false"
-          v-if="tutorialStep === 3"
+          @click="handleCompleteGuild"
+          v-if="tutorialStep === STEPS.STEP_3"
         >
           <vi-typography type="subtitle-small" class="cursor-pointer">
-            完成
+            {{ $t('finish') }}
           </vi-typography></vi-button
         >
       </div>
@@ -71,9 +93,22 @@ import TutorialStep1 from '@/components/Tutorial/Components/TutorialStep1.vue';
 import TutorialStep2 from '@/components/Tutorial/Components/TutorialStep2.vue';
 import TutorialStep3 from '@/components/Tutorial/Components/TutorialStep3.vue';
 
+defineProps({
+  tutorialType: {
+    type: String,
+    required: true,
+  },
+});
+
+const STEPS = {
+  STEP_0: 0,
+  STEP_1: 1,
+  STEP_2: 2,
+  STEP_3: 3,
+};
 const TOTAL_STEP = 3;
 const tutorialStep = ref(0);
-const isOpenTutorial = ref(true);
+const isOpenTutorial = ref(false);
 const handleCloseTutorial = () => {
   isOpenTutorial.value = false;
 };
@@ -85,15 +120,57 @@ const handleNextStep = () => {
 const handlePrevStep = () => {
   tutorialStep.value--;
 };
+const handleCompleteGuild = () => {
+  isOpenTutorial.value = false;
+  tutorialStep.value = STEPS.STEP_0;
+};
 </script>
 <style scoped lang="scss">
+.guild-action {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  background-image: url('/assets/icons/bg-guild.svg');
+  display: flex;
+  justify-items: center;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  width: 50px;
+  height: 50px;
+  flex-shrink: 0;
+  &__bg {
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 100px;
+    border: 2px solid #0091ff;
+    filter: blur(4px);
+    position: absolute;
+    top: 5px;
+    left: 5px;
+  }
+  &__icon {
+    width: 40px;
+    height: 40px;
+    display: inline-flex;
+    padding: 8px;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border-radius: 100px;
+    background: #041118;
+  }
+}
 .tutorial {
   width: fit-content;
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
   padding: 16px;
   border-radius: 4px;
   background-color: $brand-navy-700;
   box-shadow: 0px 0px 4px 0px $neutral-black-alpha-15;
-  position: relative;
   &__close-icon {
     position: absolute;
     top: 4px;

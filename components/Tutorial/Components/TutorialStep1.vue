@@ -1,12 +1,15 @@
 <template>
   <div class="tutorial-step-1">
     <vi-typography type="headline-xs">
-      {{ $t('planning-an-event-webpage-process') }}
+      {{ content[tutorialType].title }}
     </vi-typography>
     <vi-typography type="body-small">
-      活動有以下階段：待發布與已開始
+      {{ content[tutorialType].desc }}
     </vi-typography>
-    <div class="tutorial-step-1__image">
+    <div
+      class="tutorial-step-1__image"
+      v-if="tutorialType === TUTORIAL_TYPE.HOME_PAGE"
+    >
       <span class="tutorial-step-1__image__pointer">
         <img src="/assets/icons/pointer.svg" alt="" />
       </span>
@@ -14,7 +17,28 @@
     </div>
   </div>
 </template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { TUTORIAL_TYPE } from '@/constants/commom';
+
+const { t } = useI18n();
+defineProps({
+  tutorialType: {
+    type: String,
+    required: true,
+  },
+});
+
+const content = ref({
+  [TUTORIAL_TYPE.HOME_PAGE]: {
+    title: t('planning-an-event-webpage-process'),
+    desc: t('activities-have-the-following-stages'),
+  },
+  [TUTORIAL_TYPE.WEB_EDITOR]: {
+    title: '規劃活動網頁流程',
+    desc: '這個空間可以製作你的活動網頁，可以輕鬆將 AI Tool 工具放在網頁。',
+  },
+});
+</script>
 <style scoped lang="scss">
 .tutorial-step-1 {
   display: flex;
