@@ -1,48 +1,56 @@
 <template>
   <div class="sidebar-editor">
-    <vi-tooltip position="right" align="start">
+    <vi-tooltip
+      position="right"
+      align="start"
+      :arrow-visible="false"
+      :default-padding="false"
+      :visible="true"
+      :delay-time="2000"
+    >
       <vi-button
         :class="{
           active: activeSidebarButton === SIDEBAR_BUTTONS[0],
         }"
+        no-text
+        icon-before="ic_section"
         type="standard-subtle"
-        size="large"
+        size="extra-large"
         width="fit-content"
         @click="activeSidebarButton = SIDEBAR_BUTTONS[0]"
       >
-        <vi-icon name="ic_section" size="32" color="#fff" />
       </vi-button>
       <template #content>
         <ToolTipSection />
       </template>
     </vi-tooltip>
+
     <vi-button
       type="standard-subtle"
-      size="large"
+      size="extra-large"
       width="fit-content"
       class="mt-4"
+      no-text
+      icon-before="ic_ai_section"
       :class="{
         active: activeSidebarButton === SIDEBAR_BUTTONS[1],
       }"
       @click="activeSidebarButton = SIDEBAR_BUTTONS[1]"
     >
-      <vi-icon name="ic_ai_section" size="32" color="#fff" />
     </vi-button>
-    <span
+    <vi-button
+      type="standard-subtle"
+      size="extra-large"
+      icon-before="ic_capacity"
+      width="fit-content"
+      no-text
+      @click="activeSidebarButton = SIDEBAR_BUTTONS[2]"
       class="mt-auto"
       :class="{
         active: activeSidebarButton === SIDEBAR_BUTTONS[2],
       }"
     >
-      <vi-button
-        type="standard-subtle"
-        size="large"
-        width="fit-content"
-        @click="activeSidebarButton = SIDEBAR_BUTTONS[2]"
-      >
-        <vi-icon name="ic_capacity" size="32" color="#fff" />
-      </vi-button>
-    </span>
+    </vi-button>
   </div>
 </template>
 <script setup lang="ts">
@@ -71,18 +79,5 @@ const activeSidebarButton = ref();
   border-radius: 4px;
   border: 1px solid $neutral-white-alpha-10;
   background: $neutral-white-alpha-15 !important;
-}
-:deep(.typography.text-button) {
-  height: 32px !important;
-}
-:deep(.ui-kit-button.large.standard-subtle) {
-  padding: 12px !important;
-}
-:deep(.vue3-ui-kit-tooltip-arrow.right.start) {
-  display: none;
-}
-:deep(.vue3-ui-kit-tooltip-content.right.start) {
-  padding: 0px;
-  background-color: transparent !important;
 }
 </style>
