@@ -25,8 +25,8 @@ const content = ref({
     desc: t('welcome-to-the-web-application-module'),
   },
   [TUTORIAL_TYPE.WEB_EDITOR]: {
-    title: '新手教學',
-    desc: '歡迎使用網頁編輯器，我們將帶你一起製作活動網頁。',
+    title: t('tutorial-for-beginners'),
+    desc: t('tutorial-for-beginners-desc'),
   },
 });
 </script>

@@ -1,13 +1,28 @@
 <template>
   <div class="tutorial-step-3">
     <vi-typography type="headline-xs">
-      {{ $t('create-a-web-application-project') }}
+      {{ content[tutorialType].title }}
     </vi-typography>
     <vi-typography type="body-small">
-      {{ $t('edit-web-page-content-and-set-event-information') }}
+      {{ content[tutorialType].desc }}
     </vi-typography>
     <div class="tutorial-step-3__image">
-      <img src="/assets/images/tutorial-step-3.png" alt="tutorial step 3" />
+      <img
+        src="/assets/images/tutorial-step-3.png"
+        alt="tutorial step 3"
+        v-if="tutorialType === TUTORIAL_TYPE.HOME_PAGE"
+      />
+      <span
+        class="tutorial-step-3__image__pointer"
+        v-if="tutorialType === TUTORIAL_TYPE.WEB_EDITOR"
+      >
+        <img src="/assets/icons/pointer.svg" alt="" />
+      </span>
+      <img
+        src="/assets/images/tutorial-web-editor-step-3.png"
+        alt="tutorial step 3"
+        v-if="tutorialType === TUTORIAL_TYPE.WEB_EDITOR"
+      />
     </div>
   </div>
 </template>
@@ -24,12 +39,12 @@ defineProps({
 
 const content = ref({
   [TUTORIAL_TYPE.HOME_PAGE]: {
-    title: t('planning-an-event-webpage-process'),
-    desc: t('activities-have-the-following-stages'),
+    title: t('create-a-web-application-project'),
+    desc: t('edit-web-page-content-and-set-event-information'),
   },
   [TUTORIAL_TYPE.WEB_EDITOR]: {
-    title: '規劃活動網頁流程',
-    desc: '這個空間可以製作你的活動網頁，可以輕鬆將 AI Tool 工具放在網頁。',
+    title: t('publishing-a-web-application'),
+    desc: t('publishing-a-web-application_desc'),
   },
 });
 </script>
@@ -38,5 +53,18 @@ const content = ref({
   display: flex;
   flex-direction: column;
   gap: 8px;
+  &__image {
+    position: relative;
+    &__pointer {
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: absolute;
+      top: 12px;
+      right: 6px;
+    }
+  }
 }
 </style>

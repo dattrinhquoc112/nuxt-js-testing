@@ -4,6 +4,9 @@
     <div class="guild-action__icon">
       <vi-icon name="ic_guide" :size="24" color="#fff" />
     </div>
+    <vi-typography type="subtitle-large" class="guild-action__text">
+      {{ $t('guild') }}
+    </vi-typography>
   </div>
   <div class="tutorial" v-if="isOpenTutorial">
     <vi-icon
@@ -160,6 +163,38 @@ const handleCompleteGuild = () => {
     gap: 4px;
     border-radius: 100px;
     background: #041118;
+  }
+  &__text {
+    display: none;
+  }
+  &:hover {
+    .guild-action {
+      width: 96px;
+      &__bg {
+        border-radius: 100px;
+        border: 2px solid #0091ff;
+        filter: blur(4px);
+        width: 96px;
+        height: 40px;
+        flex-shrink: 0;
+        border: 2px solid transparent; /* Border trong suốt ban đầu */
+        border-image: linear-gradient(
+            to right,
+            #0091ff,
+            #2de514,
+            #ecc238,
+            #ff2cf0
+          )
+          1;
+        border-image-slice: 1;
+      }
+      &__icon {
+        margin-right: 4px;
+      }
+      &__text {
+        display: block;
+      }
+    }
   }
 }
 .tutorial {

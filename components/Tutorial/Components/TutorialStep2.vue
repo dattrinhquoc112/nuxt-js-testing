@@ -37,8 +37,8 @@ const content = ref({
     desc: t('edit-web-page-content-and-set-event-information'),
   },
   [TUTORIAL_TYPE.WEB_EDITOR]: {
-    title: '規劃活動網頁流程',
-    desc: '這個空間可以製作你的活動網頁，可以輕鬆將 AI Tool 工具放在網頁。',
+    title: t('create-a-web-application-project'),
+    desc: t('edit-web-page-content-and-set-event-information'),
   },
 });
 </script>

@@ -34,8 +34,8 @@ const content = ref({
     desc: t('activities-have-the-following-stages'),
   },
   [TUTORIAL_TYPE.WEB_EDITOR]: {
-    title: '規劃活動網頁流程',
-    desc: '這個空間可以製作你的活動網頁，可以輕鬆將 AI Tool 工具放在網頁。',
+    title: t('planning-an-event-webpage-process'),
+    desc: t('planning-an-event-webpage-process_ai-tools-desc'),
   },
 });
 </script>
@@ -50,7 +50,8 @@ const content = ref({
       width: 32px;
       height: 32px;
       display: flex;
-
+      justify-content: center;
+      align-items: center;
       position: absolute;
       top: 24px;
       right: 44px;
