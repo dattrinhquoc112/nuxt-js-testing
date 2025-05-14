@@ -111,7 +111,6 @@ rollout-dev:
     CHAR_VALUES_FILE: ./chart/app/values-dev.yaml
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
-      when: manual
     - if: $CI_COMMIT_TAG =~ /DEV/
     - if: $CI_COMMIT_BRANCH == "dev"
       changes:
