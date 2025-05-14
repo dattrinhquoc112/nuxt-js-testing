@@ -7,14 +7,13 @@ variables:
   BASE_HELM_APP_CHART: alice-app
   APP_VERSION: v1.0
   IMAGE_TAG: ${APP_VERSION}.${CI_PIPELINE_IID}
-  ## TODO: rename to landing
-  IMAGE_NAME: ${CI_JOB_STAGE}-aiaas-platform-frontend-v2
+  IMAGE_NAME: ${CI_JOB_STAGE}-landing-frontend
 
 stages:
   - code-review
   - dev
-  - uat
-  - prod
+#  - uat
+#  - prod
 
 .deploy-image:
   image:
@@ -107,8 +106,8 @@ rollout-dev:
     GCLOUD_PROJECT_ID: ${GCP_DEV_PROJECT_ID}
     GKE_CLUSTER_NAME: ${GKE_DEV_CLUSTER_NAME}
     GCP_SA_KEY_FOR_GIT_CICD: $GCP_DEV_SA_KEY_FOR_GIT_CICD
-    RELEASE_NAME: aiaas-platform-frontend-v2
-    RELEASE_NS: aiaas-platform
+    RELEASE_NAME: landing-frontend
+    RELEASE_NS: landing-page
     CHAR_VALUES_FILE: ./chart/app/values-dev.yaml
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
@@ -119,6 +118,7 @@ rollout-dev:
         - '**/*'
   needs:
     - deploy-image-dev
+
 # deploy-image-uat:
 #   extends: .deploy-image
 #   stage: uat
