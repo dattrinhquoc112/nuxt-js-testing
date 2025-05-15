@@ -9,7 +9,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { TUTORIAL_TYPE } from '@/constants/commom';
+import { TUTORIAL_TYPE } from '~/constants/common';
 
 const { t } = useI18n();
 defineProps({

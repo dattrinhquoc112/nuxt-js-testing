@@ -3,7 +3,7 @@
 </template>
 
 <script setup lang="ts">
-import { TUTORIAL_TYPE } from '~/constants/commom';
+import { TUTORIAL_TYPE } from '~/constants/common';
 
 definePageMeta({
   layout: 'app',
