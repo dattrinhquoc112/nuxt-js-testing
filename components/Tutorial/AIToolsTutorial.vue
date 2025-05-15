@@ -17,49 +17,21 @@
       <img
         src="/assets/images/ai-tool-tutorial-banner.png"
         alt=""
-        @click="goToTutorial"
+        @click="openTorialModal"
         class="cursor-pointer"
       />
     </div>
   </div>
-  <vi-modal
-    modal-title="尚未有發布的模型"
-    :is-show="isShowModal"
-    @close="isShowModal = false"
-    size="small"
-  >
-    <vi-typography type="body-small" class="tutorial-modal--title">{{
-      $t('ai-tools-tutorial-description')
-    }}</vi-typography>
-    <template #footer>
-      <div class="tutorial-modal--footer">
-        <vi-button
-          type="standard-default"
-          width="fit-content"
-          @click="handleConfirmModal"
-        >
-          {{ $t('return') }}
-        </vi-button>
-        <vi-button
-          type="standard-primary"
-          width="fit-content"
-          @click="handleCancelModal"
-        >
-          {{ $t('go') }}
-        </vi-button>
-      </div>
-    </template>
-  </vi-modal>
 </template>
 <script setup lang="ts">
-const isShowModal = ref(false);
-const goToTutorial = () => {
-  isShowModal.value = true;
+const emit = defineEmits<{
+  openTorialModal: [];
+}>();
+const openTorialModal = () => {
+  emit('openTorialModal');
 };
 
 const handleCloseTooltip = () => {};
-const handleConfirmModal = () => {};
-const handleCancelModal = () => {};
 </script>
 <style scoped lang="scss">
 .ai-tools-tutorial {
@@ -97,20 +69,17 @@ const handleCancelModal = () => {};
     }
   }
   &--content {
+    width: 100%;
     padding: 16px;
     display: flex;
     flex-direction: column;
     gap: 16px;
-  }
-}
-.tutorial-modal {
-  &--title {
-    padding: 16px 0px;
-  }
-  &--footer {
-    display: flex;
-    gap: 16px;
-    justify-content: end;
+    color: white;
+    text-align: left;
+    text-wrap: auto;
+    & img {
+      width: 100%;
+    }
   }
 }
 </style>
