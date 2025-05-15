@@ -4,7 +4,7 @@
       class="navbar-left"
       :list-option="navOptions"
       :text-back="$t('app-navigation-button-back')"
-      :app-name="$t('app-main-menu-section_voice_clone')"
+      app-name="APP Name"
       type="app"
     >
       <template #logo>
@@ -83,7 +83,7 @@ const onAvatarError = () => {
 const navOptions = [
   {
     id: 1,
-    text: t('common-navigation-menu-section_apps'),
+    text: '專案列表',
     nameIcon: 'ic_project',
     link: '/project-list',
   },

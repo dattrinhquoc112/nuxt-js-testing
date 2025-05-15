@@ -121,6 +121,12 @@
         </div>
       </div>
     </div>
+    <popup-edit-project
+      v-if="modal.edit.show"
+      :show="modal.edit.show"
+      @close="modal.edit.close"
+      @edit="onEditProject"
+    />
   </div>
 </template>
 
@@ -144,6 +150,18 @@ const model = reactive({
   modes: ['all', 'draft', 'published'],
 });
 
+const modal = reactive({
+  edit: {
+    show: false,
+    open: () => {
+      modal.edit.show = true;
+    },
+    close: () => {
+      modal.edit.show = false;
+    },
+  },
+});
+
 const listPage = ref<IProject[]>([]);
 const actionRef = reactive<{ [key: string]: boolean }>({});
 
@@ -161,6 +179,7 @@ const onShowAction = (projectID: string, show = true) => {
 const onAction = (action = '', projectID = '') => {
   switch (action) {
     case 'edit':
+      modal.edit.open();
       break;
     case 'copy':
       break;
@@ -168,6 +187,11 @@ const onAction = (action = '', projectID = '') => {
       break;
   }
   onShowAction(projectID, false);
+};
+
+const onEditProject = () => {
+  // TODO: wait API
+  modal.edit.close();
 };
 
 onMounted(() => {
