@@ -268,5 +268,10 @@
   "storage_changes": "儲存變更",
   "release": "發布",
   "section": "Section",
-  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色"
+  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色",
+  "common-form-title-free_plan": "Free Trial Plan",
+  "app-plan-title-training_count": "Training sessions this month",
+  "app-plan-title-projects_count": "Projects created",
+  "app-common-title-reached_limit": "You're All Caught Up",
+  "app-common-description-reached_limit": "You’ve used your free quota. Upgrade plans are coming soon, or wait for the reset."
 }
