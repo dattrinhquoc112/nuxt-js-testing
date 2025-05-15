@@ -1,12 +1,17 @@
 <template>
   <div class="guild-action" @click="isOpenTutorial = !isOpenTutorial">
     <div class="guild-action__bg"></div>
-    <div class="guild-action__icon">
-      <vi-icon name="ic_guide" :size="24" color="#fff" />
+    <div class="guild-action__container">
+      <div class="guild-action__container--icon">
+        <vi-icon name="ic_guide" :size="24" color="#fff" />
+      </div>
+      <vi-typography
+        type="subtitle-large"
+        class="guild-action__container--text cursor-pointer"
+      >
+        {{ $t('guild') }}
+      </vi-typography>
     </div>
-    <vi-typography type="subtitle-large" class="guild-action__text">
-      {{ $t('guild') }}
-    </vi-typography>
   </div>
   <div class="tutorial" v-if="isOpenTutorial">
     <vi-icon
@@ -95,6 +100,7 @@ import TutorialStep0 from '@/components/Tutorial/Components/TutorialStep0.vue';
 import TutorialStep1 from '@/components/Tutorial/Components/TutorialStep1.vue';
 import TutorialStep2 from '@/components/Tutorial/Components/TutorialStep2.vue';
 import TutorialStep3 from '@/components/Tutorial/Components/TutorialStep3.vue';
+import { USER_VISITED } from '@/constants/storage';
 
 defineProps({
   tutorialType: {
@@ -102,7 +108,6 @@ defineProps({
     required: true,
   },
 });
-
 const STEPS = {
   STEP_0: 0,
   STEP_1: 1,
@@ -127,72 +132,104 @@ const handleCompleteGuild = () => {
   isOpenTutorial.value = false;
   tutorialStep.value = STEPS.STEP_0;
 };
+onMounted(() => {
+  const isVisited = localStorage.getItem(USER_VISITED);
+  if (isVisited) {
+    alert(2);
+  } else {
+    localStorage.setItem(USER_VISITED, USER_VISITED);
+  }
+});
 </script>
 <style scoped lang="scss">
 .guild-action {
   position: fixed;
   bottom: 16px;
   right: 16px;
-  background-image: url('/assets/icons/bg-guild.svg');
   display: flex;
   justify-items: center;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  width: 50px;
-  height: 50px;
+  width: fit-content;
+  height: fit-content;
   flex-shrink: 0;
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+
   &__bg {
     width: 40px;
     height: 40px;
-    flex-shrink: 0;
-    border-radius: 100px;
-    border: 2px solid #0091ff;
-    filter: blur(4px);
+    border-radius: 50%;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+    &::before {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(
+        70.38deg,
+        #0091ff 0%,
+        #2de514 33%,
+        #ecc238 66%,
+        #ff2cf0 100%
+      );
+      filter: blur(5px);
+      opacity: 0.8;
+      z-index: 0;
+      transition: all 0.3s ease;
+    }
+  }
+  &__container {
+    cursor: pointer;
     position: absolute;
-    top: 5px;
-    left: 5px;
-  }
-  &__icon {
-    width: 40px;
-    height: 40px;
-    display: inline-flex;
-    padding: 8px;
-    justify-content: center;
+    top: 1px;
+    left: 1px;
+    right: 1px;
+    bottom: 1px;
+    z-index: 2;
+    display: flex;
     align-items: center;
-    gap: 4px;
-    border-radius: 100px;
-    background: #041118;
+    flex-direction: row;
+    transition: all 0.3s ease;
+    &--icon {
+      display: inline-flex;
+      padding: 8px;
+      justify-content: center;
+      align-items: center;
+      gap: 4px;
+      border-radius: 100px;
+      background: #041118;
+    }
+    &--text {
+      opacity: 0;
+      transition: all 0.3s ease;
+      position: relative;
+      left: -40px;
+    }
   }
-  &__text {
-    display: none;
-  }
+
   &:hover {
     .guild-action {
-      width: 96px;
       &__bg {
         border-radius: 100px;
-        border: 2px solid #0091ff;
-        filter: blur(4px);
         width: 96px;
         height: 40px;
         flex-shrink: 0;
-        border: 2px solid transparent; /* Border trong suốt ban đầu */
-        border-image: linear-gradient(
-            to right,
-            #0091ff,
-            #2de514,
-            #ecc238,
-            #ff2cf0
-          )
-          1;
-        border-image-slice: 1;
       }
-      &__icon {
-        margin-right: 4px;
-      }
-      &__text {
-        display: block;
+      &__container {
+        background: $brand-navy-800;
+        padding-right: 8px;
+        border-radius: 100px;
+        &--text {
+          opacity: 1;
+          left: 0;
+        }
       }
     }
   }
