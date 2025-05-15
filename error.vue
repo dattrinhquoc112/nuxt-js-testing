@@ -5,20 +5,12 @@
     </div>
     <div class="error-box">
       <div class="font-unbounded">
-        <vi-typography
-          type="featured-extra-large"
-          language-input="en"
-          class="error-title"
-        >
+        <vi-typography type="featured-extra-large" class="error-title">
           {{ $t('error_fe-page-status-title_404_page_not_found') }}
         </vi-typography>
       </div>
       <div class="mt-8 font-inner">
-        <vi-typography
-          type="subtitle-large"
-          language-input="en"
-          class="error-content"
-        >
+        <vi-typography type="subtitle-large" class="error-content">
           {{ $t('error_fe-page-status-description_404_page_not_found') }}
         </vi-typography>
       </div>

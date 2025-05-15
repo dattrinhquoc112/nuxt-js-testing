@@ -273,5 +273,9 @@
   "last_edited": "最後編輯",
   "days_left_start": "距離開始還有 {day} 天",
   "create_web_application": "建立網頁應用",
-  "search_project": "搜尋專案"
+  "search_project": "搜尋專案",
+  "storage_changes": "儲存變更",
+  "release": "發布",
+  "section": "Section",
+  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色"
 }
