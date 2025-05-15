@@ -1,8 +1,10 @@
 <template>
-  <div />
+  <Tutorial :tutorial-type="TUTORIAL_TYPE.HOME_PAGE" />
 </template>
 
 <script setup lang="ts">
+import { TUTORIAL_TYPE } from '~/constants/commom';
+
 definePageMeta({
   layout: 'app',
 });

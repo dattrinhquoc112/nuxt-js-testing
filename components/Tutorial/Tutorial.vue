@@ -137,10 +137,10 @@ const handleCompleteGuild = () => {
   tutorialStep.value = STEPS.STEP_0;
 };
 onMounted(() => {
+  // Check if the user is visiting the site for the first time. If so, show the guide.
   const isVisited = localStorage.getItem(USER_VISITED);
-  if (isVisited) {
+  if (!isVisited) {
     isOpenTutorial.value = true;
-  } else {
     localStorage.setItem(USER_VISITED, USER_VISITED);
   }
 });
