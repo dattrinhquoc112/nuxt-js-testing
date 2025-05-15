@@ -1,5 +1,9 @@
 <template>
-  <div class="guild-action" @click="isOpenTutorial = !isOpenTutorial">
+  <div
+    class="guild-action"
+    @click="isOpenTutorial = !isOpenTutorial"
+    v-if="!isOpenTutorial"
+  >
     <div class="guild-action__bg"></div>
     <div class="guild-action__container">
       <div class="guild-action__container--icon">
@@ -135,7 +139,7 @@ const handleCompleteGuild = () => {
 onMounted(() => {
   const isVisited = localStorage.getItem(USER_VISITED);
   if (isVisited) {
-    alert(2);
+    isOpenTutorial.value = true;
   } else {
     localStorage.setItem(USER_VISITED, USER_VISITED);
   }
