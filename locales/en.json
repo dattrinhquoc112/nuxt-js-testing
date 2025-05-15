@@ -284,5 +284,9 @@
   "publishing-a-web-application": "發布網頁應用",
   "publishing-a-web-application_desc": "編輯中隨時儲存編輯進度，發布後即可等待活動開始日期，觀測網頁數據。",
   "publishing-a-web-application_desc_2": "發布後即可等待活動開始日期，觀測網頁數據",
-  "guild": "Guide"
+  "guild": "Guide",
+  "storage_changes": "儲存變更",
+  "release": "發布",
+  "section": "Section",
+  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色"
 }
