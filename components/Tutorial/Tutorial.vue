@@ -206,7 +206,7 @@ onMounted(() => {
       align-items: center;
       gap: 4px;
       border-radius: 100px;
-      background: #041118;
+      background: $brand-navy-700;
     }
     &--box {
       display: flex;
@@ -255,7 +255,7 @@ onMounted(() => {
           padding-right: 8px;
         }
         &--box {
-          background: #041118;
+          background: $brand-navy-700;
 
           width: 100%;
           height: 100%;
