@@ -21,7 +21,7 @@ defineProps({
 
 const content = ref({
   [TUTORIAL_TYPE.HOME_PAGE]: {
-    title: t('planning-an-event-webpage-process'),
+    title: t('tutorial-for-beginners'),
     desc: t('welcome-to-the-web-application-module'),
   },
   [TUTORIAL_TYPE.WEB_EDITOR]: {

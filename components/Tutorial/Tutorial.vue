@@ -6,15 +6,17 @@
   >
     <div class="guild-action__bg"></div>
     <div class="guild-action__container">
-      <div class="guild-action__container--icon">
-        <vi-icon name="ic_guide" :size="24" color="#fff" />
+      <div class="guild-action__container--box">
+        <div class="guild-action__container--icon">
+          <vi-icon name="ic_guide" :size="24" color="#fff" />
+        </div>
+        <vi-typography
+          type="subtitle-large"
+          class="guild-action__container--text cursor-pointer"
+        >
+          {{ $t('guild') }}
+        </vi-typography>
       </div>
-      <vi-typography
-        type="subtitle-large"
-        class="guild-action__container--text cursor-pointer"
-      >
-        {{ $t('guild') }}
-      </vi-typography>
     </div>
   </div>
   <div class="tutorial" v-if="isOpenTutorial">
@@ -158,8 +160,6 @@ onMounted(() => {
   width: fit-content;
   height: fit-content;
   flex-shrink: 0;
-  backdrop-filter: blur(8px);
-  transition: all 0.3s ease;
 
   &__bg {
     width: 40px;
@@ -169,7 +169,6 @@ onMounted(() => {
     background-clip: padding-box;
     position: relative;
     z-index: 1;
-    transition: all 0.3s ease;
     &::before {
       content: '';
       position: absolute;
@@ -183,24 +182,23 @@ onMounted(() => {
         #ecc238 66%,
         #ff2cf0 100%
       );
+      left: 2px;
       filter: blur(5px);
       opacity: 0.8;
       z-index: 0;
-      transition: all 0.3s ease;
     }
   }
   &__container {
     cursor: pointer;
     position: absolute;
-    top: 1px;
-    left: 1px;
-    right: 1px;
-    bottom: 1px;
+    top: 0;
+    left: 0;
     z-index: 2;
     display: flex;
     align-items: center;
     flex-direction: row;
-    transition: all 0.3s ease;
+    border-radius: 100px;
+    height: 40px;
     &--icon {
       display: inline-flex;
       padding: 8px;
@@ -210,9 +208,14 @@ onMounted(() => {
       border-radius: 100px;
       background: #041118;
     }
+    &--box {
+      display: flex;
+      align-items: center;
+      padding: 2px;
+      border-radius: 100px;
+    }
     &--text {
       opacity: 0;
-      transition: all 0.3s ease;
       position: relative;
       left: -40px;
     }
@@ -220,19 +223,47 @@ onMounted(() => {
 
   &:hover {
     .guild-action {
+      padding: 4px;
       &__bg {
         border-radius: 100px;
-        width: 96px;
+        width: 90px;
         height: 40px;
         flex-shrink: 0;
+        &::before {
+          width: 92px;
+          height: 42px;
+          right: -8px;
+          top: -2px;
+          border-radius: 100px;
+        }
       }
       &__container {
-        background: $brand-navy-800;
-        padding-right: 8px;
+        background: linear-gradient(
+          70.38deg,
+          #0091ff 0%,
+          #2de514 33%,
+          #ecc238 66%,
+          #ff2cf0 100%
+        );
+        height: 40px;
+        padding: 1px;
+        border: none;
         border-radius: 100px;
         &--text {
           opacity: 1;
           left: 0;
+          padding-right: 8px;
+        }
+        &--box {
+          background: #041118;
+
+          width: 100%;
+          height: 100%;
+          border-radius: 100px;
+        }
+        &--icon {
+          background-color: transparent;
+          padding: 6px 4px 6px 6px;
         }
       }
     }
