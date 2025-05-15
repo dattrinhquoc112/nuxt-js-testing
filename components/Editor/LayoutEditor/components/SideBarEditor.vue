@@ -29,7 +29,7 @@
       align="start"
       :arrow-visible="false"
       :default-padding="false"
-      :visible="true"
+      :visible="isOpenTooltip"
       :delay-time="2000"
       :full-width="false"
       class="ai-tool-tooltip"
@@ -96,6 +96,7 @@
 </template>
 <script setup lang="ts">
 import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
+import { USER_VISITED } from '@/constants/storage';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
@@ -104,10 +105,21 @@ const activeSidebarButton = ref();
 const handleConfirmModal = () => {
   isShowModal.value = false;
 };
+const isOpenTooltip = ref(false);
 const handleCancelModal = () => {
   isShowModal.value = false;
 };
+
+onMounted(() => {
+  // Check if the user is visiting the site for the first time. If so, show the guide.
+  const isVisited = localStorage.getItem(USER_VISITED);
+  if (!isVisited) {
+    isOpenTooltip.value = true;
+    localStorage.setItem(USER_VISITED, USER_VISITED);
+  }
+});
 </script>
+
 <style lang="scss" scoped>
 .sidebar-editor {
   padding: 24px 4px;
