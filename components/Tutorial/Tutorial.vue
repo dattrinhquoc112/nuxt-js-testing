@@ -220,7 +220,6 @@ onMounted(() => {
       left: -40px;
     }
   }
-
   &:hover {
     .guild-action {
       padding: 4px;
@@ -230,10 +229,8 @@ onMounted(() => {
         height: 40px;
         flex-shrink: 0;
         &::before {
-          width: 92px;
-          height: 42px;
-          right: -8px;
-          top: -2px;
+          width: 93px;
+          height: 40px;
           border-radius: 100px;
         }
       }
