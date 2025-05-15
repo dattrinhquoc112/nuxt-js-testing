@@ -9,7 +9,7 @@
       <vi-typography type="subtitle-large">
         {{ $t('section') }}
       </vi-typography>
-      <vi-typography type="body-small" class="text-wrap">
+      <vi-typography type="body-small" class="text-wrap-auto">
         {{ $t('section_desc') }}
       </vi-typography>
     </div>
