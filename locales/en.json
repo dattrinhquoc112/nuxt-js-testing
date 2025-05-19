@@ -1,5 +1,6 @@
 {
   "title": "Home - aiaas-platform-fronted-client",
+  "app-navigation-button-back": "Back to Home",
   "auth-signup-title-title_welcome": "Welcome to Vyin AI 👋",
   "auth-signup-title-subtitle_welcome": "The best way to create and manage your AI project",
   "auth-signup-title-title_email": "Enter your email to sign up or sign in",
@@ -285,8 +286,21 @@
   "publishing-a-web-application_desc": "編輯中隨時儲存編輯進度，發布後即可等待活動開始日期，觀測網頁數據。",
   "publishing-a-web-application_desc_2": "發布後即可等待活動開始日期，觀測網頁數據",
   "guild": "Guide",
+  "project_list": "Project List",
+  "to_be_released": "To be released",
+  "not_started": "Not started",
+  "stared": "Started",
+  "last_edited": "Last edited",
+  "days_left_start": "{day} days left to start",
+  "create_web_application": "Create Web Application",
+  "search_project": "Search Project",
   "storage_changes": "儲存變更",
   "release": "發布",
   "section": "Section",
-  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色"
+  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色",
+  "common-form-title-free_plan": "Free Trial Plan",
+  "app-plan-title-training_count": "Training sessions this month",
+  "app-plan-title-projects_count": "Projects created",
+  "app-common-title-reached_limit": "You're All Caught Up",
+  "app-common-description-reached_limit": "You’ve used your free quota. Upgrade plans are coming soon, or wait for the reset."
 }
