@@ -139,8 +139,6 @@ definePageMeta({
   layout: 'app',
 });
 
-const router = useRouter();
-
 const { getProjectList } = useProjectStore();
 
 const loading = reactive({
@@ -198,7 +196,7 @@ const onEditProject = () => {
 };
 
 const onOpenDetail = (item: IProject) => {
-  router.push(`/project/${item.id}`);
+  navigateTo(`/project/${item.id}`);
 };
 
 onMounted(() => {

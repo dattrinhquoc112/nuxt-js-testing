@@ -6,6 +6,7 @@
       :text-back="$t('app-navigation-button-back')"
       app-name="APP Name"
       type="app"
+      @click:buttonBack="onBack()"
     >
       <template #logo>
         <nuxt-link to="/">
@@ -124,6 +125,10 @@ const getUserFullName = () => {
     userDetail?.value?.firstName || '',
     userDetail?.value?.lastName || '',
   ].join(' ');
+};
+
+const onBack = () => {
+  window.open(import.meta.env.VITE_APP_PLATFORM_URL, '_self');
 };
 
 onMounted(() => {

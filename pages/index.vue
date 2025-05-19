@@ -6,4 +6,5 @@
 definePageMeta({
   layout: 'app',
 });
+navigateTo('/project-list');
 </script>
