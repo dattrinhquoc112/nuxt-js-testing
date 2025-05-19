@@ -50,6 +50,13 @@ export default defineNuxtConfig({
           href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Unbounded:wght@200..900&display=swap',
         },
       ],
+      script: [
+        {
+          src: 'https://sdk.stg.gamania.dev/webtrackingsdk.min.js.gz', // Đường dẫn tới script bên ngoài
+          async: true, // Tải script không đồng bộ
+          defer: true, // Chờ cho đến khi DOM được phân tích cú pháp
+        },
+      ],
     },
   },
 
