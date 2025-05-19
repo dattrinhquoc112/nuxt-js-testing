@@ -7,6 +7,7 @@
       :text-back="$t('app-navigation-button-back')"
       app-name="APP Name"
       type="app"
+      @click:buttonBack="onBack()"
     >
       <template #logo>
         <nuxt-link to="/">
@@ -80,7 +81,7 @@ const tenantMetric = ref<ITenantMetric>();
 const { getDetailInfoUser } = useUserStore();
 const { getTenantByID } = useTenantStore();
 const { getInfoUserFromCookie } = useAuthStore();
-const { getTenantMetrics } = useTenantStore();
+// const { getTenantMetrics } = useTenantStore();
 
 const isShowAvatar = ref(true);
 const onAvatarError = () => {
@@ -131,6 +132,10 @@ const getUserFullName = () => {
     userDetail?.value?.firstName || '',
     userDetail?.value?.lastName || '',
   ].join(' ');
+};
+
+const onBack = () => {
+  window.open(import.meta.env.VITE_APP_PLATFORM_URL, '_self');
 };
 
 const onGetTenantMetric = async () => {

@@ -29,4 +29,5 @@ const handleClickSideBar = (keyAction: string) => {
     isShowListSection.value = !isShowListSection.value;
   }
 };
+navigateTo('/project-list');
 </script>
