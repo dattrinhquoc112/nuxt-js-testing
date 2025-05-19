@@ -6,6 +6,7 @@
       :text-back="$t('app-navigation-button-back')"
       app-name="APP Name"
       type="app"
+      v-model:is-expand="isExpand"
     >
       <template #logo>
         <nuxt-link to="/">
@@ -34,7 +35,9 @@
       </template>
       <template #username>{{ getUserFullName() }} </template>
       <template #tenant-name> {{ tenantDetail?.alias }} </template>
-
+      <template #footer>
+        <project-free-trial-plan v-if="isExpand" :tenantMetric="tenantMetric" />
+      </template>
       <template #menu-user>
         <vi-user
           :user-name="userDetail?.username"
@@ -67,13 +70,17 @@ import type {
 } from '~/stores/interface/response/share';
 import { useTenantStore } from '~/stores/tenant';
 import { useUserStore } from '~/stores/user';
+import type { ITenantMetric } from '~/types/tenant';
 
 const { t } = useI18n();
 const userDetail = ref<IUser>();
 const tenantDetail = ref<ITenantDetail>();
+const isExpand = ref(true);
+const tenantMetric = ref<ITenantMetric>();
 const { getDetailInfoUser } = useUserStore();
 const { getTenantByID } = useTenantStore();
 const { getInfoUserFromCookie } = useAuthStore();
+const { getTenantMetrics } = useTenantStore();
 
 const isShowAvatar = ref(true);
 const onAvatarError = () => {
@@ -126,9 +133,23 @@ const getUserFullName = () => {
   ].join(' ');
 };
 
+const onGetTenantMetric = async () => {
+  // TODO: wait BE
+  try {
+    // const tenantId = getInfoUserFromCookie()?.tenant_id;
+    // const res = await getTenantMetrics(tenantId as string);
+    // if (res.isSuccess) {
+    //   tenantMetric.value = res.data;
+    // }
+  } catch (error) {
+    console.error({ error });
+  }
+};
+
 onMounted(() => {
   fetchCurrentUser().then(() => {
     fetchTenantInfo();
+    onGetTenantMetric();
   });
 });
 provide(PROVIDE.USER_INFO, userDetail);
