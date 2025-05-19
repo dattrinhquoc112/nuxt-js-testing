@@ -96,7 +96,7 @@
 </template>
 <script setup lang="ts">
 import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
-import { USER_VISITED } from '@/constants/storage';
+import { USER_VISITED_WEB_EDITOR } from '@/constants/storage';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
@@ -112,10 +112,10 @@ const handleCancelModal = () => {
 
 onMounted(() => {
   // Check if the user is visiting the site for the first time. If so, show the guide.
-  const isVisited = localStorage.getItem(USER_VISITED);
+  const isVisited = localStorage.getItem(USER_VISITED_WEB_EDITOR);
   if (!isVisited) {
     isOpenTooltip.value = true;
-    localStorage.setItem(USER_VISITED, USER_VISITED);
+    localStorage.setItem(USER_VISITED_WEB_EDITOR, USER_VISITED_WEB_EDITOR);
   }
 });
 </script>
