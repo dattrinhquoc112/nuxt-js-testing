@@ -92,6 +92,8 @@ export default defineNuxtConfig({
           "'self'",
           "'unsafe-inline'",
           import.meta.env.VITE_APP_UI_KIT_LINK,
+          'https://sdk.stg.gamania.dev',
+          'https://dev-ui-kit-aiaas-platform.vyin.ai',
         ],
         'connect-src': [
           "'self'",
@@ -103,6 +105,8 @@ export default defineNuxtConfig({
           import.meta.env.VITE_APP_UI_KIT_LINK,
           import.meta.env.NUXT_PUBLIC_API_HOST,
           import.meta.env.NUXT_API_URL_UPLOAD,
+          'https://sdk.stg.gamania.dev',
+          'https://dev-ui-kit-aiaas-platform.vyin.ai',
         ],
         'img-src': [
           "'self'",
