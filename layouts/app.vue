@@ -1,6 +1,13 @@
 <template>
   <div class="layout-app">
-    <vi-menu class="navbar-left" :list-option="navOptions">
+    <vi-menu
+      class="navbar-left"
+      :list-option="navOptions"
+      :text-back="$t('app-navigation-button-back')"
+      app-name="APP Name"
+      type="app"
+      v-model:is-expand="isExpand"
+    >
       <template #logo>
         <nuxt-link to="/">
           <img src="@/assets/images/logo.png" alt="" />
@@ -10,7 +17,7 @@
         <vi-icon name="ic_sidemenu" size="24" color="#fff" />
       </template>
       <template #icon-back>
-        <img src="@/assets/images/logo.png" alt="" />
+        <vi-icon name="ic_chevron_left" size="16" />
       </template>
       <template #avatar>
         <div class="avatar">
@@ -28,7 +35,9 @@
       </template>
       <template #username>{{ getUserFullName() }} </template>
       <template #tenant-name> {{ tenantDetail?.alias }} </template>
-
+      <template #footer>
+        <project-free-trial-plan v-if="isExpand" :tenantMetric="tenantMetric" />
+      </template>
       <template #menu-user>
         <vi-user
           :user-name="userDetail?.username"
@@ -61,13 +70,17 @@ import type {
 } from '~/stores/interface/response/share';
 import { useTenantStore } from '~/stores/tenant';
 import { useUserStore } from '~/stores/user';
+import type { ITenantMetric } from '~/types/tenant';
 
 const { t } = useI18n();
 const userDetail = ref<IUser>();
 const tenantDetail = ref<ITenantDetail>();
+const isExpand = ref(true);
+const tenantMetric = ref<ITenantMetric>();
 const { getDetailInfoUser } = useUserStore();
 const { getTenantByID } = useTenantStore();
 const { getInfoUserFromCookie } = useAuthStore();
+const { getTenantMetrics } = useTenantStore();
 
 const isShowAvatar = ref(true);
 const onAvatarError = () => {
@@ -77,30 +90,9 @@ const onAvatarError = () => {
 const navOptions = [
   {
     id: 1,
-    text: t('common-navigation-menu-section_apps'),
-    nameIcon: 'ic_ai_apps',
-    link: '/dashboard',
-  },
-  {
-    id: 2,
-    text: t('common-navigation-menu-section_tenant_mgmt'),
-    nameIcon: 'ic_tanent_management',
-    link: '/settings',
-  },
-  {
-    id: 3,
-    text: t('common-navigation-menu-section_plan_mgmt'),
-    nameIcon: 'ic_plan',
-    link: '/traffic-plan',
-  },
-  {
-    id: 4,
-    text: t('common-navigation-menu-section_faq'),
-    nameIcon: 'ic_help',
-    link: '/faq',
-    style: {
-      marginTop: 'auto',
-    },
+    text: '專案列表',
+    nameIcon: 'ic_project',
+    link: '/project-list',
   },
 ];
 const navUsers = [
@@ -141,9 +133,23 @@ const getUserFullName = () => {
   ].join(' ');
 };
 
+const onGetTenantMetric = async () => {
+  // TODO: wait BE
+  try {
+    // const tenantId = getInfoUserFromCookie()?.tenant_id;
+    // const res = await getTenantMetrics(tenantId as string);
+    // if (res.isSuccess) {
+    //   tenantMetric.value = res.data;
+    // }
+  } catch (error) {
+    console.error({ error });
+  }
+};
+
 onMounted(() => {
   fetchCurrentUser().then(() => {
     fetchTenantInfo();
+    onGetTenantMetric();
   });
 });
 provide(PROVIDE.USER_INFO, userDetail);

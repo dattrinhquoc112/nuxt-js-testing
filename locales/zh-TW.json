@@ -1,5 +1,6 @@
 {
   "title": "Home - aiaas-platform-fronted-client",
+  "app-navigation-button-back": "返回多租戶平台",
   "auth-signup-title-title_welcome": "歡迎來到 Vyin AI 👋",
   "auth-signup-title-subtitle_welcome": "最好的方式來管理AI項目",
   "auth-signup-title-title_email": "輸入您的電子郵件以註冊或登入",
@@ -285,8 +286,21 @@
   "publishing-a-web-application_desc": "編輯中隨時儲存編輯進度，發布後即可等待活動開始日期，觀測網頁數據。",
   "publishing-a-web-application_desc_2": "發布後即可等待活動開始日期，觀測網頁數據",
   "guild": "Guide",
+  "project_list": "專案列表",
+  "to_be_released": "待發布",
+  "not_started": "未開始",
+  "stared": "已開始",
+  "last_edited": "最後編輯",
+  "days_left_start": "距離開始還有 {day} 天",
+  "create_web_application": "建立網頁應用",
+  "search_project": "搜尋專案",
   "storage_changes": "儲存變更",
   "release": "發布",
   "section": "Section",
-  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色"
+  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色",
+  "common-form-title-free_plan": "免費體驗方案",
+  "app-plan-title-training_count": "本月已訓練次數",
+  "app-plan-title-projects_count": "已建立專案",
+  "app-common-title-reached_limit": "使用額度已用完",
+  "app-common-description-reached_limit": "目前您已用完免費額度，升級方案即將登場，敬請期待！也可稍候額度重置後再繼續使用。"
 }
