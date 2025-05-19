@@ -62,6 +62,7 @@
           class="item"
           v-for="(item, index) in listPage"
           :key="index"
+          @click="onOpenDetail(item)"
         >
           <div class="item-thumbnail">
             <img :src="item.thumbnail" alt="" />
@@ -138,6 +139,8 @@ definePageMeta({
   layout: 'app',
 });
 
+const router = useRouter();
+
 const { getProjectList } = useProjectStore();
 
 const loading = reactive({
@@ -192,6 +195,10 @@ const onAction = (action = '', projectID = '') => {
 const onEditProject = () => {
   // TODO: wait API
   modal.edit.close();
+};
+
+const onOpenDetail = (item: IProject) => {
+  router.push(`/project/${item.id}`);
 };
 
 onMounted(() => {
