@@ -1,6 +1,12 @@
 <template>
   <div class="layout-app">
-    <vi-menu class="navbar-left" :list-option="navOptions">
+    <vi-menu
+      class="navbar-left"
+      :list-option="navOptions"
+      :text-back="$t('app-navigation-button-back')"
+      app-name="APP Name"
+      type="app"
+    >
       <template #logo>
         <nuxt-link to="/">
           <img src="@/assets/images/logo.png" alt="" />
@@ -10,7 +16,7 @@
         <vi-icon name="ic_sidemenu" size="24" color="#fff" />
       </template>
       <template #icon-back>
-        <img src="@/assets/images/logo.png" alt="" />
+        <vi-icon name="ic_chevron_left" size="16" />
       </template>
       <template #avatar>
         <div class="avatar">
@@ -77,30 +83,9 @@ const onAvatarError = () => {
 const navOptions = [
   {
     id: 1,
-    text: t('common-navigation-menu-section_apps'),
-    nameIcon: 'ic_ai_apps',
-    link: '/dashboard',
-  },
-  {
-    id: 2,
-    text: t('common-navigation-menu-section_tenant_mgmt'),
-    nameIcon: 'ic_tanent_management',
-    link: '/settings',
-  },
-  {
-    id: 3,
-    text: t('common-navigation-menu-section_plan_mgmt'),
-    nameIcon: 'ic_plan',
-    link: '/traffic-plan',
-  },
-  {
-    id: 4,
-    text: t('common-navigation-menu-section_faq'),
-    nameIcon: 'ic_help',
-    link: '/faq',
-    style: {
-      marginTop: 'auto',
-    },
+    text: '專案列表',
+    nameIcon: 'ic_project',
+    link: '/project-list',
   },
 ];
 const navUsers = [
