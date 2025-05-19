@@ -198,7 +198,7 @@ export const useAuthStore = defineStore('auth', () => {
         endpoint: '/auth/logout',
         proxyCustom: true,
       });
-      navigateTo('/auth');
+      navigateTo(`${import.meta.env.VITE_APP_PLATFORM_URL as string}/auth`);
     } catch (error) {}
   }
 
