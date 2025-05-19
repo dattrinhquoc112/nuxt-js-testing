@@ -277,5 +277,10 @@
   "storage_changes": "儲存變更",
   "release": "發布",
   "section": "Section",
-  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色"
+  "section_desc": "提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色",
+  "common-form-title-free_plan": "免費體驗方案",
+  "app-plan-title-training_count": "本月已訓練次數",
+  "app-plan-title-projects_count": "已建立專案",
+  "app-common-title-reached_limit": "使用額度已用完",
+  "app-common-description-reached_limit": "目前您已用完免費額度，升級方案即將登場，敬請期待！也可稍候額度重置後再繼續使用。"
 }
