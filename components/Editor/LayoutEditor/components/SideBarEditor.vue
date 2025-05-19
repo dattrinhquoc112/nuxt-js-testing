@@ -17,7 +17,7 @@
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
-        @click="activeSidebarButton = SIDEBAR_BUTTONS[0]"
+        @click="() => handleAction(SIDEBAR_BUTTONS[0], 'toggle-section')"
       >
       </vi-button>
       <template #content>
@@ -56,8 +56,14 @@
 <script setup lang="ts">
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
+const emit = defineEmits(['click-sidebar']);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const activeSidebarButton = ref();
+
+const handleAction = (keyIcon: string, keyAction: any) => {
+  activeSidebarButton.value = keyIcon;
+  emit('click-sidebar', keyAction);
+};
 </script>
 <style lang="scss" scoped>
 .sidebar-editor {
