@@ -106,7 +106,7 @@ import TutorialStep0 from '@/components/Tutorial/Components/TutorialStep0.vue';
 import TutorialStep1 from '@/components/Tutorial/Components/TutorialStep1.vue';
 import TutorialStep2 from '@/components/Tutorial/Components/TutorialStep2.vue';
 import TutorialStep3 from '@/components/Tutorial/Components/TutorialStep3.vue';
-import { USER_VISITED } from '@/constants/storage';
+import { USER_VISITED_HOME_PAGE } from '@/constants/storage';
 
 defineProps({
   tutorialType: {
@@ -140,10 +140,10 @@ const handleCompleteGuild = () => {
 };
 onMounted(() => {
   // Check if the user is visiting the site for the first time. If so, show the guide.
-  const isVisited = localStorage.getItem(USER_VISITED);
+  const isVisited = localStorage.getItem(USER_VISITED_HOME_PAGE);
   if (!isVisited) {
     isOpenTutorial.value = true;
-    localStorage.setItem(USER_VISITED, USER_VISITED);
+    localStorage.setItem(USER_VISITED_HOME_PAGE, USER_VISITED_HOME_PAGE);
   }
 });
 </script>
