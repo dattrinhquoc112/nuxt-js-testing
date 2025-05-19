@@ -142,7 +142,7 @@ const onGetTenantMetric = async () => {
     //   tenantMetric.value = res.data;
     // }
   } catch (error) {
-    console.error({ error });
+    // console.error({ error });
   }
 };
 
