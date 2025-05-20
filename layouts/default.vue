@@ -32,7 +32,7 @@
     position: absolute;
     .logo {
       width: 80px;
-      height: 24px;
+      height: 80px;
     }
   }
   .content-body {
