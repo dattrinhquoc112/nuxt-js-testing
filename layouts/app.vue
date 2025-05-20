@@ -135,7 +135,7 @@ const getUserFullName = () => {
 };
 
 const onBack = () => {
-  window.open(import.meta.env.VITE_APP_PLATFORM_URL, '_self');
+  window.location.href = import.meta.env.VITE_APP_PLATFORM_URL;
 };
 
 const onGetTenantMetric = async () => {
