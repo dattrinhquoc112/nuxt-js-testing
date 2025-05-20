@@ -99,7 +99,6 @@ const DEVICES = {
   destop: 'desktop',
   mobile: 'mobile',
 };
-const { locale } = useI18n();
 const activeDevice = ref(DEVICES.destop);
 const emit = defineEmits<{
   handleUndo: [];
