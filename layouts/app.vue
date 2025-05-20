@@ -7,10 +7,11 @@
       :text-back="$t('app-navigation-button-back')"
       app-name="APP Name"
       type="app"
+      @click:buttonBack="onBack()"
     >
       <template #logo>
         <nuxt-link to="/">
-          <img src="@/assets/images/logo.png" alt="" />
+          <img class="logo" src="@/assets/images/logo.png" alt="" />
         </nuxt-link>
       </template>
       <template #icon-right>
@@ -80,7 +81,7 @@ const tenantMetric = ref<ITenantMetric>();
 const { getDetailInfoUser } = useUserStore();
 const { getTenantByID } = useTenantStore();
 const { getInfoUserFromCookie } = useAuthStore();
-const { getTenantMetrics } = useTenantStore();
+// const { getTenantMetrics } = useTenantStore();
 
 const isShowAvatar = ref(true);
 const onAvatarError = () => {
@@ -133,6 +134,10 @@ const getUserFullName = () => {
   ].join(' ');
 };
 
+const onBack = () => {
+  window.location.href = import.meta.env.VITE_APP_PLATFORM_URL;
+};
+
 const onGetTenantMetric = async () => {
   // TODO: wait BE
   try {
@@ -170,6 +175,11 @@ provide(PROVIDE.USER_INFO, userDetail);
   .content {
     flex: 1;
     background-color: rgba(3, 12, 17, 0.6);
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
   }
 
   .navbar-left {

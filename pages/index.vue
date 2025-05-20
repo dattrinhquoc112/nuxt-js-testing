@@ -12,7 +12,12 @@
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 
+definePageMeta({
+  layout: 'app',
+});
+
 const handleEvent = () => {
   console.log('Event triggered');
 };
+navigateTo('/project-list');
 </script>
