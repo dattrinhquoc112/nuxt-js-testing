@@ -75,6 +75,8 @@
 import { TEMPLATES_OBJ } from '~/types/templates';
 import { type RGBA } from '@/types/color';
 
+const MAX_HISTORY = 20;
+
 definePageMeta({
   layout: 'default',
 });
@@ -100,7 +102,11 @@ const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
   pageX: 0,
   pageY: 0,
 });
+//
 const sections = ref<any[]>([]);
+const history = ref<any[]>([]);
+const currentIndex = ref<number>(-1);
+
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
   null
 );
@@ -160,6 +166,7 @@ watch(buttonColor, () => {
     }
   }
 });
+
 const handleChangeVideo = (urlVideo: string) => {
   if (keyElementSelected.value === 'boxImage') {
     if (objectSelecting.value.imgUrl) {
@@ -304,7 +311,45 @@ const removeTemplateWhenClick = (event: MouseEvent) => {
     window.removeEventListener('click', removeTemplateWhenClick);
   }
 };
+watch(
+  sections,
+  (newVal) => {
+    if (currentIndex.value < history.value.length - 1) {
+      history.value = history.value.slice(0, currentIndex.value + 1);
+    }
 
+    // Thêm bản ghi mới
+    history.value.push(JSON.parse(JSON.stringify(newVal))); // deep copy
+    currentIndex.value++;
+
+    // Giới hạn số bước
+    if (history.value.length > MAX_HISTORY) {
+      history.value.shift();
+      currentIndex.value--;
+    }
+  },
+  { deep: true }
+);
+
+// Undo
+const undo = () => {
+  if (currentIndex.value > 0) {
+    currentIndex.value--;
+    sections.value = JSON.parse(
+      JSON.stringify(history.value[currentIndex.value])
+    );
+  }
+};
+
+// Redo
+const redo = () => {
+  if (currentIndex.value < history.value.length - 1) {
+    currentIndex.value++;
+    sections.value = JSON.parse(
+      JSON.stringify(history.value[currentIndex.value])
+    );
+  }
+};
 const onClickTemplate = (template: any) => {
   if (templateSelected.value?.id === template?.id) {
     templateSelected.value = undefined;
@@ -370,6 +415,12 @@ const defineAction = {
 
 onMounted(() => {
   sections.value = [TEMPLATES_OBJ[0]];
+});
+
+defineExpose({
+  redo,
+  undo,
+  currentIndex,
 });
 </script>
 

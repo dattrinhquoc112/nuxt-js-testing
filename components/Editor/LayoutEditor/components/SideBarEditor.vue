@@ -16,12 +16,7 @@
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
-        @click="
-          () => {
-            activeSidebarButton = SIDEBAR_BUTTONS[0];
-            isOpenTooltip = false;
-          }
-        "
+        @click="() => handleAction(SIDEBAR_BUTTONS[0], 'toggle-section')"
       >
       </vi-button>
       <template #content>
@@ -122,6 +117,12 @@ const handleCloseAISideBar = () => {
   activeSidebarButton.value = '';
 };
 onMounted(() => {});
+
+const handleAction = (keyIcon: string, keyAction: any) => {
+  activeSidebarButton.value = keyIcon;
+  isOpenTooltip.value = false;
+  emit('click-sidebar', keyAction);
+};
 </script>
 
 <style lang="scss" scoped>
