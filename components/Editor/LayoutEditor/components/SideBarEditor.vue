@@ -16,7 +16,12 @@
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
-        @click="() => handleAction(SIDEBAR_BUTTONS[0], 'toggle-section')"
+        @click="
+          () => {
+            activeSidebarButton = SIDEBAR_BUTTONS[0];
+            isOpenTooltip = false;
+          }
+        "
       >
       </vi-button>
       <template #content>
@@ -55,7 +60,12 @@
       icon-before="ic_capacity"
       width="fit-content"
       no-text
-      @click="activeSidebarButton = SIDEBAR_BUTTONS[2]"
+      @click="
+        () => {
+          activeSidebarButton = SIDEBAR_BUTTONS[2];
+          isOpenTooltip = false;
+        }
+      "
       class="mt-auto"
       :class="{
         active: activeSidebarButton === SIDEBAR_BUTTONS[2],
