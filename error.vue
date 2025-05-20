@@ -52,7 +52,7 @@ const loaded = useState('pluginLoaded', () => false);
     top: 40px;
     left: 48px;
     display: flex;
-    width: 83px;
+    width: 80px;
     img {
       width: 100%;
       object-fit: contain;
