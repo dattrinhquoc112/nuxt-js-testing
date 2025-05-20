@@ -106,6 +106,7 @@
 import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
+const emit = defineEmits(['click-sidebar']);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const isShowModal = ref(false);
 const activeSidebarButton = ref();
