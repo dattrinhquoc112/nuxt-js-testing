@@ -16,12 +16,7 @@
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
-        @click="
-          () => {
-            activeSidebarButton = SIDEBAR_BUTTONS[0];
-            isOpenTooltip = false;
-          }
-        "
+        @click="() => handleAction(SIDEBAR_BUTTONS[0], 'toggle-section')"
       >
       </vi-button>
       <template #content>
@@ -106,13 +101,20 @@
 import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
+const emit = defineEmits(['click-sidebar']);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const isShowModal = ref(false);
 const activeSidebarButton = ref();
+const isOpenTooltip = ref(false);
+
+const handleAction = (keyIcon: string, keyAction: any) => {
+  isOpenTooltip.value = false;
+  activeSidebarButton.value = keyIcon;
+  emit('click-sidebar', keyAction);
+};
 const handleConfirmModal = () => {
   isShowModal.value = false;
 };
-const isOpenTooltip = ref(false);
 const handleCancelModal = () => {
   isShowModal.value = false;
 };
@@ -120,7 +122,6 @@ const handleCloseAISideBar = () => {
   isOpenTooltip.value = false;
   activeSidebarButton.value = '';
 };
-onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
