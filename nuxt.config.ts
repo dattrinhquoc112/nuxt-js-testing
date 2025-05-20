@@ -94,6 +94,7 @@ export default defineNuxtConfig({
           import.meta.env.VITE_APP_UI_KIT_LINK,
           'https://sdk.stg.gamania.dev',
           'https://dev-ui-kit-aiaas-platform.vyin.ai',
+          'https://uat-track.beanfun.com',
         ],
         'connect-src': [
           "'self'",
@@ -107,6 +108,7 @@ export default defineNuxtConfig({
           import.meta.env.NUXT_API_URL_UPLOAD,
           'https://sdk.stg.gamania.dev',
           'https://dev-ui-kit-aiaas-platform.vyin.ai',
+          'https://uat-track.beanfun.com',
         ],
         'img-src': [
           "'self'",
