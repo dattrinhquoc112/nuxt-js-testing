@@ -1,11 +1,14 @@
 <template>
   <div class="ai-tools-tutorial">
     <div class="ai-tools-tutorial--title">
-      <span class="ai-tools-tutorial--title__icon" @click="handleCloseTooltip">
+      <span class="ai-tools-tutorial--title__icon">
         <vi-icon name="ic_ai_section" :size="16" color="#fff" />
       </span>
       <vi-typography type="subtitle-large">{{ $t('ai-tools') }}</vi-typography>
-      <span class="ai-tools-tutorial--title__icon-close">
+      <span
+        class="ai-tools-tutorial--title__icon-close"
+        @click="handleCloseTooltip"
+      >
         <vi-icon name="ic_close" :size="16" color="#fff" />
       </span>
     </div>
@@ -26,23 +29,30 @@
 <script setup lang="ts">
 const emit = defineEmits<{
   openTorialModal: [];
+  handleCloseTooltip: [];
 }>();
 const openTorialModal = () => {
   emit('openTorialModal');
 };
 
-const handleCloseTooltip = () => {};
+const handleCloseTooltip = () => {
+  emit('handleCloseTooltip');
+};
 </script>
 <style scoped lang="scss">
 .ai-tools-tutorial {
   display: flex;
   width: 320px;
-  height: 912px;
+  height: calc(100vh - 112px);
+  max-height: 912px;
   padding-bottom: 16px;
   flex-direction: column;
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 8px;
+  position: absolute;
+  right: -330px;
+  top: -64px;
   border: 1px solid $neutral-white-alpha-10;
   background: $brand-navy-800;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25);

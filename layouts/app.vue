@@ -3,10 +3,10 @@
     <vi-menu
       class="navbar-left"
       :list-option="navOptions"
+      v-model:is-expand="isExpand"
       :text-back="$t('app-navigation-button-back')"
       app-name="APP Name"
       type="app"
-      v-model:is-expand="isExpand"
     >
       <template #logo>
         <nuxt-link to="/">
@@ -142,7 +142,7 @@ const onGetTenantMetric = async () => {
     //   tenantMetric.value = res.data;
     // }
   } catch (error) {
-    // console.error({ error });
+    console.error({ error });
   }
 };
 

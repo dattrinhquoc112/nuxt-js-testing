@@ -24,16 +24,7 @@
       </template>
     </vi-tooltip>
 
-    <vi-tooltip
-      position="right"
-      align="start"
-      :arrow-visible="false"
-      :default-padding="false"
-      :visible="isOpenTooltip"
-      :delay-time="2000"
-      :full-width="false"
-      class="ai-tool-tooltip"
-    >
+    <div class="ai-tool">
       <vi-button
         type="standard-subtle"
         size="extra-large"
@@ -44,13 +35,20 @@
         :class="{
           active: activeSidebarButton === SIDEBAR_BUTTONS[1],
         }"
-        @click="activeSidebarButton = SIDEBAR_BUTTONS[1]"
+        @click="
+          () => {
+            activeSidebarButton = SIDEBAR_BUTTONS[1];
+            isOpenTooltip = true;
+          }
+        "
       >
       </vi-button>
-      <template #content>
-        <AIToolsTutorial @openTorialModal="isShowModal = true" />
-      </template>
-    </vi-tooltip>
+      <AIToolsTutorial
+        v-if="isOpenTooltip"
+        @openTorialModal="isShowModal = true"
+        @handleCloseTooltip="handleCloseAISideBar"
+      />
+    </div>
     <vi-button
       type="standard-subtle"
       size="extra-large"
@@ -96,7 +94,6 @@
 </template>
 <script setup lang="ts">
 import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
-import { USER_VISITED_WEB_EDITOR } from '@/constants/storage';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
@@ -109,15 +106,11 @@ const isOpenTooltip = ref(false);
 const handleCancelModal = () => {
   isShowModal.value = false;
 };
-
-onMounted(() => {
-  // Check if the user is visiting the site for the first time. If so, show the guide.
-  const isVisited = localStorage.getItem(USER_VISITED_WEB_EDITOR);
-  if (!isVisited) {
-    isOpenTooltip.value = true;
-    localStorage.setItem(USER_VISITED_WEB_EDITOR, USER_VISITED_WEB_EDITOR);
-  }
-});
+const handleCloseAISideBar = () => {
+  isOpenTooltip.value = false;
+  activeSidebarButton.value = '';
+};
+onMounted(() => {});
 </script>
 
 <style lang="scss" scoped>
@@ -145,8 +138,8 @@ onMounted(() => {
 :deep(.vyin-ui-kit-tooltip-content.right.start) {
   background-color: transparent !important;
 }
-.ai-tool-tooltip :deep(.vyin-ui-kit-tooltip-content.right.start) {
-  top: -50px;
+.ai-tool {
+  position: relative;
 }
 .tutorial-modal {
   &--title {
