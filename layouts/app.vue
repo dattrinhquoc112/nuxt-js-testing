@@ -11,7 +11,7 @@
     >
       <template #logo>
         <nuxt-link to="/">
-          <img src="@/assets/images/logo.png" alt="" />
+          <img class="logo" src="@/assets/images/logo.png" alt="" />
         </nuxt-link>
       </template>
       <template #icon-right>
@@ -175,6 +175,11 @@ provide(PROVIDE.USER_INFO, userDetail);
   .content {
     flex: 1;
     background-color: rgba(3, 12, 17, 0.6);
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
   }
 
   .navbar-left {
