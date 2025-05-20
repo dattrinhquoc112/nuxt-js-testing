@@ -14,11 +14,13 @@
         <slot />
       </div>
     </div>
+    <Tutorial :tutorial-type="TUTORIAL_TYPE.WEB_EDITOR" />
   </div>
 </template>
 <script setup lang="ts">
 import NavigatorEditor from '@/components/Editor/LayoutEditor/components/NavigatorEditor.vue';
 import SideBarEditor from '@/components/Editor/LayoutEditor/components/SideBarEditor.vue';
+import { TUTORIAL_TYPE } from '@/constants/common';
 
 defineEmits<{
   handleUndo: [];
