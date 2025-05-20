@@ -5,7 +5,7 @@
     </div>
     <div class="header">
       <nuxt-link to="/">
-        <img class="logo" src="assets/images/logo.png" alt="logo" />
+        <img class="logo" src="assets/images/logo-platform.png" alt="logo" />
       </nuxt-link>
     </div>
   </div>
@@ -32,7 +32,6 @@
     position: absolute;
     .logo {
       width: 80px;
-      height: 80px;
     }
   }
   .content-body {
