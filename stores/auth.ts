@@ -40,6 +40,10 @@ export const useAuthStore = defineStore('auth', () => {
     return getCookie(KEY_LOCAL_STORAGE.IS_AUTHENTICATED);
   }
 
+  function setIsAuthenticated(value: any) {
+    setCookie(KEY_LOCAL_STORAGE.IS_AUTHENTICATED, value);
+  }
+
   function getInfoUserFromCookie(): CustomJwtPayload | null {
     return getDataFromCookie<CustomJwtPayload>(KEY_LOCAL_STORAGE.INFO_USER);
   }
@@ -198,7 +202,7 @@ export const useAuthStore = defineStore('auth', () => {
         endpoint: '/auth/logout',
         proxyCustom: true,
       });
-      navigateTo('/auth');
+      navigateTo(`${import.meta.env.VITE_APP_PLATFORM_URL as string}/auth`);
     } catch (error) {}
   }
 
@@ -212,6 +216,7 @@ export const useAuthStore = defineStore('auth', () => {
     checkEmail,
     setSessionId,
     getAuthenticatedStatus,
+    setIsAuthenticated,
     register,
     checkOtp,
     resendOtp,

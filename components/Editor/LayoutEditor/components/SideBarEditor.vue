@@ -16,7 +16,7 @@
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
-        @click="activeSidebarButton = SIDEBAR_BUTTONS[0]"
+        @click="() => handleAction(SIDEBAR_BUTTONS[0], 'toggle-section')"
       >
       </vi-button>
       <template #content>
@@ -96,6 +96,7 @@
 import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
+const emit = defineEmits(['click-sidebar']);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const isShowModal = ref(false);
 const activeSidebarButton = ref();
@@ -111,6 +112,11 @@ const handleCloseAISideBar = () => {
   activeSidebarButton.value = '';
 };
 onMounted(() => {});
+
+const handleAction = (keyIcon: string, keyAction: any) => {
+  activeSidebarButton.value = keyIcon;
+  emit('click-sidebar', keyAction);
+};
 </script>
 
 <style lang="scss" scoped>

@@ -10,7 +10,9 @@
         @handle-release="$emit('handleRelease')"
       />
       <div class="editor__container">
-        <SideBarEditor />
+        <SideBarEditor
+          @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
+        />
         <slot />
       </div>
     </div>
@@ -29,6 +31,7 @@ defineEmits<{
   handlePlay: [];
   hanldeStoreChanges: [];
   handleRelease: [];
+  clickSidebar: [string];
 }>();
 </script>
 
