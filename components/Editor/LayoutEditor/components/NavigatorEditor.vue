@@ -10,6 +10,7 @@
       <template #first>
         <div class="editor-layout__left">
           <vi-icon
+            @click="navigateProjectList"
             name="ic_chevron_left"
             size="24"
             color="#fff"
@@ -32,13 +33,15 @@
             type="standard-subtle"
             icon-before="ic_step_back"
             no-text
-            @click="$emit('handleRedo')"
+            :disabled="!historyStatus?.undoButtonEnable"
+            @click="$emit('handleUndo')"
           ></vi-button>
           <vi-button
             type="standard-subtle"
             icon-before="ic_step_next"
             no-text
-            @click="$emit('handleUndo')"
+            :disabled="!historyStatus?.redoButtonEnable"
+            @click="$emit('handleRedo')"
           ></vi-button>
         </div>
       </template>
@@ -102,6 +105,9 @@
 import { RWD_MODE } from '~/constants/common';
 
 const activeDevice = ref(RWD_MODE.DESKTOP);
+defineProps<{
+  historyStatus: any;
+}>();
 const emit = defineEmits<{
   handleUndo: [];
   handleRedo: [];
@@ -109,10 +115,15 @@ const emit = defineEmits<{
   handlePlay: [];
   hanldeStoreChanges: [];
   handleRelease: [];
+  handleBack: [];
 }>();
 const handleSwitchLayout = (device: string) => {
   activeDevice.value = device;
   emit('handleSwitchLayout', device);
+};
+
+const navigateProjectList = () => {
+  emit('handleBack');
 };
 </script>
 

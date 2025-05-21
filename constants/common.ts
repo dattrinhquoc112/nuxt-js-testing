@@ -6,3 +6,4 @@ export const RWD_MODE = {
   DESKTOP: 'DESKTOP',
   MOBILE: 'MOBILE',
 };
+export const DEBOUND_TIME_SAVE_HISTORY = 300;
