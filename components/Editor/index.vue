@@ -168,7 +168,6 @@ watch(buttonColor, () => {
     }
   }
 });
-
 const handleChangeVideo = (urlVideo: string) => {
   if (keyElementSelected.value === 'boxImage') {
     if (objectSelecting.value.imgUrl) {

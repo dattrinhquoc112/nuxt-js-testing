@@ -52,6 +52,7 @@ const handleCloseTooltip = () => {
   flex-shrink: 0;
   border-radius: 8px;
   position: absolute;
+  z-index: 30;
   right: -330px;
   top: -64px;
   border: 1px solid $neutral-white-alpha-10;
