@@ -72,9 +72,13 @@
 </template>
 
 <script lang="ts" setup>
-import { TEMPLATES_OBJ } from '~/types/templates';
+import { TEMPLATES_OBJ } from '@/types/templates';
 import { type RGBA } from '@/types/color';
+import { DEBOUND_TIME_SAVE_HISTORY } from '@/constants/common';
 
+let debounceTimer: any = null;
+const MAX_HISTORY = 20;
+const iSaveHistory = ref(false);
 definePageMeta({
   layout: 'default',
 });
@@ -100,7 +104,11 @@ const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
   pageX: 0,
   pageY: 0,
 });
+const isChanged = ref(false);
 const sections = ref<any[]>([]);
+const history = ref<any[]>(JSON.parse(JSON.stringify([[TEMPLATES_OBJ[0]]])));
+const currentIndex = ref<number>(0);
+
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
   null
 );
@@ -304,6 +312,57 @@ const removeTemplateWhenClick = (event: MouseEvent) => {
     window.removeEventListener('click', removeTemplateWhenClick);
   }
 };
+watch(objectSelecting, () => {
+  iSaveHistory.value = true;
+});
+watch(
+  sections,
+  (newVal) => {
+    isChanged.value = true;
+    if (iSaveHistory.value) {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      if (currentIndex.value < history.value.length) {
+        history.value = history.value.slice(0, currentIndex.value + 1);
+      }
+
+      debounceTimer = setTimeout(() => {
+        history.value.push(JSON.parse(JSON.stringify(newVal)));
+        currentIndex.value++;
+        if (history.value.length > MAX_HISTORY) {
+          history.value.shift();
+          history.value = history.value.slice(0, currentIndex.value + 1);
+
+          currentIndex.value--;
+        }
+      }, DEBOUND_TIME_SAVE_HISTORY);
+    }
+  },
+  { deep: true }
+);
+
+// Undo
+const undo = () => {
+  if (currentIndex.value > 0) {
+    iSaveHistory.value = false;
+    currentIndex.value -= 1;
+    sections.value = JSON.parse(
+      JSON.stringify(history.value[currentIndex.value])
+    );
+  }
+};
+
+// Redo
+const redo = () => {
+  if (currentIndex.value < history.value.length) {
+    iSaveHistory.value = false;
+    currentIndex.value++;
+    sections.value = JSON.parse(
+      JSON.stringify(history.value[currentIndex.value])
+    );
+  }
+};
 
 const onClickTemplate = (template: any) => {
   if (templateSelected.value?.id === template?.id) {
@@ -325,6 +384,7 @@ const onClickAddSection = (index: number) => {
       0,
       JSON.parse(JSON.stringify(templateSelected.value))
     );
+    iSaveHistory.value = true;
     templateSelected.value = undefined;
   }
 };
@@ -355,6 +415,7 @@ const closePopupSettingText = () => {
 const handleDeleteSection = () => {
   if (indexSectionSelected.value === undefined) return;
   sections.value.splice(indexSectionSelected.value, 1);
+  iSaveHistory.value = true;
   hiddenBoxControl();
 };
 
@@ -369,7 +430,23 @@ const defineAction = {
 };
 
 onMounted(() => {
-  sections.value = [TEMPLATES_OBJ[0]];
+  sections.value = JSON.parse(JSON.stringify([TEMPLATES_OBJ[0]]));
+});
+
+const historyStatus = computed(() => ({
+  redoButtonEnable: currentIndex.value !== history.value.length - 1,
+  undoButtonEnable: currentIndex.value !== 0,
+}));
+const isSectionDirty = (): boolean => {
+  const result =
+    JSON.stringify(sections.value) === JSON.stringify([TEMPLATES_OBJ[0]]);
+  return result;
+};
+defineExpose({
+  redo,
+  undo,
+  historyStatus,
+  isSectionDirty,
 });
 </script>
 
