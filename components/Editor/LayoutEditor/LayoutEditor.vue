@@ -2,6 +2,7 @@
   <div class="bg-black">
     <div class="editor__bg">
       <NavigatorEditor
+        :historyStatus="historyStatus"
         @handle-undo="$emit('handleUndo')"
         @handle-redo="$emit('handleRedo')"
         @handle-switcher-layout="$emit('handleSwitchLayout')"
@@ -23,6 +24,15 @@
 import NavigatorEditor from '@/components/Editor/LayoutEditor/components/NavigatorEditor.vue';
 import SideBarEditor from '@/components/Editor/LayoutEditor/components/SideBarEditor.vue';
 import { TUTORIAL_TYPE } from '@/constants/common';
+
+import { defineProps } from 'vue';
+
+defineProps<{
+  historyStatus: {
+    redoButtonEnable: boolean;
+    undoButtonEnable: boolean;
+  };
+}>();
 
 defineEmits<{
   handleUndo: [];

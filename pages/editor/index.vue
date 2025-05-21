@@ -1,6 +1,7 @@
 <template>
   <LayoutEditor
     @handle-undo="handleUndo"
+    :history-status="historyStatus"
     @handle-redo="handleRedo"
     @handle-switcher-layout="handleEvent"
     @handle-play="handleEvent"
@@ -17,17 +18,22 @@
 </template>
 
 <script setup lang="ts">
-import { log } from 'console';
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 
 definePageMeta({
   layout: 'editor',
 });
 const isShowListSection = ref(false);
+const historyStatus = ref();
 
 const editorRef = ref();
 const handleEvent = () => {};
-
+watch(
+  () => editorRef.value?.historyStatus,
+  (newVal) => {
+    historyStatus.value = newVal;
+  }
+);
 const handleClickSideBar = (keyAction: string) => {
   if (keyAction === 'toggle-section') {
     isShowListSection.value = !isShowListSection.value;

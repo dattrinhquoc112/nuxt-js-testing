@@ -1,5 +1,7 @@
 <template>
   <div class="container">
+    {{ currentIndex }}
+    {{ history.length }}
     <editor-template-selector
       v-if="isShowListSection"
       :templateSelected="templateSelected"
@@ -72,11 +74,13 @@
 </template>
 
 <script lang="ts" setup>
-import { TEMPLATES_OBJ } from '~/types/templates';
+import { TEMPLATES_OBJ } from '@/types/templates';
 import { type RGBA } from '@/types/color';
+import { DEBOUND_TIME_SAVE_HISTORY } from '@/constants/common';
 
+let debounceTimer: any = null;
 const MAX_HISTORY = 20;
-
+const iSaveHistory = ref(false);
 definePageMeta({
   layout: 'default',
 });
@@ -104,8 +108,8 @@ const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
 });
 //
 const sections = ref<any[]>([]);
-const history = ref<any[]>([]);
-const currentIndex = ref<number>(-1);
+const history = ref<any[]>(JSON.parse(JSON.stringify([[TEMPLATES_OBJ[0]]])));
+const currentIndex = ref<number>(0);
 
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
   null
@@ -311,21 +315,33 @@ const removeTemplateWhenClick = (event: MouseEvent) => {
     window.removeEventListener('click', removeTemplateWhenClick);
   }
 };
+watch(objectSelecting, () => {
+  iSaveHistory.value = true;
+});
 watch(
   sections,
   (newVal) => {
-    if (currentIndex.value < history.value.length - 1) {
-      history.value = history.value.slice(0, currentIndex.value + 1);
-    }
+    if (iSaveHistory.value) {
+      if (debounceTimer) {
+        clearTimeout(debounceTimer);
+      }
+      if (currentIndex.value < history.value.length - 1) {
+        history.value = history.value.slice(0, currentIndex.value + 1);
+      }
 
-    // Thêm bản ghi mới
-    history.value.push(JSON.parse(JSON.stringify(newVal))); // deep copy
-    currentIndex.value++;
+      // Thêm bản ghi mới
+      history.value.push(JSON.parse(JSON.stringify(newVal))); // deep copy
 
-    // Giới hạn số bước
-    if (history.value.length > MAX_HISTORY) {
-      history.value.shift();
-      currentIndex.value--;
+      debounceTimer = setTimeout(() => {
+        history.value.push(JSON.parse(JSON.stringify(newVal)));
+        currentIndex.value++;
+        if (history.value.length > MAX_HISTORY) {
+          history.value.shift();
+          history.value = history.value.slice(0, currentIndex.value + 1);
+
+          currentIndex.value--;
+        }
+      }, DEBOUND_TIME_SAVE_HISTORY);
     }
   },
   { deep: true }
@@ -334,7 +350,8 @@ watch(
 // Undo
 const undo = () => {
   if (currentIndex.value > 0) {
-    currentIndex.value--;
+    iSaveHistory.value = false;
+    currentIndex.value -= 1;
     sections.value = JSON.parse(
       JSON.stringify(history.value[currentIndex.value])
     );
@@ -343,7 +360,8 @@ const undo = () => {
 
 // Redo
 const redo = () => {
-  if (currentIndex.value < history.value.length - 1) {
+  if (currentIndex.value < history.value.length) {
+    iSaveHistory.value = false;
     currentIndex.value++;
     sections.value = JSON.parse(
       JSON.stringify(history.value[currentIndex.value])
@@ -361,7 +379,13 @@ const onClickTemplate = (template: any) => {
   }
   window.addEventListener('click', removeTemplateWhenClick);
 };
-
+watch(
+  history,
+  (newVasl) => {
+    console.log(newVasl[0], 'newVasl');
+  },
+  { deep: true }
+);
 const onClickAddSection = (index: number) => {
   if (templateSelected.value) {
     const newIndex = hoverPosition.value?.zone === 'bottom' ? index + 1 : index;
@@ -417,10 +441,14 @@ onMounted(() => {
   sections.value = [TEMPLATES_OBJ[0]];
 });
 
+const historyStatus = computed(() => ({
+  redoButtonEnable: currentIndex.value !== history.value.length - 1,
+  undoButtonEnable: currentIndex.value !== 0,
+}));
 defineExpose({
   redo,
   undo,
-  currentIndex,
+  historyStatus,
 });
 </script>
 

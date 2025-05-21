@@ -32,13 +32,15 @@
             type="standard-subtle"
             icon-before="ic_step_back"
             no-text
-            @click="$emit('handleRedo')"
+            :disabled="!historyStatus?.undoButtonEnable"
+            @click="$emit('handleUndo')"
           ></vi-button>
           <vi-button
             type="standard-subtle"
             icon-before="ic_step_next"
             no-text
-            @click="$emit('handleUndo')"
+            :disabled="!historyStatus?.redoButtonEnable"
+            @click="$emit('handleRedo')"
           ></vi-button>
         </div>
       </template>
@@ -100,6 +102,9 @@ const DEVICES = {
   mobile: 'mobile',
 };
 const activeDevice = ref(DEVICES.destop);
+defineProps<{
+  historyStatus: any;
+}>();
 const emit = defineEmits<{
   handleUndo: [];
   handleRedo: [];
