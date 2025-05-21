@@ -43,7 +43,7 @@ const handleCloseTooltip = () => {
 .ai-tools-tutorial {
   display: flex;
   width: 320px;
-  z-index: 99;
+  z-index: 30;
   height: calc(100vh - 112px);
   max-height: 912px;
   padding-bottom: 16px;
@@ -52,6 +52,7 @@ const handleCloseTooltip = () => {
   flex-shrink: 0;
   border-radius: 8px;
   position: absolute;
+  z-index: 30;
   right: -330px;
   top: -64px;
   border: 1px solid $neutral-white-alpha-10;

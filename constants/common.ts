@@ -2,3 +2,4 @@ export const TUTORIAL_TYPE = {
   HOME_PAGE: 'HOME_PAGE',
   WEB_EDITOR: 'WEB_EDITOR',
 };
+export const DEBOUND_TIME_SAVE_HISTORY = 300;

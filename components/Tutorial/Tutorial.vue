@@ -153,6 +153,7 @@ onMounted(() => {
   bottom: 16px;
   right: 16px;
   display: flex;
+  z-index: 30;
   justify-items: center;
   align-items: center;
   justify-content: center;
@@ -271,6 +272,7 @@ onMounted(() => {
   position: fixed;
   bottom: 16px;
   right: 16px;
+  z-index: 30;
   padding: 16px;
   border-radius: 4px;
   background-color: $brand-navy-700;

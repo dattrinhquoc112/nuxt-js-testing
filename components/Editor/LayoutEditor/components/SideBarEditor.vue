@@ -105,23 +105,23 @@ const emit = defineEmits(['click-sidebar']);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const isShowModal = ref(false);
 const activeSidebarButton = ref();
+const isOpenTooltip = ref(false);
+
+const handleAction = (keyIcon: string, keyAction: any) => {
+  isOpenTooltip.value = false;
+  activeSidebarButton.value = keyIcon;
+  isOpenTooltip.value = false;
+  emit('click-sidebar', keyAction);
+};
 const handleConfirmModal = () => {
   isShowModal.value = false;
 };
-const isOpenTooltip = ref(false);
 const handleCancelModal = () => {
   isShowModal.value = false;
 };
 const handleCloseAISideBar = () => {
   isOpenTooltip.value = false;
   activeSidebarButton.value = '';
-};
-onMounted(() => {});
-
-const handleAction = (keyIcon: string, keyAction: any) => {
-  activeSidebarButton.value = keyIcon;
-  isOpenTooltip.value = false;
-  emit('click-sidebar', keyAction);
 };
 </script>
 
