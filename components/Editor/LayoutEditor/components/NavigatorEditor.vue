@@ -10,6 +10,7 @@
       <template #first>
         <div class="editor-layout__left">
           <vi-icon
+            @click="navigateProjectList"
             name="ic_chevron_left"
             size="24"
             color="#fff"
@@ -112,10 +113,15 @@ const emit = defineEmits<{
   handlePlay: [];
   hanldeStoreChanges: [];
   handleRelease: [];
+  handleBack: [];
 }>();
 const handleSwitchLayout = (device: string) => {
   activeDevice.value = device;
   emit('handleSwitchLayout', 'desktop');
+};
+
+const navigateProjectList = () => {
+  emit('handleBack');
 };
 </script>
 

@@ -1,7 +1,5 @@
 <template>
   <div class="container">
-    {{ currentIndex }}
-    {{ history.length }}
     <editor-template-selector
       v-if="isShowListSection"
       :templateSelected="templateSelected"
@@ -106,7 +104,7 @@ const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
   pageX: 0,
   pageY: 0,
 });
-//
+const isChanged = ref(false);
 const sections = ref<any[]>([]);
 const history = ref<any[]>(JSON.parse(JSON.stringify([[TEMPLATES_OBJ[0]]])));
 const currentIndex = ref<number>(0);
@@ -321,16 +319,14 @@ watch(objectSelecting, () => {
 watch(
   sections,
   (newVal) => {
+    isChanged.value = true;
     if (iSaveHistory.value) {
       if (debounceTimer) {
         clearTimeout(debounceTimer);
       }
-      if (currentIndex.value < history.value.length - 1) {
+      if (currentIndex.value < history.value.length) {
         history.value = history.value.slice(0, currentIndex.value + 1);
       }
-
-      // Thêm bản ghi mới
-      history.value.push(JSON.parse(JSON.stringify(newVal))); // deep copy
 
       debounceTimer = setTimeout(() => {
         history.value.push(JSON.parse(JSON.stringify(newVal)));
@@ -368,6 +364,7 @@ const redo = () => {
     );
   }
 };
+
 const onClickTemplate = (template: any) => {
   if (templateSelected.value?.id === template?.id) {
     templateSelected.value = undefined;
@@ -379,13 +376,7 @@ const onClickTemplate = (template: any) => {
   }
   window.addEventListener('click', removeTemplateWhenClick);
 };
-watch(
-  history,
-  (newVasl) => {
-    console.log(newVasl[0], 'newVasl');
-  },
-  { deep: true }
-);
+
 const onClickAddSection = (index: number) => {
   if (templateSelected.value) {
     const newIndex = hoverPosition.value?.zone === 'bottom' ? index + 1 : index;
@@ -394,6 +385,7 @@ const onClickAddSection = (index: number) => {
       0,
       JSON.parse(JSON.stringify(templateSelected.value))
     );
+    iSaveHistory.value = true;
     templateSelected.value = undefined;
   }
 };
@@ -424,6 +416,7 @@ const closePopupSettingText = () => {
 const handleDeleteSection = () => {
   if (indexSectionSelected.value === undefined) return;
   sections.value.splice(indexSectionSelected.value, 1);
+  iSaveHistory.value = true;
   hiddenBoxControl();
 };
 
@@ -438,17 +431,23 @@ const defineAction = {
 };
 
 onMounted(() => {
-  sections.value = [TEMPLATES_OBJ[0]];
+  sections.value = JSON.parse(JSON.stringify([TEMPLATES_OBJ[0]]));
 });
 
 const historyStatus = computed(() => ({
   redoButtonEnable: currentIndex.value !== history.value.length - 1,
   undoButtonEnable: currentIndex.value !== 0,
 }));
+const isSectionDirty = (): boolean => {
+  const result =
+    JSON.stringify(sections.value) === JSON.stringify([TEMPLATES_OBJ[0]]);
+  return result;
+};
 defineExpose({
   redo,
   undo,
   historyStatus,
+  isSectionDirty,
 });
 </script>
 

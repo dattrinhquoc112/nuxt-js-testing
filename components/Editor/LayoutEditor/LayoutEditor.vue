@@ -9,12 +9,15 @@
         @handle-play="$emit('handlePlay')"
         @hanlde-store-changes="$emit('hanldeStoreChanges')"
         @handle-release="$emit('handleRelease')"
+        @handle-back="$emit('handleBack')"
       />
       <div class="editor__container">
         <SideBarEditor
           @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
         />
-        <slot />
+        <vi-scroll class="editor__content">
+          <slot />
+        </vi-scroll>
       </div>
     </div>
     <Tutorial :tutorial-type="TUTORIAL_TYPE.WEB_EDITOR" />
@@ -42,11 +45,16 @@ defineEmits<{
   hanldeStoreChanges: [];
   handleRelease: [];
   clickSidebar: [string];
+  handleBack: [];
 }>();
 </script>
 
 <style lang="scss" scoped>
 .editor {
+  &__content {
+    width: 100%;
+    height: calc(100vh - 64px);
+  }
   &__bg {
     background: linear-gradient(0deg, #030c11 0%, rgba(3, 12, 17, 0) 100%),
       linear-gradient(
