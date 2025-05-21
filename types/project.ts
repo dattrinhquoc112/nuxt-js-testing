@@ -1,3 +1,9 @@
+import type { IPaginationPayload } from './pagination';
+
+export interface IProjectListPayload extends IPaginationPayload {
+  status: string;
+  nameKeyword: string;
+}
 export interface IProject {
   id: string;
   thumbnail: string;

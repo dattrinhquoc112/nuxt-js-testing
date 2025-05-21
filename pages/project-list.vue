@@ -31,11 +31,13 @@
       </div>
       <div class="type-project">
         <vi-button
-          v-for="(item, index) in model.modes"
+          v-for="(item, index) in model.listStatus"
           :key="index"
           width="fit-content"
-          :type="model.mode === item ? 'standard-primary' : 'standard-default'"
-          @click="model.mode = item"
+          :type="
+            model.status === item ? 'standard-primary' : 'standard-default'
+          "
+          @click="model.status = item"
         >
           {{ item }}
         </vi-button>
@@ -146,9 +148,11 @@ const loading = reactive({
 });
 
 const model = reactive({
+  page: 0,
+  size: 150,
   search: '',
-  mode: 'all',
-  modes: ['all', 'draft', 'published'],
+  status: 'all',
+  listStatus: ['all', 'draft', 'published'],
 });
 
 const modal = reactive({
@@ -168,7 +172,12 @@ const actionRef = reactive<{ [key: string]: boolean }>({});
 
 const fetchProjectList = debounce(async () => {
   loading.search = true;
-  const res = await getProjectList();
+  const res = await getProjectList({
+    page: model.page,
+    size: model.size,
+    status: model.status.toUpperCase(),
+    nameKeyword: model.search,
+  });
   listPage.value = res.data;
   loading.search = false;
 }, 500);
@@ -204,7 +213,7 @@ onMounted(() => {
 });
 
 watch(
-  () => model.search,
+  () => [model.search, model.status],
   () => {
     fetchProjectList();
   }
