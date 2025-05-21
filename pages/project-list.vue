@@ -4,9 +4,12 @@
       <vi-typography type="subtitle-large">{{
         $t('project_list')
       }}</vi-typography>
-      <vi-button class="ml-auto" icon-before="ic_add">{{
-        $t('create_web_application')
-      }}</vi-button>
+      <vi-button
+        class="ml-auto"
+        icon-before="ic_add"
+        @click="navigateToWebEditor"
+        >{{ $t('create_web_application') }}</vi-button
+      >
     </div>
     <div class="content custom-content">
       <div class="row">
@@ -144,7 +147,9 @@ const { getProjectList } = useProjectStore();
 const loading = reactive({
   search: false,
 });
-
+const navigateToWebEditor = () => {
+  navigateTo('/editor');
+};
 const model = reactive({
   search: '',
   mode: 'all',
