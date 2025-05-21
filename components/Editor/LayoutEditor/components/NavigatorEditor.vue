@@ -50,9 +50,11 @@
               icon-before="ic_device_desktop"
               no-text
               size="24"
-              :class="{ active: activeDevice === DEVICES.destop }"
-              :text-color="activeDevice === DEVICES.destop ? '#030C11' : '#fff'"
-              @click="handleSwitchLayout(DEVICES.destop)"
+              :class="{ active: activeDevice === RWD_MODE.DESKTOP }"
+              :text-color="
+                activeDevice === RWD_MODE.DESKTOP ? '#030C11' : '#fff'
+              "
+              @click="() => handleSwitchLayout(RWD_MODE.DESKTOP)"
             ></vi-button>
 
             <vi-button
@@ -60,9 +62,11 @@
               icon-before="ic_device_mobile"
               no-text
               size="24"
-              :class="{ active: activeDevice === DEVICES.mobile }"
-              :text-color="activeDevice === DEVICES.mobile ? '#030C11' : '#fff'"
-              @click="handleSwitchLayout(DEVICES.mobile)"
+              :class="{ active: activeDevice === RWD_MODE.MOBILE }"
+              :text-color="
+                activeDevice === RWD_MODE.MOBILE ? '#030C11' : '#fff'
+              "
+              @click="() => handleSwitchLayout(RWD_MODE.MOBILE)"
             ></vi-button>
           </div>
           <vi-button
@@ -95,11 +99,9 @@
   </div>
 </template>
 <script setup lang="ts">
-const DEVICES = {
-  destop: 'desktop',
-  mobile: 'mobile',
-};
-const activeDevice = ref(DEVICES.destop);
+import { RWD_MODE } from '~/constants/common';
+
+const activeDevice = ref(RWD_MODE.DESKTOP);
 const emit = defineEmits<{
   handleUndo: [];
   handleRedo: [];
@@ -110,7 +112,7 @@ const emit = defineEmits<{
 }>();
 const handleSwitchLayout = (device: string) => {
   activeDevice.value = device;
-  emit('handleSwitchLayout', 'desktop');
+  emit('handleSwitchLayout', device);
 };
 </script>
 

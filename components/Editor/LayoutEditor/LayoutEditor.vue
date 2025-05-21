@@ -4,7 +4,11 @@
       <NavigatorEditor
         @handle-undo="$emit('handleUndo')"
         @handle-redo="$emit('handleRedo')"
-        @handle-switcher-layout="$emit('handleSwitchLayout')"
+        @handleSwitchLayout="
+          (e) => {
+            $emit('handleSwitchLayout', e);
+          }
+        "
         @handle-play="$emit('handlePlay')"
         @hanlde-store-changes="$emit('hanldeStoreChanges')"
         @handle-release="$emit('handleRelease')"
@@ -27,7 +31,7 @@ import { TUTORIAL_TYPE } from '@/constants/common';
 defineEmits<{
   handleUndo: [];
   handleRedo: [];
-  handleSwitchLayout: [];
+  handleSwitchLayout: [mode: string];
   handlePlay: [];
   hanldeStoreChanges: [];
   handleRelease: [];

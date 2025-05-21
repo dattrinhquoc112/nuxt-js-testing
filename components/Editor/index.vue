@@ -83,6 +83,10 @@ defineProps({
     type: Boolean,
     default: true,
   },
+  rwdMode: {
+    type: String,
+    default: '',
+  },
 });
 const emit = defineEmits(['closeSection']);
 
