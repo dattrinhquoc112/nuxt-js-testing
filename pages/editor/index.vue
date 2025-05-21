@@ -1,6 +1,7 @@
 <template>
   <LayoutEditor
     @handle-undo="handleUndo"
+    :rwd-mode="RWDMode"
     :history-status="historyStatus"
     @handle-redo="handleRedo"
     @handleSwitchLayout="(e) => SwitchToRWD(e)"
@@ -10,12 +11,17 @@
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
   >
-    <editor
-      :rwd-mode="RWDMode"
-      ref="editorRef"
-      :is-show-list-section="isShowListSection"
-      @close-section="isShowListSection = false"
-    />
+    <vi-scroll
+      class="editor__content"
+      :class="{ 'editor__content--mobile': RWDMode === RWD_MODE.MOBILE }"
+    >
+      <editor
+        :rwd-mode="RWDMode"
+        ref="editorRef"
+        :is-show-list-section="isShowListSection"
+        @close-section="isShowListSection = false"
+      />
+    </vi-scroll>
   </LayoutEditor>
 
   <vi-modal
@@ -113,6 +119,19 @@ const handleRedo = () => {
   }
   &__title {
     margin-bottom: 16px;
+  }
+}
+
+.editor {
+  &__content {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    height: calc(100vh - 64px);
+    &--mobile {
+      width: 375px;
+    }
   }
 }
 </style>
