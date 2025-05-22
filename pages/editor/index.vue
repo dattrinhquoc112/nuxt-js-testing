@@ -5,7 +5,7 @@
     :history-status="historyStatus"
     @handle-redo="handleRedo"
     @handleSwitchLayout="(e) => SwitchToRWD(e)"
-    @handle-play="handleEvent"
+    @handle-play="handlePreview"
     @handle-store-changes="handleEvent"
     @handle-release="handleEvent"
     @click-sidebar="handleClickSideBar"
@@ -57,6 +57,7 @@
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { RWD_MODE } from '~/constants/common';
+import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
 
 definePageMeta({
   layout: 'editor',
@@ -73,6 +74,12 @@ watch(
     historyStatus.value = newVal;
   }
 );
+
+const handlePreview = () => {
+  const sections = editorRef.value?.sections;
+  localStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
+  window.open('/editor/preview', '_blank');
+};
 const handleClickSideBar = (keyAction: string) => {
   if (keyAction === 'toggle-section') {
     isShowListSection.value = !isShowListSection.value;

@@ -8,6 +8,7 @@
     />
 
     <editor-list
+      :rwd-mode="rwdMode"
       :templateSelected="templateSelected"
       :classElementSelected="classElementSelected"
       :sections="sections"
@@ -451,6 +452,7 @@ defineExpose({
   undo,
   historyStatus,
   isSectionDirty,
+  sections,
 });
 </script>
 
