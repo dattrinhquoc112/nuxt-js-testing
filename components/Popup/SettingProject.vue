@@ -65,9 +65,7 @@
             </vi-form-item>
             <div class="url-preview">
               <vi-typography type="subtitle-large">活動正式網址</vi-typography>
-              <vi-typography
-                >https://campaign-module.stockfeel.com.tw/eventpage/</vi-typography
-              >
+              <vi-typography>{{ getLink() }}</vi-typography>
             </div>
           </div>
         </div>
@@ -286,6 +284,12 @@ const rules = {
 
 const onChangeOGImage = (props: { url: string }) => {
   model.seoOGImage = props.url;
+};
+
+const getLink = () => {
+  const host = window.location.origin;
+  // TODO: tenant_name, event_name
+  return `${host}/event/tenant_name/event_name`;
 };
 
 watch(
