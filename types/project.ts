@@ -21,6 +21,15 @@ export interface IProject {
   updatedAt?: string;
   createdBy?: string;
   updatedBy?: string;
+  version?: string;
+  eventEnglishName?: string;
+  eventOfficialUrl?: string;
+  metaTitle?: string;
+  metaDescription?: string;
+  metaKeyword?: string;
+  ogImageUrl?: string;
+  ogTitle?: string;
+  ogDescription?: string;
 }
 
 export interface IUpdateProjectPayload {

@@ -14,13 +14,13 @@
           width="65px"
           type="standard-default"
           @click="onAction('copy')"
-          >複製專案</vi-button
+          >{{ $t('landing-project_mgmt-button-clone_project') }}</vi-button
         >
         <vi-button
           width="65px"
           type="dangerous-default"
           @click="onAction('unpublish')"
-          >取消發布</vi-button
+          >{{ $t('landing-project_mgmt-button-unpublish') }}</vi-button
         >
       </div>
     </div>
@@ -30,33 +30,39 @@
         v-model="tabs.value"
         :items="tabs.items"
       />
-      <project-information v-show="tabs.value === 'detail'" />
-      <project-analysis v-show="tabs.value === 'analysis'" />
+      <project-information
+        v-show="tabs.value === 'detail'"
+        :project="model.project"
+      />
+      <project-analysis
+        v-show="tabs.value === 'analysis'"
+        :project="model.project"
+      />
     </div>
     <vi-modal
-      modal-title="取消發布"
-      :is-show="modal.unpublish.isShow"
-      @close="modal.unpublish.close"
+      :modal-title="modal.title"
+      :is-show="modal.isShow"
+      @close="modal.close"
     >
-      <vi-typography class="description" type="body-small"
-        >取消發布後，此專案將回到草稿狀態。後續可以再次發布此專案。</vi-typography
-      >
+      <vi-typography class="description" type="body-small">{{
+        modal.description
+      }}</vi-typography>
       <template #footer>
         <div class="modal-footer">
           <vi-button
             class="ml-auto"
             type-button="button"
-            @click="modal.unpublish.close"
+            @click="modal.close"
             type="primary-default"
             width="fit-content"
             >{{ $t('common-action-button-button_close') }}</vi-button
           >
           <vi-button
             type-button="button"
-            @click="onUnpublish"
+            @click="modal.confirm"
             type="dangerous-primary"
             width="fit-content"
-            >取消發布</vi-button
+            >{{ $t('landing-project_mgmt-button-unpublish') }}</vi-button
           >
         </div>
       </template>
@@ -65,11 +71,24 @@
 </template>
 
 <script setup lang="ts">
+import { useProjectStore } from '~/stores/project';
+import type { IProject } from '~/types/project';
+
+interface Model {
+  project?: IProject;
+}
+
 definePageMeta({
   layout: 'app',
   middleware: ['auth'],
 });
+
+const route = useRoute();
+const id = route.params.id as string;
+
 const { t } = useI18n();
+
+const { getProject, copyProject, unpublishProject } = useProjectStore();
 
 const loading = reactive({
   detail: false,
@@ -93,31 +112,38 @@ const tabs = reactive({
 
 const breadcrumbItems = computed(() => [
   {
-    text: t('project_list'),
+    text: t('app-navigation-menu-projects'),
     link: '/project-list',
   },
   { text: '咪咪喵喵', link: '' },
 ]);
 
+const model = reactive<Model>({});
+
 const modal = reactive({
-  unpublish: {
-    isShow: false,
-    open: () => {
-      modal.unpublish.isShow = true;
-    },
-    close: () => {
-      modal.unpublish.isShow = false;
-    },
+  isShow: false,
+  title: '',
+  description: '',
+  open: () => {
+    modal.isShow = true;
   },
+  close: () => {
+    modal.isShow = false;
+  },
+  confirm: () => {},
 });
 
-const onCopy = () => {
-  // TODO: wait API
+const onCopy = async () => {
+  if (!model.project) return;
+  await copyProject(model.project.id, `${model.project.name} Copy`);
+  toastMessage(t('landing-common-message-copied'));
 };
 
-const onUnpublish = () => {
-  // TODO: wait API
-  modal.unpublish.close();
+const onUnpublish = async () => {
+  if (!model.project) return;
+  await unpublishProject(model.project.id);
+  toastMessage(t('landing-common-message-unpublished'));
+  modal.close();
 };
 
 const onAction = (action: string) => {
@@ -126,12 +152,26 @@ const onAction = (action: string) => {
       onCopy();
       break;
     case 'unpublish':
-      modal.unpublish.open();
+      modal.title = t('landing-project_mgmt-modal-title_unpublish_event');
+      modal.description = t('landing-project_mgmt-modal-unpublish_description');
+      modal.open();
+      modal.confirm = onUnpublish;
       break;
     default:
       break;
   }
 };
+
+const fetchProject = async () => {
+  loading.detail = true;
+  const res = await getProject(id);
+  model.project = res.data;
+  loading.detail = false;
+};
+
+onMounted(() => {
+  fetchProject();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="header">
       <vi-typography type="subtitle-large">{{
-        $t('project_list')
+        $t('app-navigation-menu-projects')
       }}</vi-typography>
       <vi-button
         class="ml-auto"
@@ -72,7 +72,7 @@
           @click="onOpenDetail(item)"
         >
           <div class="item-thumbnail">
-            <img :src="item.thumbnail || ''" alt="" @error="imageError" />
+            <custom-image :src="item.thumbnail" />
           </div>
           <div class="item-info">
             <div class="status-active">{{ getStatus(item.status) }}</div>
@@ -158,7 +158,6 @@
 import useProjects from '~/composables/projects';
 import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
-import showToastMessage from '~/utils/toastMessage';
 
 interface Model {
   page: number;
@@ -175,7 +174,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { getProjectUrl } = useProjects();
+const { getProjectUrl, getStatus } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
 
@@ -240,13 +239,13 @@ const onShowAction = (projectID: string, show = true) => {
 const onCopyProject = async (project: IProject) => {
   await copyProject(project.id, `${project.name} Copy`);
   fetchProjectList();
-  showToastMessage(t('landing-common-message-copied'));
+  toastMessage(t('landing-common-message-copied'));
 };
 
 const onEditProject = async (payload: IUpdateProjectPayload) => {
   if (model.project) {
     await editProject(model.project.id, payload);
-    showToastMessage(t('landing-common-message-saved'));
+    toastMessage(t('landing-common-message-saved'));
     model.project = undefined;
     fetchProjectList();
     modal.close();
@@ -255,7 +254,7 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
 
 const onCreateProject = async (name: string) => {
   await createProject(name);
-  showToastMessage(t('landing-common-message-saved'));
+  toastMessage(t('landing-common-message-saved'));
   fetchProjectList();
   modal.close();
 };
@@ -295,27 +294,6 @@ const onAction = (project?: IProject, action = '') => {
 
 const onOpenDetail = (item: IProject) => {
   navigateTo(`/project/${item.id}`);
-};
-
-const getDates = (dates: string[] = []) => {
-  if (dates.length > 0) {
-    return dates
-      .filter((elem) => elem)
-      .map((date) => formatDate(date))
-      .join('-');
-  }
-  return '';
-};
-
-const getStatus = (status: string) => {
-  const trans: { [key: string]: string } = {
-    PENDING_PUBLISH: t('landing-status-label-status_pending'),
-    NOT_STARTED: t('landing-status-label-status_not_started'),
-    STARTED: t('landing-status-label-status_started'),
-    PUBLISHED: t('landing-status-label-status_published'),
-    ENDED: t('landing-status-label-status_ended'),
-  };
-  return trans[status];
 };
 
 onMounted(() => {

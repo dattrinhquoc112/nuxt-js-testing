@@ -1,7 +1,9 @@
 import { defineStore } from 'pinia';
 import { useApiStore } from '@/stores/api';
-import type { IProjectListPayload } from '~/types/project';
-import type { IUpdateProjectPayload } from '~/types/project';
+import type {
+  IProjectListPayload,
+  IUpdateProjectPayload,
+} from '~/types/project';
 import { MethodEnum } from './interface/api';
 
 export const useProjectStore = defineStore('project', () => {
@@ -38,7 +40,7 @@ export const useProjectStore = defineStore('project', () => {
   async function copyProject(id: string, newName: string) {
     return apiStore.apiRequest({
       method: MethodEnum.POST,
-      endpoint: `/api/v1/projects/${id}`,
+      endpoint: `/api/v1/projects/${id}/copy`,
       proxy: true,
       data: {
         newName,
@@ -55,11 +57,29 @@ export const useProjectStore = defineStore('project', () => {
     });
   }
 
+  async function publishProject(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/projects/${id}/publish`,
+      proxy: true,
+    });
+  }
+
+  async function unpublishProject(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/projects/${id}/unpublish`,
+      proxy: true,
+    });
+  }
+
   return {
     getProjectList,
     createProject,
     copyProject,
     editProject,
     getProject,
+    publishProject,
+    unpublishProject,
   };
 });
