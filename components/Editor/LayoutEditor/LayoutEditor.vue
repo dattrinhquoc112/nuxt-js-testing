@@ -20,7 +20,9 @@
           v-show="rwdMode === RWD_MODE.DESKTOP"
           @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
         />
-        <slot />
+        <vi-scroll class="editor__content">
+          <slot />
+        </vi-scroll>
       </div>
     </div>
     <Tutorial :tutorial-type="TUTORIAL_TYPE.WEB_EDITOR" />
@@ -39,6 +41,15 @@ defineProps<{
     undoButtonEnable: boolean;
   };
   rwdMode: string;
+}>();
+
+import { defineProps } from 'vue';
+
+defineProps<{
+  historyStatus: {
+    redoButtonEnable: boolean;
+    undoButtonEnable: boolean;
+  };
 }>();
 
 defineEmits<{

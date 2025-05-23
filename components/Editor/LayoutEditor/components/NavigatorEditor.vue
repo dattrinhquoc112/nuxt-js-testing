@@ -11,6 +11,7 @@
         <div class="editor-layout__left">
           <vi-icon
             @click="navigateProjectList"
+            @click="navigateProjectList"
             name="ic_chevron_left"
             size="24"
             color="#fff"

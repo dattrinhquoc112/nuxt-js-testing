@@ -52,6 +52,35 @@
       </div>
     </template>
   </vi-modal>
+
+  <vi-modal
+    modal-title="離開前是否儲存目前編輯"
+    :is-show="isShowModal"
+    @close="isShowModal = false"
+    size="small"
+  >
+    <vi-typography type="body-small" class="editor-leave__title">
+      離開將遺失目前進度，是否儲存編輯？
+    </vi-typography>
+    <template #footer>
+      <div class="editor-leave__footer">
+        <vi-button
+          type="standard-default"
+          width="fit-content"
+          @click="handleLeave"
+        >
+          不儲存直接離開
+        </vi-button>
+        <vi-button
+          type="standard-primary"
+          width="fit-content"
+          @click="handleSaveDraft"
+        >
+          儲存進度
+        </vi-button>
+      </div>
+    </template>
+  </vi-modal>
 </template>
 
 <script setup lang="ts">
@@ -64,6 +93,9 @@ definePageMeta({
 });
 const RWDMode = ref(RWD_MODE.DESKTOP);
 const isShowListSection = ref(false);
+const historyStatus = ref();
+const isShowModal = ref(false);
+const editorRef = ref();
 const historyStatus = ref();
 const isShowModal = ref(false);
 const editorRef = ref();
