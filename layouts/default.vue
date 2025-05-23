@@ -5,7 +5,7 @@
     </div>
     <div class="header">
       <nuxt-link to="/">
-        <img class="logo" src="assets/images/logo-platform.png" alt="logo" />
+        <img class="logo" src="@/assets/images/logo-platform.png" alt="logo" />
       </nuxt-link>
     </div>
   </div>

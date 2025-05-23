@@ -1,28 +1,49 @@
 import { defineStore } from 'pinia';
 import { useApiStore } from '@/stores/api';
+import type { ITenant } from '~/types/common';
 import { MethodEnum } from './interface/api';
-import type { ITenantDetailResponse } from './interface/response/share';
+import type {
+  ITenantDetailResponse,
+  ICheckLimitResponse,
+  IDetailMemberResponse,
+  IListRoleResponse,
+} from './interface/response/share';
 import type {
   RequestTenantPayload,
   RequestUserTenantPayload,
   TypeRole,
 } from './interface/request/shared';
 import { useAuthStore } from './auth';
-import type {
-  ICheckLimitResponse,
-  IDetailMemberResponse,
-  IListRoleResponse,
-} from './interface/response/share';
+
+export const TENANT_INFO = 'TENANT_INFO';
 
 export const useTenantStore = defineStore('tenant', () => {
   const apiStore = useApiStore();
   const { getInfoUserFromCookie } = useAuthStore();
+
+  function getCurrentTenantInfo() {
+    const tenant = localStorage.getItem(TENANT_INFO);
+    let tenantObj: ITenant | null = null;
+    try {
+      if (tenant) {
+        tenantObj = JSON.parse(tenant);
+      }
+    } catch (error) {
+      tenantObj = null;
+    }
+    return tenantObj;
+  }
+
+  function setCurrentTenantInfo(tenant: ITenant) {
+    localStorage.setItem(TENANT_INFO, JSON.stringify(tenant));
+  }
 
   async function getTenantList() {
     return apiStore.apiRequest({
       method: MethodEnum.GET,
       endpoint: '/api/v1/tenants',
       proxy: true,
+      platform: true,
     });
   }
   async function createTenant(data: RequestTenantPayload) {
@@ -30,6 +51,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.POST,
       endpoint: '/api/v1/tenants',
       proxy: true,
+      platform: true,
       data,
     });
   }
@@ -39,6 +61,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.PATCH,
       endpoint: `/api/v1/tenants/${id}`,
       proxy: true,
+      platform: true,
       data,
     });
   }
@@ -48,6 +71,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.GET,
       endpoint: `/api/v1/tenants/${tenantID}/users/${userID}`,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -56,6 +80,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.PATCH,
       endpoint: `/api/v1/tenants/${tenantId}/owner?targetUserId=${targetUserId}`,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -67,6 +92,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.GET,
       endpoint: `/api/v1/tenants/${id}/users`,
       proxy: true,
+      platform: true,
       params: data,
     });
   }
@@ -76,6 +102,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.GET,
       endpoint: `/api/v1/roles?type=${type}`,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -94,6 +121,7 @@ export const useTenantStore = defineStore('tenant', () => {
       endpoint: `/api/v1/tenants/${getInfoUserFromCookie()?.tenant_id}/users`,
       data,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -104,6 +132,7 @@ export const useTenantStore = defineStore('tenant', () => {
         getInfoUserFromCookie()?.tenant_id
       }/users/${userId}`,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -117,6 +146,7 @@ export const useTenantStore = defineStore('tenant', () => {
         getInfoUserFromCookie()?.tenant_id
       }/users/${userId}`,
       proxy: true,
+      platform: true,
       data,
     });
   }
@@ -128,6 +158,7 @@ export const useTenantStore = defineStore('tenant', () => {
         getInfoUserFromCookie()?.tenant_id
       }/users/${userId}`,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -138,6 +169,7 @@ export const useTenantStore = defineStore('tenant', () => {
         getInfoUserFromCookie()?.sub
       }`,
       proxy: true,
+      platform: true,
     });
   }
   async function checkFreeTrialLimit(
@@ -147,6 +179,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.GET,
       endpoint: `/api/v1/general/free-trial-limits`,
       proxy: true,
+      platform: true,
       params: {
         type,
       },
@@ -158,6 +191,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.GET,
       endpoint: `/api/v1/tenants/${tenantId}/metrics`,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -166,6 +200,7 @@ export const useTenantStore = defineStore('tenant', () => {
       method: MethodEnum.GET,
       endpoint: `/api/v1/tenants/${id}`,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -186,6 +221,8 @@ export const useTenantStore = defineStore('tenant', () => {
     updateTenantOwner,
     checkFreeTrialLimit,
     getUserTenantByID,
+    getCurrentTenantInfo,
+    setCurrentTenantInfo,
   };
 });
 

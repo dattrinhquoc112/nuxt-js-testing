@@ -1,6 +1,6 @@
 import { type H3Event } from 'h3';
 import { convertCookieObjectToString } from '@/utils/cookieHelper';
-import landingRequestHelper from '~/utils/landingRequestHelper';
+import platformRequestHelper from '~/utils/platformRequestHelper';
 
 export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
   const cookie = parseCookies(event);
@@ -14,7 +14,7 @@ export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
       platform_auth_session: cookie.platform_auth_session,
     });
   }
-  const response = await landingRequestHelper<ResponseDataType>({
+  const response = await platformRequestHelper<ResponseDataType>({
     ...payload,
     headers,
   });

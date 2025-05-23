@@ -1,7 +1,9 @@
-export const getQueryFromObj = (obj: any) => {
+export default (obj: any) => {
   const query: string[] = [];
   Object.keys(obj).forEach((key) => {
-    query.push(`${key}=${obj[key]}`);
+    if (obj[key].toString()) {
+      query.push(`${key}=${obj[key]}`);
+    }
   });
   return query.join('&');
 };

@@ -1,6 +1,6 @@
 <template></template>
 <script setup lang="ts">
-onUnmounted(() => {
+onMounted(() => {
   navigateTo('/project-list');
 });
 </script>
