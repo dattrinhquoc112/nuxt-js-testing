@@ -1,11 +1,5 @@
 <template>
-  <vi-spin
-    v-if="loading.detail"
-    height="100%"
-    width="100%"
-    icon-size="20px"
-    :loading="loading.detail"
-  />
+  <vi-spin v-if="loading.detail" icon-size="20px" :loading="loading.detail" />
   <div v-if="!loading.detail" class="app-container">
     <div class="header">
       <vi-breadcrumb :items="breadcrumbItems" separator="/" />

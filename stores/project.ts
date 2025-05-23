@@ -73,6 +73,14 @@ export const useProjectStore = defineStore('project', () => {
     });
   }
 
+  async function getProjectAnalysis(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.GET,
+      endpoint: `/api/v1/projects/${id}/analysis`,
+      proxy: true,
+    });
+  }
+
   return {
     getProjectList,
     createProject,
@@ -81,5 +89,6 @@ export const useProjectStore = defineStore('project', () => {
     getProject,
     publishProject,
     unpublishProject,
+    getProjectAnalysis,
   };
 });
