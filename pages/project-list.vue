@@ -88,13 +88,23 @@
                   {{ getDates([item?.startTime || '', item?.endTime || '']) }}
                 </div>
                 <div class="long-time">
-                  {{ $t('days_left_start', { day: item.startTime }) }}
+                  {{
+                    item.startTime &&
+                    $t('landing-project_mgmt-description-days_until_start', {
+                      days: getDaysCount(item.startTime, new Date()),
+                    })
+                  }}
                 </div>
               </div>
             </div>
             <div class="wrapper-time-edit">
               <div class="time-edit">
-                {{ getDates([item.updatedAt || '']) }}
+                {{
+                  item.updatedAt &&
+                  $t('landing-project_mgmt-description-last_edited', {
+                    date: getDates([item.updatedAt]),
+                  })
+                }}
               </div>
               <div
                 class="action-container"
@@ -137,6 +147,7 @@
       v-if="modal.show"
       :show="modal.show"
       :title="modal.title"
+      :value="model.project?.name"
       @close="modal.close"
       @edit="modal.confirm"
     />

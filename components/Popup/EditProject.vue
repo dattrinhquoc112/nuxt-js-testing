@@ -42,16 +42,20 @@
   </vi-modal>
 </template>
 <script lang="ts" setup>
-defineProps({
+const props = defineProps({
   show: {
     type: Boolean,
     default: false,
+  },
+  value: {
+    type: String,
+    default: '',
   },
 });
 const emit = defineEmits(['close', 'edit']);
 const { t } = useI18n();
 const model = reactive({
-  name: '',
+  name: props.value,
 });
 
 const rules = {
