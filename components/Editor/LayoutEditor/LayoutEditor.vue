@@ -43,15 +43,6 @@ defineProps<{
   rwdMode: string;
 }>();
 
-import { defineProps } from 'vue';
-
-defineProps<{
-  historyStatus: {
-    redoButtonEnable: boolean;
-    undoButtonEnable: boolean;
-  };
-}>();
-
 defineEmits<{
   handleUndo: [];
   handleRedo: [];

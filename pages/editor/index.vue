@@ -96,9 +96,7 @@ const isShowListSection = ref(false);
 const historyStatus = ref();
 const isShowModal = ref(false);
 const editorRef = ref();
-const historyStatus = ref();
-const isShowModal = ref(false);
-const editorRef = ref();
+
 const handleEvent = () => {};
 watch(
   () => editorRef.value?.historyStatus,

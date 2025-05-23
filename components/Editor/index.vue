@@ -41,7 +41,7 @@
       @change-video="handleChangeVideo"
     />
     <editor-setting-link
-      :link="objectSelecting.link"
+      :link="objectSelecting?.link"
       :isShow="isShowPopup.addLink"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingLink"
