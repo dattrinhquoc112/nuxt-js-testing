@@ -26,7 +26,7 @@
     </div>
     <div class="pa-16">
       <vi-input
-        v-model.trim="link"
+        v-model.trim="linkRef"
         width="100%"
         placeholder="請貼上網址連結"
         size="small"
@@ -44,13 +44,7 @@ const emit = defineEmits([
   'move-popup-to-bottom',
   'change-link',
 ]);
-const link = ref();
-
-watch(link, () => {
-  // handle validate link
-  emit('change-link', link.value);
-});
-
+const linkRef = ref();
 const props = defineProps({
   positionControlCurrent: {
     type: Object,
@@ -60,7 +54,22 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  link: {
+    type: String,
+    default: '',
+  },
 });
+watch(linkRef, () => {
+  // handle validate link
+  emit('change-link', linkRef.value);
+});
+watch(
+  () => props.link,
+  (newVal) => {
+    linkRef.value = newVal;
+  }
+);
+
 const popupElement = ref<HTMLElement>();
 useCheckHeightPopup(props, popupElement, emit);
 </script>

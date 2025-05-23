@@ -72,9 +72,7 @@
       <a
         class="button-href"
         :style="section?.buttonExternal.style"
-        @click="
-          (event) => handleButtonExternalClick(section?.buttonExternal?.link)
-        "
+        @click="() => handleButtonExternalClick(section?.buttonExternal?.link)"
         @dblclick="(event) => emit('handle-change-text', event)"
       >
         {{ section?.buttonExternal?.text }}</a
