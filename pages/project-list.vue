@@ -72,7 +72,7 @@
           @click="onOpenDetail(item)"
         >
           <div class="item-thumbnail">
-            <custom-image :src="item.thumbnail" />
+            <custom-image :src="getImage(item.thumbnail)" />
           </div>
           <div class="item-info">
             <div class="status-active">{{ getStatus(item.status) }}</div>
@@ -174,7 +174,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { getProjectUrl, getStatus } = useProjects();
+const { getProjectUrl, getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
 

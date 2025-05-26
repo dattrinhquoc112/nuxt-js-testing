@@ -25,11 +25,11 @@
         :items="tabs.items"
       />
       <project-information
-        v-show="tabs.value === 'detail'"
+        v-if="tabs.value === 'detail'"
         :project="model.project"
       />
       <project-analysis
-        v-show="tabs.value === 'analysis'"
+        v-if="tabs.value === 'analysis'"
         :project="model.project"
       />
     </div>
@@ -92,24 +92,16 @@ const tabs = reactive({
   items: [
     {
       name: 'detail',
-      label: '活動資訊',
+      label: t('landing-navigation-menu-event_info'),
       disabled: false,
     },
     {
       name: 'analysis',
-      label: '活動分析',
+      label: t('landing-navigation-menu-event_analytics'),
       disabled: false,
     },
   ],
 });
-
-const breadcrumbItems = computed(() => [
-  {
-    text: t('app-navigation-menu-projects'),
-    link: '/project-list',
-  },
-  { text: '咪咪喵喵', link: '' },
-]);
 
 const model = reactive<Model>({});
 
@@ -125,6 +117,14 @@ const modal = reactive({
   },
   confirm: () => {},
 });
+
+const breadcrumbItems = computed(() => [
+  {
+    text: t('app-navigation-menu-projects'),
+    link: '/project-list',
+  },
+  { text: model.project?.name, link: '' },
+]);
 
 const onCopy = async () => {
   if (!model.project) return;

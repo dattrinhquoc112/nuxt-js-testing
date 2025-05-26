@@ -1,9 +1,11 @@
 import { useTenantStore } from '~/stores/tenant';
+import { useUploadStore } from '~/stores/upload';
 import type { IProject } from '~/types/project';
 
 export default function useProjects() {
   const { t } = useI18n();
   const { getCurrentTenantInfo } = useTenantStore();
+  const { getFileURL } = useUploadStore();
   const tenantName = getCurrentTenantInfo()?.name;
   const getProjectUrl = (project?: IProject): string => {
     if (!project) return '';
@@ -22,8 +24,17 @@ export default function useProjects() {
     return trans[status];
   };
 
+  const getImage = (uri?: string) => {
+    const match = uri?.match(/^gs:\/\/[^/]+\/(.+)$/);
+    const path = match ? match[1] : '';
+    const endpoint = `/general/media/${path}`;
+    const url = getFileURL(endpoint);
+    return url;
+  };
+
   return {
     getProjectUrl,
     getStatus,
+    getImage,
   };
 }
