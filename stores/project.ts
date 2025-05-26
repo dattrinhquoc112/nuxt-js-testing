@@ -1,91 +1,94 @@
 import { defineStore } from 'pinia';
 import { useApiStore } from '@/stores/api';
+import type {
+  IProjectListPayload,
+  IUpdateProjectPayload,
+} from '~/types/project';
 import { MethodEnum } from './interface/api';
 
 export const useProjectStore = defineStore('project', () => {
   const apiStore = useApiStore();
 
-  async function getProjectList() {
-    // TODO: waiting API
-    // return apiStore.apiRequest({
-    //   method: MethodEnum.GET,
-    //   endpoint: '/api/v1/projects',
-    //   proxy: true,
-    // });
+  async function getProjectList(payload: IProjectListPayload) {
+    return apiStore.apiRequest({
+      method: MethodEnum.GET,
+      endpoint: `/api/v1/projects`,
+      proxy: true,
+      params: payload,
+    });
+  }
 
-    // Mock data
-    return {
-      data: [
-        {
-          id: 'item_1',
-          thumbnail: new URL(
-            '@/assets/images/demo/page_thumbnail.png',
-            import.meta.url
-          ).href,
-          statusActive: 'Pending Publication',
-          titlePage: 'A Small Company Event',
-          urlPage: 'https://campaign.dev.alice-ai.dev/eventpage/group/ccc',
-          periodTime: '2025/01/01-2025/12/31',
-          leftDays: 100,
-          editedAt: '2025/01/01',
-        },
-        {
-          id: 'item_2',
-          thumbnail: new URL(
-            '@/assets/images/demo/page_thumbnail.png',
-            import.meta.url
-          ).href,
-          statusActive: 'Not Started',
-          titlePage: 'Meow Meow',
-          urlPage: 'https://campaign.dev.alice-ai.dev/eventpage/group/ccc',
-          periodTime: '2025/01/01-2025/12/31',
-          leftDays: 100,
-          editedAt: '2025/01/01',
-        },
-        {
-          id: 'item_3',
-          thumbnail: new URL(
-            '@/assets/images/demo/page_thumbnail.png',
-            import.meta.url
-          ).href,
-          statusActive: 'Started',
-          titlePage: 'A Small Company Event',
-          urlPage: 'https://campaign.dev.alice-ai.dev/eventpage/group/ccc',
-          periodTime: '2025/01/01-2025/12/31',
-          leftDays: 100,
-          editedAt: '2025/01/01',
-        },
-        {
-          id: 'item_4',
-          thumbnail: new URL(
-            '@/assets/images/demo/page_thumbnail.png',
-            import.meta.url
-          ).href,
-          statusActive: 'Pending Publication',
-          titlePage: 'A Small Company Event',
-          urlPage: 'https://campaign.dev.alice-ai.dev/eventpage/group/ccc',
-          periodTime: '2025/01/01-2025/12/31',
-          leftDays: 100,
-          editedAt: '2025/01/01',
-        },
-        {
-          id: 'item_5',
-          thumbnail: new URL(
-            '@/assets/images/demo/page_thumbnail.png',
-            import.meta.url
-          ).href,
-          statusActive: 'Pending Publication',
-          titlePage: 'A Small Company Event',
-          urlPage: 'https://campaign.dev.alice-ai.dev/eventpage/group/ccc',
-          periodTime: '2025/01/01-2025/12/31',
-          leftDays: 100,
-          editedAt: '2025/01/01',
-        },
-      ],
-    };
+  async function getProject(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.GET,
+      endpoint: `/api/v1/projects/${id}`,
+      proxy: true,
+    });
+  }
+
+  async function createProject(name: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/projects`,
+      proxy: true,
+      data: {
+        name,
+      },
+    });
+  }
+
+  async function copyProject(id: string, newName: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/projects/${id}/copy`,
+      proxy: true,
+      data: {
+        newName,
+      },
+    });
+  }
+
+  async function editProject(id: string, data: IUpdateProjectPayload) {
+    return apiStore.apiRequest({
+      method: MethodEnum.PATCH,
+      endpoint: `/api/v1/projects/${id}`,
+      proxy: true,
+      data,
+    });
+  }
+
+  async function publishProject(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/projects/${id}/publish`,
+      proxy: true,
+    });
+  }
+
+  async function unpublishProject(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/projects/${id}/unpublish`,
+      proxy: true,
+    });
+  }
+
+  async function getProjectAnalysis(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.GET,
+      endpoint: `/api/v1/projects/${id}/analysis`,
+      proxy: true,
+    });
   }
 
   return {
     getProjectList,
+    createProject,
+    copyProject,
+    editProject,
+    getProject,
+    publishProject,
+    unpublishProject,
+    getProjectAnalysis,
   };
 });

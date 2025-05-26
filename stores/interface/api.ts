@@ -27,4 +27,5 @@ export interface Payload {
   credentials?: string;
   paramsString?: string;
   redirect?: RequestRedirect | undefined;
+  platform?: boolean;
 }

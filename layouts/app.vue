@@ -79,7 +79,7 @@ const tenantDetail = ref<ITenantDetail>();
 const isExpand = ref(true);
 const tenantMetric = ref<ITenantMetric>();
 const { getDetailInfoUser } = useUserStore();
-const { getTenantByID } = useTenantStore();
+const { getTenantByID, setCurrentTenantInfo } = useTenantStore();
 const { getInfoUserFromCookie } = useAuthStore();
 // const { getTenantMetrics } = useTenantStore();
 
@@ -124,6 +124,7 @@ const fetchTenantInfo = async () => {
   if (tenantId) {
     const res = await getTenantByID(tenantId);
     tenantDetail.value = res.data;
+    setCurrentTenantInfo(res.data);
   }
 };
 

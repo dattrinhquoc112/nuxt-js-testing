@@ -53,20 +53,18 @@ export const useApiStore = defineStore('api', () => {
           },
         });
       } else if (payload?.proxy) {
-        response = await $fetch<ResponseDataType>('/client/api/call', {
+        let endpoint = 'call';
+        if (payload.platform) {
+          endpoint = 'platformCall';
+        }
+        response = await $fetch<ResponseDataType>(`/client/api/${endpoint}`, {
           method: MethodEnum.POST,
           body: {
             ...payload,
             headers,
           },
         });
-      } else {
-        response = await requestHelper<ResponseDataType>({
-          ...payload,
-          headers,
-        });
-      }
-      if (payload?.isServerSide) {
+      } else if (payload?.isServerSide) {
         const iv = decodeBase64(import.meta.env.VITE_APP_CRYPTO_IV as string);
         const key = decodeBase64(import.meta.env.VITE_APP_CRYPTO_KEY as string);
         const token = encryptWithCBC({ time: new Date().getTime() }, key, iv);

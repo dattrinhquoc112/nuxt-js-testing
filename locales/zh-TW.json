@@ -318,7 +318,7 @@
   "landing-project_mgmt-description-event_period": "活動期間 {date1}-{date2}",
   "landing-project_mgmt-description-days_until_start": "距離開始還有 {days} 天",
   "landing-project_mgmt-description-days_until_end": "距離結束還有 {days} 天",
-  "landing-project_mgmt-description-last_edited": "最後編輯 {date}",
+  "landing-project_mgmt-description-last_edited": "最後編輯: {date}",
   "landing-project_mgmt-button-view_website": "瀏覽網頁",
   "landing-project_mgmt-button-edit_info": "編輯資訊",
   "landing-project_mgmt-title-meta_section_title": "Meta",
