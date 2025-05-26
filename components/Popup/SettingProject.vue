@@ -170,7 +170,10 @@
           }}</vi-typography>
           <div class="grid-two">
             <div class="section-column">
-              <form-upload-image @change="onChangeOGImage" />
+              <form-upload-image
+                :imageModel="modelOGImage"
+                @change="onChangeOGImage"
+              />
               <vi-form-item prop="ogTitle">
                 <template #default="{ errorMsg }">
                   <vi-input
@@ -205,11 +208,11 @@
               />
             </div>
             <div class="result-preview">
-              <div v-if="!model.ogImageUrl" class="none-image" />
-              <img
-                v-if="model.ogImageUrl"
+              <div v-if="!model.ogImageUri" class="none-image" />
+              <custom-image
+                v-if="model.ogImageUri"
                 class="og-image"
-                :src="model.ogImageUrl"
+                :src="model.ogImageUri"
                 alt="image"
               />
               <vi-typography
@@ -273,7 +276,7 @@ interface Model {
   metaDescription: string;
   metaKeyword: string;
   ogTitle: string;
-  ogImageUrl: string;
+  ogImageUri: string;
   ogDescription: string;
 }
 
@@ -304,8 +307,18 @@ const model = reactive<Model>({
   metaDescription: '',
   metaKeyword: '',
   ogTitle: '',
-  ogImageUrl: '',
+  ogImageUri: '',
   ogDescription: '',
+});
+
+const modelOGImage = reactive<{
+  imageURL: string;
+  fileInput: File | null;
+  isShowImage: boolean;
+}>({
+  imageURL: '',
+  fileInput: null,
+  isShowImage: true,
 });
 
 const disabledSubmit = () => {
@@ -317,7 +330,7 @@ const disabledSubmit = () => {
       'metaDescription',
       'metaKeyword',
       'ogTitle',
-      'ogImageUrl',
+      'ogImageUri',
       'ogDescription',
     ];
     isChanged =
@@ -373,7 +386,7 @@ const rules = {
   ],
 };
 
-const { getProjectUrl } = useProjects();
+const { getProjectUrl, getImage } = useProjects();
 const { editProject } = useProjectStore();
 const { uploadFile } = useUploadStore();
 
@@ -393,6 +406,7 @@ const onEditProject = async () => {
     if (model.ogImageFile) {
       const res = await uploadFile(model.ogImageFile);
       payload.ogImage = {
+        thumbnail: res?.fileUri,
         fileUri: res?.fileUri,
         fileSize: model.ogImageFile.size,
       };
@@ -404,11 +418,11 @@ const onEditProject = async () => {
 };
 
 const onChangeOGImage = (obj: { url: string; file: File }) => {
-  model.ogImageUrl = obj.url;
+  model.ogImageUri = obj.url;
   model.ogImageFile = obj.file;
 };
 
-const initProject = () => {
+const initProject = async () => {
   if (props.project) {
     if (props.project.startTime && props.project.endTime) {
       model.dates = [
@@ -426,8 +440,10 @@ const initProject = () => {
     model.metaDescription = props.project.metaDescription || '';
     model.metaKeyword = props.project.metaKeyword || '';
     model.ogTitle = props.project.ogTitle || '';
-    model.ogImageUrl = props.project.ogImageUrl || '';
     model.ogDescription = props.project.ogDescription || '';
+    // Image
+    model.ogImageUri = getImage(props.project.ogImageUri);
+    modelOGImage.imageURL = getImage(props.project.ogImageUri);
   }
 };
 

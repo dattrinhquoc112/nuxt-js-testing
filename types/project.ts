@@ -27,7 +27,7 @@ export interface IProject {
   metaTitle?: string;
   metaDescription?: string;
   metaKeyword?: string;
-  ogImageUrl?: string;
+  ogImageUri?: string;
   ogTitle?: string;
   ogDescription?: string;
 }
