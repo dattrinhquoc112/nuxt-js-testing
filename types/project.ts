@@ -44,4 +44,9 @@ export interface IUpdateProjectPayload {
   ogImageUrl?: string;
   ogTitle?: string;
   ogDescription?: string;
+  ogImage?: {
+    thumbnail?: string;
+    fileUri?: string;
+    fileSize?: number;
+  };
 }

@@ -82,7 +82,7 @@ export default defineNuxtConfig({
       crossOriginOpenerPolicy: 'same-origin-allow-popups',
       crossOriginResourcePolicy: 'same-origin',
       contentSecurityPolicy: {
-        'default-src': ["'self'"],
+        'default-src': ["'self'", import.meta.env.NUXT_API_URL_UPLOAD],
         'script-src': [
           "'self'",
           "'unsafe-inline'",
