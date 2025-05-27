@@ -25,7 +25,7 @@
     </vi-tooltip>
 
     <div class="ai-tool">
-      <vi-button
+      <!-- <vi-button
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
@@ -41,6 +41,18 @@
             isOpenTooltip = true;
           }
         "
+      > -->
+      <vi-button
+        type="standard-subtle"
+        size="extra-large"
+        width="fit-content"
+        class="mt-4"
+        no-text
+        icon-before="ic_ai_section"
+        :class="{
+          active: activeSidebarButton === SIDEBAR_BUTTONS[1],
+        }"
+        @click="() => handleAction(SIDEBAR_BUTTONS[1], 'toggle-audio')"
       >
       </vi-button>
       <AIToolsTutorial

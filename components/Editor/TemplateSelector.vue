@@ -17,7 +17,7 @@
     </div>
     <div class="templates">
       <div
-        v-for="(template, index) in TEMPLATES_OBJ"
+        v-for="(template, index) in listTemplate"
         :key="index"
         class="template"
         :class="{
@@ -32,14 +32,16 @@
 </template>
 
 <script lang="ts" setup>
-import { TEMPLATES_OBJ } from '~/types/templates';
-
 const emit = defineEmits(['click-template', 'close']);
 
 defineProps({
   templateSelected: {
     type: Object,
     default: () => ({}),
+  },
+  listTemplate: {
+    type: Array as PropType<any>,
+    default: () => [],
   },
 });
 </script>

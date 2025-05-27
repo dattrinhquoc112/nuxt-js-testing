@@ -3,6 +3,7 @@
     <editor-template-selector
       v-if="isShowListSection"
       :templateSelected="templateSelected"
+      :list-template="listTemplate"
       @click-template="onClickTemplate"
       @close="emit('closeSection')"
     />
@@ -22,6 +23,7 @@
       @set-selected-element="(val) => (selectedElement = val)"
       @handle-change-text="handleChangeText"
       @set-hover-position="(val) => (hoverPosition = val)"
+      @set-index-audio="(val) => (indexAudioSelected = val)"
     />
 
     <editor-box-control
@@ -38,6 +40,8 @@
       @close="closePopupChangeImage"
       @change-image="handleChangeImage"
       @change-video="handleChangeVideo"
+      @move-popup-to-top="handleMoveTopPopup"
+      @move-popup-to-bottom="handleMoveBottomPopup"
     />
     <editor-setting-link
       :isShow="isShowPopup.addLink"
@@ -46,6 +50,14 @@
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
       @change-link="handleChangeLink"
+    />
+
+    <editor-setting-audio
+      :isShow="isShowPopup.audioSetting"
+      :positionControlCurrent="positionControlCurrent"
+      @close="closePopupSettingAudio"
+      @move-popup-to-top="handleMoveTopPopup"
+      @move-popup-to-bottom="handleMoveBottomPopup"
     />
 
     <editor-setting-text
@@ -72,7 +84,6 @@
 </template>
 
 <script lang="ts" setup>
-import { TEMPLATES_OBJ } from '@/types/templates';
 import { type RGBA } from '@/types/color';
 import { DEBOUND_TIME_SAVE_HISTORY } from '@/constants/common';
 
@@ -82,10 +93,14 @@ const iSaveHistory = ref(false);
 definePageMeta({
   layout: 'default',
 });
-defineProps({
+const props = defineProps({
   isShowListSection: {
     type: Boolean,
     default: true,
+  },
+  listTemplate: {
+    type: Array as PropType<any>,
+    default: () => [],
   },
 });
 const emit = defineEmits(['closeSection']);
@@ -99,6 +114,7 @@ const buttonColor = ref<RGBA>({
 });
 const indexSectionSelected = ref<number>();
 const classElementSelected = ref<string>();
+const indexAudioSelected = ref<number>();
 const keyElementSelected = ref<string>();
 const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
   pageX: 0,
@@ -106,7 +122,9 @@ const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
 });
 const isChanged = ref(false);
 const sections = ref<any[]>([]);
-const history = ref<any[]>(JSON.parse(JSON.stringify([[TEMPLATES_OBJ[0]]])));
+const history = ref<any[]>(
+  JSON.parse(JSON.stringify([[props.listTemplate[0]]]))
+);
 const currentIndex = ref<number>(0);
 
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
@@ -121,6 +139,7 @@ const initPopupSetting = {
   imageSetting: false,
   addLink: false,
   textSetting: false,
+  audioSetting: false,
   colorSetting: false,
 };
 const isShowPopup = ref({
@@ -130,6 +149,11 @@ const isShowPopup = ref({
 const objectSelecting = computed(() => {
   if (!keyElementSelected.value) return undefined;
   if (indexSectionSelected.value === undefined) return undefined;
+  if (indexAudioSelected.value !== undefined) {
+    return sections.value[indexSectionSelected.value].listAudio[
+      indexAudioSelected.value
+    ][keyElementSelected.value];
+  }
   return sections.value[indexSectionSelected.value][keyElementSelected.value];
 });
 
@@ -158,36 +182,29 @@ watch(buttonColor, () => {
     objectSelecting.value.class = 'bg-color';
     objectSelecting.value.color = colorChange;
     objectSelecting.value.urlImg = '';
-    if (objectSelecting.value.urlVideo) {
-      URL.revokeObjectURL(objectSelecting.value.urlVideo);
-      objectSelecting.value.urlVideo = '';
-    }
-    if (objectSelecting.value.urlImg) {
-      URL.revokeObjectURL(objectSelecting.value.urlImg);
-      objectSelecting.value.urlImg = '';
-    }
+    revokeObjectURL(objectSelecting.value.urlVideo);
+    objectSelecting.value.urlVideo = '';
+    revokeObjectURL(objectSelecting.value.urlImg);
+    objectSelecting.value.urlImg = '';
   }
 });
 const handleChangeVideo = (urlVideo: string) => {
-  if (keyElementSelected.value === 'boxImage') {
-    if (objectSelecting.value.imgUrl) {
-      URL.revokeObjectURL(objectSelecting.value.imgUrl);
-    }
-    if (objectSelecting.value.imgVideo) {
-      URL.revokeObjectURL(objectSelecting.value.imgVideo);
-    }
+  if (keyElementSelected.value === 'audio') {
+    revokeObjectURL(objectSelecting.value.urlImage);
+    revokeObjectURL(objectSelecting.value.urlVideo);
+    objectSelecting.value.urlImage = '';
+    objectSelecting.value.urlVideo = urlVideo;
+  } else if (keyElementSelected.value === 'boxImage') {
+    revokeObjectURL(objectSelecting.value.imgUrl);
+    revokeObjectURL(objectSelecting.value.imgVideo);
     objectSelecting.value.imgUrl = '';
     objectSelecting.value.imgVideo = urlVideo;
   } else {
     objectSelecting.value.class = '';
     objectSelecting.value.color = '';
-    if (objectSelecting.value.urlVideo) {
-      URL.revokeObjectURL(objectSelecting.value.urlVideo);
-    }
-    if (objectSelecting.value.urlImg) {
-      URL.revokeObjectURL(objectSelecting.value.urlImg);
-      objectSelecting.value.urlImg = '';
-    }
+    revokeObjectURL(objectSelecting.value.urlVideo);
+    revokeObjectURL(objectSelecting.value.urlImg);
+    objectSelecting.value.urlImg = '';
     objectSelecting.value.urlVideo = urlVideo;
   }
 };
@@ -207,25 +224,22 @@ const handleChangeText = (event: MouseEvent) => {
   });
 };
 const handleChangeImage = (urlImg: string) => {
-  if (keyElementSelected.value === 'boxImage') {
-    if (objectSelecting.value.imgUrl) {
-      URL.revokeObjectURL(objectSelecting.value.imgUrl);
-    }
-    if (objectSelecting.value.imgVideo) {
-      URL.revokeObjectURL(objectSelecting.value.imgVideo);
-    }
+  if (keyElementSelected.value === 'audio') {
+    revokeObjectURL(objectSelecting.value.urlImage);
+    revokeObjectURL(objectSelecting.value.urlVideo);
+    objectSelecting.value.urlImage = urlImg;
+    objectSelecting.value.urlVideo = '';
+  } else if (keyElementSelected.value === 'boxImage') {
+    revokeObjectURL(objectSelecting.value.imgUrl);
+    revokeObjectURL(objectSelecting.value.imgVideo);
     objectSelecting.value.imgUrl = urlImg;
     objectSelecting.value.imgVideo = '';
   } else {
     objectSelecting.value.class = 'bg-img';
     objectSelecting.value.color = '';
-    if (objectSelecting.value.urlImg) {
-      URL.revokeObjectURL(objectSelecting.value.urlImg);
-    }
-    if (objectSelecting.value.urlVideo) {
-      URL.revokeObjectURL(objectSelecting.value.urlVideo);
-      objectSelecting.value.urlVideo = '';
-    }
+    revokeObjectURL(objectSelecting.value.urlImg);
+    revokeObjectURL(objectSelecting.value.urlVideo);
+    objectSelecting.value.urlVideo = '';
     objectSelecting.value.urlImg = urlImg;
   }
 };
@@ -243,7 +257,11 @@ const handleChangeLink = (link: string) => {
 
 const handleMoveTopPopup = () => {
   if (!selectedElement.value) return;
-  if (keyElementSelected.value !== 'backgroundSection') {
+  if (
+    keyElementSelected.value !== 'backgroundSection' &&
+    keyElementSelected.value !== 'boxImage' &&
+    keyElementSelected.value !== 'audio'
+  ) {
     const coordinates = selectedElement.value.getBoundingClientRect();
     const pageY = coordinates.top - 12;
     const pageX = coordinates.left + coordinates.width / 2;
@@ -257,7 +275,11 @@ const handleMoveTopPopup = () => {
 };
 const handleMoveBottomPopup = () => {
   if (!selectedElement.value) return;
-  if (keyElementSelected.value !== 'backgroundSection') {
+  if (
+    keyElementSelected.value !== 'backgroundSection' &&
+    keyElementSelected.value !== 'boxImage' &&
+    keyElementSelected.value !== 'audio'
+  ) {
     const coordinates = selectedElement.value.getBoundingClientRect();
     const pageY = coordinates.bottom + 12;
     const pageX = coordinates.left + coordinates.width / 2;
@@ -277,7 +299,6 @@ const hiddenAllPopupSetting = () => {
 const hiddenBoxControl = () => {
   isShowControl.value = false;
   hiddenAllPopupSetting();
-  window.removeEventListener('scroll', hiddenBoxControl);
 };
 
 const moveDown = () => {
@@ -397,6 +418,13 @@ const showPopupSettingLink = () => {
 const showPopupSettingColor = () => {
   isShowPopup.value.colorSetting = true;
 };
+const showPopupSettingAudio = () => {
+  isShowControl.value = false;
+  isShowPopup.value.audioSetting = true;
+};
+const closePopupSettingAudio = () => {
+  isShowPopup.value.audioSetting = false;
+};
 const showPopupChangeImage = () => {
   isShowPopup.value.imageSetting = true;
 };
@@ -423,6 +451,7 @@ const defineAction = {
   showPopupSettingColor,
   showPopupSettingText,
   showPopupSettingLink,
+  showPopupSettingAudio,
   moveUp,
   moveDown,
   showPopupChangeImage,
@@ -430,7 +459,7 @@ const defineAction = {
 };
 
 onMounted(() => {
-  sections.value = JSON.parse(JSON.stringify([TEMPLATES_OBJ[0]]));
+  sections.value = JSON.parse(JSON.stringify([props.listTemplate[0]]));
 });
 
 const historyStatus = computed(() => ({
@@ -439,7 +468,7 @@ const historyStatus = computed(() => ({
 }));
 const isSectionDirty = (): boolean => {
   const result =
-    JSON.stringify(sections.value) === JSON.stringify([TEMPLATES_OBJ[0]]);
+    JSON.stringify(sections.value) === JSON.stringify([props.listTemplate[0]]);
   return result;
 };
 defineExpose({
@@ -447,6 +476,7 @@ defineExpose({
   undo,
   historyStatus,
   isSectionDirty,
+  hiddenBoxControl,
 });
 </script>
 

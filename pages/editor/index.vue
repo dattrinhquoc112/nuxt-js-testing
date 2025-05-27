@@ -9,9 +9,11 @@
     @handle-release="handleEvent"
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
+    @scroll-editor="handleHiddenAllControl"
   >
     <editor
       ref="editorRef"
+      :list-template="listTemplateCurrent"
       :is-show-list-section="isShowListSection"
       @close-section="isShowListSection = false"
     />
@@ -49,6 +51,7 @@
 
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
+import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '~/types/templates';
 
 definePageMeta({
   layout: 'editor',
@@ -57,6 +60,7 @@ const isShowListSection = ref(false);
 const historyStatus = ref();
 const isShowModal = ref(false);
 const editorRef = ref();
+const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
 const handleEvent = () => {};
 watch(
   () => editorRef.value?.historyStatus,
@@ -65,9 +69,17 @@ watch(
   }
 );
 const handleClickSideBar = (keyAction: string) => {
+  isShowListSection.value = true;
   if (keyAction === 'toggle-section') {
-    isShowListSection.value = !isShowListSection.value;
+    listTemplateCurrent.value = TEMPLATES_SECTION;
   }
+  if (keyAction === 'toggle-audio') {
+    listTemplateCurrent.value = TEMPLATES_AUDIO;
+  }
+};
+
+const handleHiddenAllControl = () => {
+  editorRef.value?.hiddenBoxControl();
 };
 
 const handleLeave = () => {
