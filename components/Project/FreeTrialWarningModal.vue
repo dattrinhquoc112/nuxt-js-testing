@@ -3,7 +3,7 @@
     :modal-title="$t('app-common-title-reached_limit')"
     :is-show="props.isShowModal"
     size="small"
-    @close="handleClose"
+    @close="emit('close')"
   >
     <div class="container">
       <vi-typography type="body-small" class="description">
@@ -15,7 +15,7 @@
         <vi-button
           type="primary-default"
           class="ml-auto mr-20"
-          @click="handleConfirm"
+          @click="emit('close')"
           width="134px"
         >
           {{ $t('common-action-button-button_confirm') }}
@@ -33,14 +33,6 @@ const props = defineProps({
     default: false,
   },
 });
-
-const handleClose = () => {
-  emit('close');
-};
-
-const handleConfirm = () => {
-  emit('close');
-};
 </script>
 
 <style lang="scss" scoped>
