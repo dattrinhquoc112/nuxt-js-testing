@@ -349,7 +349,7 @@ export const TEMPLATES_AUDIO = [
       {
         audio: {
           urlImage: audioCard,
-          urlVideo: audioCard,
+          urlVideo: '',
           setting: {},
         },
         urlBackground: '',
