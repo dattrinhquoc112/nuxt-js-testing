@@ -26,11 +26,11 @@
       />
       <project-information
         v-if="tabs.value === 'detail'"
-        :project="model.project"
+        v-model:project="model.project"
       />
       <project-analysis
         v-if="tabs.value === 'analysis'"
-        :project="model.project"
+        v-model:project="model.project"
       />
     </div>
     <vi-modal
