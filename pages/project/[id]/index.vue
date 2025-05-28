@@ -122,7 +122,7 @@ const modal = reactive({
 const breadcrumbItems = computed(() => [
   {
     text: t('app-navigation-menu-projects'),
-    link: '/project-list',
+    link: '/project',
   },
   { text: model.project?.name, link: '' },
 ]);
