@@ -15,6 +15,7 @@ export const useUserStore = defineStore('user', () => {
       method: MethodEnum.GET,
       endpoint: `/api/v1/users/${getInfoUserFromCookie()?.sub}`,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -23,6 +24,7 @@ export const useUserStore = defineStore('user', () => {
       method: MethodEnum.GET,
       endpoint: `/api/v1/users/registration-check?email=${email}`,
       proxy: true,
+      platform: true,
     });
   }
 
