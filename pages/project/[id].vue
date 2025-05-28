@@ -107,7 +107,7 @@ const tabs = reactive({
 const breadcrumbItems = computed(() => [
   {
     text: t('app-navigation-menu-projects'),
-    link: '/project-list',
+    link: '/project',
   },
   { text: '咪咪喵喵', link: '' },
 ]);
