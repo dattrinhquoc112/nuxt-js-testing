@@ -60,6 +60,7 @@ const emit = defineEmits([
   'set-selected-element',
   'handle-change-text',
   'set-hover-position',
+  'set-index-audio',
 ]);
 
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
@@ -95,19 +96,19 @@ const sectionClass = (index: number) => {
 const hiddenBoxControl = () => {
   emit('set-show-control', false);
   emit('hidden-all-popup-setting');
-  window.removeEventListener('scroll', hiddenBoxControl);
 };
 const hiddenBoxControlWhenClick = (event: MouseEvent) => {
-  const listClassTriggerHover = [
+  const listClassNotHide = [
     'section-wrap',
     'box-control',
     'popup-setting-text',
     'popup-setting-link',
     'popup-setting-color',
     'popup-setting-image',
+    'popup-setting-audio',
   ];
   if (
-    listClassTriggerHover.some((itemClass) =>
+    listClassNotHide.some((itemClass) =>
       (event.target as HTMLElement).closest(`.${itemClass}`)
     )
   ) {
@@ -140,7 +141,6 @@ const showOptionForButtonHref = (elementButton: HTMLElement) => {
   });
 
   window.addEventListener('click', hiddenBoxControlWhenClick);
-  window.addEventListener('scroll', hiddenBoxControl);
 };
 const showOptionForSection = (elementSection: HTMLElement) => {
   if (!boxControlElement.value) return;
@@ -163,7 +163,26 @@ const showOptionForSection = (elementSection: HTMLElement) => {
   });
 
   window.addEventListener('click', hiddenBoxControlWhenClick);
-  window.addEventListener('scroll', hiddenBoxControl);
+};
+
+const showOptionForAudioImage = (elementSelected: HTMLElement) => {
+  if (!boxControlElement.value) return;
+  emit('hidden-all-popup-setting');
+
+  boxControlElement.value.setAttribute('class', 'box-control');
+  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
+
+  const coordinates = elementSelected.getBoundingClientRect();
+  const pageY = coordinates.bottom + 12;
+  const pageX = coordinates.left + coordinates.width / 2;
+  emit('set-show-control', true);
+
+  emit('set-position-control', {
+    pageY,
+    pageX,
+  });
+
+  window.addEventListener('click', hiddenBoxControlWhenClick);
 };
 
 const showOptionForText = (elementButton: HTMLElement) => {
@@ -184,7 +203,6 @@ const showOptionForText = (elementButton: HTMLElement) => {
   });
 
   window.addEventListener('click', hiddenBoxControlWhenClick);
-  window.addEventListener('scroll', hiddenBoxControl);
 };
 
 const showOptionForRightImage = (elementButton: HTMLElement) => {
@@ -201,15 +219,14 @@ const showOptionForRightImage = (elementButton: HTMLElement) => {
 
   emit('show-popup-change-image');
   window.addEventListener('click', hiddenBoxControlWhenClick);
-  window.addEventListener('scroll', hiddenBoxControl);
 };
 
 const handleShowOption = (event: any, index: number) => {
   if (event.target?.closest('.section-wrap')) {
+    emit('set-index-section-selected', index);
     if (event.target?.classList.contains('section-wrap')) {
       emit('set-class-element-selected', 'section-wrap');
       emit('set-key-element-selected', 'backgroundSection');
-      emit('set-index-section-selected', index);
       nextTick(() => {
         emit('set-selected-element', event.target);
         showOptionForSection(event.target);
@@ -218,7 +235,6 @@ const handleShowOption = (event: any, index: number) => {
     if (event.target?.classList.contains('button-href')) {
       emit('set-class-element-selected', 'button-href');
       emit('set-key-element-selected', 'buttonExternal');
-      emit('set-index-section-selected', index);
       nextTick(() => {
         emit('set-selected-element', event.target);
         showOptionForButtonHref(event.target);
@@ -227,7 +243,6 @@ const handleShowOption = (event: any, index: number) => {
     if (event.target?.classList.contains('text-title')) {
       emit('set-class-element-selected', 'text-title');
       emit('set-key-element-selected', 'textTitle');
-      emit('set-index-section-selected', index);
       nextTick(() => {
         emit('set-selected-element', event.target);
         showOptionForText(event.target);
@@ -236,7 +251,6 @@ const handleShowOption = (event: any, index: number) => {
     if (event.target?.classList.contains('text-head')) {
       emit('set-class-element-selected', 'text-head');
       emit('set-key-element-selected', 'textProduct');
-      emit('set-index-section-selected', index);
       nextTick(() => {
         emit('set-selected-element', event.target);
         showOptionForText(event.target);
@@ -245,7 +259,6 @@ const handleShowOption = (event: any, index: number) => {
     if (event.target?.classList.contains('text-des')) {
       emit('set-class-element-selected', 'text-des');
       emit('set-key-element-selected', 'textDes');
-      emit('set-index-section-selected', index);
       nextTick(() => {
         emit('set-selected-element', event.target);
         showOptionForText(event.target);
@@ -253,11 +266,40 @@ const handleShowOption = (event: any, index: number) => {
     }
     if (event.target?.classList.contains('right-section-image')) {
       emit('set-key-element-selected', 'boxImage');
-      emit('set-index-section-selected', index);
       nextTick(() => {
         emit('set-selected-element', event.target);
         showOptionForRightImage(event.target);
       });
+    }
+    if (event.target?.closest('.card-audio')) {
+      const indexAudio = event.target?.parentElement?.dataset.index;
+      emit('set-index-audio', Number(indexAudio));
+      if (event.target?.classList.contains('audio-image')) {
+        emit('set-class-element-selected', 'audio-image');
+        emit('set-key-element-selected', 'audio');
+        nextTick(() => {
+          emit('set-selected-element', event.target);
+          showOptionForAudioImage(event.target);
+        });
+      }
+      if (event.target?.classList.contains('audio-text-subtitle')) {
+        emit('set-class-element-selected', 'audio-text-subtitle');
+        emit('set-key-element-selected', 'textSubtitle');
+        nextTick(() => {
+          emit('set-selected-element', event.target);
+          showOptionForText(event.target);
+        });
+      }
+      if (event.target?.classList.contains('audio-text-product')) {
+        emit('set-class-element-selected', 'audio-text-subtitle');
+        emit('set-key-element-selected', 'textProduction');
+        nextTick(() => {
+          emit('set-selected-element', event.target);
+          showOptionForText(event.target);
+        });
+      }
+    } else {
+      emit('set-index-audio', undefined);
     }
   }
 };
@@ -268,18 +310,10 @@ const initHover = () => {
 
   const handleHover = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    const listClassNotHover = [
-      'box-control',
-      'popup-setting-text',
-      'popup-setting-link',
-      'popup-setting-color',
-      'popup-setting-image',
-    ];
-    if (
-      listClassNotHover.some((itemClass) => target.closest(`.${itemClass}`))
-    ) {
+    if (target.closest('.icon-play')) {
       return;
     }
+
     if (props.templateSelected.value) return;
 
     defaultOutline = target.style.outline;

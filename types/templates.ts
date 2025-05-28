@@ -5,78 +5,16 @@ import sectionDemo2 from '@/assets/images/listSection/2.png';
 import sectionDemo3 from '@/assets/images/listSection/3.png';
 import sectionDemo4 from '@/assets/images/listSection/4.png';
 import sectionDemo5 from '@/assets/images/listSection/5.png';
+import audioDemo1 from '@/assets/images/listSection/audio_1.png';
+import audioDemo2 from '@/assets/images/listSection/audio_2.png';
+import audioDemo3 from '@/assets/images/listSection/audio_3.png';
+import audioCard from '@/assets/images/listSection/audio_card.png';
 
 export interface TemplateProps {
   id: string;
   html: string;
 }
-
-export const TEMPLATES: TemplateProps[] = [
-  {
-    id: '1',
-    html: `<section class="section-wrap section-one">
-    <div class="content center">
-      <div class="text-head">Production</div>
-      <div class="text-title">Empower \n Growth</div>
-      <a class="button-href">Learn More</a>
-    </div>
-  </section>`,
-  },
-  {
-    id: '2',
-    html: `<section class="section-wrap section-one">
-    <div class="content left">
-    <div class="text-title">Empower \n Growth</div>
-    <div class="text-des">Helvetica Light is an easy-to-read font, with tall and narrow letters, that works well on almost every site.</div>
-    <a class="button-href">Learn More</a>
-    </div>
-  </section>`,
-  },
-  {
-    id: '3',
-    html: `<section class="section-wrap section-one">
-    <div class="content right">
-    <div class="text-title">Empower \n Growth</div>
-    <div class="text-des">Helvetica Light is an easy-to-read font, with tall and narrow letters, that works well on almost every site.</div>
-    <a class="button-href">Learn More</a>
-    </div>
-  </section>`,
-  },
-  {
-    id: '4',
-    html: `<section class="section-wrap section-two">
-    
-    <div class="left">
-      <div class="text-head">Production</div>
-      <div class="text-title">Empower \n Growth</div>
-      <a class="button-href">Learn More</a>
-    </div>
-
-    <div class="right">
-      <img src="${defaultImage}"/>
-    </div>
-    </div>
-  </section>`,
-  },
-  {
-    id: '5',
-    html: `<section class="section-wrap section-two reverse">
-    
-    <div class="left">
-      <div class="text-head">Production</div>
-      <div class="text-title">Empower \n Growth</div>
-      <a class="button-href">Learn More</a>
-    </div>
-
-    <div class="right">
-      <img src="${defaultImage}"/>
-    </div>
-    </div>
-  </section>`,
-  },
-];
-
-export const TEMPLATES_OBJ = [
+export const TEMPLATES_SECTION = [
   {
     id: 'section-one-center',
     textProduct: {
@@ -234,7 +172,7 @@ export const TEMPLATES_OBJ = [
         fontWeight: '400',
         lineHeight: 'normal',
         whiteSpace: 'pre-line',
-        textAlgin: 'center',
+        textAlign: 'center',
       },
     },
     textTitle: {
@@ -288,7 +226,7 @@ export const TEMPLATES_OBJ = [
         fontWeight: '400',
         lineHeight: 'normal',
         whiteSpace: 'pre-line',
-        textAlgin: 'center',
+        textAlign: 'center',
       },
     },
     textTitle: {
@@ -330,5 +268,286 @@ export const TEMPLATES_OBJ = [
       urlVideo: '',
     },
     imageDemo: sectionDemo5,
+  },
+];
+export const TEMPLATES_AUDIO = [
+  {
+    id: 'audio-section',
+    textTitle: {
+      text: 'Empower \n Growth',
+      style: {
+        color: '#000',
+        fontFamily: 'Inter',
+        textAlign: 'center',
+        fontSize: '48px',
+        fontStyle: 'normal',
+        fontWeight: '700',
+        lineHeight: 'normal',
+        whiteSpace: 'pre-line',
+      },
+    },
+    listAudio: [
+      {
+        audio: {
+          urlImage: audioCard,
+          urlVideo: '',
+          setting: {},
+        },
+        urlBackground: '',
+        textSubtitle: {
+          text: 'Subtitle',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '28px',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+        textProduction: {
+          text: 'Production',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '18px',
+            fontStyle: 'normal',
+            fontWeight: '400',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+      },
+    ],
+    imageDemo: audioDemo1,
+    backgroundSection: {
+      urlImg: '',
+      color: '#fff',
+      urlVideo: '',
+      class: 'bg-color',
+    },
+  },
+  {
+    id: 'audio-section',
+    textTitle: {
+      text: 'Empower \n Growth',
+      style: {
+        color: '#000',
+        fontFamily: 'Inter',
+        textAlign: 'center',
+        fontSize: '48px',
+        fontStyle: 'normal',
+        fontWeight: '700',
+        lineHeight: 'normal',
+        whiteSpace: 'pre-line',
+      },
+    },
+    listAudio: [
+      {
+        audio: {
+          urlImage: audioCard,
+          urlVideo: '',
+          setting: {},
+        },
+        urlBackground: '',
+        textSubtitle: {
+          text: 'Subtitle',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '28px',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+        textProduction: {
+          text: 'Production',
+          style: {
+            fontFamily: 'Inter',
+            color: '#000',
+            fontSize: '18px',
+            fontStyle: 'normal',
+            fontWeight: '400',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+      },
+      {
+        audio: {
+          urlImage: audioCard,
+          urlVideo: '',
+          setting: {},
+        },
+        urlBackground: '',
+        textSubtitle: {
+          text: 'Subtitle',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '28px',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+        textProduction: {
+          text: 'Production',
+          style: {
+            fontFamily: 'Inter',
+            color: '#000',
+            fontSize: '18px',
+            fontStyle: 'normal',
+            fontWeight: '400',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+      },
+    ],
+    imageDemo: audioDemo2,
+    backgroundSection: {
+      urlImg: '',
+      color: '#fff',
+      urlVideo: '',
+      class: 'bg-color',
+    },
+  },
+  {
+    id: 'audio-section',
+    textTitle: {
+      text: 'Empower \n Growth',
+      style: {
+        color: '#000',
+        fontFamily: 'Inter',
+        textAlign: 'center',
+        fontSize: '48px',
+        fontStyle: 'normal',
+        fontWeight: '700',
+        lineHeight: 'normal',
+        whiteSpace: 'pre-line',
+      },
+    },
+    listAudio: [
+      {
+        audio: {
+          urlImage: audioCard,
+          urlVideo: '',
+          setting: {},
+        },
+        urlBackground: '',
+        textSubtitle: {
+          text: 'Subtitle',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '28px',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+        textProduction: {
+          text: 'Production',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '18px',
+            fontStyle: 'normal',
+            fontWeight: '400',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+      },
+      {
+        audio: {
+          urlImage: audioCard,
+          urlVideo: '',
+          setting: {},
+        },
+        urlBackground: '',
+        textSubtitle: {
+          text: 'Subtitle',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '28px',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+        textProduction: {
+          text: 'Production',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '18px',
+            fontStyle: 'normal',
+            fontWeight: '400',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+      },
+      {
+        audio: {
+          urlImage: audioCard,
+          urlVideo: '',
+          setting: {},
+        },
+        urlBackground: '',
+        textSubtitle: {
+          text: 'Subtitle',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '28px',
+            fontStyle: 'normal',
+            fontWeight: '600',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+        textProduction: {
+          text: 'Production',
+          style: {
+            color: '#000',
+            fontFamily: 'Inter',
+            fontSize: '18px',
+            fontStyle: 'normal',
+            fontWeight: '400',
+            lineHeight: 'normal',
+            whiteSpace: 'pre-line',
+            textAlign: 'center',
+          },
+        },
+      },
+    ],
+    imageDemo: audioDemo3,
+    backgroundSection: {
+      urlImg: '',
+      color: '#fff',
+      urlVideo: '',
+      class: 'bg-color',
+    },
   },
 ];

@@ -11,11 +11,11 @@
         @handle-release="$emit('handleRelease')"
         @handle-back="$emit('handleBack')"
       />
-      <div class="editor__container">
+      <div ref="editorContainer" class="editor__container">
         <SideBarEditor
           @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
         />
-        <vi-scroll class="editor__content">
+        <vi-scroll id="editor_content" class="editor__content">
           <slot />
         </vi-scroll>
       </div>
@@ -37,7 +37,7 @@ defineProps<{
   };
 }>();
 
-defineEmits<{
+const emit = defineEmits<{
   handleUndo: [];
   handleRedo: [];
   handleSwitchLayout: [];
@@ -46,7 +46,33 @@ defineEmits<{
   handleRelease: [];
   clickSidebar: [string];
   handleBack: [];
+  scrollEditor: [];
 }>();
+const editorContainer = ref<HTMLElement>();
+
+const editorContentElement = computed(() =>
+  editorContainer.value?.querySelector('#editor_content')
+);
+
+const handleScrollEditorContent = () => {
+  emit('scrollEditor');
+};
+
+onMounted(() => {
+  if (!editorContentElement.value) return;
+  editorContentElement.value.addEventListener(
+    'scroll',
+    handleScrollEditorContent
+  );
+});
+
+onUnmounted(() => {
+  if (!editorContentElement.value) return;
+  editorContentElement.value.removeEventListener(
+    'scroll',
+    handleScrollEditorContent
+  );
+});
 </script>
 
 <style lang="scss" scoped>

@@ -136,6 +136,81 @@
       </video>
     </div>
   </section>
+  <section
+    v-if="section.id === 'audio-section'"
+    class="section-wrap section-audio"
+    @click.stop="(event) => emit('show-option', event)"
+    :class="`${section.backgroundSection.class}`"
+    :style="`--bg-image:url(${section.backgroundSection.urlImg});--bg-color:${section.backgroundSection.color};`"
+  >
+    <video
+      v-if="section.backgroundSection.urlVideo"
+      :key="section.backgroundSection.urlVideo"
+      class="video-background"
+      autoplay
+      muted
+      loop
+      playsinline
+      @click.stop="clickParent"
+    >
+      <source :src="section.backgroundSection.urlVideo" />
+    </video>
+    <div class="wrap-content">
+      <div
+        class="text-title"
+        :style="section?.textTitle.style"
+        @dblclick="(event) => emit('handle-change-text', event)"
+      >
+        {{ section?.textTitle?.text }}
+      </div>
+      <div class="list-audio">
+        <div
+          v-for="(audio, audioIndex) in section.listAudio"
+          :key="audioIndex"
+          class="card-audio"
+          :data-index="audioIndex"
+        >
+          <div class="audio-image">
+            <video
+              v-if="audio.audio.urlVideo"
+              :key="audio.audio.urlVideo"
+              class="video-background"
+              autoplay
+              muted
+              loop
+              playsinline
+              @click.stop="clickParent"
+            >
+              <source :src="audio.audio.urlVideo" />
+            </video>
+            <img
+              v-else
+              @click.stop="clickParent"
+              :src="audio.audio.urlImage"
+              alt=""
+            />
+            <div class="icon-play">
+              <vi-icon name="ic_play" size="24" color="#000" />
+            </div>
+          </div>
+          <div
+            class="audio-text-subtitle"
+            :style="audio?.textSubtitle.style"
+            @dblclick="(event) => emit('handle-change-text', event)"
+          >
+            {{ audio.textSubtitle.text }}
+          </div>
+          <div
+            class="audio-text-product"
+            :style="audio?.textProduction.style"
+            @dblclick="(event) => emit('handle-change-text', event)"
+          >
+            {{ audio.textProduction.text }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
 </template>
 
 <script lang="ts" setup>
