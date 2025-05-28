@@ -1,7 +1,7 @@
 <template>
   <div class="information-container">
     <div class="information-iitem mw-360">
-      <custom-image :src="project?.thumbnail" />
+      <custom-image :src="getImage(project?.thumbnail)" />
       <vi-button class="br-1000" type="standard-default" width="fit-content">{{
         getStatus(props.project?.status || '')
       }}</vi-button>
@@ -45,7 +45,7 @@
         $t('landing-project_mgmt-title-og_section_title')
       }}</vi-typography>
       <div class="child-item fit">
-        <custom-image :src="project?.ogImageUrl" />
+        <custom-image :src="getImage(props.project?.ogImageUri)" />
         <vi-typography type="headline-xs">{{ project?.ogTitle }}</vi-typography>
         <vi-typography class="description" type="body-small">{{
           project?.ogDescription
@@ -65,7 +65,7 @@ const props = defineProps({
   },
 });
 
-const { getStatus, getProjectUrl } = useProjects();
+const { getStatus, getProjectUrl, getImage } = useProjects();
 </script>
 <style lang="scss" scoped>
 .button-action {

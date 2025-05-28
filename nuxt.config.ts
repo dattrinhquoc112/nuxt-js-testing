@@ -82,7 +82,7 @@ export default defineNuxtConfig({
       crossOriginOpenerPolicy: 'same-origin-allow-popups',
       crossOriginResourcePolicy: 'same-origin',
       contentSecurityPolicy: {
-        'default-src': ["'self'"],
+        'default-src': ["'self'", import.meta.env.NUXT_API_URL_UPLOAD],
         'script-src': [
           "'self'",
           "'unsafe-inline'",
@@ -104,6 +104,7 @@ export default defineNuxtConfig({
           "'self'",
           'data:',
           'blob:',
+          import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
           import.meta.env.NUXT_API_URL_GET_AVATAR,
           'https://content.voiceclone.dev.vyin.ai',
         ],
