@@ -18,6 +18,8 @@ export default defineNuxtConfig({
       apiRedirectUri: process.env.NUXT_API_REDIRECT_URI,
       apiHost: process.env.NUXT_PUBLIC_API_HOST,
       contactLink: process.env.NUXT_PUBLIC_CONTACT_LINK,
+      sdkTrackingBUID: process.env.NUXT_APP_SDK_TRACKING_BUID,
+      sdkTrackingProperty: process.env.NUXT_APP_SDK_TRACKING_PROPERTY,
     },
   },
 

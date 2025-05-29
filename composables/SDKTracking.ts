@@ -18,7 +18,7 @@ export default function useSDKTracking(sdkInfo: {
   tenantID: string;
 }) {
   const SDKInstance = ref();
-
+  const { sdkTrackingBUID, sdkTrackingProperty } = useRuntimeConfig().public;
   const handlePageViewEvent = () =>
     SDKInstance.value.passEvent(
       new window.webTrackingSDK.events.PageViewEvent({
@@ -53,7 +53,11 @@ export default function useSDKTracking(sdkInfo: {
         },
       })
     );
-  const handleClickEvent = () =>
+  const handleClickEvent = (clickInfo: {
+    sec: string;
+    type: string;
+    audioId: string;
+  }) =>
     SDKInstance.value.passEvent(
       new window.webTrackingSDK.events.ClickEvent({
         eventId: EVENT_KEY.CONTENT_CLICK.EVENT_ID,
@@ -61,8 +65,11 @@ export default function useSDKTracking(sdkInfo: {
         pageInfo: {
           tenant: sdkInfo.tenantID,
           page: sdkInfo.pageName,
-          sec: 'ai',
-          type: 'event_page',
+        },
+        click_info: {
+          sec: clickInfo.sec,
+          type: clickInfo.type,
+          audio_id: clickInfo.audioId,
         },
       })
     );
@@ -87,9 +94,9 @@ export default function useSDKTracking(sdkInfo: {
 
   onBeforeMount(async () => {
     SDKInstance.value = await window.webTrackingSDK.init({
-      BUID: 'GAMA-aiaas-01',
-      property: 'aiaas',
-      sourceProperty: '10',
+      BUID: sdkTrackingBUID,
+      property: sdkTrackingProperty,
+      sourceProperty: sdkInfo.tenantID,
     });
   });
 
