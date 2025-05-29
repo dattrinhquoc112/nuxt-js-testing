@@ -291,7 +291,18 @@ export const TEMPLATES_AUDIO = [
         audio: {
           urlImage: audioCard,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: null,
+            pitch: null,
+            speed: null,
+            text: null,
+            listPhrase: [
+              {
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
         urlBackground: '',
         textSubtitle: {
@@ -350,7 +361,18 @@ export const TEMPLATES_AUDIO = [
         audio: {
           urlImage: audioCard,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: null,
+            pitch: null,
+            speed: null,
+            text: null,
+            listPhrase: [
+              {
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
         urlBackground: '',
         textSubtitle: {
@@ -384,7 +406,18 @@ export const TEMPLATES_AUDIO = [
         audio: {
           urlImage: audioCard,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: null,
+            pitch: null,
+            speed: null,
+            text: null,
+            listPhrase: [
+              {
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
         urlBackground: '',
         textSubtitle: {
@@ -443,7 +476,18 @@ export const TEMPLATES_AUDIO = [
         audio: {
           urlImage: audioCard,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: null,
+            pitch: null,
+            speed: null,
+            text: null,
+            listPhrase: [
+              {
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
         urlBackground: '',
         textSubtitle: {
@@ -477,7 +521,18 @@ export const TEMPLATES_AUDIO = [
         audio: {
           urlImage: audioCard,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: null,
+            pitch: null,
+            speed: null,
+            text: null,
+            listPhrase: [
+              {
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
         urlBackground: '',
         textSubtitle: {
@@ -511,7 +566,18 @@ export const TEMPLATES_AUDIO = [
         audio: {
           urlImage: audioCard,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: null,
+            pitch: null,
+            speed: null,
+            text: null,
+            listPhrase: [
+              {
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
         urlBackground: '',
         textSubtitle: {
