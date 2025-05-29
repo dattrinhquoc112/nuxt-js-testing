@@ -67,8 +67,8 @@ export default function useSDKTracking(sdkInfo: {
           page: sdkInfo.pageName,
         },
         click_info: {
-          sec: clickInfo.sec,
-          type: clickInfo.type,
+          sec: 'ai',
+          type: 'audio_tta',
           audio_id: clickInfo.audioId,
         },
       })
