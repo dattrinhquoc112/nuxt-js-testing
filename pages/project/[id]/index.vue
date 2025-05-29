@@ -129,14 +129,22 @@ const breadcrumbItems = computed(() => [
 
 const onCopy = async () => {
   if (!model.project) return;
-  await copyProject(model.project.id, `${model.project.name} Copy`);
-  toastMessage(t('landing-common-message-copied'));
+  try {
+    await copyProject(model.project.id, `${model.project.name} Copy`);
+    toastMessage(t('landing-common-message-copied'));
+  } catch (error) {
+    toastMessage(t('landing-common-message-copied-error'));
+  }
 };
 
 const onUnpublish = async () => {
   if (!model.project) return;
-  await unpublishProject(model.project.id);
-  toastMessage(t('landing-common-message-unpublished'));
+  try {
+    await unpublishProject(model.project.id);
+    toastMessage(t('landing-common-message-unpublished'));
+  } catch (error) {
+    toastMessage(t('landing-common-message-unpublished-error'));
+  }
   modal.close();
 };
 
