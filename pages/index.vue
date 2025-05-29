@@ -1,6 +1,5 @@
-<template></template>
 <script setup lang="ts">
 onMounted(() => {
-  navigateTo('/project-list');
+  navigateTo('/project');
 });
 </script>

@@ -107,7 +107,7 @@ const tabs = reactive({
 const breadcrumbItems = computed(() => [
   {
     text: t('app-navigation-menu-projects'),
-    link: '/project-list',
+    link: '/project',
   },
   { text: '咪咪喵喵', link: '' },
 ]);
@@ -129,14 +129,22 @@ const modal = reactive({
 
 const onCopy = async () => {
   if (!model.project) return;
-  await copyProject(model.project.id, `${model.project.name} Copy`);
-  toastMessage(t('landing-common-message-copied'));
+  try {
+    await copyProject(model.project.id, `${model.project.name} Copy`);
+    toastMessage(t('landing-common-message-copied'));
+  } catch (error) {
+    toastMessage(t('landing-common-message-copied-error'));
+  }
 };
 
 const onUnpublish = async () => {
   if (!model.project) return;
-  await unpublishProject(model.project.id);
-  toastMessage(t('landing-common-message-unpublished'));
+  try {
+    await unpublishProject(model.project.id);
+    toastMessage(t('landing-common-message-unpublished'));
+  } catch (error) {
+    toastMessage(t('landing-common-message-unpublished-error'));
+  }
   modal.close();
 };
 

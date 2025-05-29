@@ -63,7 +63,7 @@
         />
         <div
           class="not-found"
-          v-show="!loading.search && listPage.length === 0"
+          v-show="!loading.search && model.projects.length === 0"
         >
           <img src="/assets/icons/searchNotFound.svg" />
           <vi-typography type="subtitle-large"
@@ -71,11 +71,11 @@
           >
         </div>
         <div
-          v-show="!loading.search && listPage.length > 0"
+          v-show="!loading.search && model.projects.length > 0"
           class="item"
-          v-for="(item, index) in listPage"
+          v-for="(item, index) in model.projects"
           :key="index"
-          @click="onOpenDetail(item)"
+          @click="onClickProject(item)"
         >
           <div class="item-thumbnail">
             <custom-image :src="item.thumbnail" />
@@ -173,6 +173,7 @@ interface Model {
   status: string;
   listStatus: { value: string; label: string }[];
   project?: IProject;
+  projects: IProject[];
 }
 
 definePageMeta({
@@ -196,6 +197,7 @@ const model = reactive<Model>({
   size: 150,
   search: '',
   status: 'ALL',
+  projects: [],
   listStatus: [
     {
       value: 'ALL',
@@ -226,7 +228,6 @@ const modal = reactive({
   },
 });
 
-const listPage = ref<IProject[]>([]);
 const actionRef = reactive<{ [key: string]: boolean }>({});
 
 const fetchProjectList = debounce(async () => {
@@ -237,7 +238,7 @@ const fetchProjectList = debounce(async () => {
     status: model.status,
     nameKeyword: model.search.trim(),
   });
-  listPage.value = res.data;
+  model.projects = res.data;
   loading.search = false;
 }, 500);
 
@@ -261,13 +262,6 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
   }
 };
 
-const onCreateProject = async (name: string) => {
-  await createProject(name);
-  toastMessage(t('landing-common-message-saved'));
-  fetchProjectList();
-  modal.close();
-};
-
 const onAction = async (project?: IProject, action = '') => {
   switch (action) {
     case 'create':
@@ -275,12 +269,7 @@ const onAction = async (project?: IProject, action = '') => {
       if (metricInfo.isLimitedProject || metricInfo.isLimitedCapacity) {
         handleModal();
       } else {
-        modal.title = t('landing-project_mgmt-button-create');
-        model.project = undefined;
-        modal.confirm = (name: string) => {
-          onCreateProject(name);
-        };
-        modal.open();
+        navigateTo('/project/editor');
       }
       break;
     case 'edit':
@@ -306,8 +295,13 @@ const onAction = async (project?: IProject, action = '') => {
   }
 };
 
-const onOpenDetail = (item: IProject) => {
-  navigateTo(`/project/${item.id}`);
+const onClickProject = (item: IProject) => {
+  // NOTE: DRAFT is PENDING_PUBLISH, PUBLISHED is other
+  if (item.status === 'PENDING_PUBLISH') {
+    navigateTo(`/project/editor?id=${item.id}`);
+  } else {
+    navigateTo(`/project/${item.id}`);
+  }
 };
 
 onMounted(() => {
