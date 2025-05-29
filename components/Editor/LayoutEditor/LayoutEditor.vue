@@ -2,23 +2,40 @@
   <div class="bg-black">
     <div class="editor__bg">
       <NavigatorEditor
+        :historyStatus="historyStatus"
         @handle-undo="$emit('handleUndo')"
         @handle-redo="$emit('handleRedo')"
         @handle-switcher-layout="$emit('handleSwitchLayout')"
         @handle-play="$emit('handlePlay')"
         @hanlde-store-changes="$emit('hanldeStoreChanges')"
         @handle-release="$emit('handleRelease')"
+        @handle-back="$emit('handleBack')"
       />
       <div class="editor__container">
-        <SideBarEditor />
-        <slot />
+        <SideBarEditor
+          @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
+        />
+        <vi-scroll class="editor__content">
+          <slot />
+        </vi-scroll>
       </div>
     </div>
+    <Tutorial :tutorial-type="TUTORIAL_TYPE.WEB_EDITOR" />
   </div>
 </template>
 <script setup lang="ts">
 import NavigatorEditor from '@/components/Editor/LayoutEditor/components/NavigatorEditor.vue';
 import SideBarEditor from '@/components/Editor/LayoutEditor/components/SideBarEditor.vue';
+import { TUTORIAL_TYPE } from '@/constants/common';
+
+import { defineProps } from 'vue';
+
+defineProps<{
+  historyStatus: {
+    redoButtonEnable: boolean;
+    undoButtonEnable: boolean;
+  };
+}>();
 
 defineEmits<{
   handleUndo: [];
@@ -27,11 +44,17 @@ defineEmits<{
   handlePlay: [];
   hanldeStoreChanges: [];
   handleRelease: [];
+  clickSidebar: [string];
+  handleBack: [];
 }>();
 </script>
 
 <style lang="scss" scoped>
 .editor {
+  &__content {
+    width: 100%;
+    height: calc(100vh - 64px);
+  }
   &__bg {
     background: linear-gradient(0deg, #030c11 0%, rgba(3, 12, 17, 0) 100%),
       linear-gradient(

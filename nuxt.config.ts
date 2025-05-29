@@ -117,6 +117,7 @@ export default defineNuxtConfig({
           import.meta.env.NUXT_API_URL_GET_AVATAR,
           'https://content.voiceclone.dev.vyin.ai',
         ],
+        'media-src': ['blob:'],
         'object-src': ["'none'"],
         'frame-src': ["'self'"],
         'frame-ancestors': ["'none'"],
