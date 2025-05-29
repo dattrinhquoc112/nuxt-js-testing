@@ -1,2 +1,5 @@
-<template></template>
-<script setup lang="ts"></script>
+<script setup lang="ts">
+onMounted(() => {
+  navigateTo('/project');
+});
+</script>

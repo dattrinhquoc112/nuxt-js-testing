@@ -1,59 +1,71 @@
 <template>
   <div class="information-container">
     <div class="information-iitem mw-360">
-      <img :src="imgSrc" />
-      <vi-button class="br-1000" type="standard-default" width="fit-content"
-        >未開始</vi-button
-      >
-      <vi-typography type="headline-xs">咪咪喵喵</vi-typography>
-      <vi-typography class="description" type="body-small"
-        >活動期間 2025/01/01-2025/12/31</vi-typography
-      >
+      <custom-image :src="project?.thumbnail" />
+      <vi-button class="br-1000" type="standard-default" width="fit-content">{{
+        getStatus(props.project?.status || '')
+      }}</vi-button>
+      <vi-typography type="headline-xs">{{ project?.name }}</vi-typography>
+      <vi-typography class="description" type="body-small">{{
+        project?.startTime &&
+        project?.endTime &&
+        $t('landing-project_mgmt-description-event_period', {
+          date1: getDates([project?.startTime || '']),
+          date2: getDates([project?.endTime || '']),
+        })
+      }}</vi-typography>
       <div class="child-item">
         <vi-typography class="description" type="body-small">
-          https://campaign.dev.alice-ai.dev/eventpage/group/ccc
+          {{ getProjectUrl(project) }}
         </vi-typography>
         <vi-button
           class="browser-btn"
           type="standard-subtle"
-          @click="
-            openLink('https://campaign.dev.alice-ai.dev/eventpage/group/ccc')
-          "
+          @click="openLink(getProjectUrl(project))"
         >
-          瀏覽網頁 <vi-icon name="ic_arrow_up_right" size="16" />
+          {{ $t('landing-project_mgmt-button-view_website') }}
+          <vi-icon name="ic_arrow_up_right" size="16" />
         </vi-button>
       </div>
-      <vi-button type="standard-default" width="fit-content"
-        >編輯資訊</vi-button
-      >
+      <vi-button type="standard-default" width="fit-content">{{
+        $t('landing-project_mgmt-button-edit_info')
+      }}</vi-button>
     </div>
     <vi-divider direction="vertical" />
     <div class="information-iitem">
-      <vi-typography>Meta</vi-typography>
+      <vi-typography>{{
+        $t('landing-project_mgmt-title-meta_section_title')
+      }}</vi-typography>
       <div class="child-item">
-        <vi-typography>咪咪喵喵</vi-typography>
-        <vi-typography
-          >網頁搜尋到的活動小簡介網頁搜尋到的活動小簡介網頁搜尋到的活動小簡介網頁搜尋到的活動小簡介網頁搜尋到的活動小簡介網頁搜</vi-typography
-        >
-        <vi-typography>活動, AI應用, 聲音小遊戲, 隨機, 偶像</vi-typography>
+        <vi-typography>{{ project?.metaTitle }}</vi-typography>
+        <vi-typography>{{ project?.metaDescription }}</vi-typography>
+        <vi-typography>{{ project?.metaKeyword }}</vi-typography>
       </div>
-      <vi-typography>OG</vi-typography>
+      <vi-typography>{{
+        $t('landing-project_mgmt-title-og_section_title')
+      }}</vi-typography>
       <div class="child-item fit">
-        <img :src="imgSrc" />
-        <vi-typography type="headline-xs">咪咪喵喵</vi-typography>
-        <vi-typography class="description" type="body-small"
-          >社群分享的介紹內容</vi-typography
-        >
+        <custom-image :src="project?.ogImageUrl" />
+        <vi-typography type="headline-xs">{{ project?.ogTitle }}</vi-typography>
+        <vi-typography class="description" type="body-small">{{
+          project?.ogDescription
+        }}</vi-typography>
       </div>
     </div>
   </div>
 </template>
 <script setup lang="ts">
-// TODO: dummy image
-const imgSrc = new URL(
-  '@/assets/images/demo/page_thumbnail.png',
-  import.meta.url
-).href;
+import useProjects from '~/composables/projects';
+import type { IProject } from '~/types/project';
+
+const props = defineProps({
+  project: {
+    type: Object as PropType<IProject>,
+    default: undefined,
+  },
+});
+
+const { getStatus, getProjectUrl } = useProjects();
 </script>
 <style lang="scss" scoped>
 .button-action {

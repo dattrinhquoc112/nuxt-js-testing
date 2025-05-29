@@ -318,7 +318,7 @@
   "landing-project_mgmt-description-event_period": "Event Period {date1}-{date2}",
   "landing-project_mgmt-description-days_until_start": "{days} Days Until Start",
   "landing-project_mgmt-description-days_until_end": "{days} Days Until End",
-  "landing-project_mgmt-description-last_edited": "Last Edited {date}",
+  "landing-project_mgmt-description-last_edited": "Last Edited: {date}",
   "landing-project_mgmt-button-view_website": "View Website",
   "landing-project_mgmt-button-edit_info": "Edit Information",
   "landing-project_mgmt-title-meta_section_title": "Meta",
