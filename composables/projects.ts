@@ -8,9 +8,11 @@ export default function useProjects() {
   const { getFileURL } = useUploadStore();
   const tenantName = getCurrentTenantInfo()?.name;
   const getProjectUrl = (project?: IProject): string => {
-    if (!project) return '';
-    const host = window.location.origin;
-    return new URL(`${host}/${tenantName}/${project.name}`).href;
+    if (project?.eventEnglishName && tenantName) {
+      const host = window.location.origin;
+      return new URL(`${host}/event/${tenantName}/${project.name}`).href;
+    }
+    return '';
   };
 
   const getStatus = (status: string) => {

@@ -80,7 +80,7 @@
               <div>
                 <div class="title-page">{{ item.name }}</div>
                 <div class="url-page">
-                  {{ getProjectUrl(item) }}
+                  {{ item.eventOfficialUrl }}
                 </div>
               </div>
               <div>
@@ -175,7 +175,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { getProjectUrl, getStatus, getImage } = useProjects();
+const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject } = useProjectStore();
 
 const loading = reactive({
