@@ -10,6 +10,7 @@
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
   >
+    {{ focusedTime }}
     <editor
       ref="editorRef"
       :is-show-list-section="isShowListSection"
@@ -49,9 +50,16 @@
 
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
+import useSDKTracking from '~/composables/SDKTracking';
+import { ROUTE } from '~/constants/router';
 
 definePageMeta({
   layout: 'editor',
+});
+
+const { focusedTime } = useSDKTracking({
+  pageName: 'homepage',
+  tenantID: '10',
 });
 const isShowListSection = ref(false);
 const historyStatus = ref();
@@ -72,19 +80,18 @@ const handleClickSideBar = (keyAction: string) => {
 
 const handleLeave = () => {
   isShowModal.value = false;
-  navigateTo('/project-list');
+  navigateTo(ROUTE.PROJECT_LIST);
 };
 
 const handleSaveDraft = () => {
   // TODO: implement save draft logic
   isShowModal.value = false;
-  navigateTo('/project-list');
-  alert('Draft saved successfully!');
+  navigateTo(ROUTE.PROJECT_LIST);
 };
 const handleBack = () => {
   const isSectionDirty = editorRef.value?.isSectionDirty();
   if (isSectionDirty) {
-    navigateTo('/project-list');
+    navigateTo(ROUTE.PROJECT_LIST);
   } else {
     isShowModal.value = true;
   }
