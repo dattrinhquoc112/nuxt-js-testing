@@ -1,5 +1,6 @@
 <template>
   <LayoutEditor
+    :rwd-mode="'MOBILE'"
     @handle-undo="handleUndo"
     :history-status="historyStatus"
     @handle-redo="handleRedo"
@@ -9,6 +10,11 @@
     @handle-release="handleEvent"
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
+    @handle-activity-settings="() => {}"
+    @handle-edit-info="() => {}"
+    @handle-switch-layout="() => {}"
+    @hanlde-store-changes="() => {}"
+    :project-name="'fdsaf'"
   >
     <editor
       ref="editorRef"
