@@ -1,5 +1,11 @@
 <template>
   <div class="app-container">
+    <project-free-trial-warning-modal
+      :is-show-modal="modalMetric.warningLimitProject"
+    />
+    <project-reach-maximum-warning-modal
+      :is-show-modal="modalMetric.warningLimitCapacity"
+    />
     <div class="header">
       <vi-typography type="subtitle-large">{{
         $t('app-navigation-menu-projects')
@@ -155,6 +161,7 @@
 </template>
 
 <script lang="ts" setup>
+import useMetric from '~/composables/metric';
 import useProjects from '~/composables/projects';
 import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
@@ -177,6 +184,8 @@ const { t } = useI18n();
 
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject } = useProjectStore();
+
+const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
 
 const loading = reactive({
   search: false,
@@ -252,10 +261,15 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
   }
 };
 
-const onAction = (project?: IProject, action = '') => {
+const onAction = async (project?: IProject, action = '') => {
   switch (action) {
     case 'create':
-      navigateTo('/project/editor');
+      await getTenantMetric();
+      if (metricInfo.isLimitedProject || metricInfo.isLimitedCapacity) {
+        handleModal();
+      } else {
+        navigateTo('/project/editor');
+      }
       break;
     case 'edit':
       modal.title = t('landing-project_mgmt-modal-title_edit_project_info');

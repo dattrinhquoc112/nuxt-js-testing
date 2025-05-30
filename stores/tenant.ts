@@ -195,6 +195,14 @@ export const useTenantStore = defineStore('tenant', () => {
     });
   }
 
+  async function getMetrics() {
+    return apiStore.apiRequest({
+      method: MethodEnum.GET,
+      endpoint: `/api/v1/tenants/metrics`,
+      proxy: true,
+    });
+  }
+
   async function getTenantByID(id: string): Promise<ITenantDetailResponse> {
     return apiStore.apiRequest({
       method: MethodEnum.GET,
@@ -223,6 +231,7 @@ export const useTenantStore = defineStore('tenant', () => {
     getUserTenantByID,
     getCurrentTenantInfo,
     setCurrentTenantInfo,
+    getMetrics,
   };
 });
 
