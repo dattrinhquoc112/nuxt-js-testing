@@ -2,8 +2,8 @@
   <vi-modal
     modal-title="編輯專案資訊"
     :is-show="show"
-    @close="emit('close')"
-    size="full-screen"
+    @close="onClose"
+    size="large"
   >
     <vi-form :model="model" :rules="rules" @submit="() => {}">
       <div class="modal-content">
