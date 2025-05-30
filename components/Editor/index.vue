@@ -51,7 +51,7 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
       @change-link="handleChangeLink"
     />
-
+    
     <editor-setting-audio
       :isShow="isShowPopup.audioSetting"
       :positionControlCurrent="positionControlCurrent"
@@ -197,6 +197,27 @@ const classPopupSettingImage = computed(() => {
   if (keyElementSelected.value === 'boxImage') return 'for-box-image';
   return '';
 });
+
+const checkMaterials = (
+  objSelecting: any,
+  newFileUri: string,
+  type = 'UPDATE'
+) => {
+  if (!listMaterials.value.length) return;
+  const materialIndex = listMaterials.value.findIndex(
+    (item) =>
+      item.fileUri === objSelecting.urlImage ||
+      item.fileUri === objSelecting.urlVideo
+  );
+  if (materialIndex === -1) return;
+  if (type === 'DELETE') {
+    listMaterials.value.splice(materialIndex, 1);
+    return;
+  }
+
+  listMaterials.value[materialIndex].fileUri = newFileUri;
+};
+
 watch(buttonColor, () => {
   const colorChange = `rgba(${buttonColor.value.r},${buttonColor.value.g},${
     buttonColor.value.b
@@ -218,6 +239,7 @@ watch(buttonColor, () => {
     const bg = obj as BACKGROUND_SECTION;
     bg.class = 'bg-color';
     bg.color = colorChange;
+    checkMaterials(bg, '', 'DELETE');
     bg.urlVideo = '';
     bg.urlImage = '';
     bg.file = null;
@@ -236,6 +258,7 @@ const handleChangeVideo = ({
   if (!obj) return;
   revokeObjectURL(obj.urlVideo);
   revokeObjectURL(obj.urlImage);
+  checkMaterials(obj, urlVideo);
   obj.urlImage = '';
   obj.urlVideo = urlVideo;
   obj.file = file;
@@ -273,6 +296,7 @@ const handleChangeImage = ({
   if (!obj) return;
   revokeObjectURL(obj.urlImage);
   revokeObjectURL(obj.urlVideo);
+  checkMaterials(obj, urlImage);
   obj.urlVideo = '';
   obj.file = file;
   obj.urlImage = urlImage;
@@ -501,20 +525,32 @@ const defineAction = {
   showPopupChangeImage,
   handleDeleteSection,
 };
-const addMaterial = (
+const updateMaterial = (
   dataApi: UPLOAD_RESPONSE,
   file: File,
   indexSection: number,
+  fileUri: string,
   type: string = 'MEDIA'
 ) => {
-  listMaterials.value.push({
-    indexSection,
-    id: null,
-    type,
-    thumbnail: 'string',
-    fileUri: dataApi.fileUri,
-    fileSize: file.size,
-  });
+  const findMaterial = listMaterials.value.find(
+    (item) => item.fileUri === fileUri
+  );
+
+  if (findMaterial) {
+    findMaterial.indexSection = indexSection;
+    findMaterial.type = type;
+    findMaterial.fileUri = dataApi.fileUri;
+    findMaterial.fileSize = file.size;
+  } else {
+    listMaterials.value.push({
+      indexSection,
+      id: null,
+      type,
+      thumbnail: 'string',
+      fileUri: dataApi.fileUri,
+      fileSize: file.size,
+    });
+  }
 };
 
 const uploadAllImage = async (key: string, type: string = 'MEDIA') => {
@@ -526,10 +562,14 @@ const uploadAllImage = async (key: string, type: string = 'MEDIA') => {
         const res: UPLOAD_RESPONSE | undefined = await uploadFile(
           item[key].file
         );
-        if (item[key].urlImage) item[key].urlImage = res?.fileUri;
-        if (item[key].urlVideo) item[key].urlVideo = res?.fileUri;
-        if (res) {
-          addMaterial(res, item[key].file, index, type);
+        if (!res) return;
+        if (item[key].urlImage) {
+          updateMaterial(res, item[key].file, index, item[key].urlImage, type);
+          item[key].urlImage = res?.fileUri;
+        }
+        if (item[key].urlVideo) {
+          updateMaterial(res, item[key].file, index, item[key].urlVideo, type);
+          item[key].urlVideo = res?.fileUri;
         }
       }
     })
@@ -553,10 +593,14 @@ const updateAllImageAudio = async () => {
       listAudio.map(async (item: any, index: number) => {
         if (item?.file) {
           const res: UPLOAD_RESPONSE | undefined = await uploadFile(item.file);
-          if (item.urlImage) item.urlImage = res?.fileUri;
-          if (item.urlVideo) item.urlVideo = res?.fileUri;
-          if (res) {
-            addMaterial(res, item.file, index);
+          if (!res) return;
+          if (item.urlImage) {
+            updateMaterial(res, item.file, index, item.urlImage);
+            item.urlImage = res?.fileUri;
+          }
+          if (item.urlVideo) {
+            updateMaterial(res, item.file, index, item.urlVideo);
+            item.urlVideo = res?.fileUri;
           }
         }
       })
