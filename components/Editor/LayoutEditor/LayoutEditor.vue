@@ -7,7 +7,7 @@
         @handle-redo="$emit('handleRedo')"
         @handle-switcher-layout="$emit('handleSwitchLayout')"
         @handle-play="$emit('handlePlay')"
-        @hanlde-store-changes="$emit('hanldeStoreChanges')"
+        @handle-store-changes="$emit('handleStoreChanges')"
         @handle-release="$emit('handleRelease')"
         @handle-back="$emit('handleBack')"
       />
@@ -42,7 +42,7 @@ const emit = defineEmits<{
   handleRedo: [];
   handleSwitchLayout: [];
   handlePlay: [];
-  hanldeStoreChanges: [];
+  handleStoreChanges: [];
   handleRelease: [];
   clickSidebar: [string];
   handleBack: [];

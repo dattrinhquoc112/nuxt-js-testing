@@ -5,7 +5,7 @@
     @handle-redo="handleRedo"
     @handle-switcher-layout="handleEvent"
     @handle-play="handleEvent"
-    @handle-store-changes="handleEvent"
+    @handle-store-changes="handleSaveTemplate"
     @handle-release="handleEvent"
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
@@ -68,6 +68,11 @@ watch(
     historyStatus.value = newVal;
   }
 );
+
+const handleSaveTemplate = () => {
+  editorRef.value.handleSaveTemplate();
+};
+
 const handleClickSideBar = (keyAction: string) => {
   isShowListSection.value = true;
   if (keyAction === 'toggle-section') {

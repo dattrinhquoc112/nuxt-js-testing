@@ -3,7 +3,7 @@ import { useApiStore } from '@/stores/api';
 import { MethodEnum } from './interface/api';
 import type { createDemoAudioPayload } from './interface/request/audio';
 
-export const useAudioStore = defineStore('audio', () => {
+export const useEditorStore = defineStore('editor', () => {
   const apiStore = useApiStore();
 
   async function getVoiceModelList() {

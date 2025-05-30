@@ -272,7 +272,7 @@ const handleShowOption = (event: any, index: number) => {
       });
     }
     if (event.target?.closest('.card-audio')) {
-      const indexAudio = event.target?.parentElement?.dataset.index;
+      const indexAudio = event.target?.closest('.card-audio')?.dataset.index;
       emit('set-index-audio', Number(indexAudio));
       if (event.target?.classList.contains('audio-image')) {
         emit('set-class-element-selected', 'audio-image');

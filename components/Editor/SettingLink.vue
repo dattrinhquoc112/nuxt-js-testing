@@ -30,6 +30,8 @@
         width="100%"
         placeholder="請貼上網址連結"
         size="small"
+        :hint="messageError"
+        :error="Boolean(messageError)"
       />
     </div>
   </div>
@@ -45,10 +47,22 @@ const emit = defineEmits([
   'change-link',
 ]);
 const link = ref();
+const messageError = ref('');
+
+function isValidURL(url: string) {
+  const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/\S*)?$/;
+  return regex.test(url);
+}
 
 watch(link, () => {
-  // handle validate link
-  emit('change-link', link.value);
+  const isValidLink = isValidURL(link.value);
+  if (!isValidLink) {
+    messageError.value = 'Link Khong Hop Le';
+    emit('change-link', '');
+  } else {
+    messageError.value = '';
+    emit('change-link', link.value);
+  }
 });
 
 const props = defineProps({
@@ -62,6 +76,7 @@ const props = defineProps({
   },
 });
 const popupElement = ref<HTMLElement>();
+
 useCheckHeightPopup(props, popupElement, emit);
 </script>
 
@@ -76,14 +91,7 @@ useCheckHeightPopup(props, popupElement, emit);
   background: $brand-navy-800;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25),
     0px 0px 4px 0px rgba(0, 0, 0, 0.15);
-  :deep() {
-    .input-container {
-      gap: 0;
-      .input-footer {
-        display: none;
-      }
-    }
-  }
+
   &.show-on-top {
     transform: translateX(-50%) translateY(-100%);
   }
