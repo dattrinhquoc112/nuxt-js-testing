@@ -93,7 +93,7 @@ const navOptions = [
     id: 1,
     text: '專案列表',
     nameIcon: 'ic_project',
-    link: '/project-list',
+    link: '/project',
   },
 ];
 const navUsers = [

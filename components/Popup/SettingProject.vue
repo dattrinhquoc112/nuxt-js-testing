@@ -2,7 +2,7 @@
   <vi-modal
     modal-title="編輯專案資訊"
     :is-show="show"
-    @close="emit('close')"
+    @close="onClose"
     size="full-screen"
   >
     <vi-form :model="model" :rules="rules" @submit="() => {}">
@@ -98,38 +98,55 @@
                       )
                     "
                     required
+                    :max="60"
+                    is-count
                     width="100%"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
                   />
                 </template>
               </vi-form-item>
-              <vi-input
-                v-model="model.metaDescription"
-                size="large"
-                type="textarea"
-                :label="$t('landing-project_mgmt-title-meta_description')"
-                :placeholder="
-                  $t(
-                    'landing-project_mgmt-placeholder-placeholder_meta_description'
-                  )
-                "
-                width="100%"
-                height="210px"
-              />
-              <vi-input
-                v-model="model.metaKeyword"
-                size="large"
-                type="textarea"
-                :label="$t('landing-project_mgmt-title-meta_keyword')"
-                :placeholder="
-                  $t(
-                    'landing-project_mgmt-placeholder-placeholder_meta_keyword'
-                  )
-                "
-                width="100%"
-                height="210px"
-              />
+              <vi-form-item prop="metaDescription">
+                <template #default="{ errorMsg }">
+                  <vi-input
+                    v-model="model.metaDescription"
+                    size="large"
+                    type="textarea"
+                    :label="$t('landing-project_mgmt-title-meta_description')"
+                    :placeholder="
+                      $t(
+                        'landing-project_mgmt-placeholder-placeholder_meta_description'
+                      )
+                    "
+                    :max="155"
+                    is-count
+                    width="100%"
+                    height="210px"
+                    :error="Boolean(errorMsg)"
+                    :hint="errorMsg"
+                  />
+                </template>
+              </vi-form-item>
+              <vi-form-item prop="metaKeyword">
+                <template #default="{ errorMsg }">
+                  <vi-input
+                    v-model="model.metaKeyword"
+                    size="large"
+                    type="textarea"
+                    :label="$t('landing-project_mgmt-title-meta_keyword')"
+                    :placeholder="
+                      $t(
+                        'landing-project_mgmt-placeholder-placeholder_meta_keyword'
+                      )
+                    "
+                    :max="25"
+                    width="100%"
+                    height="210px"
+                    :error="Boolean(errorMsg)"
+                    :hint="errorMsg"
+                  />
+                </template>
+              </vi-form-item>
             </div>
             <div class="result-preview">
               <vi-typography
@@ -187,25 +204,35 @@
                       )
                     "
                     required
+                    :max="95"
+                    is-count
                     width="100%"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
                   />
                 </template>
               </vi-form-item>
-              <vi-input
-                v-model="model.ogDescription"
-                size="large"
-                type="textarea"
-                :label="$t('landing-project_mgmt-title-og_description')"
-                :placeholder="
-                  $t(
-                    'landing-project_mgmt-placeholder-placeholder_og_description'
-                  )
-                "
-                width="100%"
-                height="210px"
-              />
+              <vi-form-item prop="ogDescription">
+                <template #default="{ errorMsg }">
+                  <vi-input
+                    v-model="model.ogDescription"
+                    size="large"
+                    type="textarea"
+                    :label="$t('landing-project_mgmt-title-og_description')"
+                    :placeholder="
+                      $t(
+                        'landing-project_mgmt-placeholder-placeholder_og_description'
+                      )
+                    "
+                    :max="200"
+                    is-count
+                    width="100%"
+                    height="210px"
+                    :error="Boolean(errorMsg)"
+                    :hint="errorMsg"
+                  />
+                </template>
+              </vi-form-item>
             </div>
             <div class="result-preview">
               <div v-if="!model.ogImageUri" class="none-image" />
@@ -251,7 +278,7 @@
         >
         <vi-button
           type-button="button"
-          @click="emit('close')"
+          @click="onClose"
           type="standard-default"
           width="fit-content"
           >{{ $t('common-action-button-button_cancel') }}</vi-button
@@ -278,6 +305,7 @@ interface Model {
   ogTitle: string;
   ogImageUri: string;
   ogDescription: string;
+  project?: IProject;
 }
 
 const { t } = useI18n();
@@ -365,6 +393,11 @@ const rules = {
       }),
       trigger: 'change',
     },
+    {
+      regex: /^[a-z0-9\-._~]+$/,
+      message: t('error_fe-data-validation-input_format_invalid'),
+      trigger: 'change',
+    },
   ],
   metaTitle: [
     {
@@ -374,6 +407,25 @@ const rules = {
       }),
       trigger: 'change',
     },
+    {
+      max: 60,
+      message: t('error_fe-data-validation-input_length_exceeded'),
+      trigger: 'change',
+    },
+  ],
+  metaDescription: [
+    {
+      max: 155,
+      message: t('error_fe-data-validation-input_length_exceeded'),
+      trigger: 'change',
+    },
+  ],
+  metaKeyword: [
+    {
+      max: 25,
+      message: t('error_fe-data-validation-input_length_exceeded'),
+      trigger: 'change',
+    },
   ],
   ogTitle: [
     {
@@ -381,6 +433,18 @@ const rules = {
       message: t('error_fe-data-validation-field_required_empty', {
         field_name: t('landing-project_mgmt-title-og_title'),
       }),
+      trigger: 'change',
+    },
+    {
+      max: 95,
+      message: t('error_fe-data-validation-input_length_exceeded'),
+      trigger: 'change',
+    },
+  ],
+  ogDescription: [
+    {
+      max: 200,
+      message: t('error_fe-data-validation-input_length_exceeded'),
       trigger: 'change',
     },
   ],
@@ -402,6 +466,10 @@ const onEditProject = async () => {
       metaKeyword: model.metaKeyword,
       ogTitle: model.ogTitle,
       ogDescription: model.ogDescription,
+      eventOfficialUrl: getProjectUrl({
+        ...props.project,
+        eventEnglishName: model.eventEnglishName,
+      }),
     };
     if (model.ogImageFile) {
       const res = await uploadFile(model.ogImageFile);
@@ -411,7 +479,8 @@ const onEditProject = async () => {
         fileSize: model.ogImageFile.size,
       };
     }
-    await editProject(props.project?.id, payload);
+    const res = await editProject(props.project?.id, payload);
+    model.project = res.data;
     toastMessage(t('landing-common-message-saved'));
     loading.update = false;
   }
@@ -424,15 +493,20 @@ const onChangeOGImage = (obj: { url: string; file: File }) => {
 
 const initProject = async () => {
   if (props.project) {
+    model.project = props.project;
     if (props.project.startTime && props.project.endTime) {
       model.dates = [
         formatDate(props.project.startTime, 'YYYY/MM/DD HH:mm:ss'),
         formatDate(props.project.endTime, 'YYYY/MM/DD HH:mm:ss'),
       ];
     } else {
+      const createdAt = new Date(props.project.createdAt);
+      const plus30Days = new Date(
+        createdAt.getTime() + 30 * 24 * 60 * 60 * 1000
+      );
       model.dates = [
-        formatDate(new Date(), 'YYYY/MM/DD HH:mm:ss'),
-        formatDate(new Date(), 'YYYY/MM/DD HH:mm:ss'),
+        formatDate(createdAt, 'YYYY/MM/DD HH:mm:ss'),
+        formatDate(plus30Days, 'YYYY/MM/DD HH:mm:ss'),
       ];
     }
     model.eventEnglishName = props.project.eventEnglishName || '';
@@ -445,6 +519,10 @@ const initProject = async () => {
     model.ogImageUri = getImage(props.project.ogImageUri);
     modelOGImage.imageURL = getImage(props.project.ogImageUri);
   }
+};
+
+const onClose = () => {
+  emit('close', model.project);
 };
 
 onMounted(() => {

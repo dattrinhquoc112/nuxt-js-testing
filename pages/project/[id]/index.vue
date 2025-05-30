@@ -26,11 +26,11 @@
       />
       <project-information
         v-if="tabs.value === 'detail'"
-        :project="model.project"
+        v-model:project="model.project"
       />
       <project-analysis
         v-if="tabs.value === 'analysis'"
-        :project="model.project"
+        v-model:project="model.project"
       />
     </div>
     <vi-modal
@@ -121,21 +121,29 @@ const modal = reactive({
 const breadcrumbItems = computed(() => [
   {
     text: t('app-navigation-menu-projects'),
-    link: '/project-list',
+    link: '/project',
   },
   { text: model.project?.name, link: '' },
 ]);
 
 const onCopy = async () => {
   if (!model.project) return;
-  await copyProject(model.project.id, `${model.project.name} Copy`);
-  toastMessage(t('landing-common-message-copied'));
+  try {
+    await copyProject(model.project.id, `${model.project.name} Copy`);
+    toastMessage(t('landing-common-message-copied'));
+  } catch (error) {
+    toastMessage(t('landing-common-message-copied-error'));
+  }
 };
 
 const onUnpublish = async () => {
   if (!model.project) return;
-  await unpublishProject(model.project.id);
-  toastMessage(t('landing-common-message-unpublished'));
+  try {
+    await unpublishProject(model.project.id);
+    toastMessage(t('landing-common-message-unpublished'));
+  } catch (error) {
+    toastMessage(t('landing-common-message-unpublished-error'));
+  }
   modal.close();
 };
 
