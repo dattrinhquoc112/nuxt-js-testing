@@ -2,11 +2,15 @@ import { defineStore } from 'pinia';
 import { useApiStore } from '@/stores/api';
 import { MethodEnum } from './interface/api';
 import type { IPresignedUrl } from './interface/response/share';
+import type { UPLOAD_RESPONSE } from './interface/response/upload';
 
 export const useUploadStore = defineStore('upload', () => {
   const apiStore = useApiStore();
 
-  async function uploadFile(file: File, objectType = 'MATERIAL') {
+  async function uploadFile(
+    file: File,
+    objectType = 'MATERIAL'
+  ): Promise<UPLOAD_RESPONSE | undefined> {
     try {
       const presignedUrl: IPresignedUrl = await apiStore.apiRequest({
         method: MethodEnum.POST,
@@ -21,7 +25,7 @@ export const useUploadStore = defineStore('upload', () => {
             'Content-Type': file.type,
           },
         });
-        return presignedUrl.data;
+        return presignedUrl.data as UPLOAD_RESPONSE;
       }
       throw new Error('Not found pre-signed URL');
     } catch (error) {}

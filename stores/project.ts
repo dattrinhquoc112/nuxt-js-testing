@@ -81,6 +81,23 @@ export const useProjectStore = defineStore('project', () => {
     });
   }
 
+  async function updateContentProject(id: string, data: any) {
+    return apiStore.apiRequest({
+      method: MethodEnum.PATCH,
+      endpoint: `/api/v1/projects/${id}/content`,
+      proxy: true,
+      data,
+    });
+  }
+
+  async function getContentProject(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.GET,
+      endpoint: `/api/v1/projects/${id}/content`,
+      proxy: true,
+    });
+  }
+
   return {
     getProjectList,
     createProject,
@@ -90,5 +107,7 @@ export const useProjectStore = defineStore('project', () => {
     publishProject,
     unpublishProject,
     getProjectAnalysis,
+    updateContentProject,
+    getContentProject,
   };
 });

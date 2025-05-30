@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="audioSelecting?.setting"
     ref="popupElement"
     class="popup-setting-audio"
     :style="{
@@ -31,38 +32,47 @@
       </div>
       <vi-dropdown
         class="mt-24"
-        v-model="sizeValue"
+        v-model="audioSelecting.setting.voiceModelId"
         size="small"
         label="聲音選擇"
-        :listOption="dropdownOptions"
+        :listOption="listModel"
       />
       <div class="box-adjust-speech">
         <vi-typography type="subtitle-small">調節語速</vi-typography>
         <vi-progress
-          v-model="dualSlider"
+          v-model="audioSelecting.setting.speed"
           has-tick-mark
           is-show-legend
           progress-width="100%"
           type="dual-slider"
-          :data="arrayExample"
+          :data="arraySpeed"
         />
         <vi-typography type="subtitle-small">調節語速</vi-typography>
         <vi-progress
-          v-model="dualSlider"
+          v-model="audioSelecting.setting.pitch"
           has-tick-mark
           is-show-legend
           progress-width="100%"
           type="dual-slider"
-          :data="arrayExample"
+          :data="arrayPitch"
         />
       </div>
 
       <div class="box-demo">
-        <vi-typography type="body-small"
-          >AI Clone 預設文案提示文字內容AI Clone 預設文案提示文字內容AI Clone
-          預設文案提示文字內容</vi-typography
-        >
-        <editor-icon-play />
+        <vi-typography type="body-small">點擊 Play 試聽聲音</vi-typography>
+        <!--   <editor-icon-play class="ml-auto" /> -->
+        <div class="custom-audio">
+          <vi-audio
+            :audio-file="audioFile"
+            width="100%"
+            :show-timer="false"
+            :is-show-audio-size="false"
+            :is-show-status="isLoadingGetDemo"
+            :is-show-control-buttons="!isLoadingGetDemo"
+            :show-file-info="false"
+            :is-show-progress="false"
+          />
+        </div>
       </div>
 
       <div class="text-randomly">
@@ -73,7 +83,7 @@
 
       <div class="list-phrase">
         <div
-          v-for="(item, index) in listPhrase"
+          v-for="(item, index) in audioSelecting.setting.listPhrase"
           :key="index"
           class="item-phrase"
         >
@@ -87,14 +97,20 @@
             :max="50"
             end-label-icon="ic_close"
             placeholder="請輸入語句"
+            @change="() => handleCreateDemo(index)"
           />
           <div class="audio-box">
-            <vi-progress
-              v-model="singerSlider"
-              type="single-slider"
-              :data="arrayExample2"
-            />
-            <editor-icon-play />
+            <div class="custom-audio">
+              <vi-audio
+                :audio-file="audioFile"
+                width="100%"
+                :show-timer="false"
+                :is-show-audio-size="false"
+                :is-show-status="isLoadingGetDemo"
+                :is-show-control-buttons="!isLoadingGetDemo"
+                :show-file-info="false"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -112,18 +128,10 @@
 </template>
 
 <script lang="ts" setup>
+import _ from 'lodash';
 import { ref } from 'vue';
 import useCheckHeightPopup from '~/composables/checkHeightPopupSetting';
-
-const dualSlider = ref('中');
-const singerSlider = ref(40);
-const arrayExample2 = new Array(100).fill('').map((_, index) => index + 1);
-const arrayExample = ['慢', '中', '快'];
-const itemPhrase = {
-  text: '',
-  audio: '',
-};
-const listPhrase = ref([JSON.parse(JSON.stringify(itemPhrase))]);
+import { useEditorStore } from '~/stores/editor';
 
 const emit = defineEmits([
   'change-align',
@@ -133,15 +141,7 @@ const emit = defineEmits([
   'move-popup-to-bottom',
 ]);
 
-const dropdownOptions = ref([
-  { text: 'item 1', value: 'value 1' },
-  { text: 'item 2', value: 'value 2' },
-  { text: 'item 3', value: 'value 3' },
-  { text: 'item 4', value: 'value 4' },
-  { text: 'item 5', value: 'value 5' },
-]);
-const sizeValue = ref('value 1');
-
+const audioSelecting = defineModel<any>();
 const props = defineProps({
   positionControlCurrent: {
     type: Object as PropType<{ pageX: number; pageY: number }>,
@@ -152,11 +152,82 @@ const props = defineProps({
     default: false,
   },
 });
+
+const mapSpeed = {
+  慢: 0.5,
+  中: 1,
+  快: 1.5,
+};
+const mapPitch = {
+  低: 0.5,
+  中: 1,
+  高: 1.5,
+};
+
+const arraySpeed = [0.5, 1, 1.5];
+const arrayPitch = [0.5, 1, 1.5];
+
+const audioFile = 'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg';
+
+const itemPhrase = {
+  text: '',
+  audio: '',
+  id: null,
+};
+const { getVoiceModelList, getListDemos, createDemo } = useEditorStore();
+
+const listModel = ref<{ text: string; value: string }[]>([]);
+const isLoadingGetDemo = ref(false);
+
 const popupElement = ref<HTMLElement>();
 const addPhrase = () => {
-  listPhrase.value.push(JSON.parse(JSON.stringify(itemPhrase)));
+  audioSelecting.value.setting.listPhrase.push(_.cloneDeep(itemPhrase));
 };
+const handleCreateDemo = _.debounce(async (index: number) => {
+  if (!audioSelecting.value.setting.voiceModelId.value) return;
+  try {
+    isLoadingGetDemo.value = true;
+    const res = await createDemo(
+      audioSelecting.value.setting.voiceModelId.value as string,
+      {
+        pitch:
+          mapPitch[audioSelecting.value.setting.speed as keyof typeof mapPitch],
+        speed:
+          mapSpeed[audioSelecting.value.setting.pitch as keyof typeof mapSpeed],
+        text: audioSelecting.value.setting.listPhrase[index].text,
+      }
+    );
+    console.log('res: ', res.data);
+  } catch (error) {
+  } finally {
+    isLoadingGetDemo.value = false;
+  }
+}, 500);
+
+const fetchListVoiceModel = async () => {
+  const listModelApi = (await getVoiceModelList()).data;
+  listModel.value = listModelApi.map((item: any) => ({
+    text: item.name,
+    value: item.id,
+  }));
+};
+
+watch(
+  () => audioSelecting.value?.setting?.voiceModelId.value,
+  async () => {
+    if (!audioSelecting.value?.setting?.voiceModelId.value) return;
+    const res = await getListDemos(
+      audioSelecting.value.setting.voiceModelId.value
+    );
+    console.log(res.data);
+  }
+);
+
 useCheckHeightPopup(props, popupElement, emit);
+
+onMounted(() => {
+  fetchListVoiceModel();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -219,6 +290,14 @@ useCheckHeightPopup(props, popupElement, emit);
       display: flex;
       align-items: center;
       gap: 12px;
+      .custom-audio {
+        margin-left: auto;
+        :deep() {
+          .player-container {
+            gap: 0;
+          }
+        }
+      }
     }
     .text-randomly {
       padding: 8px 12px;
@@ -251,18 +330,55 @@ useCheckHeightPopup(props, popupElement, emit);
         .audio-box {
           border-radius: 4px;
           background: $neutral-white-alpha-7;
-          padding-top: 24px;
+          padding-top: 36px;
           margin-top: -24px;
           padding-bottom: 16px;
           padding-right: 12px;
           padding-left: 12px;
+        }
+      }
+    }
+    .custom-audio {
+      :deep() {
+        .player-container {
           display: flex;
           flex-direction: column;
+          align-items: unset;
+          width: 100%;
           gap: 8px;
-          align-items: flex-end;
+          .progress-container {
+            margin: 0;
+          }
+          .control-buttons {
+            width: fit-content;
+            margin-left: auto;
+            button {
+              margin-right: 0;
+              img {
+                width: 16px;
+                height: 16px;
+              }
+            }
+          }
+          .status-container {
+            width: 32px;
+            height: 32px;
+            justify-content: center;
+            margin-left: auto;
+            border-radius: 100px;
+            background: $neutral-white-alpha-90;
+            .spin-loading {
+              background-color: transparent;
+              .img-loading {
+                width: 16px !important;
+                height: 16px !important;
+              }
+            }
+          }
         }
       }
     }
   }
 }
 </style>
+~/stores/editor

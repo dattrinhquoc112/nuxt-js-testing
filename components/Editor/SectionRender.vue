@@ -8,7 +8,9 @@
     @click.stop="(event) => emit('show-option', event)"
     class="section-wrap section-one"
     :class="section.backgroundSection.class"
-    :style="`--bg-image:url(${section.backgroundSection.urlImg});--bg-color:${section.backgroundSection.color};`"
+    :style="`--bg-image:url(${getImage(
+      section.backgroundSection.urlImage
+    )});--bg-color:${section.backgroundSection.color};`"
   >
     <video
       v-if="section.backgroundSection.urlVideo"
@@ -20,7 +22,7 @@
       loop
       playsinline
     >
-      <source :src="section.backgroundSection.urlVideo" />
+      <source :src="getImage(section.backgroundSection.urlVideo)" />
     </video>
 
     <div
@@ -79,7 +81,9 @@
     :class="`${section.backgroundSection.class} ${
       section?.id === 'section-two-reverse' ? 'reverse' : ''
     }`"
-    :style="`--bg-image:url(${section.backgroundSection.urlImg});--bg-color:${section.backgroundSection.color};`"
+    :style="`--bg-image:url(${getImage(
+      section.backgroundSection.urlImage
+    )});--bg-color:${section.backgroundSection.color};`"
   >
     <video
       v-if="section.backgroundSection.urlVideo"
@@ -91,7 +95,7 @@
       playsinline
       @click.stop="clickParent"
     >
-      <source :src="section.backgroundSection.urlVideo" />
+      <source :src="getImage(section.backgroundSection.urlVideo)" />
     </video>
     <div class="left">
       <div
@@ -119,12 +123,12 @@
     <div class="right right-section-image">
       <img
         @click.stop="clickParent"
-        v-if="section.boxImage.imgUrl"
-        :src="section.boxImage.imgUrl"
+        v-if="section.boxImage.urlImage"
+        :src="getImage(section.boxImage.urlImage)"
       />
       <video
-        v-if="section.boxImage.imgVideo"
-        :key="section.boxImage.imgVideo"
+        v-if="section.boxImage.urlVideo"
+        :key="section.boxImage.urlVideo"
         class="right-section-video-background"
         autoplay
         muted
@@ -132,7 +136,7 @@
         playsinline
         @click.stop="clickParent"
       >
-        <source :src="section.boxImage.imgVideo" />
+        <source :src="getImage(section.boxImage.urlVideo)" />
       </video>
     </div>
   </section>
@@ -141,7 +145,9 @@
     class="section-wrap section-audio"
     @click.stop="(event) => emit('show-option', event)"
     :class="`${section.backgroundSection.class}`"
-    :style="`--bg-image:url(${section.backgroundSection.urlImg});--bg-color:${section.backgroundSection.color};`"
+    :style="`--bg-image:url(${getImage(
+      section.backgroundSection.urlImage
+    )});--bg-color:${section.backgroundSection.color};`"
   >
     <video
       v-if="section.backgroundSection.urlVideo"
@@ -153,7 +159,7 @@
       playsinline
       @click.stop="clickParent"
     >
-      <source :src="section.backgroundSection.urlVideo" />
+      <source :src="getImage(section.backgroundSection.urlVideo)" />
     </video>
     <div class="wrap-content">
       <div
@@ -181,12 +187,12 @@
               playsinline
               @click.stop="clickParent"
             >
-              <source :src="audio.audio.urlVideo" />
+              <source :src="getImage(audio.audio.urlVideo)" />
             </video>
             <img
               v-else
               @click.stop="clickParent"
-              :src="audio.audio.urlImage"
+              :src="getImage(audio.audio.urlImage)"
               alt=""
             />
             <div class="icon-play">
@@ -214,6 +220,8 @@
 </template>
 
 <script lang="ts" setup>
+import useProjects from '~/composables/projects';
+
 defineProps({
   section: {
     type: Object as PropType<any>,
@@ -225,6 +233,7 @@ const clickParent = (event: MouseEvent) => {
   const element = event.target as HTMLElement;
   element.parentElement?.click();
 };
+const { getImage } = useProjects();
 </script>
 
 <style></style>

@@ -14,7 +14,78 @@ export interface TemplateProps {
   id: string;
   html: string;
 }
-export const TEMPLATES_SECTION = [
+
+interface STYLE {
+  color?: string;
+  fontFamily?: string;
+  textAlign?: string;
+  fontSize?: string;
+  fontStyle?: string;
+  fontWeight?: string;
+  lineHeight?: string;
+  whiteSpace?: string;
+  backgroundColor?: string;
+  width?: string;
+}
+export interface TEXT_ITEM {
+  text: string;
+  style: STYLE;
+}
+export interface BUTTON_EXTERNAL_ITEM {
+  text: string;
+  link: string;
+  style: STYLE;
+}
+export interface BACKGROUND_SECTION {
+  file: File | null;
+  urlImage: string;
+  color: string;
+  urlVideo: string;
+  class: string;
+}
+export interface BOX_IMAGE {
+  urlImage: string;
+  urlVideo: string;
+  file: File | null;
+}
+export interface AUDIO_SETTING {
+  urlImage: string;
+  urlVideo: string;
+  file: File | null;
+  setting: {
+    voiceModelId: any;
+    pitch: number | null;
+    speed: number | null;
+    text: string;
+    listPhrase: {
+      id: string | number | null;
+      text: string;
+      audioUrl: string;
+    }[];
+  };
+}
+export interface AUDIO_ITEM {
+  audio: AUDIO_SETTING;
+  textSubtitle: TEXT_ITEM;
+  textProduction: TEXT_ITEM;
+}
+export interface SECTION_ITEM {
+  id: string;
+  textTitle?: TEXT_ITEM;
+  textDes?: TEXT_ITEM;
+  textProduct?: TEXT_ITEM;
+  buttonExternal?: BUTTON_EXTERNAL_ITEM;
+  backgroundSection?: BACKGROUND_SECTION;
+  imageDemo?: string;
+  boxImage?: BOX_IMAGE;
+  listAudio?: AUDIO_ITEM[];
+}
+export type OBJ_SECTION_ITEM =
+  | SECTION_ITEM[keyof SECTION_ITEM]
+  | AUDIO_ITEM[keyof AUDIO_ITEM]
+  | undefined;
+
+export const TEMPLATES_SECTION: SECTION_ITEM[] = [
   {
     id: 'section-one-center',
     textProduct: {
@@ -58,7 +129,8 @@ export const TEMPLATES_SECTION = [
       },
     },
     backgroundSection: {
-      urlImg: bgSectionImage,
+      file: null,
+      urlImage: bgSectionImage,
       color: '',
       urlVideo: '',
       class: 'bg-img',
@@ -106,7 +178,8 @@ export const TEMPLATES_SECTION = [
       },
     },
     backgroundSection: {
-      urlImg: bgSectionImage,
+      file: null,
+      urlImage: bgSectionImage,
       color: '',
       urlVideo: '',
       class: 'bg-img',
@@ -154,7 +227,8 @@ export const TEMPLATES_SECTION = [
       },
     },
     backgroundSection: {
-      urlImg: bgSectionImage,
+      file: null,
+      urlImage: bgSectionImage,
       color: '',
       urlVideo: '',
       class: 'bg-img',
@@ -204,11 +278,13 @@ export const TEMPLATES_SECTION = [
       },
     },
     boxImage: {
-      imgUrl: defaultImage,
-      imgVideo: '',
+      urlImage: defaultImage,
+      urlVideo: '',
+      file: null,
     },
     backgroundSection: {
-      urlImg: '',
+      file: null,
+      urlImage: '',
       color: '#fff',
       urlVideo: '',
       class: 'bg-color',
@@ -258,11 +334,13 @@ export const TEMPLATES_SECTION = [
       },
     },
     boxImage: {
-      imgUrl: defaultImage,
-      imgVideo: '',
+      file: null,
+      urlImage: defaultImage,
+      urlVideo: '',
     },
     backgroundSection: {
-      urlImg: '',
+      file: null,
+      urlImage: '',
       color: '#fff',
       class: 'bg-color',
       urlVideo: '',
@@ -270,7 +348,7 @@ export const TEMPLATES_SECTION = [
     imageDemo: sectionDemo5,
   },
 ];
-export const TEMPLATES_AUDIO = [
+export const TEMPLATES_AUDIO: SECTION_ITEM[] = [
   {
     id: 'audio-section',
     textTitle: {
@@ -291,9 +369,21 @@ export const TEMPLATES_AUDIO = [
         audio: {
           urlImage: audioCard,
           urlVideo: '',
-          setting: {},
+          file: null,
+          setting: {
+            voiceModelId: {},
+            pitch: 1,
+            speed: 1,
+            text: '',
+            listPhrase: [
+              {
+                id: null,
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
-        urlBackground: '',
         textSubtitle: {
           text: 'Subtitle',
           style: {
@@ -324,7 +414,8 @@ export const TEMPLATES_AUDIO = [
     ],
     imageDemo: audioDemo1,
     backgroundSection: {
-      urlImg: '',
+      file: null,
+      urlImage: '',
       color: '#fff',
       urlVideo: '',
       class: 'bg-color',
@@ -349,10 +440,22 @@ export const TEMPLATES_AUDIO = [
       {
         audio: {
           urlImage: audioCard,
+          file: null,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: {},
+            pitch: 1,
+            speed: 1,
+            text: '',
+            listPhrase: [
+              {
+                id: null,
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
-        urlBackground: '',
         textSubtitle: {
           text: 'Subtitle',
           style: {
@@ -383,10 +486,22 @@ export const TEMPLATES_AUDIO = [
       {
         audio: {
           urlImage: audioCard,
+          file: null,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: {},
+            pitch: 1,
+            speed: 1,
+            text: '',
+            listPhrase: [
+              {
+                id: 'null',
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
-        urlBackground: '',
         textSubtitle: {
           text: 'Subtitle',
           style: {
@@ -417,7 +532,8 @@ export const TEMPLATES_AUDIO = [
     ],
     imageDemo: audioDemo2,
     backgroundSection: {
-      urlImg: '',
+      file: null,
+      urlImage: '',
       color: '#fff',
       urlVideo: '',
       class: 'bg-color',
@@ -442,10 +558,22 @@ export const TEMPLATES_AUDIO = [
       {
         audio: {
           urlImage: audioCard,
+          file: null,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: {},
+            pitch: 1,
+            speed: 1,
+            text: '',
+            listPhrase: [
+              {
+                id: null,
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
-        urlBackground: '',
         textSubtitle: {
           text: 'Subtitle',
           style: {
@@ -476,10 +604,22 @@ export const TEMPLATES_AUDIO = [
       {
         audio: {
           urlImage: audioCard,
+          file: null,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: {},
+            pitch: 1,
+            speed: 1,
+            text: '',
+            listPhrase: [
+              {
+                id: null,
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
-        urlBackground: '',
         textSubtitle: {
           text: 'Subtitle',
           style: {
@@ -510,10 +650,22 @@ export const TEMPLATES_AUDIO = [
       {
         audio: {
           urlImage: audioCard,
+          file: null,
           urlVideo: '',
-          setting: {},
+          setting: {
+            voiceModelId: {},
+            pitch: 1,
+            speed: 1,
+            text: '',
+            listPhrase: [
+              {
+                id: null,
+                text: '',
+                audioUrl: '',
+              },
+            ],
+          },
         },
-        urlBackground: '',
         textSubtitle: {
           text: 'Subtitle',
           style: {
@@ -544,7 +696,8 @@ export const TEMPLATES_AUDIO = [
     ],
     imageDemo: audioDemo3,
     backgroundSection: {
-      urlImg: '',
+      file: null,
+      urlImage: '',
       color: '#fff',
       urlVideo: '',
       class: 'bg-color',
