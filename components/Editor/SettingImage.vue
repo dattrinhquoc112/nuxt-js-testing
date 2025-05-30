@@ -80,7 +80,7 @@ const onImageChange = (event: Event) => {
   if (!selected) return;
   if (selected?.type === 'image/png' || selected?.type === 'image/jpeg') {
     const objectUrl = URL.createObjectURL(selected);
-    emit('change-image', objectUrl);
+    emit('change-image', { objectUrl, file: selected });
     target.value = '';
   }
 };
@@ -90,7 +90,7 @@ const onVideoChange = (event: Event) => {
   if (!selected) return;
   // if (selected?.type === 'image/png' || selected?.type === 'image/jpeg') {
   const objectUrl = URL.createObjectURL(selected);
-  emit('change-video', objectUrl);
+  emit('change-video', { objectUrl, file: selected });
   target.value = '';
   // }
 };

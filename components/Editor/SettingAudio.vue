@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="audioSelecting?.setting"
     ref="popupElement"
     class="popup-setting-audio"
     :style="{
@@ -31,7 +32,7 @@
       </div>
       <vi-dropdown
         class="mt-24"
-        v-model="modelSelected"
+        v-model="audioSelecting.setting.voiceModelId"
         size="small"
         label="聲音選擇"
         :listOption="listModel"
@@ -39,7 +40,7 @@
       <div class="box-adjust-speech">
         <vi-typography type="subtitle-small">調節語速</vi-typography>
         <vi-progress
-          v-model="speedSelected"
+          v-model="audioSelecting.setting.speed"
           has-tick-mark
           is-show-legend
           progress-width="100%"
@@ -48,7 +49,7 @@
         />
         <vi-typography type="subtitle-small">調節語速</vi-typography>
         <vi-progress
-          v-model="pitchSelected"
+          v-model="audioSelecting.setting.pitch"
           has-tick-mark
           is-show-legend
           progress-width="100%"
@@ -82,7 +83,7 @@
 
       <div class="list-phrase">
         <div
-          v-for="(item, index) in listPhrase"
+          v-for="(item, index) in audioSelecting.setting.listPhrase"
           :key="index"
           class="item-phrase"
         >
@@ -130,28 +131,7 @@
 import _ from 'lodash';
 import { ref } from 'vue';
 import useCheckHeightPopup from '~/composables/checkHeightPopupSetting';
-import { useAudioStore } from '~/stores/audio';
-
-const speedSelected = ref('中');
-const pitchSelected = ref('中');
-const arraySpeed = ['慢', '中', '快'];
-const arrayPitch = ['低', '中', '高'];
-
-const audioFile = 'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg';
-
-const mapSettingAudio = {
-  低: 0.5,
-  慢: 0.5,
-  中: 1,
-  快: 1.5,
-  高: 1.5,
-};
-
-const itemPhrase = {
-  text: '',
-  audio: '',
-};
-const listPhrase = ref([_.cloneDeep(itemPhrase)]);
+import { useEditorStore } from '~/stores/editor';
 
 const emit = defineEmits([
   'change-align',
@@ -160,12 +140,8 @@ const emit = defineEmits([
   'move-popup-to-top',
   'move-popup-to-bottom',
 ]);
-const { getVoiceModelList, getListDemos, createDemo } = useAudioStore();
 
-const modelSelected = ref<{ text: string; value: string }>();
-const listModel = ref<{ text: string; value: string }[]>([]);
-const isLoadingGetDemo = ref(false);
-
+const audioSelecting = defineModel<any>();
 const props = defineProps({
   positionControlCurrent: {
     type: Object as PropType<{ pageX: number; pageY: number }>,
@@ -176,21 +152,51 @@ const props = defineProps({
     default: false,
   },
 });
+
+const mapSpeed = {
+  慢: 0.5,
+  中: 1,
+  快: 1.5,
+};
+const mapPitch = {
+  低: 0.5,
+  中: 1,
+  高: 1.5,
+};
+
+const arraySpeed = [0.5, 1, 1.5];
+const arrayPitch = [0.5, 1, 1.5];
+
+const audioFile = 'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg';
+
+const itemPhrase = {
+  text: '',
+  audio: '',
+  id: null,
+};
+const { getVoiceModelList, getListDemos, createDemo } = useEditorStore();
+
+const listModel = ref<{ text: string; value: string }[]>([]);
+const isLoadingGetDemo = ref(false);
+
 const popupElement = ref<HTMLElement>();
 const addPhrase = () => {
-  listPhrase.value.push(_.cloneDeep(itemPhrase));
+  audioSelecting.value.setting.listPhrase.push(_.cloneDeep(itemPhrase));
 };
 const handleCreateDemo = _.debounce(async (index: number) => {
-  if (!modelSelected.value?.value) return;
+  if (!audioSelecting.value.setting.voiceModelId.value) return;
   try {
     isLoadingGetDemo.value = true;
-    const res = await createDemo(modelSelected.value?.value as string, {
-      pitch:
-        mapSettingAudio[pitchSelected.value as keyof typeof mapSettingAudio],
-      speed:
-        mapSettingAudio[speedSelected.value as keyof typeof mapSettingAudio],
-      text: listPhrase.value[index].text,
-    });
+    const res = await createDemo(
+      audioSelecting.value.setting.voiceModelId.value as string,
+      {
+        pitch:
+          mapPitch[audioSelecting.value.setting.speed as keyof typeof mapPitch],
+        speed:
+          mapSpeed[audioSelecting.value.setting.pitch as keyof typeof mapSpeed],
+        text: audioSelecting.value.setting.listPhrase[index].text,
+      }
+    );
     console.log('res: ', res.data);
   } catch (error) {
   } finally {
@@ -205,11 +211,17 @@ const fetchListVoiceModel = async () => {
     value: item.id,
   }));
 };
-watch(modelSelected, async () => {
-  if (!modelSelected.value?.value) return;
-  const res = await getListDemos(modelSelected.value?.value);
-  console.log(res.data);
-});
+
+watch(
+  () => audioSelecting.value?.setting?.voiceModelId.value,
+  async () => {
+    if (!audioSelecting.value?.setting?.voiceModelId.value) return;
+    const res = await getListDemos(
+      audioSelecting.value.setting.voiceModelId.value
+    );
+    console.log(res.data);
+  }
+);
 
 useCheckHeightPopup(props, popupElement, emit);
 
@@ -369,3 +381,4 @@ onMounted(() => {
   }
 }
 </style>
+~/stores/editor

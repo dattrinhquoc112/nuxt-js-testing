@@ -77,7 +77,7 @@
           <vi-button
             width="fit-content"
             type="standard-primary"
-            @click="$emit('hanldeStoreChanges')"
+            @click="$emit('handleStoreChanges')"
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
               {{ $t('storage_changes') }}
@@ -111,7 +111,7 @@ const emit = defineEmits<{
   handleRedo: [];
   handleSwitchLayout: [mode: string];
   handlePlay: [];
-  hanldeStoreChanges: [];
+  handleStoreChanges: [];
   handleRelease: [];
   handleBack: [];
 }>();
