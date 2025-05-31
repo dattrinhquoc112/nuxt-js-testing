@@ -49,7 +49,7 @@ defineProps<{
 defineEmits<{
   handleUndo: [];
   handleRedo: [];
-  handleSwitchLayout: [];
+  handleSwitchLayout: [e: any];
   handlePlay: [];
   hanldeStoreChanges: [];
   handleRelease: [];

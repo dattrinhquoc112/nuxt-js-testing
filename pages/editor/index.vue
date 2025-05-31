@@ -10,8 +10,8 @@
     @handle-release="handleEvent"
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
-    @handle-activity-settings="() => {}"
-    @handle-edit-info="() => {}"
+    @handle-activity-settings="isShowActivitySettingModal = true"
+    @handle-edit-info="isShowEditInfoModal = true"
     @handle-switch-layout="() => {}"
     @hanlde-store-changes="() => {}"
     :project-name="'fdsaf'"
@@ -22,7 +22,11 @@
       @close-section="isShowListSection = false"
     />
   </LayoutEditor>
-
+  <popup-setting-project
+    :show="isShowActivitySettingModal"
+    @close="isShowActivitySettingModal = false"
+    @submit="isShowActivitySettingModal = false"
+  />
   <vi-modal
     modal-title="離開前是否儲存目前編輯"
     :is-show="isShowModal"
@@ -64,6 +68,9 @@ const historyStatus = ref();
 const isShowModal = ref(false);
 const editorRef = ref();
 const handleEvent = () => {};
+const isShowEditInfoModal = ref(false);
+const isShowActivitySettingModal = ref(false);
+
 watch(
   () => editorRef.value?.historyStatus,
   (newVal) => {
@@ -85,7 +92,6 @@ const handleSaveDraft = () => {
   // TODO: implement save draft logic
   isShowModal.value = false;
   navigateTo('/project-list');
-  alert('Draft saved successfully!');
 };
 const handleBack = () => {
   const isSectionDirty = editorRef.value?.isSectionDirty();
