@@ -70,11 +70,12 @@ export default function useMetric() {
         ? (dataCapacity.value * 100) / dataCapacity.total
         : 0;
 
-    dataCapacity.description = `${t(
-      'platform-plan-description-description_storage',
-      { value: dataCapacity.value }
-    )}/${t('platform-plan-description-description_storage_total', {
+    dataCapacity.description = `${t('landing-common-field-storage_used', {
+      value: dataCapacity.value,
+      unit: 'MB',
+    })}/${t('landing-common-field-storage_total', {
       limit: dataCapacity.total,
+      unit: 'MB',
     })}`;
 
     metricInfo.isLimitedProject =
