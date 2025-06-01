@@ -139,7 +139,6 @@
                         'landing-project_mgmt-placeholder-placeholder_meta_keyword'
                       )
                     "
-                    :max="25"
                     width="100%"
                     height="210px"
                     :error="Boolean(errorMsg)"
@@ -422,8 +421,9 @@ const rules = {
   ],
   metaKeyword: [
     {
-      max: 25,
-      message: t('error_fe-data-validation-input_length_exceeded'),
+      regex:
+        /^([\p{L}\p{N} .'&+/_-]{1,25})(,([\p{L}\p{N} .'&+/_-]{1,25})){0,9}$/u,
+      message: t('error_fe-data-validation-input_format_invalid'),
       trigger: 'change',
     },
   ],
