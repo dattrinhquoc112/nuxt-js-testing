@@ -1,14 +1,18 @@
 import { useTenantStore } from '~/stores/tenant';
+import { useUploadStore } from '~/stores/upload';
 import type { IProject } from '~/types/project';
 
 export default function useProjects() {
   const { t } = useI18n();
   const { getCurrentTenantInfo } = useTenantStore();
+  const { getFileURL } = useUploadStore();
   const tenantName = getCurrentTenantInfo()?.name;
   const getProjectUrl = (project?: IProject): string => {
-    if (!project) return '';
-    const host = window.location.origin;
-    return new URL(`${host}/${tenantName}/${project.name}`).href;
+    if (project?.eventEnglishName && tenantName) {
+      const host = window.location.origin;
+      return new URL(`${host}/event/${tenantName}/${project.name}`).href;
+    }
+    return '';
   };
 
   const getStatus = (status: string) => {
@@ -22,8 +26,17 @@ export default function useProjects() {
     return trans[status];
   };
 
+  const getImage = (uri?: string) => {
+    const match = uri?.match(/^gs:\/\/[^/]+\/(.+)$/);
+    const path = match ? match[1] : '';
+    const endpoint = `/general/media/${path}`;
+    const url = getFileURL(endpoint);
+    return url;
+  };
+
   return {
     getProjectUrl,
     getStatus,
+    getImage,
   };
 }

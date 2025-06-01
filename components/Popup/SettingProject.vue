@@ -8,9 +8,9 @@
     <vi-form :model="model" :rules="rules" @submit="() => {}">
       <div class="modal-content">
         <div class="section-column">
-          <vi-typography class="color-white-60" type="subtitle-large"
-            >活動時間</vi-typography
-          >
+          <vi-typography class="color-white-60" type="subtitle-large">{{
+            $t('landing-project_mgmt-section-event_time')
+          }}</vi-typography>
           <div class="grid-two">
             <div class="section-column">
               <vi-date-picker
@@ -28,8 +28,12 @@
                       :value="model.date"
                       size="large"
                       type="text"
-                      label="活動上下線期間"
-                      placeholder="Please input"
+                      :label="
+                        $t('landing-project_mgmt-title-event_period_setting')
+                      "
+                      :placeholder="
+                        $t('landing-project_mgmt-title-event_period_setting')
+                      "
                       required
                       width="100%"
                       :error="Boolean(errorMsg)"
@@ -44,18 +48,22 @@
           </div>
         </div>
         <div class="section-column">
-          <vi-typography class="color-white-60" type="subtitle-large"
-            >網址</vi-typography
-          >
+          <vi-typography class="color-white-60" type="subtitle-large">{{
+            $t('landing-project_mgmt-section-url_section')
+          }}</vi-typography>
           <div class="grid-two">
-            <vi-form-item prop="name">
+            <vi-form-item prop="eventEnglishName">
               <template #default="{ errorMsg }">
                 <vi-input
-                  v-model="model.name"
+                  v-model="model.eventEnglishName"
                   size="large"
                   type="text"
-                  label="活動英文名稱"
-                  placeholder="請輸入活動英文名稱"
+                  :label="$t('landing-project_mgmt-title-event_name_en')"
+                  :placeholder="
+                    $t(
+                      'landing-project_mgmt-placeholder-placeholder_event_name_en'
+                    )
+                  "
                   required
                   width="100%"
                   :error="Boolean(errorMsg)"
@@ -64,131 +72,194 @@
               </template>
             </vi-form-item>
             <div class="url-preview">
-              <vi-typography type="subtitle-large">活動正式網址</vi-typography>
-              <vi-typography>{{ getLink() }}</vi-typography>
+              <vi-typography type="subtitle-large">{{
+                $t('landing-project_mgmt-title-event_url')
+              }}</vi-typography>
+              <vi-typography>{{ getProjectUrl(props.project) }}</vi-typography>
             </div>
           </div>
         </div>
         <div class="section-column">
-          <vi-typography class="color-white-60" type="subtitle-large"
-            >SEO-Meta</vi-typography
-          >
+          <vi-typography class="color-white-60" type="subtitle-large">{{
+            $t('landing-project_mgmt-section-seo_meta_section')
+          }}</vi-typography>
           <div class="grid-two">
             <div class="section-column">
-              <vi-form-item prop="seoMetaTitle">
+              <vi-form-item prop="metaTitle">
                 <template #default="{ errorMsg }">
                   <vi-input
-                    v-model="model.seoMetaTitle"
+                    v-model="model.metaTitle"
                     size="large"
                     type="text"
-                    label="Meta-Title"
-                    placeholder="請輸入網頁標題"
+                    :label="$t('landing-project_mgmt-title-meta_title')"
+                    :placeholder="
+                      $t(
+                        'landing-project_mgmt-placeholder-placeholder_meta_title'
+                      )
+                    "
                     required
+                    :max="60"
+                    is-count
                     width="100%"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
                   />
                 </template>
               </vi-form-item>
-              <vi-input
-                v-model="model.seoMetaDescription"
-                size="large"
-                type="textarea"
-                label="Meta-Description"
-                placeholder="請輸入網頁搜尋到的簡介"
-                width="100%"
-                height="210px"
-              />
-              <vi-input
-                v-model="model.seoMetaKeyword"
-                size="large"
-                type="textarea"
-                label="Meta-Keyword"
-                placeholder="請輸入 Meta Keyword"
-                width="100%"
-                height="210px"
-              />
+              <vi-form-item prop="metaDescription">
+                <template #default="{ errorMsg }">
+                  <vi-input
+                    v-model="model.metaDescription"
+                    size="large"
+                    type="textarea"
+                    :label="$t('landing-project_mgmt-title-meta_description')"
+                    :placeholder="
+                      $t(
+                        'landing-project_mgmt-placeholder-placeholder_meta_description'
+                      )
+                    "
+                    :max="155"
+                    is-count
+                    width="100%"
+                    height="210px"
+                    :error="Boolean(errorMsg)"
+                    :hint="errorMsg"
+                  />
+                </template>
+              </vi-form-item>
+              <vi-form-item prop="metaKeyword">
+                <template #default="{ errorMsg }">
+                  <vi-input
+                    v-model="model.metaKeyword"
+                    size="large"
+                    type="textarea"
+                    :label="$t('landing-project_mgmt-title-meta_keyword')"
+                    :placeholder="
+                      $t(
+                        'landing-project_mgmt-placeholder-placeholder_meta_keyword'
+                      )
+                    "
+                    :max="25"
+                    width="100%"
+                    height="210px"
+                    :error="Boolean(errorMsg)"
+                    :hint="errorMsg"
+                  />
+                </template>
+              </vi-form-item>
             </div>
             <div class="result-preview">
               <vi-typography
                 :class="{
-                  'color-white-60': !model.seoMetaTitle,
+                  'color-white-60': !model.metaTitle,
                 }"
                 type="headline-xs"
-                >{{ model.seoMetaTitle || 'Meta title' }}</vi-typography
-              >
-              <vi-typography
-                :class="{
-                  'color-white-60': !model.seoMetaDescription,
-                }"
-                type="body-small"
                 >{{
-                  model.seoMetaDescription || 'Meta Description'
+                  model.metaTitle || $t('landing-project_mgmt-title-meta_title')
                 }}</vi-typography
               >
               <vi-typography
                 :class="{
-                  'color-white-60': !model.seoMetaKeyword,
+                  'color-white-60': !model.metaDescription,
                 }"
                 type="body-small"
-                >{{ model.seoMetaKeyword || 'Meta Keyword' }}</vi-typography
+                >{{
+                  model.metaDescription ||
+                  $t('landing-project_mgmt-title-meta_description')
+                }}</vi-typography
+              >
+              <vi-typography
+                :class="{
+                  'color-white-60': !model.metaKeyword,
+                }"
+                type="body-small"
+                >{{
+                  model.metaKeyword ||
+                  $t('landing-project_mgmt-title-meta_keyword')
+                }}</vi-typography
               >
             </div>
           </div>
         </div>
         <div class="section-column">
-          <vi-typography class="color-white-60" type="subtitle-large"
-            >SEO-OG</vi-typography
-          >
+          <vi-typography class="color-white-60" type="subtitle-large">{{
+            $t('landing-project_mgmt-section-seo_og_section')
+          }}</vi-typography>
           <div class="grid-two">
             <div class="section-column">
-              <form-upload-image @change="onChangeOGImage" />
-              <vi-form-item prop="seoOGTitle">
+              <form-upload-image
+                :imageModel="modelOGImage"
+                @change="onChangeOGImage"
+              />
+              <vi-form-item prop="ogTitle">
                 <template #default="{ errorMsg }">
                   <vi-input
-                    v-model="model.seoOGTitle"
+                    v-model="model.ogTitle"
                     size="large"
                     type="text"
-                    label="OG-Title"
-                    placeholder="請輸入社群分享的標題"
+                    :label="$t('landing-project_mgmt-title-og_title')"
+                    :placeholder="
+                      $t(
+                        'landing-project_mgmt-placeholder-placeholder_og_title'
+                      )
+                    "
                     required
+                    :max="95"
+                    is-count
                     width="100%"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
                   />
                 </template>
               </vi-form-item>
-              <vi-input
-                v-model="model.seoOGDescription"
-                size="large"
-                type="textarea"
-                label="OG-Description"
-                placeholder="請輸入社群分享的介紹顯示內容"
-                width="100%"
-                height="210px"
-              />
+              <vi-form-item prop="ogDescription">
+                <template #default="{ errorMsg }">
+                  <vi-input
+                    v-model="model.ogDescription"
+                    size="large"
+                    type="textarea"
+                    :label="$t('landing-project_mgmt-title-og_description')"
+                    :placeholder="
+                      $t(
+                        'landing-project_mgmt-placeholder-placeholder_og_description'
+                      )
+                    "
+                    :max="200"
+                    is-count
+                    width="100%"
+                    height="210px"
+                    :error="Boolean(errorMsg)"
+                    :hint="errorMsg"
+                  />
+                </template>
+              </vi-form-item>
             </div>
             <div class="result-preview">
-              <div v-if="!model.seoOGImage" class="none-image" />
-              <img
-                v-if="model.seoOGImage"
+              <div v-if="!model.ogImageUri" class="none-image" />
+              <custom-image
+                v-if="model.ogImageUri"
                 class="og-image"
-                :src="model.seoOGImage"
+                :src="model.ogImageUri"
                 alt="image"
               />
               <vi-typography
                 :class="{
-                  'color-white-60': !model.seoOGTitle,
+                  'color-white-60': !model.ogTitle,
                 }"
                 type="subtitle-large"
-                >{{ model.seoOGTitle || 'OG title' }}</vi-typography
+                >{{
+                  model.ogTitle || $t('landing-project_mgmt-title-og_title')
+                }}</vi-typography
               >
               <vi-typography
                 :class="{
-                  'color-white-60': !model.seoOGDescription,
+                  'color-white-60': !model.ogDescription,
                 }"
                 type="body-small"
-                >{{ model.seoOGDescription || 'OG Description' }}</vi-typography
+                >{{
+                  model.ogDescription ||
+                  $t('landing-project_mgmt-title-og_description')
+                }}</vi-typography
               >
             </div>
           </div>
@@ -199,7 +270,7 @@
       <div class="modal-footer">
         <vi-button
           type-button="button"
-          @click="emit('submit')"
+          @click="onEditProject"
           type="standard-primary"
           width="fit-content"
           :disabled="disabledSubmit()"
@@ -207,7 +278,7 @@
         >
         <vi-button
           type-button="button"
-          @click="emit('close')"
+          @click="onClose"
           type="standard-default"
           width="fit-content"
           >{{ $t('common-action-button-button_cancel') }}</vi-button
@@ -217,30 +288,91 @@
   </vi-modal>
 </template>
 <script lang="ts" setup>
+import useProjects from '~/composables/projects';
+import { useProjectStore } from '~/stores/project';
+import { useUploadStore } from '~/stores/upload';
+import type { IProject, IUpdateProjectPayload } from '~/types/project';
+
+interface Model {
+  dates: string[] | Date[] | number[];
+  date: string;
+  isShowDate: boolean;
+  ogImageFile?: File;
+  eventEnglishName: string;
+  metaTitle: string;
+  metaDescription: string;
+  metaKeyword: string;
+  ogTitle: string;
+  ogImageUri: string;
+  ogDescription: string;
+  project?: IProject;
+}
+
 const { t } = useI18n();
 
-defineProps({
+const props = defineProps({
   show: {
     type: Boolean,
     default: false,
   },
+  project: {
+    type: Object as PropType<IProject>,
+    default: undefined,
+  },
 });
 const emit = defineEmits(['close', 'submit']);
-const model = reactive({
-  dates: [],
+
+const loading = reactive({
+  update: false,
+});
+
+const model = reactive<Model>({
+  dates: [new Date().toISOString(), new Date().toISOString()],
   date: '',
   isShowDate: false,
-  name: '',
-  seoMetaTitle: '',
-  seoMetaDescription: '',
-  seoMetaKeyword: '',
-  seoOGTitle: '',
-  seoOGImage: '',
-  seoOGDescription: '',
+  eventEnglishName: '',
+  metaTitle: '',
+  metaDescription: '',
+  metaKeyword: '',
+  ogTitle: '',
+  ogImageUri: '',
+  ogDescription: '',
+});
+
+const modelOGImage = reactive<{
+  imageURL: string;
+  fileInput: File | null;
+  isShowImage: boolean;
+}>({
+  imageURL: '',
+  fileInput: null,
+  isShowImage: true,
 });
 
 const disabledSubmit = () => {
-  return !(model.date && model.name && model.seoMetaTitle && model.seoOGTitle);
+  let isChanged = false;
+  if (props.project) {
+    const keys = [
+      'eventEnglishName',
+      'metaTitle',
+      'metaDescription',
+      'metaKeyword',
+      'ogTitle',
+      'ogImageUri',
+      'ogDescription',
+    ];
+    isChanged =
+      JSON.stringify(objectByKey(model, keys)) !==
+      JSON.stringify(objectByKey(props.project, keys));
+  }
+  return (
+    !(
+      model.date &&
+      model.eventEnglishName &&
+      model.metaTitle &&
+      model.ogTitle
+    ) || !isChanged
+  );
 };
 
 const rules = {
@@ -248,49 +380,161 @@ const rules = {
     {
       required: true,
       message: t('error_fe-data-validation-field_required_empty', {
-        field_name: '活動上下線期間',
+        field_name: t('landing-project_mgmt-title-event_period_setting'),
       }),
       trigger: 'change',
     },
   ],
-  name: [
+  eventEnglishName: [
     {
       required: true,
       message: t('error_fe-data-validation-field_required_empty', {
-        field_name: '活動英文名稱',
+        field_name: t('landing-project_mgmt-title-event_name_en'),
       }),
       trigger: 'change',
     },
-  ],
-  seoMetaTitle: [
     {
-      required: true,
-      message: t('error_fe-data-validation-field_required_empty', {
-        field_name: '活動英文名稱',
-      }),
+      regex: /^[a-z0-9\-._~]+$/,
+      message: t('error_fe-data-validation-input_format_invalid'),
       trigger: 'change',
     },
   ],
-  seoOGTitle: [
+  metaTitle: [
     {
       required: true,
       message: t('error_fe-data-validation-field_required_empty', {
-        field_name: '活動英文名稱',
+        field_name: t('landing-project_mgmt-title-meta_title'),
       }),
+      trigger: 'change',
+    },
+    {
+      max: 60,
+      message: t('error_fe-data-validation-input_length_exceeded'),
+      trigger: 'change',
+    },
+  ],
+  metaDescription: [
+    {
+      max: 155,
+      message: t('error_fe-data-validation-input_length_exceeded'),
+      trigger: 'change',
+    },
+  ],
+  metaKeyword: [
+    {
+      max: 25,
+      message: t('error_fe-data-validation-input_length_exceeded'),
+      trigger: 'change',
+    },
+  ],
+  ogTitle: [
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-og_title'),
+      }),
+      trigger: 'change',
+    },
+    {
+      max: 95,
+      message: t('error_fe-data-validation-input_length_exceeded'),
+      trigger: 'change',
+    },
+  ],
+  ogDescription: [
+    {
+      max: 200,
+      message: t('error_fe-data-validation-input_length_exceeded'),
       trigger: 'change',
     },
   ],
 };
 
-const onChangeOGImage = (props: { url: string }) => {
-  model.seoOGImage = props.url;
+const { getProjectUrl, getImage } = useProjects();
+const { editProject } = useProjectStore();
+const { uploadFile } = useUploadStore();
+
+const onEditProject = async () => {
+  if (props?.project?.id) {
+    loading.update = true;
+    const payload: IUpdateProjectPayload = {
+      startTime: new Date(model.dates[0]).toISOString(),
+      endTime: new Date(model.dates[1]).toISOString(),
+      eventEnglishName: model.eventEnglishName,
+      metaTitle: model.metaTitle,
+      metaDescription: model.metaDescription,
+      metaKeyword: model.metaKeyword,
+      ogTitle: model.ogTitle,
+      ogDescription: model.ogDescription,
+      eventOfficialUrl: getProjectUrl({
+        ...props.project,
+        eventEnglishName: model.eventEnglishName,
+      }),
+    };
+    if (model.ogImageFile) {
+      const res = await uploadFile(model.ogImageFile);
+      payload.ogImage = {
+        thumbnail: res?.fileUri,
+        fileUri: res?.fileUri,
+        fileSize: model.ogImageFile.size,
+      };
+    }
+    const res = await editProject(props.project?.id, payload);
+    model.project = res.data;
+    toastMessage(t('landing-common-message-saved'));
+    loading.update = false;
+  }
 };
 
-const getLink = () => {
-  const host = window.location.origin;
-  // TODO: tenant_name, event_name
-  return `${host}/event/tenant_name/event_name`;
+const onChangeOGImage = (obj: { url: string; file: File }) => {
+  model.ogImageUri = obj.url;
+  model.ogImageFile = obj.file;
 };
+
+const initProject = async () => {
+  if (props.project) {
+    model.project = props.project;
+    if (props.project.startTime && props.project.endTime) {
+      model.dates = [
+        formatDate(props.project.startTime, 'YYYY/MM/DD HH:mm:ss'),
+        formatDate(props.project.endTime, 'YYYY/MM/DD HH:mm:ss'),
+      ];
+    } else {
+      const createdAt = new Date(props.project.createdAt);
+      const plus30Days = new Date(
+        createdAt.getTime() + 30 * 24 * 60 * 60 * 1000
+      );
+      model.dates = [
+        formatDate(createdAt, 'YYYY/MM/DD HH:mm:ss'),
+        formatDate(plus30Days, 'YYYY/MM/DD HH:mm:ss'),
+      ];
+    }
+    model.eventEnglishName = props.project.eventEnglishName || '';
+    model.metaTitle = props.project.metaTitle || '';
+    model.metaDescription = props.project.metaDescription || '';
+    model.metaKeyword = props.project.metaKeyword || '';
+    model.ogTitle = props.project.ogTitle || '';
+    model.ogDescription = props.project.ogDescription || '';
+    // Image
+    model.ogImageUri = getImage(props.project.ogImageUri);
+    modelOGImage.imageURL = getImage(props.project.ogImageUri);
+  }
+};
+
+const onClose = () => {
+  emit('close', model.project);
+};
+
+onMounted(() => {
+  initProject();
+});
+
+watch(
+  () => props.project?.id,
+  () => {
+    initProject();
+  }
+);
 
 watch(
   () => model.dates,
@@ -345,7 +589,8 @@ watch(
   border: 1px solid $neutral-white-alpha-10;
   height: fit-content;
   .og-image {
-    width: 100%;
+    max-width: 100%;
+    align-self: center;
     object-fit: contain;
   }
   .none-image {

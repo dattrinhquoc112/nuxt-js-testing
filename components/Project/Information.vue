@@ -1,7 +1,7 @@
 <template>
   <div class="information-container">
     <div class="information-iitem mw-360">
-      <custom-image :src="project?.thumbnail" />
+      <custom-image :src="getImage(project?.thumbnail)" />
       <vi-button class="br-1000" type="standard-default" width="fit-content">{{
         getStatus(props.project?.status || '')
       }}</vi-button>
@@ -16,20 +16,23 @@
       }}</vi-typography>
       <div class="child-item">
         <vi-typography class="description" type="body-small">
-          {{ getProjectUrl(project) }}
+          {{ project.eventOfficialUrl }}
         </vi-typography>
         <vi-button
           class="browser-btn"
           type="standard-subtle"
-          @click="openLink(getProjectUrl(project))"
+          @click="openLink(project.eventOfficialUrl)"
         >
           {{ $t('landing-project_mgmt-button-view_website') }}
           <vi-icon name="ic_arrow_up_right" size="16" />
         </vi-button>
       </div>
-      <vi-button type="standard-default" width="fit-content">{{
-        $t('landing-project_mgmt-button-edit_info')
-      }}</vi-button>
+      <vi-button
+        type="standard-default"
+        width="fit-content"
+        @click="modal.setting.open"
+        >{{ $t('landing-project_mgmt-button-edit_info') }}</vi-button
+      >
     </div>
     <vi-divider direction="vertical" />
     <div class="information-iitem">
@@ -45,7 +48,7 @@
         $t('landing-project_mgmt-title-og_section_title')
       }}</vi-typography>
       <div class="child-item fit">
-        <custom-image :src="project?.ogImageUrl" />
+        <custom-image :src="getImage(props.project?.ogImageUri)" />
         <vi-typography type="headline-xs">{{ project?.ogTitle }}</vi-typography>
         <vi-typography class="description" type="body-small">{{
           project?.ogDescription
@@ -53,6 +56,11 @@
       </div>
     </div>
   </div>
+  <popup-setting-project
+    :show="modal.setting.show"
+    :project="props.project"
+    @close="modal.setting.close"
+  />
 </template>
 <script setup lang="ts">
 import useProjects from '~/composables/projects';
@@ -65,7 +73,23 @@ const props = defineProps({
   },
 });
 
-const { getStatus, getProjectUrl } = useProjects();
+const emit = defineEmits<{
+  (e: 'update:project', value: IProject): void;
+}>();
+
+const { getStatus, getImage } = useProjects();
+const modal = reactive({
+  setting: {
+    show: false,
+    close: (value: IProject) => {
+      emit('update:project', value);
+      modal.setting.show = false;
+    },
+    open: () => {
+      modal.setting.show = true;
+    },
+  },
+});
 </script>
 <style lang="scss" scoped>
 .button-action {

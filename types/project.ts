@@ -27,7 +27,7 @@ export interface IProject {
   metaTitle?: string;
   metaDescription?: string;
   metaKeyword?: string;
-  ogImageUrl?: string;
+  ogImageUri?: string;
   ogTitle?: string;
   ogDescription?: string;
 }
@@ -44,4 +44,9 @@ export interface IUpdateProjectPayload {
   ogImageUrl?: string;
   ogTitle?: string;
   ogDescription?: string;
+  ogImage?: {
+    thumbnail?: string;
+    fileUri?: string;
+    fileSize?: number;
+  };
 }

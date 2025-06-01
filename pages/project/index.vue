@@ -72,7 +72,7 @@
           @click="onClickProject(item)"
         >
           <div class="item-thumbnail">
-            <custom-image :src="item.thumbnail" />
+            <custom-image :src="getImage(item.thumbnail)" />
           </div>
           <div class="item-info">
             <div class="status-active">{{ getStatus(item.status) }}</div>
@@ -80,7 +80,7 @@
               <div>
                 <div class="title-page">{{ item.name }}</div>
                 <div class="url-page">
-                  {{ getProjectUrl(item) }}
+                  {{ item.eventOfficialUrl }}
                 </div>
               </div>
               <div>
@@ -175,7 +175,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { getProjectUrl, getStatus } = useProjects();
+const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject } = useProjectStore();
 
 const loading = reactive({
