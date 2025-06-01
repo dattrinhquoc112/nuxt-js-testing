@@ -87,6 +87,7 @@
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { RWD_MODE } from '~/constants/common';
 import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
+import { ROUTE } from '@/constants/route';
 
 definePageMeta({
   layout: 'editor',
@@ -108,7 +109,7 @@ watch(
 const handlePreview = () => {
   const sections = editorRef.value?.sections;
   localStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
-  window.open('/editor/preview', '_blank');
+  window.open(ROUTE.EDITOR_PREVIEW, '_blank');
 };
 const handleClickSideBar = (keyAction: string) => {
   if (keyAction === 'toggle-section') {
@@ -122,19 +123,19 @@ const SwitchToRWD = (e: any) => {
 
 const handleLeave = () => {
   isShowModal.value = false;
-  navigateTo('/project-list');
+  navigateTo(ROUTE.PROJECT_LIST);
 };
 
 const handleSaveDraft = () => {
   // TODO: implement save draft logic
   isShowModal.value = false;
-  navigateTo('/project-list');
+  navigateTo(ROUTE.PROJECT_LIST);
   alert('Draft saved successfully!');
 };
 const handleBack = () => {
   const isSectionDirty = editorRef.value?.isSectionDirty();
   if (isSectionDirty) {
-    navigateTo('/project-list');
+    navigateTo(ROUTE.PROJECT_LIST);
   } else {
     isShowModal.value = true;
   }

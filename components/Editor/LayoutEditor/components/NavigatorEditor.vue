@@ -84,7 +84,7 @@
             @click="$emit('hanldeStoreChanges')"
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
-              {{ $t('storage_changes') }}
+              {{ $t('landing-editor-button-save_changes') }}
             </vi-typography>
           </vi-button>
           <vi-button
@@ -93,7 +93,7 @@
             @click="$emit('handleRelease')"
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
-              {{ $t('release') }}
+              {{ $t('landing-editor-button-publish') }}
             </vi-typography>
           </vi-button>
         </div>
