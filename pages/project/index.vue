@@ -237,7 +237,7 @@ const onShowAction = (projectID: string, show = true) => {
 };
 
 const onCopyProject = async (project: IProject) => {
-  await copyProject(project.id, `${project.name} Copy`);
+  await copyProject(project.id, `${project.name}_copy`);
   fetchProjectList();
   toastMessage(t('landing-common-message-copied'));
 };
