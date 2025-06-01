@@ -27,6 +27,14 @@
     @close="isShowActivitySettingModal = false"
     @submit="isShowActivitySettingModal = false"
   />
+
+  <popup-edit-project
+    :show="isShowEditInfoModal"
+    :value="projectName"
+    @close="isShowEditInfoModal = false"
+    @edit="handleEditEditor"
+  />
+
   <vi-modal
     modal-title="離開前是否儲存目前編輯"
     :is-show="isShowModal"
@@ -70,13 +78,27 @@ const editorRef = ref();
 const handleEvent = () => {};
 const isShowEditInfoModal = ref(false);
 const isShowActivitySettingModal = ref(false);
-
+const projectName = ref();
+const route = useRoute();
+const editorID = ref('');
 watch(
   () => editorRef.value?.historyStatus,
   (newVal) => {
     historyStatus.value = newVal;
   }
 );
+watch(
+  () => route.query.id,
+  async (newId) => {
+    if (newId) {
+      editorID.value = Array.isArray(newId) ? newId[0] ?? '' : newId;
+    }
+  },
+  {
+    immediate: true,
+  }
+);
+const handleEditEditor = () => {};
 const handleClickSideBar = (keyAction: string) => {
   if (keyAction === 'toggle-section') {
     isShowListSection.value = !isShowListSection.value;
