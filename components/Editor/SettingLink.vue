@@ -26,7 +26,7 @@
     </div>
     <div class="pa-16">
       <vi-input
-        v-model.trim="link"
+        v-model.trim="linkRef"
         width="100%"
         placeholder="請貼上網址連結"
         size="small"
@@ -46,25 +46,13 @@ const emit = defineEmits([
   'move-popup-to-bottom',
   'change-link',
 ]);
-const link = ref();
+const linkRef = ref();
 const messageError = ref('');
 
 function isValidURL(url: string) {
   const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/\S*)?$/;
   return regex.test(url);
 }
-
-watch(link, () => {
-  const isValidLink = isValidURL(link.value);
-  if (!isValidLink) {
-    messageError.value = 'Link Khong Hop Le';
-    emit('change-link', '');
-  } else {
-    messageError.value = '';
-    emit('change-link', link.value);
-  }
-});
-
 const props = defineProps({
   positionControlCurrent: {
     type: Object,
@@ -74,7 +62,36 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  link: {
+    type: String,
+    default: '',
+  },
 });
+watch(
+  () => props.link,
+  () => {
+    const isValidLink = isValidURL(props.link);
+    if (!isValidLink) {
+      messageError.value = 'Link Khong Hop Le';
+      emit('change-link', '');
+    } else {
+      messageError.value = '';
+      emit('change-link', props.link);
+    }
+  }
+);
+
+watch(linkRef, () => {
+  // handle validate link
+  emit('change-link', linkRef.value);
+});
+watch(
+  () => props.link,
+  (newVal) => {
+    linkRef.value = newVal;
+  }
+);
+
 const popupElement = ref<HTMLElement>();
 
 useCheckHeightPopup(props, popupElement, emit);

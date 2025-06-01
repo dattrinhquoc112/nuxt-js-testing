@@ -23,9 +23,9 @@
         @click="emit('add-section', index)"
         :class="hoverPosition.zone"
       ></div>
-
       <editor-section-render
         :section="section"
+        :rwd-mode="rwdMode"
         @show-option="(event) => handleShowOption(event, index)"
         @handle-change-text="(event) => emit('handle-change-text', event)"
       />
@@ -34,6 +34,8 @@
 </template>
 
 <script lang="ts" setup>
+import { RWD_MODE } from '~/constants/common';
+
 const props = defineProps({
   templateSelected: {
     type: Object,
@@ -44,6 +46,10 @@ const props = defineProps({
     default: () => [],
   },
   classElementSelected: {
+    type: String,
+    default: '',
+  },
+  rwdMode: {
     type: String,
     default: '',
   },
@@ -344,10 +350,8 @@ onMounted(initHover);
 #editor {
   flex: 1;
   background-color: #1e1e1e;
-  padding: 20px;
   overflow-y: auto;
   color: white;
-
   .section {
     position: relative;
 

@@ -9,6 +9,7 @@
     />
 
     <editor-list
+      :rwd-mode="rwdMode"
       :templateSelected="templateSelected"
       :classElementSelected="classElementSelected"
       :sections="sections"
@@ -44,6 +45,13 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
     />
     <editor-setting-link
+      :link="
+        objectSelecting &&
+        typeof objectSelecting === 'object' &&
+        'link' in objectSelecting
+          ? objectSelecting.link
+          : ''
+      "
       :isShow="isShowPopup.addLink"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingLink"
@@ -51,7 +59,7 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
       @change-link="handleChangeLink"
     />
-    
+
     <editor-setting-audio
       :isShow="isShowPopup.audioSetting"
       :positionControlCurrent="positionControlCurrent"
@@ -102,6 +110,7 @@ import { useProjectStore } from '~/stores/project';
 let debounceTimer: any = null;
 const MAX_HISTORY = 20;
 const iSaveHistory = ref(false);
+
 definePageMeta({
   layout: 'default',
 });
@@ -109,6 +118,10 @@ const props = defineProps({
   isShowListSection: {
     type: Boolean,
     default: true,
+  },
+  rwdMode: {
+    type: String,
+    default: '',
   },
   listTemplate: {
     type: Array as PropType<any>,
@@ -723,6 +736,7 @@ defineExpose({
   isSectionDirty,
   hiddenBoxControl,
   handleSaveTemplate,
+  sections,
 });
 </script>
 
