@@ -108,7 +108,7 @@ watch(
 
 const handlePreview = () => {
   const sections = editorRef.value?.sections;
-  localStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
+  sessionStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
   window.open(ROUTE.EDITOR_PREVIEW, '_blank');
 };
 const handleClickSideBar = (keyAction: string) => {
