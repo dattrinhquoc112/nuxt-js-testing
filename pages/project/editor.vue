@@ -11,6 +11,11 @@
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
     @scroll-editor="handleHiddenAllControl"
+    @handle-activity-settings="isShowActivitySettingModal = true"
+    @handle-edit-info="isShowEditInfoModal = true"
+    @handle-switch-layout="() => {}"
+    @hanlde-store-changes="() => {}"
+    :project-name="'fdsaf'"
   >
     <vi-scroll
       class="editor__content"
@@ -25,7 +30,11 @@
       />
     </vi-scroll>
   </LayoutEditor>
-
+  <popup-setting-project
+    :show="isShowActivitySettingModal"
+    @close="isShowActivitySettingModal = false"
+    @submit="isShowActivitySettingModal = false"
+  />
   <vi-modal
     modal-title="離開前是否儲存目前編輯"
     :is-show="isShowModal"
@@ -101,7 +110,8 @@ const historyStatus = ref();
 const isShowModal = ref(false);
 const editorRef = ref();
 const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
-
+const isShowEditInfoModal = ref(false);
+const isShowActivitySettingModal = ref(false);
 const handleEvent = () => {};
 watch(
   () => editorRef.value?.historyStatus,

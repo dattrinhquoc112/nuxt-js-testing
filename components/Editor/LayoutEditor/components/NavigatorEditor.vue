@@ -16,15 +16,51 @@
             color="#fff"
             class="editor-layout__left__back"
           />
-          <vi-typography type="headline-xs" class="editor-layout__left__text">
-            未命名專案
+          <vi-typography
+            type="headline-xs"
+            class="editor-layout__left__text truncate"
+          >
+            {{ projectName }}
           </vi-typography>
           <vi-icon
+            v-if="!isOpenSettingEvent"
             name="ic_chevron_down"
             size="16"
             color="#fff"
             class="editor-layout__left__dropdown"
+            @click="isOpenSettingEvent = true"
           />
+          <vi-icon
+            v-if="isOpenSettingEvent"
+            name="ic_chevron_up"
+            size="16"
+            color="#fff"
+            class="editor-layout__left__dropdown"
+            @click="isOpenSettingEvent = false"
+          />
+          <div
+            v-if="isOpenSettingEvent"
+            class="editor-layout__left__event-list"
+          >
+            <vi-button
+              type="standard-default"
+              class="no-rounded"
+              @click="emit('handleEditInfo')"
+            >
+              <vi-typography type="body-large" class="cursor-pointer">
+                {{ $t('landing-project_mgmt-modal-title_edit_project_info') }}
+              </vi-typography>
+            </vi-button>
+            <vi-button
+              type="standard-default"
+              class="no-rounded"
+              @click="emit('handleActivitySettings')"
+            >
+              <vi-typography type="body-large" class="cursor-pointer">
+                {{ $t('landing-project_mgmt-title-event_settings') }}
+              </vi-typography>
+            </vi-button>
+          </div>
         </div>
       </template>
       <template #second>
@@ -85,6 +121,7 @@
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
               {{ $t('landing-editor-button-save_changes') }}
+              {{ $t('landing-editor-button-save_changes') }}
             </vi-typography>
           </vi-button>
           <vi-button
@@ -93,6 +130,7 @@
             @click="$emit('handleRelease')"
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
+              {{ $t('landing-editor-button-publish') }}
               {{ $t('landing-editor-button-publish') }}
             </vi-typography>
           </vi-button>
@@ -105,8 +143,11 @@
 import { RWD_MODE } from '~/constants/common';
 
 const activeDevice = ref(RWD_MODE.DESKTOP);
+
+const isOpenSettingEvent = ref(false);
 defineProps<{
   historyStatus: any;
+  projectName: string;
 }>();
 const emit = defineEmits<{
   handleUndo: [];
@@ -116,6 +157,8 @@ const emit = defineEmits<{
   handleStoreChanges: [];
   handleRelease: [];
   handleBack: [];
+  handleEditInfo: [];
+  handleActivitySettings: [];
 }>();
 const handleSwitchLayout = (device: string) => {
   activeDevice.value = device;
@@ -131,15 +174,37 @@ const navigateProjectList = () => {
 .editor-layout {
   height: 64px;
   border-bottom: 1px solid $neutral-white-alpha-7;
+
   &__left {
     display: flex;
+    max-width: 100%;
     align-items: center;
+    position: relative;
     cursor: pointer;
     &__back {
       margin-right: 16px;
     }
     &__text {
+      flex: 1;
       margin-right: 8px;
+    }
+    &__event-list {
+      position: absolute;
+      left: 40px;
+      top: 40px;
+      z-index: 40;
+      display: flex;
+      width: 180px;
+      background-color: $brand-navy-800;
+      border-radius: 4px;
+      border: 0.5px solid $neutral-white-alpha-15;
+      box-shadow: 0px 4px 8px 0px rgba(3, 12, 17, 0.8);
+      overflow: hidden;
+      flex-direction: column;
+      text-align: left;
+      &--btn {
+        margin-right: auto;
+      }
     }
   }
   &__center {
@@ -157,7 +222,6 @@ const navigateProjectList = () => {
     & {
       .button {
         cursor: pointer;
-
         &__switcher {
           padding: 4px;
           display: flex;
@@ -196,5 +260,12 @@ const navigateProjectList = () => {
 :deep(.navigation-item.leading) {
   padding-top: 12px !important;
   padding-bottom: 12px !important;
+}
+:deep(.no-rounded.ui-kit-button) {
+  justify-content: left;
+  border-radius: 0 !important;
+}
+:deep(.navigation-item) {
+  width: 33% !important;
 }
 </style>

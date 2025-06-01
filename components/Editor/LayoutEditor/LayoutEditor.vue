@@ -2,6 +2,7 @@
   <div class="bg-black">
     <div class="editor__bg">
       <NavigatorEditor
+        :projectName="projectName"
         :historyStatus="historyStatus"
         @handle-undo="$emit('handleUndo')"
         @handle-redo="$emit('handleRedo')"
@@ -10,6 +11,8 @@
             $emit('handleSwitchLayout', e);
           }
         "
+        @handle-activity-settings="$emit('handleActivitySettings')"
+        @handle-edit-info="$emit('handleEditInfo')"
         @handle-play="$emit('handlePlay')"
         @handle-store-changes="$emit('handleStoreChanges')"
         @handle-release="$emit('handleRelease')"
@@ -41,6 +44,7 @@ defineProps<{
     undoButtonEnable: boolean;
   };
   rwdMode: string;
+  projectName: string;
 }>();
 
 const emit = defineEmits<{
@@ -53,6 +57,8 @@ const emit = defineEmits<{
   clickSidebar: [string];
   handleBack: [];
   scrollEditor: [];
+  handleEditInfo: [];
+  handleActivitySettings: [];
 }>();
 const editorContainer = ref<HTMLElement>();
 
