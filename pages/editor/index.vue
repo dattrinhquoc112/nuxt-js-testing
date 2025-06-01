@@ -14,7 +14,7 @@
     @handle-edit-info="isShowEditInfoModal = true"
     @handle-switch-layout="() => {}"
     @hanlde-store-changes="() => {}"
-    :project-name="'fdsaf'"
+    :project-name="webEditorName"
   >
     <editor
       ref="editorRef"
@@ -67,7 +67,11 @@
 
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
+import { ROUTE } from '@/constants/route';
+import { DEFAULT_WEB_EDITOR_NAME } from '@/constants/common';
+import { useProjectStore } from '@/stores/project';
 
+const { getProject, editProject } = useProjectStore();
 definePageMeta({
   layout: 'editor',
 });
@@ -81,6 +85,18 @@ const isShowActivitySettingModal = ref(false);
 const projectName = ref();
 const route = useRoute();
 const editorID = ref('');
+const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
+
+const { t } = useI18n();
+const handleGetProjectDetail = async (id: any) => {
+  const detailProject = await getProject(id);
+  if (detailProject) {
+    const { data } = detailProject;
+    return data;
+  }
+  return {};
+};
+
 watch(
   () => editorRef.value?.historyStatus,
   (newVal) => {
@@ -92,13 +108,24 @@ watch(
   async (newId) => {
     if (newId) {
       editorID.value = Array.isArray(newId) ? newId[0] ?? '' : newId;
+      const data = await handleGetProjectDetail(newId);
+      webEditorName.value = data.name;
     }
   },
   {
     immediate: true,
   }
 );
-const handleEditEditor = () => {};
+
+const handleEditEditor = async (name: string) => {
+  if (editorID.value) {
+    await editProject(editorID.value, { name });
+    toastMessage(t('landing-common-message-saved'));
+    isShowEditInfoModal.value = false;
+  } else {
+    webEditorName.value = name;
+  }
+};
 const handleClickSideBar = (keyAction: string) => {
   if (keyAction === 'toggle-section') {
     isShowListSection.value = !isShowListSection.value;
@@ -107,18 +134,18 @@ const handleClickSideBar = (keyAction: string) => {
 
 const handleLeave = () => {
   isShowModal.value = false;
-  navigateTo('/project-list');
+  navigateTo(ROUTE.PROJECT_LIST);
 };
 
 const handleSaveDraft = () => {
   // TODO: implement save draft logic
   isShowModal.value = false;
-  navigateTo('/project-list');
+  navigateTo(ROUTE.PROJECT_LIST);
 };
 const handleBack = () => {
   const isSectionDirty = editorRef.value?.isSectionDirty();
   if (isSectionDirty) {
-    navigateTo('/project-list');
+    navigateTo(ROUTE.PROJECT_LIST);
   } else {
     isShowModal.value = true;
   }
