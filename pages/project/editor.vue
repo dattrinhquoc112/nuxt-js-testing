@@ -89,18 +89,19 @@ const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
     const isLatestVersion = await checkIsLatestVersion();
     if (!isLatestVersion) {
       isShowModal.confirmReplace = true;
-    }
-    switch (type) {
-      case 'save':
-        handleSaveTemplate();
-        break;
-      case 'switch-layout':
-        break;
-      case 'show-section':
-        handleClickSideBar(keyAction);
-        break;
-      default:
-        break;
+    } else {
+      switch (type) {
+        case 'save':
+          handleSaveTemplate();
+          break;
+        case 'switch-layout':
+          break;
+        case 'show-section':
+          handleClickSideBar(keyAction);
+          break;
+        default:
+          break;
+      }
     }
   } catch (error) {
     return Promise.reject(error);

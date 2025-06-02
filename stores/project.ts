@@ -110,7 +110,7 @@ export const useProjectStore = defineStore('project', () => {
   async function checkIsLatestVersion() {
     try {
       if (!versionContent.value?.idProject || !versionContent.value.version)
-        return;
+        return true;
       const latestVersion = (
         await apiStore.apiRequest({
           method: MethodEnum.GET,
