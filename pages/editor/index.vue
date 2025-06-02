@@ -7,7 +7,7 @@
     @handle-switcher-layout="handleEvent"
     @handle-play="handleEvent"
     @handle-store-changes="handleEvent"
-    @handle-release="handleEvent"
+    @handle-release="handleCheckCOnditionPublish"
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
     @handle-activity-settings="isShowActivitySettingModal = true"
@@ -30,7 +30,7 @@
   />
   <popup-edit-project
     :show="isShowEditInfoModal"
-    :value="projectName"
+    :value="webEditorName"
     @close="isShowEditInfoModal = false"
     @edit="handleEditEditor"
   />
@@ -63,6 +63,15 @@
       </div>
     </template>
   </vi-modal>
+  <EditorReminderPU
+    v-model:model="isOpenReminderPU"
+    @handle-click="
+      () => {
+        isOpenReminderPU = false;
+        isShowActivitySettingModal = true;
+      }
+    "
+  />
 </template>
 
 <script setup lang="ts">
@@ -76,6 +85,8 @@ const { getProject, editProject, createProject } = useProjectStore();
 definePageMeta({
   layout: 'editor',
 });
+
+const isOpenReminderPU = ref(false);
 const isShowListSection = ref(false);
 const historyStatus = ref();
 const isShowModal = ref(false);
@@ -83,7 +94,6 @@ const editorRef = ref();
 const handleEvent = () => {};
 const isShowEditInfoModal = ref(false);
 const isShowActivitySettingModal = ref(false);
-const projectName = ref();
 const route = useRoute();
 const editorID = ref('');
 const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
@@ -120,9 +130,26 @@ watch(
   }
 );
 
+const handleCheckCOnditionPublish = async () => {
+  const isFinishSetupEvent =
+    project.value?.metaTitle &&
+    project.value?.ogTitle &&
+    project.value?.eventEnglishName &&
+    project.value.startTime &&
+    project.value.endTime;
+  // TODO: need to update check setup finished audio
+  const isFinishedSetupAudio = true;
+  if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
+  } else {
+    isOpenReminderPU.value = true;
+  }
+  return !!isFinishSetupEvent && !!isFinishedSetupAudio;
+};
+
 const handleEditEditor = async (name: string) => {
   if (editorID.value) {
-    await editProject(editorID.value, { name });
+    const res = await editProject(editorID.value, { name });
+    webEditorName.value = res.data.name;
     toastMessage(t('landing-common-message-saved'));
     isShowEditInfoModal.value = false;
   } else {

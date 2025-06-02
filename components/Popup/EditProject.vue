@@ -54,10 +54,16 @@ const props = defineProps({
 });
 const emit = defineEmits(['close', 'edit']);
 const { t } = useI18n();
-const model = reactive({
-  name: props.value,
+const model = ref({
+  name: '',
 });
-
+watch(
+  () => props.value,
+  (newValue) => {
+    model.value.name = newValue;
+  },
+  { immediate: true }
+);
 const rules = {
   name: [
     {
