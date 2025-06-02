@@ -11,7 +11,7 @@
     <template #footer>
       <div class="btn-confirm">
         <vi-button
-          type="standard-default"
+          type="standard-primary"
           width="fit-content"
           @click="emit('handleClick')"
           class="ml-auto"

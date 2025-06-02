@@ -81,7 +81,8 @@ import { DEFAULT_WEB_EDITOR_NAME } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 
-const { getProject, editProject, createProject } = useProjectStore();
+const { getProject, editProject, createProject, publishProject } =
+  useProjectStore();
 definePageMeta({
   layout: 'editor',
 });
@@ -140,7 +141,10 @@ const handleCheckCOnditionPublish = async () => {
   // TODO: need to update check setup finished audio
   const isFinishedSetupAudio = true;
   if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
+    const res = await publishProject(editorID.value);
+    console.log(res, 'res nek');
   } else {
+    console.log(isFinishSetupEvent);
     isOpenReminderPU.value = true;
   }
   return !!isFinishSetupEvent && !!isFinishedSetupAudio;
@@ -154,6 +158,7 @@ const handleEditEditor = async (name: string) => {
     isShowEditInfoModal.value = false;
   } else {
     webEditorName.value = name;
+    await createProject(name);
   }
 };
 
