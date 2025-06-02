@@ -24,10 +24,10 @@
   </LayoutEditor>
   <popup-setting-project
     :show="isShowActivitySettingModal"
+    :project="project"
     @close="isShowActivitySettingModal = false"
-    @submit="isShowActivitySettingModal = false"
+    @submit="handleSubmitSettingProject"
   />
-
   <popup-edit-project
     :show="isShowEditInfoModal"
     :value="projectName"
@@ -70,8 +70,9 @@ import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { ROUTE } from '@/constants/route';
 import { DEFAULT_WEB_EDITOR_NAME } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
+import { toastMessage } from '#imports';
 
-const { getProject, editProject } = useProjectStore();
+const { getProject, editProject, createProject } = useProjectStore();
 definePageMeta({
   layout: 'editor',
 });
@@ -86,7 +87,7 @@ const projectName = ref();
 const route = useRoute();
 const editorID = ref('');
 const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
-
+const project = ref();
 const { t } = useI18n();
 const handleGetProjectDetail = async (id: any) => {
   const detailProject = await getProject(id);
@@ -110,6 +111,8 @@ watch(
       editorID.value = Array.isArray(newId) ? newId[0] ?? '' : newId;
       const data = await handleGetProjectDetail(newId);
       webEditorName.value = data.name;
+      const res = await getProject(editorID.value);
+      project.value = res.data;
     }
   },
   {
@@ -124,6 +127,17 @@ const handleEditEditor = async (name: string) => {
     isShowEditInfoModal.value = false;
   } else {
     webEditorName.value = name;
+  }
+};
+
+const handleSubmitSettingProject = async (payload: any) => {
+  isShowActivitySettingModal.value = false;
+  if (!editorID.value) {
+    const res = await createProject(webEditorName.value);
+    editorID.value = res.data.id;
+    const resEdit = await editProject(editorID.value, payload);
+    project.value = resEdit.data;
+    toastMessage(t('landing-common-message-saved'));
   }
 };
 const handleClickSideBar = (keyAction: string) => {

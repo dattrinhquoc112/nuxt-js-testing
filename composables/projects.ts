@@ -7,11 +7,10 @@ export default function useProjects() {
   const { getCurrentTenantInfo } = useTenantStore();
   const { getFileURL } = useUploadStore();
   const tenantName = getCurrentTenantInfo()?.name;
-  const getProjectUrl = (project?: IProject): string => {
-    if (project?.eventEnglishName && tenantName) {
+  const getProjectUrl = (eventEnglishName?: string): string => {
+    if (eventEnglishName && tenantName) {
       const host = window.location.origin;
-      return new URL(`${host}/event/${tenantName}/${project.eventEnglishName}`)
-        .href;
+      return new URL(`${host}/event/${tenantName}/${eventEnglishName}`).href;
     }
     return '';
   };
