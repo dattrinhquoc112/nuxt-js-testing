@@ -58,7 +58,6 @@ const emit = defineEmits<{
   scrollEditor: [];
   handleEditInfo: [];
   handleActivitySettings: [];
-  scrollEditor: [];
 }>();
 const editorContainer = ref<HTMLElement>();
 

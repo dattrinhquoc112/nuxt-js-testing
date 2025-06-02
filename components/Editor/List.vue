@@ -14,7 +14,7 @@
         :class="hoverPosition.zone"
         @click="emit('add-section', index)"
       >
-        Add New Section in here
+        {{ $t('landing-editor-section-add_section') }}
       </span>
 
       <div

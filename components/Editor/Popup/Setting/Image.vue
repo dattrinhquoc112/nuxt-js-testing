@@ -15,7 +15,9 @@
     <div class="header">
       <vi-icon name="ic_picture" size="24" color="#fff"></vi-icon>
       <div class="ml-8 mr-auto neutral-white-alpha-90-text">
-        <vi-typography type="subtitle-large">Media Setting</vi-typography>
+        <vi-typography type="subtitle-large">{{
+          $t('landing-editor-modal-media_setting')
+        }}</vi-typography>
       </div>
       <vi-icon
         class="neutral-white-alpha-60-text cursor-pointer"
@@ -42,13 +44,17 @@
         </div>
       </div>
       <div class="neutral-white-alpha-60-text mt-8">
-        <vi-typography type="body-small"
-          >影像格式 : JPEG, PNG, MP4, MOV</vi-typography
-        >
+        <vi-typography type="body-small">{{
+          $t('landing-editor-modal-media_description')
+        }}</vi-typography>
       </div>
       <div class="box-button">
-        <vi-button type="standard-default">上傳</vi-button>
-        <vi-button type="dangerous-default">刪除</vi-button>
+        <vi-button type="standard-default">{{
+          $t('landing-editor-button-media_upload')
+        }}</vi-button>
+        <vi-button type="dangerous-default">{{
+          $t('common-action-button-button_delete')
+        }}</vi-button>
       </div>
     </div>
   </div>

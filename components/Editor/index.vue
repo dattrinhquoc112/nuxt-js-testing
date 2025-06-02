@@ -33,7 +33,7 @@
       @action-event="(key) => (defineAction[key as keyof typeof defineAction])()"
     />
 
-    <editor-setting-image
+    <editor-popup-setting-image
       :class="classPopupSettingImage"
       :isShow="isShowPopup.imageSetting"
       :positionControlCurrent="positionControlCurrent"
@@ -43,7 +43,7 @@
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
     />
-    <editor-setting-link
+    <editor-popup-setting-link
       :isShow="isShowPopup.addLink"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingLink"
@@ -51,8 +51,8 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
       @change-link="handleChangeLink"
     />
-    
-    <editor-setting-audio
+
+    <editor-popup-setting-audio
       :isShow="isShowPopup.audioSetting"
       :positionControlCurrent="positionControlCurrent"
       v-model="objectSelecting"
@@ -61,7 +61,7 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
     />
 
-    <editor-setting-text
+    <editor-popup-setting-text
       :isShow="isShowPopup.textSetting"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingText"
@@ -70,7 +70,7 @@
       @change-align="handleChangeAlign"
       @change-size="handleChangeSize"
     />
-    <editor-setting-color
+    <editor-popup-setting-color
       :class="
         keyElementSelected === 'backgroundSection' ? 'for-bg-section' : ''
       "
@@ -119,8 +119,13 @@ const props = defineProps({
 const router = useRouter();
 const route = useRoute();
 const { uploadFile } = useUploadStore();
-const { createProject, updateContentProject, getContentProject } =
-  useProjectStore();
+const {
+  createProject,
+  updateContentProject,
+  getContentProject,
+  setVersionContent,
+} = useProjectStore();
+
 const emit = defineEmits(['closeSection']);
 const templateSelected = ref();
 const buttonColor = ref<RGBA>({
@@ -669,7 +674,12 @@ const handleSaveTemplate = async () => {
     updateAllImageAudio(),
   ]);
   const payload = convertDataSections();
-  await updateContentProject(idProjectRes, payload);
+  const res = await updateContentProject(idProjectRes, payload);
+  if (res.data.version)
+    setVersionContent({
+      idProject: idProjectRes,
+      version: res.data.version,
+    });
   router.push({
     query: {
       id: idProjectRes,
@@ -682,6 +692,11 @@ const fetchContentProject = async () => {
     sections.value = JSON.parse(JSON.stringify([props.listTemplate[0]]));
   } else {
     const data = await getContentProject(route.query.id as string);
+    if (data.data.version)
+      setVersionContent({
+        idProject: route.query.id as string,
+        version: data.data.version,
+      });
     if (!data.data.sections.length) return;
     sections.value = data.data.sections.map(
       (item: any, indexSection: number) => {
@@ -724,6 +739,7 @@ defineExpose({
   isSectionDirty,
   hiddenBoxControl,
   handleSaveTemplate,
+  fetchContentProject,
 });
 </script>
 

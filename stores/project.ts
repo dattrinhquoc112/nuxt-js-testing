@@ -8,6 +8,15 @@ import { MethodEnum } from './interface/api';
 
 export const useProjectStore = defineStore('project', () => {
   const apiStore = useApiStore();
+  type versionContentType = {
+    version: number;
+    idProject: string;
+  };
+  const versionContent = ref<versionContentType>();
+
+  const setVersionContent = ({ version, idProject }: versionContentType) => {
+    versionContent.value = { version, idProject };
+  };
 
   async function getProjectList(payload: IProjectListPayload) {
     return apiStore.apiRequest({
@@ -98,6 +107,23 @@ export const useProjectStore = defineStore('project', () => {
     });
   }
 
+  async function checkIsLatestVersion() {
+    try {
+      if (!versionContent.value?.idProject || !versionContent.value.version)
+        return;
+      const latestVersion = (
+        await apiStore.apiRequest({
+          method: MethodEnum.GET,
+          endpoint: `/api/v1/projects/${versionContent.value.idProject}/latest-version`,
+          proxy: true,
+        })
+      ).data.version;
+      return Number(versionContent.value?.version) === Number(latestVersion);
+    } catch (error) {
+      return Promise.reject(error);
+    }
+  }
+
   return {
     getProjectList,
     createProject,
@@ -109,5 +135,7 @@ export const useProjectStore = defineStore('project', () => {
     getProjectAnalysis,
     updateContentProject,
     getContentProject,
+    setVersionContent,
+    checkIsLatestVersion,
   };
 });
