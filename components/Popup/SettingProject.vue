@@ -75,7 +75,9 @@
               <vi-typography type="subtitle-large">{{
                 $t('landing-project_mgmt-title-event_url')
               }}</vi-typography>
-              <vi-typography>{{ getProjectUrl(props.project) }}</vi-typography>
+              <vi-typography>{{
+                getProjectUrl(model.eventEnglishName)
+              }}</vi-typography>
             </div>
           </div>
         </div>
@@ -455,34 +457,33 @@ const { editProject } = useProjectStore();
 const { uploadFile } = useUploadStore();
 
 const onEditProject = async () => {
-  if (props?.project?.id) {
-    loading.update = true;
-    const payload: IUpdateProjectPayload = {
-      startTime: new Date(model.dates[0]).toISOString(),
-      endTime: new Date(model.dates[1]).toISOString(),
-      eventEnglishName: model.eventEnglishName,
-      metaTitle: model.metaTitle,
-      metaDescription: model.metaDescription,
-      metaKeyword: model.metaKeyword,
-      ogTitle: model.ogTitle,
-      ogDescription: model.ogDescription,
-      eventOfficialUrl: getProjectUrl({
-        ...props.project,
-        eventEnglishName: model.eventEnglishName,
-      }),
+  loading.update = true;
+  const payload: IUpdateProjectPayload = {
+    startTime: new Date(model.dates[0]).toISOString(),
+    endTime: new Date(model.dates[1]).toISOString(),
+    eventEnglishName: model.eventEnglishName,
+    metaTitle: model.metaTitle,
+    metaDescription: model.metaDescription,
+    metaKeyword: model.metaKeyword,
+    ogTitle: model.ogTitle,
+    ogDescription: model.ogDescription,
+    eventOfficialUrl: getProjectUrl(model.eventEnglishName),
+  };
+  if (model.ogImageFile) {
+    const res = await uploadFile(model.ogImageFile);
+    payload.ogImage = {
+      thumbnail: res?.fileUri,
+      fileUri: res?.fileUri,
+      fileSize: model.ogImageFile.size,
     };
-    if (model.ogImageFile) {
-      const res = await uploadFile(model.ogImageFile);
-      payload.ogImage = {
-        thumbnail: res?.fileUri,
-        fileUri: res?.fileUri,
-        fileSize: model.ogImageFile.size,
-      };
-    }
+  }
+  if (props.project?.id) {
     const res = await editProject(props.project?.id, payload);
     model.project = res.data;
     toastMessage(t('landing-common-message-saved'));
     loading.update = false;
+  } else {
+    emit('submit', payload);
   }
 };
 
