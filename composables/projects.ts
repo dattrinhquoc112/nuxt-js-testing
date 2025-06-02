@@ -10,7 +10,8 @@ export default function useProjects() {
   const getProjectUrl = (project?: IProject): string => {
     if (project?.eventEnglishName && tenantName) {
       const host = window.location.origin;
-      return new URL(`${host}/event/${tenantName}/${project.name}`).href;
+      return new URL(`${host}/event/${tenantName}/${project.eventEnglishName}`)
+        .href;
     }
     return '';
   };
