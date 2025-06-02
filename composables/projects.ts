@@ -27,9 +27,17 @@ export default function useProjects() {
   };
 
   const getImage = (uri?: string) => {
+    if (!uri) return '';
+
+    if (uri.startsWith('blob:')) {
+      return uri;
+    }
     const match = uri?.match(/^gs:\/\/[^/]+\/(.+)$/);
     const path = match ? match[1] : '';
-    const endpoint = `/general/media/${path}`;
+    if (!path) {
+      return uri;
+    }
+    const endpoint = `/general/media?fileKey=${path}`;
     const url = getFileURL(endpoint);
     return url;
   };

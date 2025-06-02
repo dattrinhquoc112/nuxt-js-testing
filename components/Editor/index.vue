@@ -3,6 +3,7 @@
     <editor-template-selector
       v-if="isShowListSection"
       :templateSelected="templateSelected"
+      :list-template="listTemplate"
       @click-template="onClickTemplate"
       @close="emit('closeSection')"
     />
@@ -22,6 +23,7 @@
       @set-selected-element="(val) => (selectedElement = val)"
       @handle-change-text="handleChangeText"
       @set-hover-position="(val) => (hoverPosition = val)"
+      @set-index-audio="(val) => (indexAudioSelected = val)"
     />
 
     <editor-box-control
@@ -38,6 +40,8 @@
       @close="closePopupChangeImage"
       @change-image="handleChangeImage"
       @change-video="handleChangeVideo"
+      @move-popup-to-top="handleMoveTopPopup"
+      @move-popup-to-bottom="handleMoveBottomPopup"
     />
     <editor-setting-link
       :isShow="isShowPopup.addLink"
@@ -46,6 +50,15 @@
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
       @change-link="handleChangeLink"
+    />
+    
+    <editor-setting-audio
+      :isShow="isShowPopup.audioSetting"
+      :positionControlCurrent="positionControlCurrent"
+      v-model="objectSelecting"
+      @close="closePopupSettingAudio"
+      @move-popup-to-top="handleMoveTopPopup"
+      @move-popup-to-bottom="handleMoveBottomPopup"
     />
 
     <editor-setting-text
@@ -72,9 +85,19 @@
 </template>
 
 <script lang="ts" setup>
-import { TEMPLATES_OBJ } from '@/types/templates';
 import { type RGBA } from '@/types/color';
 import { DEBOUND_TIME_SAVE_HISTORY } from '@/constants/common';
+import { useUploadStore } from '~/stores/upload';
+import { type UPLOAD_RESPONSE } from '~/stores/interface/response/upload';
+import {
+  type SECTION_ITEM,
+  type AUDIO_ITEM,
+  type OBJ_SECTION_ITEM,
+  type BUTTON_EXTERNAL_ITEM,
+  type TEXT_ITEM,
+  type BACKGROUND_SECTION,
+} from '~/types/templates';
+import { useProjectStore } from '~/stores/project';
 
 let debounceTimer: any = null;
 const MAX_HISTORY = 20;
@@ -82,14 +105,23 @@ const iSaveHistory = ref(false);
 definePageMeta({
   layout: 'default',
 });
-defineProps({
+const props = defineProps({
   isShowListSection: {
     type: Boolean,
     default: true,
   },
+  listTemplate: {
+    type: Array as PropType<any>,
+    default: () => [],
+  },
 });
-const emit = defineEmits(['closeSection']);
 
+const router = useRouter();
+const route = useRoute();
+const { uploadFile } = useUploadStore();
+const { createProject, updateContentProject, getContentProject } =
+  useProjectStore();
+const emit = defineEmits(['closeSection']);
 const templateSelected = ref();
 const buttonColor = ref<RGBA>({
   r: 255,
@@ -99,14 +131,19 @@ const buttonColor = ref<RGBA>({
 });
 const indexSectionSelected = ref<number>();
 const classElementSelected = ref<string>();
-const keyElementSelected = ref<string>();
+const indexAudioSelected = ref<number>();
+type SectionKeys = keyof SECTION_ITEM | keyof AUDIO_ITEM;
+const keyElementSelected = ref<SectionKeys>();
 const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
   pageX: 0,
   pageY: 0,
 });
 const isChanged = ref(false);
-const sections = ref<any[]>([]);
-const history = ref<any[]>(JSON.parse(JSON.stringify([[TEMPLATES_OBJ[0]]])));
+const sections = ref<SECTION_ITEM[] | []>([]);
+const listMaterials = ref<any[]>([]);
+const history = ref<any[]>(
+  JSON.parse(JSON.stringify([[props.listTemplate[0]]]))
+);
 const currentIndex = ref<number>(0);
 
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
@@ -121,16 +158,34 @@ const initPopupSetting = {
   imageSetting: false,
   addLink: false,
   textSetting: false,
+  audioSetting: false,
   colorSetting: false,
 };
 const isShowPopup = ref({
   ...initPopupSetting,
 });
 
-const objectSelecting = computed(() => {
-  if (!keyElementSelected.value) return undefined;
-  if (indexSectionSelected.value === undefined) return undefined;
-  return sections.value[indexSectionSelected.value][keyElementSelected.value];
+const objectSelecting = computed<OBJ_SECTION_ITEM>(() => {
+  const sectionIndex = indexSectionSelected.value;
+  const key = keyElementSelected.value;
+  const audioIndex = indexAudioSelected.value;
+
+  if (
+    sectionIndex === undefined ||
+    key === undefined ||
+    sections.value[sectionIndex] === undefined
+  ) {
+    return undefined;
+  }
+
+  const section = sections.value[sectionIndex];
+
+  if (audioIndex !== undefined) {
+    const audioItem = section.listAudio?.[audioIndex];
+    return audioItem?.[key as keyof AUDIO_ITEM];
+  }
+
+  return section?.[key as keyof SECTION_ITEM];
 });
 
 const handleSetPositionControl = (data: { pageX: number; pageY: number }) => {
@@ -142,53 +197,75 @@ const classPopupSettingImage = computed(() => {
   if (keyElementSelected.value === 'boxImage') return 'for-box-image';
   return '';
 });
+
+const checkMaterials = (
+  objSelecting: any,
+  newFileUri: string,
+  type = 'UPDATE'
+) => {
+  if (!listMaterials.value.length) return;
+  const materialIndex = listMaterials.value.findIndex(
+    (item) =>
+      item.fileUri === objSelecting.urlImage ||
+      item.fileUri === objSelecting.urlVideo
+  );
+  if (materialIndex === -1) return;
+  if (type === 'DELETE') {
+    listMaterials.value.splice(materialIndex, 1);
+    return;
+  }
+
+  listMaterials.value[materialIndex].fileUri = newFileUri;
+};
+
 watch(buttonColor, () => {
   const colorChange = `rgba(${buttonColor.value.r},${buttonColor.value.g},${
     buttonColor.value.b
   },${buttonColor.value.a / 100})`;
+  const obj = objectSelecting.value;
+  if (!obj) return;
+
   if (keyElementSelected.value === 'buttonExternal') {
-    objectSelecting.value.style.backgroundColor = colorChange;
+    const button = obj as BUTTON_EXTERNAL_ITEM;
+    button.style.backgroundColor = colorChange;
     const oppositeColor = getOppositeColor(buttonColor.value);
-    objectSelecting.value.style.color = `rgba(${oppositeColor.r},${
-      oppositeColor.g
-    },${oppositeColor.b},${oppositeColor.a / 100})`;
+    button.style.color = `rgba(${oppositeColor.r},${oppositeColor.g},${
+      oppositeColor.b
+    },${oppositeColor.a / 100})`;
   } else if (keyElementSelected.value !== 'backgroundSection') {
-    objectSelecting.value.style.color = colorChange;
+    const other = obj as TEXT_ITEM;
+    other.style.color = colorChange;
   } else {
-    objectSelecting.value.class = 'bg-color';
-    objectSelecting.value.color = colorChange;
-    objectSelecting.value.urlImg = '';
-    if (objectSelecting.value.urlVideo) {
-      URL.revokeObjectURL(objectSelecting.value.urlVideo);
-      objectSelecting.value.urlVideo = '';
-    }
-    if (objectSelecting.value.urlImg) {
-      URL.revokeObjectURL(objectSelecting.value.urlImg);
-      objectSelecting.value.urlImg = '';
-    }
+    const bg = obj as BACKGROUND_SECTION;
+    bg.class = 'bg-color';
+    bg.color = colorChange;
+    checkMaterials(bg, '', 'DELETE');
+    bg.urlVideo = '';
+    bg.urlImage = '';
+    bg.file = null;
+    revokeObjectURL(bg.urlVideo);
+    revokeObjectURL(bg.urlImage);
   }
 });
-const handleChangeVideo = (urlVideo: string) => {
-  if (keyElementSelected.value === 'boxImage') {
-    if (objectSelecting.value.imgUrl) {
-      URL.revokeObjectURL(objectSelecting.value.imgUrl);
-    }
-    if (objectSelecting.value.imgVideo) {
-      URL.revokeObjectURL(objectSelecting.value.imgVideo);
-    }
-    objectSelecting.value.imgUrl = '';
-    objectSelecting.value.imgVideo = urlVideo;
-  } else {
-    objectSelecting.value.class = '';
-    objectSelecting.value.color = '';
-    if (objectSelecting.value.urlVideo) {
-      URL.revokeObjectURL(objectSelecting.value.urlVideo);
-    }
-    if (objectSelecting.value.urlImg) {
-      URL.revokeObjectURL(objectSelecting.value.urlImg);
-      objectSelecting.value.urlImg = '';
-    }
-    objectSelecting.value.urlVideo = urlVideo;
+
+const handleChangeVideo = ({
+  objectUrl: urlVideo,
+  file,
+}: {
+  objectUrl: string;
+  file: File;
+}) => {
+  const obj = objectSelecting.value as BACKGROUND_SECTION;
+  if (!obj) return;
+  revokeObjectURL(obj.urlVideo);
+  revokeObjectURL(obj.urlImage);
+  checkMaterials(obj, urlVideo);
+  obj.urlImage = '';
+  obj.urlVideo = urlVideo;
+  obj.file = file;
+  if (keyElementSelected.value === 'backgroundSection') {
+    obj.class = '';
+    obj.color = '';
   }
 };
 const handleChangeText = (event: MouseEvent) => {
@@ -201,49 +278,59 @@ const handleChangeText = (event: MouseEvent) => {
   element.textContent = '';
   element.appendChild(textarea);
   textarea.focus();
+
   textarea.addEventListener('blur', () => {
-    objectSelecting.value.text = textarea.value;
+    const obj = objectSelecting.value as TEXT_ITEM;
+    if (!obj) return;
+    obj.text = textarea.value;
     element.textContent = textarea.value;
   });
 };
-const handleChangeImage = (urlImg: string) => {
-  if (keyElementSelected.value === 'boxImage') {
-    if (objectSelecting.value.imgUrl) {
-      URL.revokeObjectURL(objectSelecting.value.imgUrl);
-    }
-    if (objectSelecting.value.imgVideo) {
-      URL.revokeObjectURL(objectSelecting.value.imgVideo);
-    }
-    objectSelecting.value.imgUrl = urlImg;
-    objectSelecting.value.imgVideo = '';
-  } else {
-    objectSelecting.value.class = 'bg-img';
-    objectSelecting.value.color = '';
-    if (objectSelecting.value.urlImg) {
-      URL.revokeObjectURL(objectSelecting.value.urlImg);
-    }
-    if (objectSelecting.value.urlVideo) {
-      URL.revokeObjectURL(objectSelecting.value.urlVideo);
-      objectSelecting.value.urlVideo = '';
-    }
-    objectSelecting.value.urlImg = urlImg;
+const handleChangeImage = ({
+  objectUrl: urlImage,
+  file,
+}: {
+  objectUrl: string;
+  file: File;
+}) => {
+  const obj = objectSelecting.value as BACKGROUND_SECTION;
+  if (!obj) return;
+  revokeObjectURL(obj.urlImage);
+  revokeObjectURL(obj.urlVideo);
+  checkMaterials(obj, urlImage);
+  obj.urlVideo = '';
+  obj.file = file;
+  obj.urlImage = urlImage;
+  if (keyElementSelected.value === 'backgroundSection') {
+    obj.class = 'bg-img';
+    obj.color = '';
   }
 };
 const handleChangeAlign = (align: string) => {
-  objectSelecting.value.style.textAlign = align;
+  const obj = objectSelecting.value as TEXT_ITEM;
+  if (!obj) return;
+  obj.style.textAlign = align;
 };
 
 const handleChangeSize = (size: string) => {
-  objectSelecting.value.style.fontSize = size;
+  const obj = objectSelecting.value as TEXT_ITEM;
+  if (!obj) return;
+  obj.style.fontSize = size;
 };
 
 const handleChangeLink = (link: string) => {
-  objectSelecting.value.link = link;
+  const obj = objectSelecting.value as BUTTON_EXTERNAL_ITEM;
+  if (!obj || !link) return;
+  obj.link = link;
 };
 
 const handleMoveTopPopup = () => {
   if (!selectedElement.value) return;
-  if (keyElementSelected.value !== 'backgroundSection') {
+  if (
+    keyElementSelected.value !== 'backgroundSection' &&
+    keyElementSelected.value !== 'boxImage' &&
+    keyElementSelected.value !== 'audio'
+  ) {
     const coordinates = selectedElement.value.getBoundingClientRect();
     const pageY = coordinates.top - 12;
     const pageX = coordinates.left + coordinates.width / 2;
@@ -257,7 +344,11 @@ const handleMoveTopPopup = () => {
 };
 const handleMoveBottomPopup = () => {
   if (!selectedElement.value) return;
-  if (keyElementSelected.value !== 'backgroundSection') {
+  if (
+    keyElementSelected.value !== 'backgroundSection' &&
+    keyElementSelected.value !== 'boxImage' &&
+    keyElementSelected.value !== 'audio'
+  ) {
     const coordinates = selectedElement.value.getBoundingClientRect();
     const pageY = coordinates.bottom + 12;
     const pageX = coordinates.left + coordinates.width / 2;
@@ -277,7 +368,6 @@ const hiddenAllPopupSetting = () => {
 const hiddenBoxControl = () => {
   isShowControl.value = false;
   hiddenAllPopupSetting();
-  window.removeEventListener('scroll', hiddenBoxControl);
 };
 
 const moveDown = () => {
@@ -397,6 +487,13 @@ const showPopupSettingLink = () => {
 const showPopupSettingColor = () => {
   isShowPopup.value.colorSetting = true;
 };
+const showPopupSettingAudio = () => {
+  isShowControl.value = false;
+  isShowPopup.value.audioSetting = true;
+};
+const closePopupSettingAudio = () => {
+  isShowPopup.value.audioSetting = false;
+};
 const showPopupChangeImage = () => {
   isShowPopup.value.imageSetting = true;
 };
@@ -423,15 +520,188 @@ const defineAction = {
   showPopupSettingColor,
   showPopupSettingText,
   showPopupSettingLink,
+  showPopupSettingAudio,
   moveUp,
   moveDown,
   showPopupChangeImage,
   handleDeleteSection,
 };
+const updateMaterial = (
+  dataApi: UPLOAD_RESPONSE,
+  file: File,
+  indexSection: number,
+  fileUri: string,
+  type: string = 'MEDIA'
+) => {
+  const findMaterial = listMaterials.value.find(
+    (item) => item.fileUri === fileUri
+  );
 
-onMounted(() => {
-  sections.value = JSON.parse(JSON.stringify([TEMPLATES_OBJ[0]]));
-});
+  if (findMaterial) {
+    findMaterial.indexSection = indexSection;
+    findMaterial.type = type;
+    findMaterial.fileUri = dataApi.fileUri;
+    findMaterial.fileSize = file.size;
+  } else {
+    listMaterials.value.push({
+      indexSection,
+      id: null,
+      type,
+      thumbnail: 'string',
+      fileUri: dataApi.fileUri,
+      fileSize: file.size,
+    });
+  }
+};
+
+const uploadAllImage = async (key: string, type: string = 'MEDIA') => {
+  if (!sections.value.length) return;
+
+  await Promise.all(
+    sections.value.map(async (item: any, index: number) => {
+      if (item?.[key]?.file) {
+        const res: UPLOAD_RESPONSE | undefined = await uploadFile(
+          item[key].file
+        );
+        if (!res) return;
+        if (item[key].urlImage) {
+          updateMaterial(res, item[key].file, index, item[key].urlImage, type);
+          item[key].urlImage = res?.fileUri;
+        }
+        if (item[key].urlVideo) {
+          updateMaterial(res, item[key].file, index, item[key].urlVideo, type);
+          item[key].urlVideo = res?.fileUri;
+        }
+      }
+    })
+  );
+};
+
+const updateAllImageAudio = async () => {
+  if (!sections.value.length) return;
+  const listAudio: any[] = [];
+  sections.value.forEach(async (item: any) => {
+    if (item?.listAudio) {
+      item.listAudio.forEach((itemAudio: any) => {
+        if (itemAudio.audio?.file) {
+          listAudio.push(itemAudio.audio);
+        }
+      });
+    }
+  });
+  if (listAudio.length) {
+    await Promise.all(
+      listAudio.map(async (item: any, index: number) => {
+        if (item?.file) {
+          const res: UPLOAD_RESPONSE | undefined = await uploadFile(item.file);
+          if (!res) return;
+          if (item.urlImage) {
+            updateMaterial(res, item.file, index, item.urlImage);
+            item.urlImage = res?.fileUri;
+          }
+          if (item.urlVideo) {
+            updateMaterial(res, item.file, index, item.urlVideo);
+            item.urlVideo = res?.fileUri;
+          }
+        }
+      })
+    );
+  }
+};
+
+const convertDataSections = () => {
+  return {
+    sections: sections.value.map((section: SECTION_ITEM, index: number) => {
+      let audioSettings: any = [];
+      if (section.id === 'audio-section') {
+        audioSettings = section.listAudio?.map(
+          (item: AUDIO_ITEM, orderAudio) => {
+            return {
+              order: orderAudio.toString(),
+              audioAppProjectId: item.audio.setting.voiceModelId.value,
+              speed: item.audio.setting.speed,
+              pitch: item.audio.setting.pitch,
+              demoPersistence: 'TEMPORARY',
+              sentences: item.audio.setting.listPhrase.map((sen) => ({
+                text: sen.text,
+                fileUri: sen.audioUrl,
+                demoId: 123123,
+              })),
+            };
+          }
+        );
+      }
+
+      const materials = listMaterials.value
+        .filter((i) => i.indexSection === index)
+        .map((i) => ({
+          id: i.id,
+          type: i.type,
+          thumbnail: i.thumbnail,
+          fileUri: i.fileUri,
+          fileSize: i.fileSize,
+        }));
+
+      return {
+        template: section.id,
+        order: index,
+        settings: {
+          generalSettings: resetAllFileToNull(section),
+          audioSettings,
+        },
+        materials,
+      };
+    }),
+  };
+};
+
+const handleSaveTemplate = async () => {
+  let idProjectRes;
+  if (!route.query?.id) {
+    idProjectRes = (await createProject('未命名專案')).data?.id;
+  } else {
+    idProjectRes = route.query?.id;
+  }
+
+  await Promise.all([
+    uploadAllImage('backgroundSection'),
+    uploadAllImage('boxImage'),
+    updateAllImageAudio(),
+  ]);
+  const payload = convertDataSections();
+  await updateContentProject(idProjectRes, payload);
+  router.push({
+    query: {
+      id: idProjectRes,
+    },
+  });
+};
+
+const fetchContentProject = async () => {
+  if (!route.query?.id) {
+    sections.value = JSON.parse(JSON.stringify([props.listTemplate[0]]));
+  } else {
+    const data = await getContentProject(route.query.id as string);
+    if (!data.data.sections.length) return;
+    sections.value = data.data.sections.map(
+      (item: any, indexSection: number) => {
+        if (item.materials?.length) {
+          listMaterials.value = listMaterials.value.concat(
+            item.materials.map((i: any) => ({
+              indexSection,
+              id: i.id,
+              type: i.type,
+              thumbnail: i.thumbnail,
+              fileUri: i.fileUri,
+              fileSize: i.fileSize,
+            }))
+          );
+        }
+        return item.settings.generalSettings;
+      }
+    );
+  }
+};
 
 const historyStatus = computed(() => ({
   redoButtonEnable: currentIndex.value !== history.value.length - 1,
@@ -439,14 +709,21 @@ const historyStatus = computed(() => ({
 }));
 const isSectionDirty = (): boolean => {
   const result =
-    JSON.stringify(sections.value) === JSON.stringify([TEMPLATES_OBJ[0]]);
+    JSON.stringify(sections.value) === JSON.stringify([props.listTemplate[0]]);
   return result;
 };
+
+onMounted(() => {
+  fetchContentProject();
+});
+
 defineExpose({
   redo,
   undo,
   historyStatus,
   isSectionDirty,
+  hiddenBoxControl,
+  handleSaveTemplate,
 });
 </script>
 

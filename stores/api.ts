@@ -57,6 +57,9 @@ export const useApiStore = defineStore('api', () => {
         if (payload.platform) {
           endpoint = 'platformCall';
         }
+        if (payload.audio) {
+          endpoint = 'audioCall';
+        }
         response = await $fetch<ResponseDataType>(`/client/api/${endpoint}`, {
           method: MethodEnum.POST,
           body: {

@@ -55,8 +55,11 @@
 </template>
 
 <script lang="ts" setup>
+import useCheckHeightPopup from '~/composables/checkHeightPopupSetting';
+
 const emit = defineEmits(['close', 'change-image', 'change-video']);
-defineProps({
+
+const props = defineProps({
   positionControlCurrent: {
     type: Object,
     default: () => ({}),
@@ -69,6 +72,7 @@ defineProps({
 const inputImage = ref<HTMLElement>();
 const inputVideo = ref<HTMLElement>();
 const popupElement = ref<HTMLElement>();
+useCheckHeightPopup(props, popupElement, emit);
 
 const onImageChange = (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -76,7 +80,7 @@ const onImageChange = (event: Event) => {
   if (!selected) return;
   if (selected?.type === 'image/png' || selected?.type === 'image/jpeg') {
     const objectUrl = URL.createObjectURL(selected);
-    emit('change-image', objectUrl);
+    emit('change-image', { objectUrl, file: selected });
     target.value = '';
   }
 };
@@ -86,7 +90,7 @@ const onVideoChange = (event: Event) => {
   if (!selected) return;
   // if (selected?.type === 'image/png' || selected?.type === 'image/jpeg') {
   const objectUrl = URL.createObjectURL(selected);
-  emit('change-video', objectUrl);
+  emit('change-video', { objectUrl, file: selected });
   target.value = '';
   // }
 };
@@ -110,6 +114,12 @@ const onVideoChange = (event: Event) => {
         display: none;
       }
     }
+  }
+  &.show-on-top {
+    transform: translateX(-50%) translateY(-100%);
+  }
+  &.show-on-bottom {
+    transform: translateX(-50%);
   }
   &.for-bg-section {
     transform: translateX(calc(-100% + 56px));

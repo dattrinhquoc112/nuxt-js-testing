@@ -3,7 +3,7 @@ import {
   convertCookieObjectToString,
   parseSetCookie,
 } from '@/utils/cookieHelper';
-import landingRequestHelper from '~/utils/landingRequestHelper';
+import audioRequestHelper from '~/utils/audioRequestHelper';
 import { MethodEnum } from '~/stores/interface/api';
 import requestFetch from '@/utils/requestFetch';
 
@@ -40,7 +40,7 @@ export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
       platform_auth_session: cookieAuthSession,
     });
   }
-  const response = await landingRequestHelper<ResponseDataType>({
+  const response = await audioRequestHelper<ResponseDataType>({
     ...payload,
     headers,
   });

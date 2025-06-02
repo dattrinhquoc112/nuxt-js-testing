@@ -6,7 +6,6 @@
     @handle-redo="handleRedo"
     @handle-switcher-layout="handleEvent"
     @handle-play="handleEvent"
-    @handle-store-changes="handleEvent"
     @handle-release="handleCheckCOnditionPublish"
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
@@ -15,9 +14,12 @@
     @handle-switch-layout="() => {}"
     @hanlde-store-changes="() => {}"
     :project-name="webEditorName"
+    @handle-store-changes="handleSaveTemplate"
+    @scroll-editor="handleHiddenAllControl"
   >
     <editor
       ref="editorRef"
+      :list-template="listTemplateCurrent"
       :is-show-list-section="isShowListSection"
       @close-section="isShowListSection = false"
     />
@@ -80,6 +82,7 @@ import { ROUTE } from '@/constants/route';
 import { DEFAULT_WEB_EDITOR_NAME } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
+import { TEMPLATES_AUDIO, TEMPLATES_SECTION } from '~/types/templates';
 
 const { getProject, editProject, createProject, publishProject } =
   useProjectStore();
@@ -92,6 +95,7 @@ const isShowListSection = ref(false);
 const historyStatus = ref();
 const isShowModal = ref(false);
 const editorRef = ref();
+const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
 const handleEvent = () => {};
 const isShowEditInfoModal = ref(false);
 const isShowActivitySettingModal = ref(false);
@@ -172,10 +176,23 @@ const handleSubmitSettingProject = async (payload: any) => {
     toastMessage(t('landing-common-message-saved'));
   }
 };
+
+const handleSaveTemplate = () => {
+  editorRef.value.handleSaveTemplate();
+};
+
 const handleClickSideBar = (keyAction: string) => {
+  isShowListSection.value = true;
   if (keyAction === 'toggle-section') {
-    isShowListSection.value = !isShowListSection.value;
+    listTemplateCurrent.value = TEMPLATES_SECTION;
   }
+  if (keyAction === 'toggle-audio') {
+    listTemplateCurrent.value = TEMPLATES_AUDIO;
+  }
+};
+
+const handleHiddenAllControl = () => {
+  editorRef.value?.hiddenBoxControl();
 };
 
 const handleLeave = () => {

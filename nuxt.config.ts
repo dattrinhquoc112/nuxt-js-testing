@@ -20,6 +20,7 @@ export default defineNuxtConfig({
       contactLink: process.env.NUXT_PUBLIC_CONTACT_LINK,
       apiLandingHost: process.env.NUXT_PUBLIC_API_LANDING_HOST,
       apiPlatformHost: process.env.NUXT_PUBLIC_API_HOST,
+      apiAudioHost: process.env.NUXT_PUBLIC_AUDIO_HOST,
     },
   },
 
@@ -99,6 +100,7 @@ export default defineNuxtConfig({
           import.meta.env.NUXT_PUBLIC_API_HOST,
           import.meta.env.NUXT_API_URL_UPLOAD,
           import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
+          'https://actions.google.com',
         ],
         'img-src': [
           "'self'",
@@ -108,7 +110,11 @@ export default defineNuxtConfig({
           import.meta.env.NUXT_API_URL_GET_AVATAR,
           'https://content.voiceclone.dev.vyin.ai',
         ],
-        'media-src': ['blob:'],
+        'media-src': [
+          'blob:',
+          'https://actions.google.com',
+          'http://localhost:3001',
+        ],
         'object-src': ["'none'"],
         'frame-src': ["'self'"],
         'frame-ancestors': ["'none'"],

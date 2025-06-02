@@ -16,6 +16,7 @@
       v-for="itemControl in listOptionControl"
       :key="itemControl.icon"
       class="item"
+      :class="itemControl?.classStyle ? itemControl?.classStyle : ''"
       @click="emit('action-event', itemControl?.fn)"
     >
       <vi-icon
@@ -44,8 +45,17 @@ const props = defineProps({
   },
 });
 
-const listOptionControl = computed(() => {
+const listOptionControl = computed<
+  {
+    icon: string;
+    fn: string;
+    classStyle?: string;
+    color?: string;
+  }[]
+>(() => {
   if (
+    props.classElementSelected === 'audio-text-subtitle' ||
+    props.classElementSelected === 'audio-text-product' ||
     props.classElementSelected === 'text-title' ||
     props.classElementSelected === 'text-des' ||
     props.classElementSelected === 'text-head'
@@ -74,6 +84,19 @@ const listOptionControl = computed(() => {
       {
         icon: 'ic_link',
         fn: 'showPopupSettingLink',
+      },
+    ];
+  }
+  if (props.classElementSelected === 'audio-image') {
+    return [
+      {
+        icon: 'ic_picture',
+        fn: 'showPopupChangeImage',
+      },
+      {
+        icon: 'ic_ai_section',
+        fn: 'showPopupSettingAudio',
+        classStyle: 'box-ai-icon',
       },
     ];
   }
@@ -124,6 +147,9 @@ const listOptionControl = computed(() => {
   &.for-button-href,
   &.for-text-des,
   &.for-text-title,
+  &.for-audio-text-subtitle,
+  &.for-audio-text-product,
+  &.for-audio-image,
   &.for-text-head {
     transform: translateX(-50%);
     &.show-on-top {
@@ -142,6 +168,12 @@ const listOptionControl = computed(() => {
     &:hover {
       border: 1px solid rgba($color: #fff, $alpha: 0.12);
       background-color: rgba($color: #2589ff, $alpha: 0.3);
+    }
+    &.box-ai-icon {
+      background: linear-gradient(66deg, #0078d8 15.31%, #ff2cf0 84.69%);
+      &:hover {
+        background-color: unset;
+      }
     }
   }
 }
