@@ -76,6 +76,7 @@
           />
           <vi-button
             width="fit-content"
+            :is-loading="loading.updateContent"
             type="standard-primary"
             @click="$emit('handleStoreChanges')"
           >
@@ -98,6 +99,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import { useEditorStore } from '~/stores/editor';
+
 const DEVICES = {
   destop: 'desktop',
   mobile: 'mobile',
@@ -115,6 +118,8 @@ const emit = defineEmits<{
   handleRelease: [];
   handleBack: [];
 }>();
+const { loading } = useEditorStore();
+
 const handleSwitchLayout = (device: string) => {
   activeDevice.value = device;
   emit('handleSwitchLayout', 'desktop');

@@ -3,11 +3,13 @@
     @handle-undo="handleUndo"
     :history-status="historyStatus"
     @handle-redo="handleRedo"
-    @handle-switcher-layout="handleEvent"
+    @handle-switcher-layout="checkVersionAndUpdate({}, 'switch-layout')"
     @handle-play="handleEvent"
-    @handle-store-changes="handleSaveTemplate"
+    @handle-store-changes="checkVersionAndUpdate({}, 'save')"
     @handle-release="handleEvent"
-    @click-sidebar="handleClickSideBar"
+    @click-sidebar="
+      (keyAction) => checkVersionAndUpdate({ keyAction }, 'show-section')
+    "
     @handle-back="handleBack"
     @scroll-editor="handleHiddenAllControl"
   >
@@ -19,46 +21,38 @@
     />
   </LayoutEditor>
 
-  <vi-modal
-    modal-title="離開前是否儲存目前編輯"
-    :is-show="isShowModal"
-    @close="isShowModal = false"
-    size="small"
-  >
-    <vi-typography type="body-small" class="editor-leave__title">
-      離開將遺失目前進度，是否儲存編輯？
-    </vi-typography>
-    <template #footer>
-      <div class="editor-leave__footer">
-        <vi-button
-          type="standard-default"
-          width="fit-content"
-          @click="handleLeave"
-        >
-          不儲存直接離開
-        </vi-button>
-        <vi-button
-          type="standard-primary"
-          width="fit-content"
-          @click="handleSaveDraft"
-        >
-          儲存進度
-        </vi-button>
-      </div>
-    </template>
-  </vi-modal>
+  <editor-popup-confirm-save
+    :is-show="isShowModal.confirmSave"
+    @close="isShowModal.confirmSave = false"
+    @handle-leave="handleLeave"
+    @handle-save-draft="handleSaveDraft"
+  />
+  <editor-popup-confirm-replace-content
+    :is-show="isShowModal.confirmReplace"
+    @close="isShowModal.confirmReplace = false"
+    @handle-save-current="handleSaveTemplate"
+    @handle-update-new="handleUpdateToNewVersion"
+  />
 </template>
 
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
+import { useEditorStore } from '~/stores/editor';
+import { useProjectStore } from '~/stores/project';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '~/types/templates';
 
 definePageMeta({
   layout: 'editor',
 });
+const { setLoading } = useEditorStore();
+const { checkIsLatestVersion } = useProjectStore();
+const { t } = useI18n();
 const isShowListSection = ref(false);
 const historyStatus = ref();
-const isShowModal = ref(false);
+const isShowModal = reactive({
+  confirmSave: false,
+  confirmReplace: false,
+});
 const editorRef = ref();
 const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
 const handleEvent = () => {};
@@ -69,8 +63,15 @@ watch(
   }
 );
 
-const handleSaveTemplate = () => {
-  editorRef.value.handleSaveTemplate();
+const handleSaveTemplate = async () => {
+  setLoading('updateContent', true);
+  await editorRef.value.handleSaveTemplate();
+  setLoading('updateContent', false);
+  isShowModal.confirmReplace = false;
+  window.VIUIKit.VIMessage({
+    title: t('notification-status-action-save_success'),
+    width: '348px',
+  });
 };
 
 const handleClickSideBar = (keyAction: string) => {
@@ -83,18 +84,52 @@ const handleClickSideBar = (keyAction: string) => {
   }
 };
 
+const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
+  try {
+    const isLatestVersion = await checkIsLatestVersion();
+    if (!isLatestVersion) {
+      isShowModal.confirmReplace = true;
+    }
+    switch (type) {
+      case 'save':
+        handleSaveTemplate();
+        break;
+      case 'switch-layout':
+        break;
+      case 'show-section':
+        handleClickSideBar(keyAction);
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+const handleUpdateToNewVersion = async () => {
+  setLoading('updateContent', true);
+  await editorRef.value.fetchContentProject();
+  setLoading('updateContent', false);
+  isShowModal.confirmReplace = false;
+  window.VIUIKit.VIMessage({
+    title: t('landing-editor-message-version_updated'),
+    width: '348px',
+  });
+};
+
 const handleHiddenAllControl = () => {
   editorRef.value?.hiddenBoxControl();
 };
 
 const handleLeave = () => {
-  isShowModal.value = false;
+  isShowModal.confirmSave = false;
   navigateTo('/project-list');
 };
 
 const handleSaveDraft = () => {
   // TODO: implement save draft logic
-  isShowModal.value = false;
+  isShowModal.confirmSave = false;
   navigateTo('/project-list');
   alert('Draft saved successfully!');
 };
@@ -103,7 +138,7 @@ const handleBack = () => {
   if (isSectionDirty) {
     navigateTo('/project-list');
   } else {
-    isShowModal.value = true;
+    isShowModal.confirmSave = true;
   }
 };
 const handleUndo = () => {
@@ -115,14 +150,16 @@ const handleRedo = () => {
 </script>
 
 <style lang="scss" scoped>
-.editor-leave {
-  &__footer {
-    display: flex;
-    justify-content: end;
-    gap: 16px;
-  }
-  &__title {
-    margin-bottom: 16px;
+:deep() {
+  .editor-leave {
+    &__footer {
+      display: flex;
+      justify-content: end;
+      gap: 16px;
+    }
+    &__title {
+      margin-bottom: 16px;
+    }
   }
 }
 </style>

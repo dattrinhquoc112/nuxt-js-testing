@@ -5,6 +5,13 @@ import type { createDemoAudioPayload } from './interface/request/audio';
 
 export const useEditorStore = defineStore('editor', () => {
   const apiStore = useApiStore();
+  const loading = reactive({
+    updateContent: false,
+  });
+
+  const setLoading = (key: keyof typeof loading, val: boolean) => {
+    loading[key] = val;
+  };
 
   async function getVoiceModelList() {
     return apiStore.apiRequest({
@@ -42,5 +49,5 @@ export const useEditorStore = defineStore('editor', () => {
     });
   }
 
-  return { getVoiceModelList, getListDemos, createDemo };
+  return { getVoiceModelList, getListDemos, createDemo, loading, setLoading };
 });
