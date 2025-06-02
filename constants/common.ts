@@ -15,4 +15,5 @@ export const MESSAGE_TYPES = {
   ERROR: 'error',
   GUIDE: 'guide',
 };
+
 export type MessageType = (typeof MESSAGE_TYPES)[keyof typeof MESSAGE_TYPES];

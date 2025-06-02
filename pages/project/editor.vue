@@ -15,7 +15,7 @@
     @handle-edit-info="isShowEditInfoModal = true"
     @handle-switch-layout="() => {}"
     @hanlde-store-changes="() => {}"
-    :project-name="'fdsaf'"
+    :project-name="webEditorName"
   >
     <vi-scroll
       class="editor__content"
@@ -32,9 +32,17 @@
   </LayoutEditor>
   <popup-setting-project
     :show="isShowActivitySettingModal"
+    :project="project"
     @close="isShowActivitySettingModal = false"
-    @submit="isShowActivitySettingModal = false"
+    @submit="handleSubmitSettingProject"
   />
+  <popup-edit-project
+    :show="isShowEditInfoModal"
+    :value="projectName"
+    @close="isShowEditInfoModal = false"
+    @edit="handleEditEditor"
+  />
+
   <vi-modal
     modal-title="離開前是否儲存目前編輯"
     :is-show="isShowModal"
@@ -96,11 +104,13 @@
 
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
-import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
-import { RWD_MODE } from '~/constants/common';
-import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
+import { DEFAULT_WEB_EDITOR_NAME, RWD_MODE } from '@/constants/common';
+import { useProjectStore } from '@/stores/project';
+import { toastMessage } from '#imports';
+import { TEMPLATES_AUDIO, TEMPLATES_SECTION } from '~/types/templates';
 
+const { getProject, editProject, createProject } = useProjectStore();
 definePageMeta({
   layout: 'editor',
 });
@@ -112,22 +122,62 @@ const editorRef = ref();
 const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
 const isShowEditInfoModal = ref(false);
 const isShowActivitySettingModal = ref(false);
-const handleEvent = () => {};
+const projectName = ref();
+const route = useRoute();
+const editorID = ref('');
+const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
+const project = ref();
+const { t } = useI18n();
+const handleGetProjectDetail = async (id: any) => {
+  const detailProject = await getProject(id);
+  if (detailProject) {
+    const { data } = detailProject;
+    return data;
+  }
+  return {};
+};
+
 watch(
   () => editorRef.value?.historyStatus,
   (newVal) => {
     historyStatus.value = newVal;
   }
 );
+watch(
+  () => route.query.id,
+  async (newId) => {
+    if (newId) {
+      editorID.value = Array.isArray(newId) ? newId[0] ?? '' : newId;
+      const data = await handleGetProjectDetail(newId);
+      webEditorName.value = data.name;
+      const res = await getProject(editorID.value);
+      project.value = res.data;
+    }
+  },
+  {
+    immediate: true,
+  }
+);
 
-const handleSaveTemplate = () => {
-  editorRef.value.handleSaveTemplate();
+const handleEditEditor = async (name: string) => {
+  if (editorID.value) {
+    await editProject(editorID.value, { name });
+    toastMessage(t('landing-common-message-saved'));
+    isShowEditInfoModal.value = false;
+  } else {
+    webEditorName.value = name;
+  }
 };
 
-const handlePreview = () => {
-  const sections = editorRef.value?.sections;
-  localStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
-  window.open(ROUTE.EDITOR_PREVIEW, '_blank');
+const handleSubmitSettingProject = async (payload: any) => {
+  isShowActivitySettingModal.value = false;
+  if (!editorID.value) {
+    const res = await createProject(webEditorName.value);
+    editorID.value = res.data.id;
+    const resEdit = await editProject(editorID.value, payload);
+    project.value = resEdit.data;
+    toastMessage(t('landing-common-message-saved'));
+  }
 };
 const handleClickSideBar = (keyAction: string) => {
   isShowListSection.value = true;
@@ -156,7 +206,6 @@ const handleSaveDraft = () => {
   // TODO: implement save draft logic
   isShowModal.value = false;
   navigateTo(ROUTE.PROJECT_LIST);
-  alert('Draft saved successfully!');
 };
 const handleBack = () => {
   const isSectionDirty = editorRef.value?.isSectionDirty();
