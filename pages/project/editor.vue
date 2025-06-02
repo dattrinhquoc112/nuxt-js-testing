@@ -219,7 +219,6 @@ const handleSaveDraft = () => {
   // TODO: implement save draft logic
   isShowModal.value = false;
   navigateTo(ROUTE.PROJECT_LIST);
-  alert('Draft saved successfully!');
 };
 const handleBack = () => {
   const isSectionDirty = editorRef.value?.isSectionDirty();
