@@ -10,14 +10,13 @@ export const useEventStore = defineStore('event', () => {
     eventEnglishName: string
   ) => {
     const host = window.location.origin;
-    const url = new URL(`${host}/${tenantName}/${eventEnglishName}`).href;
     return apiStore.apiRequest({
       method: MethodEnum.GET,
       endpoint: `/api/v1/projects/published-content?tenantName=${tenantName}&eventEnglishName=${eventEnglishName}`,
       proxy: true,
       landingWeb: true,
       headers: {
-        'X-PATH': url,
+        'X-PATH': `${host}/event`,
       },
     });
   };
