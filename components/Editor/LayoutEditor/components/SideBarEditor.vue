@@ -91,7 +91,6 @@ watch(
 
 const handleAction = (keyIcon: string, keyAction: any) => {
   activeSidebarButton.value = keyIcon;
-  isOpenTooltip.value = false;
   emit('click-sidebar', keyAction);
 };
 </script>
