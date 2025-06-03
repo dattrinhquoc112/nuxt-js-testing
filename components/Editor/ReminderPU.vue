@@ -14,9 +14,9 @@
           type="standard-primary"
           width="fit-content"
           @click="emit('handleClick')"
-          class="ml-auto"
+          class="ml-auto cursor-pointer"
         >
-          <vi-typography type="subtitle-large" class="editor-leave__title">
+          <vi-typography type="subtitle-large" class="cursor-pointer">
             {{ $t('common-action-button-button_confirm') }}
           </vi-typography>
         </vi-button>

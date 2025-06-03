@@ -16,7 +16,10 @@
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
-        @click="() => handleAction(SIDEBAR_BUTTONS[0], 'toggle-section')"
+        @click="
+          () =>
+            handleAction(SIDEBAR_BUTTONS[0], SIDE_BAR_ACTION.CLICKED_SESSION)
+        "
       >
       </vi-button>
       <template #content>
@@ -25,7 +28,7 @@
     </vi-tooltip>
 
     <div class="ai-tool">
-      <!-- <vi-button
+      <vi-button
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
@@ -38,102 +41,58 @@
         @click="
           () => {
             activeSidebarButton = SIDEBAR_BUTTONS[1];
-            isOpenTooltip = true;
+            handleAction(SIDEBAR_BUTTONS[1], SIDE_BAR_ACTION.CLICKED_AI_TOOLS);
           }
         "
-      > -->
+      />
       <vi-button
         type="standard-subtle"
         size="extra-large"
+        icon-before="ic_capacity"
         width="fit-content"
-        class="mt-4"
         no-text
-        icon-before="ic_ai_section"
+        @click="
+          () => {
+            activeSidebarButton = SIDEBAR_BUTTONS[2];
+            handleAction(SIDEBAR_BUTTONS[2], SIDE_BAR_ACTION.CLICKED_CAPACITY);
+          }
+        "
+        class="mt-auto"
         :class="{
-          active: activeSidebarButton === SIDEBAR_BUTTONS[1],
+          active: activeSidebarButton === SIDEBAR_BUTTONS[2],
         }"
-        @click="() => handleAction(SIDEBAR_BUTTONS[1], 'toggle-audio')"
       >
       </vi-button>
-      <AIToolsTutorial
-        v-if="isOpenTooltip"
-        @openTorialModal="isShowModal = true"
-        @handleCloseTooltip="handleCloseAISideBar"
-      />
     </div>
-    <vi-button
-      type="standard-subtle"
-      size="extra-large"
-      icon-before="ic_capacity"
-      width="fit-content"
-      no-text
-      @click="
-        () => {
-          activeSidebarButton = SIDEBAR_BUTTONS[2];
-          isOpenTooltip = false;
-        }
-      "
-      class="mt-auto"
-      :class="{
-        active: activeSidebarButton === SIDEBAR_BUTTONS[2],
-      }"
-    >
-    </vi-button>
-    <vi-modal
-      modal-title="尚未有發布的模型"
-      :is-show="isShowModal"
-      @close="isShowModal = false"
-      size="small"
-    >
-      <vi-typography type="body-small" class="tutorial-modal--title">{{
-        $t('ai-tools-tutorial-description')
-      }}</vi-typography>
-      <template #footer>
-        <div class="tutorial-modal--footer">
-          <vi-button
-            type="standard-default"
-            width="fit-content"
-            @click="handleConfirmModal"
-          >
-            {{ $t('return') }}
-          </vi-button>
-          <vi-button
-            type="standard-primary"
-            width="fit-content"
-            @click="handleCancelModal"
-          >
-            {{ $t('go') }}
-          </vi-button>
-        </div>
-      </template>
-    </vi-modal>
   </div>
 </template>
 <script setup lang="ts">
-import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
+import { SIDE_BAR_ACTION } from '~/constants/common';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
-const emit = defineEmits(['click-sidebar']);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
-const isShowModal = ref(false);
 const activeSidebarButton = ref();
-const isOpenTooltip = ref(false);
+const emit = defineEmits(['click-sidebar']);
+
+const props = defineProps({
+  isShowListSection: {
+    type: String,
+    default: '',
+  },
+});
+watch(
+  () => props.isShowListSection,
+  (newVal) => {
+    if (newVal === '') {
+      activeSidebarButton.value = '';
+    }
+  }
+);
 
 const handleAction = (keyIcon: string, keyAction: any) => {
-  isOpenTooltip.value = false;
   activeSidebarButton.value = keyIcon;
   isOpenTooltip.value = false;
   emit('click-sidebar', keyAction);
-};
-const handleConfirmModal = () => {
-  isShowModal.value = false;
-};
-const handleCancelModal = () => {
-  isShowModal.value = false;
-};
-const handleCloseAISideBar = () => {
-  isOpenTooltip.value = false;
-  activeSidebarButton.value = '';
 };
 </script>
 
@@ -164,15 +123,8 @@ const handleCloseAISideBar = () => {
 }
 .ai-tool {
   position: relative;
-}
-.tutorial-modal {
-  &--title {
-    padding: 16px 0px;
-  }
-  &--footer {
-    display: flex;
-    gap: 16px;
-    justify-content: end;
-  }
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 </style>

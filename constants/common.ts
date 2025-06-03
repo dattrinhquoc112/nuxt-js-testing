@@ -15,5 +15,9 @@ export const MESSAGE_TYPES = {
   ERROR: 'error',
   GUIDE: 'guide',
 };
-
+export const SIDE_BAR_ACTION = {
+  CLICKED_SESSION: 'clicked_session',
+  CLICKED_AI_TOOLS: 'clicked_ai_tools',
+  CLICKED_CAPACITY: 'clicked_capacity',
+};
 export type MessageType = (typeof MESSAGE_TYPES)[keyof typeof MESSAGE_TYPES];

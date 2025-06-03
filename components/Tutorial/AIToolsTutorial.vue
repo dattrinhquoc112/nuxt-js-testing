@@ -1,15 +1,21 @@
 <template>
-  <div class="ai-tools-tutorial">
+  <div class="ai-tools-tutorial" v-show="modelValue">
     <div class="ai-tools-tutorial--title">
       <span class="ai-tools-tutorial--title__icon">
-        <vi-icon name="ic_ai_section" :size="16" color="#fff" />
+        <vi-icon name="ic_ai_section" :size="24" color="#fff" />
       </span>
-      <vi-typography type="subtitle-large">{{ $t('ai-tools') }}</vi-typography>
+      <vi-typography type="subtitle-large">{{
+        $t('landing-editor-menu-section_ai_tools')
+      }}</vi-typography>
       <span
         class="ai-tools-tutorial--title__icon-close"
         @click="handleCloseTooltip"
       >
-        <vi-icon name="ic_close" :size="16" color="#fff" />
+        <vi-icon
+          name="ic_close"
+          :size="24"
+          class="neutral-white-alpha-60-text"
+        />
       </span>
     </div>
     <div class="ai-tools-tutorial--content">
@@ -20,21 +26,71 @@
       <img
         src="/assets/images/ai-tool-tutorial-banner.png"
         alt=""
-        @click="openTorialModal"
+        @click="openTutorialModal"
         class="cursor-pointer"
       />
     </div>
   </div>
+
+  <vi-modal
+    modal-title="尚未有發布的模型"
+    :is-show="isShowModal"
+    @close="isShowModal = false"
+    size="small"
+  >
+    <vi-typography type="body-small" class="tutorial-modal--title">{{
+      $t('ai-tools-tutorial-description')
+    }}</vi-typography>
+    <template #footer>
+      <div class="tutorial-modal--footer">
+        <vi-button
+          type="standard-default"
+          width="fit-content"
+          @click="() => (isShowModal = false)"
+        >
+          {{ $t('return') }}
+        </vi-button>
+        <vi-button
+          type="standard-primary"
+          width="fit-content"
+          @click="handleNavigatePage"
+        >
+          {{ $t('go') }}
+        </vi-button>
+      </div>
+    </template>
+  </vi-modal>
 </template>
 <script setup lang="ts">
-const emit = defineEmits<{
-  openTorialModal: [];
-  handleCloseTooltip: [];
-}>();
-const openTorialModal = () => {
-  emit('openTorialModal');
-};
+import { useEditorStore } from '~/stores/editor';
 
+defineProps({
+  modelValue: Boolean,
+});
+const emit = defineEmits<{
+  openTutorialModal: [];
+  handleCloseTooltip: [];
+  handleOpenAITools: [];
+  'update:modelValue': [e: Boolean];
+}>();
+const { getVoiceModelList } = useEditorStore();
+const isShowModal = ref(false);
+const openTutorialModal = async () => {
+  const res = await getVoiceModelList();
+  if (!(res.data.length > 0)) {
+    emit('handleOpenAITools');
+    emit('update:modelValue', false);
+  } else {
+    isShowModal.value = true;
+  }
+};
+const handleNavigatePage = () => {
+  const audioDomain = useRuntimeConfig().public.clientAudioHost;
+  const audioListURL = `${audioDomain}/project-list`;
+  openLink(audioListURL);
+  isShowModal.value = false;
+  emit('handleCloseTooltip');
+};
 const handleCloseTooltip = () => {
   emit('handleCloseTooltip');
 };
@@ -51,10 +107,10 @@ const handleCloseTooltip = () => {
   align-items: flex-start;
   flex-shrink: 0;
   border-radius: 8px;
-  position: absolute;
+  position: fixed;
   z-index: 30;
-  right: -330px;
-  top: -64px;
+  left: 72px;
+  top: 88px;
   border: 1px solid $neutral-white-alpha-10;
   background: $brand-navy-800;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25);
@@ -92,6 +148,17 @@ const handleCloseTooltip = () => {
     & img {
       width: 100%;
     }
+  }
+}
+
+.tutorial-modal {
+  &--title {
+    padding: 16px 0px;
+  }
+  &--footer {
+    display: flex;
+    gap: 16px;
+    justify-content: end;
   }
 }
 </style>

@@ -1,5 +1,6 @@
 <template>
   <LayoutEditor
+    :isShowListSection="isShowListSection"
     @handle-undo="handleUndo"
     :rwd-mode="RWDMode"
     :history-status="historyStatus"
@@ -28,7 +29,7 @@
         ref="editorRef"
         :list-template="listTemplateCurrent"
         :is-show-list-section="isShowListSection"
-        @close-section="isShowListSection = false"
+        @close-section="isShowListSection = ''"
       />
     </vi-scroll>
   </LayoutEditor>
@@ -71,7 +72,11 @@
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
-import { RWD_MODE, DEFAULT_WEB_EDITOR_NAME } from '~/constants/common';
+import {
+  RWD_MODE,
+  DEFAULT_WEB_EDITOR_NAME,
+  SIDE_BAR_ACTION,
+} from '~/constants/common';
 import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
 import { useProjectStore } from '@/stores/project';
@@ -89,7 +94,7 @@ const isOpenReminderPU = ref(false);
 const { setLoading } = useEditorStore();
 const { checkIsLatestVersion } = useProjectStore();
 const { t } = useI18n();
-const isShowListSection = ref(false);
+const isShowListSection = ref('');
 const historyStatus = ref();
 const isShowModal = reactive({
   confirmSave: false,
@@ -153,9 +158,10 @@ const handleCheckCOnditionPublish = async () => {
   const isFinishedSetupAudio = true;
   if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
     const res = await publishProject(editorID.value);
-    console.log(res, 'res nek');
+    if (res.data) {
+      toastMessage(t(' landing-project_mgmt-menu-published'));
+    }
   } else {
-    console.log(isFinishSetupEvent);
     isOpenReminderPU.value = true;
   }
   return !!isFinishSetupEvent && !!isFinishedSetupAudio;
@@ -164,9 +170,11 @@ const handleCheckCOnditionPublish = async () => {
 const handleEditEditor = async (name: string) => {
   if (editorID.value) {
     const res = await editProject(editorID.value, { name });
-    webEditorName.value = res.data.name;
-    toastMessage(t('landing-common-message-saved'));
     isShowEditInfoModal.value = false;
+    if (res.data) {
+      webEditorName.value = res.data.name;
+      toastMessage(t('landing-common-message-saved'));
+    }
   } else {
     webEditorName.value = name;
     await createProject(name);
@@ -196,11 +204,11 @@ const handleSaveTemplate = async () => {
 };
 
 const handleClickSideBar = (keyAction: string) => {
-  isShowListSection.value = true;
-  if (keyAction === 'toggle-section') {
+  isShowListSection.value = keyAction;
+  if (keyAction === SIDE_BAR_ACTION.CLICKED_SESSION) {
     listTemplateCurrent.value = TEMPLATES_SECTION;
   }
-  if (keyAction === 'toggle-audio') {
+  if (keyAction === SIDE_BAR_ACTION.CLICKED_AI_TOOLS) {
     listTemplateCurrent.value = TEMPLATES_AUDIO;
   }
 };
@@ -210,18 +218,19 @@ const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
     const isLatestVersion = await checkIsLatestVersion();
     if (!isLatestVersion) {
       isShowModal.confirmReplace = true;
-    }
-    switch (type) {
-      case 'save':
-        handleSaveTemplate();
-        break;
-      case 'switch-layout':
-        break;
-      case 'show-section':
-        handleClickSideBar(keyAction);
-        break;
-      default:
-        break;
+    } else {
+      switch (type) {
+        case 'save':
+          handleSaveTemplate();
+          break;
+        case 'switch-layout':
+          break;
+        case 'show-section':
+          handleClickSideBar(keyAction);
+          break;
+        default:
+          break;
+      }
     }
   } catch (error) {
     return Promise.reject(error);
