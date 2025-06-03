@@ -20,7 +20,7 @@ export const useApiStore = defineStore('api', () => {
             width: '348px',
             type: 'error',
           });
-          // navigateTo('/auth/logout');
+          navigateTo('/auth/logout');
         }
         break;
       default:
