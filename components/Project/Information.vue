@@ -16,12 +16,12 @@
       }}</vi-typography>
       <div class="child-item">
         <vi-typography class="description" type="body-small">
-          {{ project.eventOfficialUrl }}
+          {{ project?.eventOfficialUrl }}
         </vi-typography>
         <vi-button
           class="browser-btn"
           type="standard-subtle"
-          @click="openLink(project.eventOfficialUrl)"
+          @click="openLink(project?.eventOfficialUrl)"
         >
           {{ $t('landing-project_mgmt-button-view_website') }}
           <vi-icon name="ic_arrow_up_right" size="16" />
