@@ -14,7 +14,7 @@
           type="subtitle-large"
           class="guild-action__container--text cursor-pointer"
         >
-          {{ $t('guild') }}
+          {{ $t('landing-tutorial-button-guide') }}
         </vi-typography>
       </div>
     </div>
@@ -63,7 +63,7 @@
           v-if="tutorialStep === STEPS.STEP_0"
         >
           <vi-typography type="subtitle-small" class="cursor-pointer">
-            {{ $t('start') }}
+            {{ $t('common-action-button-button_start') }}
           </vi-typography>
         </vi-button>
         <vi-button
@@ -74,7 +74,7 @@
           @click="handlePrevStep"
         >
           <vi-typography type="subtitle-small" class="cursor-pointer">
-            {{ $t('return') }}
+            {{ $t('common-action-button-button_back') }}
           </vi-typography></vi-button
         >
         <vi-button
@@ -84,7 +84,7 @@
           @click="handleNextStep"
         >
           <vi-typography type="subtitle-small" class="cursor-pointer">
-            {{ $t('next-step') }}
+            {{ $t('common-action-button-button_next') }}
           </vi-typography></vi-button
         >
         <vi-button
@@ -94,7 +94,7 @@
           v-if="tutorialStep === STEPS.STEP_3"
         >
           <vi-typography type="subtitle-small" class="cursor-pointer">
-            {{ $t('finish') }}
+            {{ $t('common-action-button-button_complete') }}
           </vi-typography></vi-button
         >
       </div>
@@ -230,8 +230,8 @@ onMounted(() => {
         height: 40px;
         flex-shrink: 0;
         &::before {
-          width: 93px;
-          height: 40px;
+          width: 94%;
+          height: 100%;
           border-radius: 100px;
         }
       }

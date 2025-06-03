@@ -21,12 +21,12 @@ defineProps({
 
 const content = ref({
   [TUTORIAL_TYPE.HOME_PAGE]: {
-    title: t('tutorial-for-beginners'),
-    desc: t('welcome-to-the-web-application-module'),
+    title: t('landing-tutorial-title-tutorial_title'),
+    desc: t('landing-tutorial-subtitle-project_welcome'),
   },
   [TUTORIAL_TYPE.WEB_EDITOR]: {
-    title: t('tutorial-for-beginners'),
-    desc: t('tutorial-for-beginners-desc'),
+    title: t('landing-tutorial-title-tutorial_title'),
+    desc: t('landing-tutorial-subtitle-editor_welcome'),
   },
 });
 </script>
