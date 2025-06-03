@@ -66,9 +66,9 @@
           v-show="!loading.search && model.projects.length === 0"
         >
           <img src="/assets/icons/searchNotFound.svg" />
-          <vi-typography type="subtitle-large"
-            >目前沒有內容， 快來創作你的 AI 聲音！</vi-typography
-          >
+          <vi-typography type="subtitle-large">{{
+            $t('landing-project_mgmt-description-no_content')
+          }}</vi-typography>
         </div>
         <div
           v-show="!loading.search && model.projects.length > 0"

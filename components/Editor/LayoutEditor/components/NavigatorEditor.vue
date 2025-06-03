@@ -122,7 +122,6 @@
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
               {{ $t('landing-editor-button-save_changes') }}
-              {{ $t('landing-editor-button-save_changes') }}
             </vi-typography>
           </vi-button>
           <vi-button
@@ -131,7 +130,6 @@
             @click="$emit('handleRelease')"
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
-              {{ $t('landing-editor-button-publish') }}
               {{ $t('landing-editor-button-publish') }}
             </vi-typography>
           </vi-button>
