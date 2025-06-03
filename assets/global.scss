@@ -111,6 +111,7 @@ html {
   width: 100%;
   padding-top: calc(600 / 1376 * 100%);
   position: relative;
+  background-color: var;
   .video-background {
     position: absolute;
     top: 0;
@@ -119,19 +120,20 @@ html {
     height: 100%;
     z-index: 5;
   }
+  &.bg-img {
+    background-image: var(--bg-image);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  &.bg-color {
+    background-color: var(--bg-color);
+  }
   &.section-one {
     position: relative;
     width: 100%;
     aspect-ratio: 172 / 75;
-    &.bg-img {
-      background-image: var(--bg-image);
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
-    }
-    &.bg-color {
-      background-color: var(--bg-color);
-    }
+
     .content--destop {
       position: absolute;
       z-index: 10;
@@ -233,15 +235,7 @@ html {
     width: 100%;
     aspect-ratio: 172 / 75;
     position: relative;
-    &.bg-img {
-      background-image: var(--bg-image);
-      background-position: center;
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    &.bg-color {
-      background-color: var(--bg-color);
-    }
+
     .left {
       position: absolute;
       width: 50%;
@@ -299,7 +293,7 @@ html {
       }
     }
     &--mobile {
-      aspect-ratio: 15 / 32;
+      aspect-ratio: 15/32;
       padding: 0;
       & .left {
         position: unset;
@@ -383,65 +377,20 @@ html {
         }
       }
     }
-  }
-  &.section-audio {
-    .wrap-content {
-      position: absolute;
-      width: fit-content;
-      top: 50%;
-      left: 50%;
-      z-index: 10;
-      transform: translate(-50%, -50%);
-      .list-audio {
+    &--mobile {
+      padding: 0;
+      & .list-audio {
         display: flex;
-        gap: 24px;
-        width: fit-content;
-        margin-right: auto;
-        margin-left: auto;
-        margin-top: 48px;
-        .card-audio {
-          width: 300px;
-          .audio-image {
-            width: 100%;
-            height: 400px;
-            cursor: pointer;
-            position: relative;
-            .video-background {
-              position: absolute;
-              top: 0;
-              left: 0;
-              width: 100%;
-              height: 100%;
-              z-index: 5;
-            }
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
-            .icon-play {
-              position: absolute;
-              width: 40px;
-              height: 40px;
-              background-color: white;
-              border-radius: 50%;
-              bottom: 80px;
-              left: 50%;
-              transform: translateX(-50%);
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
-          }
-          .audio-text-subtitle {
-            margin-top: 24px;
-            word-break: break-word;
-          }
-          .audio-text-product {
-            margin-top: 12px;
-            word-break: break-word;
-          }
-        }
+        flex-direction: column;
+      }
+      &__1 {
+        aspect-ratio: 125/272;
+      }
+      &__2 {
+        aspect-ratio: 125/452;
+      }
+      &__3 {
+        aspect-ratio: 125/632;
       }
     }
   }
