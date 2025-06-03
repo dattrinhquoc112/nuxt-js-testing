@@ -428,6 +428,22 @@ const rules = {
       message: t('error_fe-data-validation-input_format_invalid'),
       trigger: 'change',
     },
+    {
+      callback: (value: string) => {
+        if (!value) return true;
+
+        const keywords = value
+          .split(',')
+          .map((k) => k.trim().toLowerCase())
+          .filter((k) => k !== '');
+
+        const unique = new Set(keywords);
+
+        return unique.size === keywords.length;
+      },
+      message: t('error_fe-data-validation-input_duplicate_keyword'),
+      trigger: 'change',
+    },
   ],
   ogTitle: [
     {
@@ -556,6 +572,7 @@ watch(
   padding-top: 12px;
   padding-bottom: 8px;
   white-space: pre-wrap;
+  word-break: break-all;
 }
 .grid-two {
   display: grid;
