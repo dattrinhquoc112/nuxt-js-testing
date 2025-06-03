@@ -33,12 +33,12 @@ defineProps({
 
 const content = ref({
   [TUTORIAL_TYPE.HOME_PAGE]: {
-    title: t('create-a-web-application-project'),
-    desc: t('edit-web-page-content-and-set-event-information'),
+    title: t('landing-tutorial-title-tutorial_2'),
+    desc: t('landing-tutorial-subtitle-project_tutorial_2'),
   },
   [TUTORIAL_TYPE.WEB_EDITOR]: {
-    title: t('create-a-web-application-project'),
-    desc: t('edit-web-page-content-and-set-event-information'),
+    title: t('landing-tutorial-title-tutorial_2'),
+    desc: t('landing-tutorial-subtitle-project_tutorial_2'),
   },
 });
 </script>

@@ -30,12 +30,12 @@ defineProps({
 
 const content = ref({
   [TUTORIAL_TYPE.HOME_PAGE]: {
-    title: t('planning-an-event-webpage-process'),
-    desc: t('activities-have-the-following-stages'),
+    title: t('landing-tutorial-title-tutorial_1'),
+    desc: t('landing-tutorial-subtitle-project_tutorial_1'),
   },
   [TUTORIAL_TYPE.WEB_EDITOR]: {
-    title: t('planning-an-event-webpage-process'),
-    desc: t('planning-an-event-webpage-process_ai-tools-desc'),
+    title: t('landing-tutorial-title-tutorial_1'),
+    desc: t('landing-tutorial-subtitle-editor_tutorial_1'),
   },
 });
 </script>

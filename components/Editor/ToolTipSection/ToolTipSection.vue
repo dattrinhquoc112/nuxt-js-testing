@@ -10,7 +10,7 @@
         {{ $t('section') }}
       </vi-typography>
       <vi-typography type="body-small" class="text-wrap-auto">
-        {{ $t('section_desc') }}
+        提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色
       </vi-typography>
     </div>
   </div>
