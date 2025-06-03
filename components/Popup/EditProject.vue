@@ -3,6 +3,7 @@
     :modal-title="$t('landing-project_mgmt-modal-title_edit_project_info')"
     :is-show="show"
     @close="emit('close')"
+    size="small"
   >
     <vi-form :model="model" :rules="rules">
       <vi-form-item prop="name">
