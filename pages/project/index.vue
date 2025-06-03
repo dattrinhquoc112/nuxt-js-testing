@@ -27,6 +27,7 @@
             type="text"
             start-icon="ic_search"
             :placeholder="$t('landing-project_mgmt-placeholder-search')"
+            :max="30"
           >
             <template v-if="model.search" #end-icon>
               <vi-icon
@@ -231,11 +232,12 @@ const actionRef = reactive<{ [key: string]: boolean }>({});
 
 const fetchProjectList = debounce(async () => {
   loading.search = true;
+  model.search = model.search.trim();
   const res = await getProjectList({
     page: model.page,
     size: model.size,
     status: model.status,
-    nameKeyword: model.search.trim(),
+    nameKeyword: model.search,
   });
   model.projects = res.data;
   loading.search = false;
