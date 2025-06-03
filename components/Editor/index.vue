@@ -62,7 +62,7 @@
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
     />
-    <editor-setting-link
+    <editor-popup-setting-link
       :link="
         objectSelecting &&
         typeof objectSelecting === 'object' &&
