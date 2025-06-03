@@ -151,11 +151,14 @@
       @close="modal.close"
       @edit="modal.confirm"
     />
+    <Tutorial :tutorial-type="TUTORIAL_TYPE.WEB_EDITOR" />
   </div>
 </template>
 
 <script lang="ts" setup>
+import Tutorial from '@/components/Tutorial/Tutorial.vue';
 import useProjects from '~/composables/projects';
+import { TUTORIAL_TYPE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
 

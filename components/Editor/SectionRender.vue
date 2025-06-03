@@ -7,7 +7,12 @@
     "
     @click.stop="(event) => emit('show-option', event)"
     class="section-wrap section-one"
-    :class="section.backgroundSection.class"
+    :class="[
+      section.backgroundSection.class,
+      {
+        'section-one--mobile': rwdMode === RWD_MODE.MOBILE,
+      },
+    ]"
     :style="`--bg-image:url(${getImage(
       section.backgroundSection.urlImage
     )});--bg-color:${section.backgroundSection.color};`"
@@ -26,16 +31,19 @@
     </video>
 
     <div
-      class="content"
-      :class="
+      :class="[
         section?.id === 'section-one-center'
           ? 'center'
           : section?.id === 'section-one-left'
           ? 'left'
           : section?.id === 'section-one-right'
           ? 'right'
-          : ''
-      "
+          : '',
+        {
+          'content--destop': rwdMode === RWD_MODE.DESKTOP,
+          'content--mobile': rwdMode === RWD_MODE.MOBILE,
+        },
+      ]"
     >
       <div
         class="text-head"
@@ -66,6 +74,7 @@
       <a
         class="button-href"
         :style="section?.buttonExternal.style"
+        @click="() => handleButtonExternalClick(section?.buttonExternal?.link)"
         @dblclick="(event) => emit('handle-change-text', event)"
       >
         {{ section?.buttonExternal?.text }}</a
@@ -78,9 +87,14 @@
     "
     class="section-wrap section-two"
     @click.stop="(event) => emit('show-option', event)"
-    :class="`${section.backgroundSection.class} ${
-      section?.id === 'section-two-reverse' ? 'reverse' : ''
-    }`"
+    :class="[
+      `${section.backgroundSection.class} ${
+        section?.id === 'section-two-reverse' ? 'reverse' : ''
+      }`,
+      {
+        'section-two--mobile': rwdMode === RWD_MODE.MOBILE,
+      },
+    ]"
     :style="`--bg-image:url(${getImage(
       section.backgroundSection.urlImage
     )});--bg-color:${section.backgroundSection.color};`"
@@ -115,6 +129,9 @@
       <a
         class="button-href"
         :style="section?.buttonExternal.style"
+        @click="
+          (event) => handleButtonExternalClick(section?.buttonExternal?.link)
+        "
         @dblclick="(event) => emit('handle-change-text', event)"
         >{{ section?.buttonExternal?.text }}</a
       >
@@ -222,10 +239,20 @@
 <script lang="ts" setup>
 import useProjects from '~/composables/projects';
 
-defineProps({
+import { RWD_MODE } from '@/constants/common';
+
+const props = defineProps({
   section: {
     type: Object as PropType<any>,
     default: () => ({}),
+  },
+  rwdMode: {
+    type: String,
+    default: '',
+  },
+  readOnly: {
+    type: Boolean,
+    default: false,
   },
 });
 const emit = defineEmits(['show-option', 'handle-change-text']);
@@ -234,6 +261,12 @@ const clickParent = (event: MouseEvent) => {
   element.parentElement?.click();
 };
 const { getImage } = useProjects();
+
+const handleButtonExternalClick = (link: string) => {
+  if (props.readOnly) {
+    window.open(link, '_blank');
+  }
+};
 </script>
 
 <style></style>

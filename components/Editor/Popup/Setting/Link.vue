@@ -28,7 +28,7 @@
     </div>
     <div class="pa-16">
       <vi-input
-        v-model.trim="link"
+        v-model.trim="linkRef"
         width="100%"
         :placeholder="$t('landing-editor-modal-link_placeholder')"
         size="small"
@@ -48,7 +48,7 @@ const emit = defineEmits([
   'move-popup-to-bottom',
   'change-link',
 ]);
-const link = ref();
+const linkRef = ref();
 const { t } = useI18n();
 const messageError = ref('');
 
@@ -56,17 +56,6 @@ function isValidURL(url: string) {
   const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/\S*)?$/;
   return regex.test(url);
 }
-
-watch(link, () => {
-  const isValidLink = isValidURL(link.value);
-  if (!isValidLink) {
-    messageError.value = t('error_fe-data-validation-input_format_invalid');
-    emit('change-link', '');
-  } else {
-    messageError.value = '';
-    emit('change-link', link.value);
-  }
-});
 
 const props = defineProps({
   positionControlCurrent: {
@@ -77,7 +66,37 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  link: {
+    type: String,
+    default: '',
+  },
 });
+
+watch(
+  () => props.link,
+  (newVal) => {
+    const isValidLink = isValidURL(newVal);
+    if (!isValidLink) {
+      messageError.value = t('error_fe-data-validation-input_format_invalid');
+      emit('change-link', '');
+    } else {
+      messageError.value = '';
+      emit('change-link', newVal);
+    }
+  }
+);
+
+watch(linkRef, () => {
+  // handle validate link
+  emit('change-link', linkRef.value);
+});
+watch(
+  () => props.link,
+  (newVal) => {
+    linkRef.value = newVal;
+  }
+);
+
 const popupElement = ref<HTMLElement>();
 
 useCheckHeightPopup(props, popupElement, emit);

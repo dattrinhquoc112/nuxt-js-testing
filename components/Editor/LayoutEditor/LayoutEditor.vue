@@ -20,6 +20,7 @@
       />
       <div ref="editorContainer" class="editor__container">
         <SideBarEditor
+          v-show="rwdMode === RWD_MODE.DESKTOP"
           @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
           :isShowListSection="isShowListSection"
         />
@@ -34,7 +35,7 @@
 <script setup lang="ts">
 import NavigatorEditor from '@/components/Editor/LayoutEditor/components/NavigatorEditor.vue';
 import SideBarEditor from '@/components/Editor/LayoutEditor/components/SideBarEditor.vue';
-import { TUTORIAL_TYPE } from '@/constants/common';
+import { RWD_MODE, TUTORIAL_TYPE } from '@/constants/common';
 
 import { defineProps } from 'vue';
 
@@ -43,15 +44,15 @@ defineProps<{
     redoButtonEnable: boolean;
     undoButtonEnable: boolean;
   };
-  rwdMode: string;
   projectName: string;
   isShowListSection: string;
+  rwdMode: string;
 }>();
 
 const emit = defineEmits<{
   handleUndo: [];
   handleRedo: [];
-  handleSwitchLayout: [e: any];
+  handleSwitchLayout: [mode: string];
   handlePlay: [];
   handleStoreChanges: [];
   handleRelease: [];

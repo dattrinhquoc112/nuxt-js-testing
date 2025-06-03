@@ -25,8 +25,8 @@
       @handleOpenAITools="showSelectAITools = true"
       @handleCloseTooltip="emit('closeSection')"
     />
-
     <editor-list
+      :rwd-mode="rwdMode"
       :templateSelected="templateSelected"
       :classElementSelected="classElementSelected"
       :sections="sections"
@@ -124,6 +124,7 @@ const showSelectAITools = ref(false);
 let debounceTimer: any = null;
 const MAX_HISTORY = 20;
 const iSaveHistory = ref(false);
+
 definePageMeta({
   layout: 'default',
 });
@@ -136,6 +137,10 @@ const props = defineProps({
   listTemplate: {
     type: Array as PropType<any>,
     default: () => [],
+  },
+  rwdMode: {
+    type: String,
+    default: '',
   },
 });
 
@@ -763,6 +768,7 @@ defineExpose({
   hiddenBoxControl,
   handleSaveTemplate,
   fetchContentProject,
+  sections,
 });
 </script>
 

@@ -2,6 +2,10 @@ export const TUTORIAL_TYPE = {
   HOME_PAGE: 'HOME_PAGE',
   WEB_EDITOR: 'WEB_EDITOR',
 };
+export const RWD_MODE = {
+  DESKTOP: 'DESKTOP',
+  MOBILE: 'MOBILE',
+};
 export const DEBOUND_TIME_SAVE_HISTORY = 300;
 export const DEFAULT_WEB_EDITOR_NAME = '未命名專案';
 export const MAXIMUM_WEB_EDITOR_NAME = 50;

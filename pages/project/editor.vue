@@ -1,12 +1,12 @@
 <template>
   <LayoutEditor
-    :rwd-mode="'MOBILE'"
+    :rwd-mode="RWDMode"
     :isShowListSection="isShowListSection"
     @handle-undo="handleUndo"
     :history-status="historyStatus"
     @handle-redo="handleRedo"
-    @handle-switcher-layout="checkVersionAndUpdate({}, 'switch-layout')"
-    @handle-play="handleEvent"
+    @handleSwitchLayout="(e) => SwitchToRWD(e)"
+    @handle-play="handlePreview"
     @handle-release="handleCheckCOnditionPublish"
     @handle-store-changes="checkVersionAndUpdate({}, 'save')"
     @click-sidebar="
@@ -19,12 +19,18 @@
     :project-name="webEditorName"
     @scroll-editor="handleHiddenAllControl"
   >
-    <editor
-      ref="editorRef"
-      :list-template="listTemplateCurrent"
-      :is-show-list-section="isShowListSection"
-      @close-section="isShowListSection = ''"
-    />
+    <vi-scroll
+      class="editor__content"
+      :class="{ 'editor__content--mobile': RWDMode === RWD_MODE.MOBILE }"
+    >
+      <editor
+        ref="editorRef"
+        :rwd-mode="RWDMode"
+        :list-template="listTemplateCurrent"
+        :is-show-list-section="isShowListSection"
+        @close-section="isShowListSection = ''"
+      />
+    </vi-scroll>
   </LayoutEditor>
   <popup-setting-project
     :show="isShowActivitySettingModal"
@@ -65,17 +71,23 @@
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { ROUTE } from '@/constants/route';
-import { DEFAULT_WEB_EDITOR_NAME, SIDE_BAR_ACTION } from '@/constants/common';
+import {
+  DEFAULT_WEB_EDITOR_NAME,
+  SIDE_BAR_ACTION,
+  RWD_MODE,
+} from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { TEMPLATES_AUDIO, TEMPLATES_SECTION } from '~/types/templates';
 import { useEditorStore } from '~/stores/editor';
+import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
 
 const { getProject, editProject, createProject, publishProject } =
   useProjectStore();
 definePageMeta({
   layout: 'editor',
 });
+const RWDMode = ref(RWD_MODE.DESKTOP);
 const router = useRouter();
 const isOpenReminderPU = ref(false);
 const { setLoading } = useEditorStore();
@@ -111,6 +123,16 @@ watch(
     historyStatus.value = newVal;
   }
 );
+
+const handlePreview = () => {
+  const sections = editorRef.value?.sections;
+  sessionStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
+  window.open(ROUTE.EDITOR_PREVIEW, '_blank');
+};
+
+const SwitchToRWD = (e: any) => {
+  RWDMode.value = e;
+};
 watch(
   () => route.query.id,
   async (newId) => {
@@ -294,6 +316,19 @@ const handleRedo = () => {
     }
     &__title {
       margin-bottom: 16px;
+    }
+  }
+}
+
+.editor {
+  &__content {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    height: calc(100vh - 64px);
+    &--mobile {
+      width: 375px;
     }
   }
 }
