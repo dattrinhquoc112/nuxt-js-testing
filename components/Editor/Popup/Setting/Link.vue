@@ -56,18 +56,6 @@ function isValidURL(url: string) {
   const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/\S*)?$/;
   return regex.test(url);
 }
-
-watch(link, () => {
-  const isValidLink = isValidURL(link.value);
-  if (!isValidLink) {
-    messageError.value = t('error_fe-data-validation-input_format_invalid');
-    emit('change-link', '');
-  } else {
-    messageError.value = '';
-    emit('change-link', link.value);
-  }
-});
-
 const props = defineProps({
   positionControlCurrent: {
     type: Object,
@@ -82,6 +70,21 @@ const props = defineProps({
     default: '',
   },
 });
+
+watch(
+  () => props.link,
+  () => {
+    const isValidLink = isValidURL(props.link);
+    if (!isValidLink) {
+      messageError.value = t('error_fe-data-validation-input_format_invalid');
+      emit('change-link', '');
+    } else {
+      messageError.value = '';
+      emit('change-link', props.link);
+    }
+  }
+);
+
 watch(
   () => props.link,
   () => {
