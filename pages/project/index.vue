@@ -87,7 +87,7 @@
               <div>
                 <div class="title-page">{{ item.name }}</div>
                 <div class="url-page">
-                  {{ item.eventOfficialUrl }}
+                  {{ item?.eventOfficialUrl }}
                 </div>
               </div>
               <div>
