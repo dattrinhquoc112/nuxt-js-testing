@@ -31,6 +31,7 @@ export const useApiStore = defineStore('api', () => {
         });
         break;
     }
+    return Promise.reject(error);
   };
 
   async function apiRequest<ResponseDataType>(payload: Payload) {
@@ -81,8 +82,7 @@ export const useApiStore = defineStore('api', () => {
       }
       return response;
     } catch (error) {
-      handleError(error);
-      throw error;
+      return handleError(error);
     }
   }
 

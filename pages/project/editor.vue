@@ -89,7 +89,7 @@ definePageMeta({
   layout: 'editor',
 });
 const RWDMode = ref(RWD_MODE.DESKTOP);
-
+const router = useRouter();
 const isOpenReminderPU = ref(false);
 const { setLoading } = useEditorStore();
 const { checkIsLatestVersion } = useProjectStore();
@@ -154,12 +154,18 @@ const handleCheckCOnditionPublish = async () => {
     project.value?.eventEnglishName &&
     project.value.startTime &&
     project.value.endTime;
-  // TODO: need to update check setup finished audio
   const isFinishedSetupAudio = true;
+
   if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
-    const res = await publishProject(editorID.value);
-    if (res.data) {
+    try {
+      await publishProject(editorID.value);
       toastMessage(t(' landing-project_mgmt-menu-published'));
+      navigateTo(ROUTE.PROJECT_LIST);
+    } catch (error: any) {
+      const errCode = error?.data?.statusMessage;
+      if (errCode && errCode === 'PROJECT_URL_DUPLICATE') {
+        isOpenReminderPU.value = true;
+      }
     }
   } else {
     isOpenReminderPU.value = true;
@@ -168,16 +174,27 @@ const handleCheckCOnditionPublish = async () => {
 };
 
 const handleEditEditor = async (name: string) => {
+  isShowEditInfoModal.value = false;
+
   if (editorID.value) {
     const res = await editProject(editorID.value, { name });
-    isShowEditInfoModal.value = false;
     if (res.data) {
       webEditorName.value = res.data.name;
       toastMessage(t('landing-common-message-saved'));
     }
   } else {
-    webEditorName.value = name;
-    await createProject(name);
+    const res = await createProject(name);
+    editorID.value = res.data.id;
+    router.push({
+      query: {
+        id: res.data.id,
+      },
+    });
+    const resEdit = await editProject(editorID.value, { name });
+    if (resEdit.data) {
+      webEditorName.value = resEdit.data.name;
+      toastMessage(t('landing-common-message-saved'));
+    }
   }
 };
 
@@ -185,10 +202,19 @@ const handleSubmitSettingProject = async (payload: any) => {
   isShowActivitySettingModal.value = false;
   if (!editorID.value) {
     const res = await createProject(webEditorName.value);
-    editorID.value = res.data.id;
-    const resEdit = await editProject(editorID.value, payload);
-    project.value = resEdit.data;
-    toastMessage(t('landing-common-message-saved'));
+    if (res) {
+      editorID.value = res.data.id;
+      router.push({
+        query: {
+          id: res.data.id,
+        },
+      });
+      const resEdit = await editProject(editorID.value, payload);
+      if (resEdit) {
+        project.value = resEdit.data;
+        toastMessage(t('landing-common-message-saved'));
+      }
+    }
   }
 };
 
