@@ -1,11 +1,29 @@
 <template>
   <div class="container">
     <editor-template-selector
-      v-if="isShowListSection"
+      v-if="
+        isShowListSection === SIDE_BAR_ACTION.CLICKED_SESSION ||
+        (isShowListSection === SIDE_BAR_ACTION.CLICKED_AI_TOOLS &&
+          showSelectAITools)
+      "
+      :type="isShowListSection"
       :templateSelected="templateSelected"
       :list-template="listTemplate"
       @click-template="onClickTemplate"
       @close="emit('closeSection')"
+      @handleBack="
+        () => {
+          modelValue = true;
+          showSelectAITools = false;
+        }
+      "
+    />
+
+    <AIToolsTutorial
+      v-model="modelValue"
+      v-if="isShowListSection === SIDE_BAR_ACTION.CLICKED_AI_TOOLS"
+      @handleOpenAITools="showSelectAITools = true"
+      @handleCloseTooltip="emit('closeSection')"
     />
 
     <editor-list
@@ -85,8 +103,10 @@
 </template>
 
 <script lang="ts" setup>
+import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
+
 import { type RGBA } from '@/types/color';
-import { DEBOUND_TIME_SAVE_HISTORY } from '@/constants/common';
+import { DEBOUND_TIME_SAVE_HISTORY, SIDE_BAR_ACTION } from '@/constants/common';
 import { useUploadStore } from '~/stores/upload';
 import { type UPLOAD_RESPONSE } from '~/stores/interface/response/upload';
 import {
@@ -99,16 +119,19 @@ import {
 } from '~/types/templates';
 import { useProjectStore } from '~/stores/project';
 
+const modelValue = ref(true);
+const showSelectAITools = ref(false);
 let debounceTimer: any = null;
 const MAX_HISTORY = 20;
 const iSaveHistory = ref(false);
 definePageMeta({
   layout: 'default',
 });
+
 const props = defineProps({
   isShowListSection: {
-    type: Boolean,
-    default: true,
+    type: String,
+    default: '',
   },
   listTemplate: {
     type: Array as PropType<any>,

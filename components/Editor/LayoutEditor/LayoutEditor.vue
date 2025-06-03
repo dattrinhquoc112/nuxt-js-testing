@@ -21,6 +21,7 @@
       <div ref="editorContainer" class="editor__container">
         <SideBarEditor
           @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
+          :isShowListSection="isShowListSection"
         />
         <vi-scroll id="editor_content" class="editor__content">
           <slot />
@@ -44,6 +45,7 @@ defineProps<{
   };
   rwdMode: string;
   projectName: string;
+  isShowListSection: string;
 }>();
 
 const emit = defineEmits<{

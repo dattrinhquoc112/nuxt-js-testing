@@ -1,11 +1,30 @@
 <template>
   <vi-scroll class="wrap">
     <div class="header">
-      <vi-icon name="ic_section" size="24" color="#fff"></vi-icon>
+      <vi-icon
+        name="ic_section"
+        size="24"
+        color="#fff"
+        v-if="type === SIDE_BAR_ACTION.CLICKED_SESSION"
+      ></vi-icon>
+
+      <vi-icon
+        name="ic_chevron_left"
+        @click="emit('handleBack')"
+        size="24"
+        color="#fff"
+        class="cursor-pointer"
+        v-if="type === SIDE_BAR_ACTION.CLICKED_AI_TOOLS"
+      ></vi-icon>
+
       <div class="ml-8 mr-auto neutral-white-alpha-90-text">
-        <vi-typography type="subtitle-large">{{
-          $t('landing-editor-menu-title_section')
-        }}</vi-typography>
+        <vi-typography type="subtitle-large">
+          {{
+            type === SIDE_BAR_ACTION.CLICKED_SESSION
+              ? $t('landing-editor-menu-title_section')
+              : $t('landing-editor-section-title_audio_tts')
+          }}
+        </vi-typography>
       </div>
       <vi-icon
         class="neutral-white-alpha-60-text cursor-pointer"
@@ -15,7 +34,11 @@
       ></vi-icon>
     </div>
     <div class="neutral-white-alpha-60-text mb-16">
-      <vi-typography type="subtitle-large">Hero</vi-typography>
+      <vi-typography
+        type="subtitle-large"
+        v-if="type === SIDE_BAR_ACTION.CLICKED_SESSION"
+        >Hero</vi-typography
+      >
     </div>
     <div class="templates">
       <div
@@ -34,7 +57,9 @@
 </template>
 
 <script lang="ts" setup>
-const emit = defineEmits(['click-template', 'close']);
+import { SIDE_BAR_ACTION } from '~/constants/common';
+
+const emit = defineEmits(['click-template', 'close', 'handleBack']);
 
 defineProps({
   templateSelected: {
@@ -44,6 +69,10 @@ defineProps({
   listTemplate: {
     type: Array as PropType<any>,
     default: () => [],
+  },
+  type: {
+    type: String,
+    default: '',
   },
 });
 </script>
