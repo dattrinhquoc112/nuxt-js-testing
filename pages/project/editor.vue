@@ -6,15 +6,17 @@
     @handle-redo="handleRedo"
     @handleSwitchLayout="(e) => SwitchToRWD(e)"
     @handle-play="handlePreview"
-    @handle-store-changes="handleSaveTemplate"
-    @handle-release="handleEvent"
-    @click-sidebar="handleClickSideBar"
-    @handle-back="handleBack"
     @scroll-editor="handleHiddenAllControl"
+    @handle-switcher-layout="checkVersionAndUpdate({}, 'switch-layout')"
+    @handle-release="handleCheckCOnditionPublish"
+    @handle-store-changes="checkVersionAndUpdate({}, 'save')"
+    @click-sidebar="
+      (keyAction) => checkVersionAndUpdate({ keyAction }, 'show-section')
+    "
+    @handle-back="handleBack"
     @handle-activity-settings="isShowActivitySettingModal = true"
     @handle-edit-info="isShowEditInfoModal = true"
     @handle-switch-layout="() => {}"
-    @hanlde-store-changes="() => {}"
     :project-name="webEditorName"
   >
     <vi-scroll
@@ -38,88 +40,61 @@
   />
   <popup-edit-project
     :show="isShowEditInfoModal"
-    :value="projectName"
+    :value="webEditorName"
     @close="isShowEditInfoModal = false"
     @edit="handleEditEditor"
   />
 
-  <vi-modal
-    modal-title="離開前是否儲存目前編輯"
-    :is-show="isShowModal"
-    @close="isShowModal = false"
-    size="small"
-  >
-    <vi-typography type="body-small" class="editor-leave__title">
-      離開將遺失目前進度，是否儲存編輯？
-    </vi-typography>
-    <template #footer>
-      <div class="editor-leave__footer">
-        <vi-button
-          type="standard-default"
-          width="fit-content"
-          @click="handleLeave"
-        >
-          不儲存直接離開
-        </vi-button>
-        <vi-button
-          type="standard-primary"
-          width="fit-content"
-          @click="handleSaveDraft"
-        >
-          儲存進度
-        </vi-button>
-      </div>
-    </template>
-  </vi-modal>
-
-  <vi-modal
-    modal-title="離開前是否儲存目前編輯"
-    :is-show="isShowModal"
-    @close="isShowModal = false"
-    size="small"
-  >
-    <vi-typography type="body-small" class="editor-leave__title">
-      離開將遺失目前進度，是否儲存編輯？
-    </vi-typography>
-    <template #footer>
-      <div class="editor-leave__footer">
-        <vi-button
-          type="standard-default"
-          width="fit-content"
-          @click="handleLeave"
-        >
-          不儲存直接離開
-        </vi-button>
-        <vi-button
-          type="standard-primary"
-          width="fit-content"
-          @click="handleSaveDraft"
-        >
-          儲存進度
-        </vi-button>
-      </div>
-    </template>
-  </vi-modal>
+  <EditorReminderPU
+    v-model:model="isOpenReminderPU"
+    @handle-click="
+      () => {
+        isOpenReminderPU = false;
+        isShowActivitySettingModal = true;
+      }
+    "
+  />
+  <editor-popup-confirm-save
+    :is-show="isShowModal.confirmSave"
+    @close="isShowModal.confirmSave = false"
+    @handle-leave="handleLeave"
+    @handle-save-draft="handleSaveDraft"
+  />
+  <editor-popup-confirm-replace-content
+    :is-show="isShowModal.confirmReplace"
+    @close="isShowModal.confirmReplace = false"
+    @handle-save-current="handleSaveTemplate"
+    @handle-update-new="handleUpdateToNewVersion"
+  />
 </template>
 
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
-import { RWD_MODE } from '~/constants/common';
+import { RWD_MODE, DEFAULT_WEB_EDITOR_NAME } from '~/constants/common';
 import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
-import { DEFAULT_WEB_EDITOR_NAME } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
+import { useEditorStore } from '~/stores/editor';
 
-const { getProject, editProject, createProject } = useProjectStore();
+const { getProject, editProject, createProject, publishProject } =
+  useProjectStore();
 definePageMeta({
   layout: 'editor',
 });
 const RWDMode = ref(RWD_MODE.DESKTOP);
+
+const isOpenReminderPU = ref(false);
+const { setLoading } = useEditorStore();
+const { checkIsLatestVersion } = useProjectStore();
+const { t } = useI18n();
 const isShowListSection = ref(false);
 const historyStatus = ref();
-const isShowModal = ref(false);
+const isShowModal = reactive({
+  confirmSave: false,
+  confirmReplace: false,
+});
 const editorRef = ref();
 const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
 const isShowEditInfoModal = ref(false);
@@ -130,7 +105,6 @@ const route = useRoute();
 const editorID = ref('');
 const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
 const project = ref();
-const { t } = useI18n();
 const handleGetProjectDetail = async (id: any) => {
   const detailProject = await getProject(id);
   if (detailProject) {
@@ -146,10 +120,6 @@ watch(
     historyStatus.value = newVal;
   }
 );
-
-const handleSaveTemplate = () => {
-  editorRef.value.handleSaveTemplate();
-};
 
 const handlePreview = () => {
   const sections = editorRef.value?.sections;
@@ -172,13 +142,34 @@ watch(
   }
 );
 
+const handleCheckCOnditionPublish = async () => {
+  const isFinishSetupEvent =
+    project.value?.metaTitle &&
+    project.value?.ogTitle &&
+    project.value?.eventEnglishName &&
+    project.value.startTime &&
+    project.value.endTime;
+  // TODO: need to update check setup finished audio
+  const isFinishedSetupAudio = true;
+  if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
+    const res = await publishProject(editorID.value);
+    console.log(res, 'res nek');
+  } else {
+    console.log(isFinishSetupEvent);
+    isOpenReminderPU.value = true;
+  }
+  return !!isFinishSetupEvent && !!isFinishedSetupAudio;
+};
+
 const handleEditEditor = async (name: string) => {
   if (editorID.value) {
-    await editProject(editorID.value, { name });
+    const res = await editProject(editorID.value, { name });
+    webEditorName.value = res.data.name;
     toastMessage(t('landing-common-message-saved'));
     isShowEditInfoModal.value = false;
   } else {
     webEditorName.value = name;
+    await createProject(name);
   }
 };
 
@@ -192,6 +183,18 @@ const handleSubmitSettingProject = async (payload: any) => {
     toastMessage(t('landing-common-message-saved'));
   }
 };
+
+const handleSaveTemplate = async () => {
+  setLoading('updateContent', true);
+  await editorRef.value.handleSaveTemplate();
+  setLoading('updateContent', false);
+  isShowModal.confirmReplace = false;
+  window.VIUIKit.VIMessage({
+    title: t('notification-status-action-save_success'),
+    width: '348px',
+  });
+};
+
 const handleClickSideBar = (keyAction: string) => {
   isShowListSection.value = true;
   if (keyAction === 'toggle-section') {
@@ -200,6 +203,40 @@ const handleClickSideBar = (keyAction: string) => {
   if (keyAction === 'toggle-audio') {
     listTemplateCurrent.value = TEMPLATES_AUDIO;
   }
+};
+
+const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
+  try {
+    const isLatestVersion = await checkIsLatestVersion();
+    if (!isLatestVersion) {
+      isShowModal.confirmReplace = true;
+    }
+    switch (type) {
+      case 'save':
+        handleSaveTemplate();
+        break;
+      case 'switch-layout':
+        break;
+      case 'show-section':
+        handleClickSideBar(keyAction);
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    return Promise.reject(error);
+  }
+};
+
+const handleUpdateToNewVersion = async () => {
+  setLoading('updateContent', true);
+  await editorRef.value.fetchContentProject();
+  setLoading('updateContent', false);
+  isShowModal.confirmReplace = false;
+  window.VIUIKit.VIMessage({
+    title: t('landing-editor-message-version_updated'),
+    width: '348px',
+  });
 };
 
 const handleHiddenAllControl = () => {
@@ -211,13 +248,13 @@ const SwitchToRWD = (e: any) => {
 };
 
 const handleLeave = () => {
-  isShowModal.value = false;
   navigateTo(ROUTE.PROJECT_LIST);
+  isShowModal.confirmSave = false;
 };
 
 const handleSaveDraft = () => {
   // TODO: implement save draft logic
-  isShowModal.value = false;
+  isShowModal.confirmSave = false;
   navigateTo(ROUTE.PROJECT_LIST);
 };
 const handleBack = () => {
@@ -225,7 +262,7 @@ const handleBack = () => {
   if (isSectionDirty) {
     navigateTo(ROUTE.PROJECT_LIST);
   } else {
-    isShowModal.value = true;
+    isShowModal.confirmSave = true;
   }
 };
 const handleUndo = () => {
@@ -237,14 +274,16 @@ const handleRedo = () => {
 </script>
 
 <style lang="scss" scoped>
-.editor-leave {
-  &__footer {
-    display: flex;
-    justify-content: end;
-    gap: 16px;
-  }
-  &__title {
-    margin-bottom: 16px;
+:deep() {
+  .editor-leave {
+    &__footer {
+      display: flex;
+      justify-content: end;
+      gap: 16px;
+    }
+    &__title {
+      margin-bottom: 16px;
+    }
   }
 }
 

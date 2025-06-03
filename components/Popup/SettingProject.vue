@@ -482,6 +482,7 @@ const onEditProject = async () => {
     model.project = res.data;
     toastMessage(t('landing-common-message-saved'));
     loading.update = false;
+    emit('close');
   } else {
     emit('submit', payload);
   }

@@ -15,7 +15,9 @@
         <vi-icon name="ic_ai_section" size="16" color="#fff"></vi-icon>
       </div>
       <div class="ml-8 mr-auto neutral-white-alpha-90-text">
-        <vi-typography type="subtitle-large">Audio TTS</vi-typography>
+        <vi-typography type="subtitle-large">{{
+          $t('landing-editor-section-title_audio_tts')
+        }}</vi-typography>
       </div>
       <vi-icon
         class="neutral-white-alpha-60-text cursor-pointer"
@@ -34,11 +36,13 @@
         class="mt-24"
         v-model="audioSelecting.setting.voiceModelId"
         size="small"
-        label="聲音選擇"
+        :label="$t('landing-editor-modal-tts_field_choice_voice')"
         :listOption="listModel"
       />
       <div class="box-adjust-speech">
-        <vi-typography type="subtitle-small">調節語速</vi-typography>
+        <vi-typography type="subtitle-small">{{
+          $t('landing-editor-modal-tts_subtitle_speed')
+        }}</vi-typography>
         <vi-progress
           v-model="audioSelecting.setting.speed"
           has-tick-mark
@@ -47,7 +51,9 @@
           type="dual-slider"
           :data="arraySpeed"
         />
-        <vi-typography type="subtitle-small">調節語速</vi-typography>
+        <vi-typography type="subtitle-small">{{
+          $t('landing-editor-modal-tts_subtitle_pitch')
+        }}</vi-typography>
         <vi-progress
           v-model="audioSelecting.setting.pitch"
           has-tick-mark
@@ -59,8 +65,9 @@
       </div>
 
       <div class="box-demo">
-        <vi-typography type="body-small">點擊 Play 試聽聲音</vi-typography>
-        <!--   <editor-icon-play class="ml-auto" /> -->
+        <vi-typography type="body-small">{{
+          $t('landing-editor-modal-tts_preview_hint')
+        }}</vi-typography>
         <div class="custom-audio">
           <vi-audio
             :audio-file="audioFile"
@@ -76,9 +83,9 @@
       </div>
 
       <div class="text-randomly">
-        <vi-typography type="caption-large-500"
-          >設定的語句將被隨機播放</vi-typography
-        >
+        <vi-typography type="caption-large-500">{{
+          $t('landing-editor-modal-tts_play_hint')
+        }}</vi-typography>
       </div>
 
       <div class="list-phrase">
@@ -92,11 +99,13 @@
             v-model="item.text"
             type="textarea"
             size="large"
-            label="語句一"
+            :label="
+              $t('landing-editor-modal-tts_sentence_number', { num: index })
+            "
             :is-count="true"
             :max="50"
             end-label-icon="ic_close"
-            placeholder="請輸入語句"
+            :placeholder="$t('landing-editor-modal-tts_placeholder_enter_text')"
             @change="() => handleCreateDemo(index)"
           />
           <div class="audio-box">
@@ -121,7 +130,7 @@
         type="standard-default"
         size="small"
         width="100%"
-        >新增語句</vi-button
+        >{{ $t('landing-editor-modal-tts_add_sentence') }}</vi-button
       >
     </vi-scroll>
   </div>

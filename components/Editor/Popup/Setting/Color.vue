@@ -15,7 +15,9 @@
     <div class="header">
       <vi-icon name="ic_color" size="24" color="#fff"></vi-icon>
       <div class="ml-8 mr-auto neutral-white-alpha-90-text">
-        <vi-typography type="subtitle-large">Color Setting</vi-typography>
+        <vi-typography type="subtitle-large">{{
+          $t('landing-editor-modal-color_setting')
+        }}</vi-typography>
       </div>
       <vi-icon
         class="neutral-white-alpha-60-text cursor-pointer"
