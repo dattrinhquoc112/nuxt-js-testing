@@ -21,11 +21,12 @@
                 type="daterange"
                 @close="model.isShowDate = false"
                 @accept="model.isShowDate = false"
+                allow-set-time
               >
                 <vi-form-item prop="date">
                   <template #default="{ errorMsg }">
                     <vi-input
-                      :value="model.date"
+                      v-model="model.date"
                       size="large"
                       type="text"
                       :label="
@@ -385,6 +386,13 @@ const rules = {
       }),
       trigger: 'change',
     },
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-event_period_setting'),
+      }),
+      trigger: 'blur',
+    },
   ],
   eventEnglishName: [
     {
@@ -393,6 +401,13 @@ const rules = {
         field_name: t('landing-project_mgmt-title-event_name_en'),
       }),
       trigger: 'change',
+    },
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-event_name_en'),
+      }),
+      trigger: 'blur',
     },
     {
       regex: /^[a-z0-9\-._~]+$/,
@@ -407,6 +422,13 @@ const rules = {
         field_name: t('landing-project_mgmt-title-meta_title'),
       }),
       trigger: 'change',
+    },
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-meta_title'),
+      }),
+      trigger: 'blur',
     },
     {
       max: 60,
@@ -452,6 +474,13 @@ const rules = {
         field_name: t('landing-project_mgmt-title-og_title'),
       }),
       trigger: 'change',
+    },
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-og_title'),
+      }),
+      trigger: 'blur',
     },
     {
       max: 95,
