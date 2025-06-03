@@ -1,6 +1,9 @@
 <template>
   <div
-    :class="['container', { 'container--mobile': rwdMode === RWD_MODE.MOBILE }]"
+    :class="[
+      'container',
+      //  { 'container--mobile': rwdMode === RWD_MODE.MOBILE }
+    ]"
   >
     <editor-template-selector
       v-if="
@@ -108,11 +111,7 @@
 import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
 
 import { type RGBA } from '@/types/color';
-import {
-  DEBOUND_TIME_SAVE_HISTORY,
-  SIDE_BAR_ACTION,
-  RWD_MODE,
-} from '@/constants/common';
+import { DEBOUND_TIME_SAVE_HISTORY, SIDE_BAR_ACTION } from '@/constants/common';
 import { useUploadStore } from '~/stores/upload';
 import { type UPLOAD_RESPONSE } from '~/stores/interface/response/upload';
 

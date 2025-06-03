@@ -146,15 +146,15 @@
     @click.stop="(event) => emit('show-option', event)"
     :class="[
       section.backgroundSection.class,
-      {
-        'section-audio--mobile': rwdMode === RWD_MODE.MOBILE,
-        'section-audio--mobile__1':
-          section.listAudio.length === 1 && rwdMode === RWD_MODE.MOBILE,
-        'section-audio--mobile__2':
-          section.listAudio.length === 2 && rwdMode === RWD_MODE.MOBILE,
-        'section-audio--mobile__3':
-          section.listAudio.length === 3 && rwdMode === RWD_MODE.MOBILE,
-      },
+      // {
+      //   'section-audio--mobile': rwdMode === RWD_MODE.MOBILE,
+      //   'section-audio--mobile__1':
+      //     section.listAudio.length === 1 && rwdMode === RWD_MODE.MOBILE,
+      //   'section-audio--mobile__2':
+      //     section.listAudio.length === 2 && rwdMode === RWD_MODE.MOBILE,
+      //   'section-audio--mobile__3':
+      //     section.listAudio.length === 3 && rwdMode === RWD_MODE.MOBILE,
+      // },
     ]"
     :style="`--bg-image:url(${getImage(
       section.backgroundSection.urlImage
