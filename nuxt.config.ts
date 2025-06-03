@@ -20,6 +20,8 @@ export default defineNuxtConfig({
       contactLink: process.env.NUXT_PUBLIC_CONTACT_LINK,
       sdkTrackingBUID: process.env.NUXT_APP_SDK_TRACKING_BUID,
       sdkTrackingProperty: process.env.NUXT_APP_SDK_TRACKING_PROPERTY,
+      apiLandingHost: process.env.NUXT_PUBLIC_API_LANDING_HOST,
+      apiPlatformHost: process.env.NUXT_PUBLIC_API_HOST,
     },
   },
 
@@ -111,6 +113,7 @@ export default defineNuxtConfig({
           'https://sdk.stg.gamania.dev',
           'https://dev-ui-kit-aiaas-platform.vyin.ai',
           'https://uat-track.beanfun.com',
+          import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
         ],
         'img-src': [
           "'self'",

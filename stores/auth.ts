@@ -112,6 +112,7 @@ export const useAuthStore = defineStore('auth', () => {
       endpoint: '/api/v1/users',
       data,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -128,6 +129,7 @@ export const useAuthStore = defineStore('auth', () => {
       endpoint: `/api/v1/general/otp/${otpVerificationId}/resend`,
       data: { otpVerificationId },
       proxy: true,
+      platform: true,
     });
   }
 
@@ -146,6 +148,7 @@ export const useAuthStore = defineStore('auth', () => {
         method: MethodEnum.POST,
         endpoint: `/api/v1/general/uploads?contentType=${file.type}&objectType=AVATAR`,
         proxy: true,
+        platform: true,
       });
       if (presignedUrl.data.uploadUrl) {
         await $fetch(presignedUrl.data.uploadUrl, {
@@ -166,6 +169,7 @@ export const useAuthStore = defineStore('auth', () => {
       endpoint: `/api/v1/users/${getInfoUserFromCookie()?.sub}`,
       data: payload,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -175,6 +179,7 @@ export const useAuthStore = defineStore('auth', () => {
       endpoint: `/api/v1/users/unlock`,
       data,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -184,6 +189,7 @@ export const useAuthStore = defineStore('auth', () => {
       endpoint: `/api/v1/users/reset-password`,
       data,
       proxy: true,
+      platform: true,
     });
   }
 
@@ -192,6 +198,7 @@ export const useAuthStore = defineStore('auth', () => {
       method: MethodEnum.POST,
       endpoint: `/api/v1/users/forget-password?email=${email}`,
       proxy: true,
+      platform: true,
     });
   }
 

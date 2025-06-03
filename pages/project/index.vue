@@ -2,13 +2,13 @@
   <div class="app-container">
     <div class="header">
       <vi-typography type="subtitle-large">{{
-        $t('project_list')
+        $t('app-navigation-menu-projects')
       }}</vi-typography>
       <vi-button
         class="ml-auto"
         icon-before="ic_add"
-        @click="navigateToWebEditor"
-        >{{ $t('create_web_application') }}</vi-button
+        @click="onAction(undefined, 'create')"
+        >{{ $t('landing-project_mgmt-button-create') }}</vi-button
       >
     </div>
     <div class="content custom-content">
@@ -20,7 +20,7 @@
             class="mt-12"
             type="text"
             start-icon="ic_search"
-            :placeholder="$t('search_project')"
+            :placeholder="$t('landing-project_mgmt-placeholder-search')"
           >
             <template v-if="model.search" #end-icon>
               <vi-icon
@@ -34,13 +34,17 @@
       </div>
       <div class="type-project">
         <vi-button
-          v-for="(item, index) in model.modes"
+          v-for="(item, index) in model.listStatus"
           :key="index"
           width="fit-content"
-          :type="model.mode === item ? 'standard-primary' : 'standard-default'"
-          @click="model.mode = item"
+          :type="
+            model.status === item.value
+              ? 'standard-primary'
+              : 'standard-default'
+          "
+          @click="model.status = item.value"
         >
-          {{ item }}
+          {{ item.label }}
         </vi-button>
       </div>
       <div class="list-page">
@@ -53,7 +57,7 @@
         />
         <div
           class="not-found"
-          v-show="!loading.search && listPage.length === 0"
+          v-show="!loading.search && model.projects.length === 0"
         >
           <img src="/assets/icons/searchNotFound.svg" />
           <vi-typography type="subtitle-large"
@@ -61,33 +65,47 @@
           >
         </div>
         <div
-          v-show="!loading.search && listPage.length > 0"
+          v-show="!loading.search && model.projects.length > 0"
           class="item"
-          v-for="(item, index) in listPage"
+          v-for="(item, index) in model.projects"
           :key="index"
-          @click="onOpenDetail(item)"
+          @click="onClickProject(item)"
         >
           <div class="item-thumbnail">
-            <img :src="item.thumbnail" alt="" />
+            <custom-image :src="item.thumbnail" />
           </div>
           <div class="item-info">
-            <div class="status-active">{{ item.statusActive }}</div>
+            <div class="status-active">{{ getStatus(item.status) }}</div>
             <div class="wrapper-title">
               <div>
-                <div class="title-page">{{ item.titlePage }}</div>
+                <div class="title-page">{{ item.name }}</div>
                 <div class="url-page">
-                  {{ item.urlPage }}
+                  {{ getProjectUrl(item) }}
                 </div>
               </div>
               <div>
-                <div class="period-time">{{ item.periodTime }}</div>
+                <div class="period-time">
+                  {{ getDates([item?.startTime || '', item?.endTime || '']) }}
+                </div>
                 <div class="long-time">
-                  {{ $t('days_left_start', { day: item.leftDays }) }}
+                  {{
+                    item.startTime &&
+                    $t('landing-project_mgmt-description-days_until_start', {
+                      days: getDaysCount(item.startTime, new Date()),
+                    })
+                  }}
                 </div>
               </div>
             </div>
             <div class="wrapper-time-edit">
-              <div class="time-edit">{{ item.editedAt }}</div>
+              <div class="time-edit">
+                {{
+                  item.updatedAt &&
+                  $t('landing-project_mgmt-description-last_edited', {
+                    date: getDates([item.updatedAt]),
+                  })
+                }}
+              </div>
               <div
                 class="action-container"
                 v-click-outside="() => onShowAction(item.id, false)"
@@ -97,25 +115,25 @@
                   :class="{
                     'action-btn-active': actionRef[item.id],
                   }"
-                  @click="onShowAction(item.id, !actionRef[item.id])"
+                  @click.stop="onShowAction(item.id, !actionRef[item.id])"
                 >
                   <vi-icon name="ic_more" size="24" color="#fff" />
                 </div>
                 <div v-if="actionRef[item.id]" class="select-option">
                   <div
-                    @click="() => onAction('edit', item.id)"
+                    @click.stop="() => onAction(item, 'edit')"
                     class="action-item"
                   >
                     <vi-typography class="cursor-pointer" type="body-large">
-                      編輯
+                      {{ t('landing-project_mgmt-button-edit') }}
                     </vi-typography>
                   </div>
                   <div
-                    @click="() => onAction('copy', item.id)"
+                    @click.stop="() => onAction(item, 'copy')"
                     class="action-item"
                   >
                     <vi-typography class="cursor-pointer" type="body-large">
-                      複製
+                      {{ $t('landing-project_mgmt-button-copy') }}
                     </vi-typography>
                   </div>
                 </div>
@@ -126,55 +144,91 @@
       </div>
     </div>
     <popup-edit-project
-      v-if="modal.edit.show"
-      :show="modal.edit.show"
-      @close="modal.edit.close"
-      @edit="onEditProject"
+      v-if="modal.show"
+      :show="modal.show"
+      :title="modal.title"
+      :value="model.project?.name"
+      @close="modal.close"
+      @edit="modal.confirm"
     />
   </div>
 </template>
 
 <script lang="ts" setup>
+import useProjects from '~/composables/projects';
 import { useProjectStore } from '~/stores/project';
-import type { IProject } from '~/types/project';
+import type { IProject, IUpdateProjectPayload } from '~/types/project';
+
+interface Model {
+  page: number;
+  size: number;
+  search: string;
+  status: string;
+  listStatus: { value: string; label: string }[];
+  project?: IProject;
+  projects: IProject[];
+}
 
 definePageMeta({
   layout: 'app',
 });
 
-const { getProjectList } = useProjectStore();
+const { t } = useI18n();
+
+const { getProjectUrl, getStatus } = useProjects();
+const { getProjectList, copyProject, editProject } = useProjectStore();
 
 const loading = reactive({
   search: false,
 });
-const navigateToWebEditor = () => {
-  navigateTo('/editor');
-};
-const model = reactive({
+
+const model = reactive<Model>({
+  page: 0,
+  size: 150,
   search: '',
-  mode: 'all',
-  modes: ['all', 'draft', 'published'],
+  status: 'ALL',
+  projects: [],
+  listStatus: [
+    {
+      value: 'ALL',
+      label: t('landing-project_mgmt-menu-all'),
+    },
+    {
+      value: 'DRAFT',
+      label: t('landing-project_mgmt-menu-draft'),
+    },
+    {
+      value: 'PUBLISHED',
+      label: t('landing-project_mgmt-menu-published'),
+    },
+  ],
 });
 
 const modal = reactive({
-  edit: {
-    show: false,
-    open: () => {
-      modal.edit.show = true;
-    },
-    close: () => {
-      modal.edit.show = false;
-    },
+  show: false,
+  title: t('landing-project_mgmt-modal-title_edit_project_info'),
+  open: () => {
+    modal.show = true;
+  },
+  confirm: (name: string) => {
+    model.search = name;
+  },
+  close: () => {
+    modal.show = false;
   },
 });
 
-const listPage = ref<IProject[]>([]);
 const actionRef = reactive<{ [key: string]: boolean }>({});
 
 const fetchProjectList = debounce(async () => {
   loading.search = true;
-  const res = await getProjectList();
-  listPage.value = res.data;
+  const res = await getProjectList({
+    page: model.page,
+    size: model.size,
+    status: model.status,
+    nameKeyword: model.search.trim(),
+  });
+  model.projects = res.data;
   loading.search = false;
 }, 500);
 
@@ -182,26 +236,57 @@ const onShowAction = (projectID: string, show = true) => {
   actionRef[projectID] = show;
 };
 
-const onAction = (action = '', projectID = '') => {
+const onCopyProject = async (project: IProject) => {
+  await copyProject(project.id, `${project.name} Copy`);
+  fetchProjectList();
+  toastMessage(t('landing-common-message-copied'));
+};
+
+const onEditProject = async (payload: IUpdateProjectPayload) => {
+  if (model.project) {
+    await editProject(model.project.id, payload);
+    toastMessage(t('landing-common-message-saved'));
+    model.project = undefined;
+    fetchProjectList();
+    modal.close();
+  }
+};
+
+const onAction = (project?: IProject, action = '') => {
   switch (action) {
+    case 'create':
+      navigateTo('/project/editor');
+      break;
     case 'edit':
-      modal.edit.open();
+      modal.title = t('landing-project_mgmt-modal-title_edit_project_info');
+      model.project = project;
+      modal.open();
+      modal.confirm = (name: string) => {
+        onEditProject({
+          name,
+        });
+      };
       break;
     case 'copy':
+      if (project) {
+        onCopyProject(project);
+      }
       break;
     default:
       break;
   }
-  onShowAction(projectID, false);
+  if (project) {
+    onShowAction(project.id, false);
+  }
 };
 
-const onEditProject = () => {
-  // TODO: wait API
-  modal.edit.close();
-};
-
-const onOpenDetail = (item: IProject) => {
-  navigateTo(`/project/${item.id}`);
+const onClickProject = (item: IProject) => {
+  // NOTE: DRAFT is PENDING_PUBLISH, PUBLISHED is other
+  if (item.status === 'PENDING_PUBLISH') {
+    navigateTo(`/project/editor?id=${item.id}`);
+  } else {
+    navigateTo(`/project/${item.id}`);
+  }
 };
 
 onMounted(() => {
@@ -209,7 +294,7 @@ onMounted(() => {
 });
 
 watch(
-  () => model.search,
+  () => [model.search, model.status],
   () => {
     fetchProjectList();
   }
@@ -233,7 +318,6 @@ watch(
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   flex: 1;
   margin-top: 36px;
   gap: 16px;
@@ -248,6 +332,7 @@ watch(
     cursor: pointer;
     .item-thumbnail {
       width: 336px;
+      height: 188px;
       display: flex;
       img {
         width: 100%;
@@ -316,10 +401,14 @@ watch(
     gap: 16px;
     align-items: center;
     color: $neutral-white-alpha-60;
+    margin: auto;
     img {
       width: 80px;
       height: 80px;
     }
+  }
+  .spin {
+    margin: auto;
   }
 }
 .action-container {
