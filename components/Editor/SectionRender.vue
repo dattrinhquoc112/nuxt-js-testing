@@ -73,8 +73,8 @@
       </div>
       <a
         class="button-href"
+        v-bind="getLinkForButton"
         :style="section?.buttonExternal.style"
-        @click="() => handleButtonExternalClick(section?.buttonExternal?.link)"
         @dblclick="(event) => emit('handle-change-text', event)"
       >
         {{ section?.buttonExternal?.text }}</a
@@ -110,6 +110,7 @@
       @click.stop="clickParent"
     >
       <source :src="getImage(section.backgroundSection.urlVideo)" />
+      <source :src="getImage(section.backgroundSection.urlVideo)" />
     </video>
     <div class="left">
       <div
@@ -128,10 +129,8 @@
       </div>
       <a
         class="button-href"
+        v-bind="getLinkForButton"
         :style="section?.buttonExternal.style"
-        @click="
-          (event) => handleButtonExternalClick(section?.buttonExternal?.link)
-        "
         @dblclick="(event) => emit('handle-change-text', event)"
         >{{ section?.buttonExternal?.text }}</a
       >
@@ -265,6 +264,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isPublic: {
+    type: Boolean,
+    default: false,
+  },
 });
 const emit = defineEmits(['show-option', 'handle-change-text']);
 const clickParent = (event: MouseEvent) => {
@@ -273,11 +276,15 @@ const clickParent = (event: MouseEvent) => {
 };
 const { getImage } = useProjects();
 
-const handleButtonExternalClick = (link: string) => {
-  if (props.readOnly) {
-    window.open(link, '_blank');
-  }
-};
+const getLinkForButton = computed(() => {
+  if (!props.isPublic && !props.readOnly) return {};
+  return {
+    href: props.section?.buttonExternal?.link
+      ? props.section?.buttonExternal?.link
+      : '#',
+    target: '_blank',
+  };
+});
 </script>
 
 <style></style>
