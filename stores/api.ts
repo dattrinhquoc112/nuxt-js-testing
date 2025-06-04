@@ -57,8 +57,6 @@ export const useApiStore = defineStore('api', () => {
         let endpoint = 'call';
         if (payload.platform) {
           endpoint = 'platformCall';
-        } else if (payload.landingWeb) {
-          endpoint = 'landingWeb';
         }
         if (payload.audio) {
           endpoint = 'audioCall';

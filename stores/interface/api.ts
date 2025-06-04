@@ -29,5 +29,4 @@ export interface Payload {
   redirect?: RequestRedirect | undefined;
   platform?: boolean;
   audio?: boolean;
-  landingWeb?: boolean;
 }
