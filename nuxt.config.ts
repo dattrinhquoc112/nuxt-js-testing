@@ -18,6 +18,8 @@ export default defineNuxtConfig({
       apiRedirectUri: process.env.NUXT_API_REDIRECT_URI,
       apiHost: process.env.NUXT_PUBLIC_API_HOST,
       contactLink: process.env.NUXT_PUBLIC_CONTACT_LINK,
+      sdkTrackingBUID: process.env.NUXT_APP_SDK_TRACKING_BUID,
+      sdkTrackingProperty: process.env.NUXT_APP_SDK_TRACKING_PROPERTY,
       apiLandingHost: process.env.NUXT_PUBLIC_API_LANDING_HOST,
       apiPlatformHost: process.env.NUXT_PUBLIC_API_HOST,
       apiAudioHost: process.env.NUXT_PUBLIC_AUDIO_HOST,
@@ -52,6 +54,13 @@ export default defineNuxtConfig({
         {
           rel: 'stylesheet',
           href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Unbounded:wght@200..900&display=swap',
+        },
+      ],
+      script: [
+        {
+          src: 'https://sdk.stg.gamania.dev/webtrackingsdk.min.js.gz', // Đường dẫn tới script bên ngoài
+          async: true, // Tải script không đồng bộ
+          defer: true, // Chờ cho đến khi DOM được phân tích cú pháp
         },
       ],
     },
@@ -89,6 +98,9 @@ export default defineNuxtConfig({
           "'self'",
           "'unsafe-inline'",
           import.meta.env.VITE_APP_UI_KIT_LINK,
+          'https://sdk.stg.gamania.dev',
+          'https://dev-ui-kit-aiaas-platform.vyin.ai',
+          'https://uat-track.beanfun.com',
         ],
         'connect-src': [
           "'self'",
@@ -100,6 +112,9 @@ export default defineNuxtConfig({
           import.meta.env.VITE_APP_UI_KIT_LINK,
           import.meta.env.NUXT_PUBLIC_API_HOST,
           import.meta.env.NUXT_API_URL_UPLOAD,
+          'https://sdk.stg.gamania.dev',
+          'https://dev-ui-kit-aiaas-platform.vyin.ai',
+          'https://uat-track.beanfun.com',
           import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
           'https://actions.google.com',
         ],
