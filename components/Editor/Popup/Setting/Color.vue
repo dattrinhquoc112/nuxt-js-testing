@@ -65,16 +65,20 @@
 
       <!-- HEX + Opacity Input -->
       <div class="input-group">
-        <input type="text" v-model="hex" class="hex-input" />
-        <div class="opacity-input-group">
-          <input
-            type="number"
-            min="0"
-            max="100"
-            v-model.number="opacity"
-            class="opacity-input"
-          />
-          <span class="percent-sign">%</span>
+        <vi-typography>{{
+          $t('landing-editor-modal-color_hex')
+        }}</vi-typography>
+        <div class="input-group input-hex">
+          <input type="text" v-model="hex" class="hex-input" />
+          <vi-divider direction="vertical" width="20px" />
+          <div class="opacity-input-group">
+            <input
+              v-model.number="opacity"
+              class="opacity-input"
+              @input="onInputPercent"
+            />
+            <span class="percent-sign">%</span>
+          </div>
         </div>
       </div>
     </div>
@@ -248,6 +252,31 @@ function rgbToHex(r: number, g: number, b: number): string {
       .toUpperCase()
   );
 }
+
+const onInputPercent = (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const value = target.value.trim();
+
+  if (value === '') {
+    target.value = '';
+    return;
+  }
+
+  if (!/^\d+$/.test(value)) {
+    target.value = '';
+    return;
+  }
+
+  const number = Number(value);
+
+  if (number < 0) {
+    target.value = '0';
+  } else if (number > 100) {
+    target.value = '100';
+  } else {
+    target.value = number.toString();
+  }
+};
 </script>
 
 <style lang="scss" scoped>
@@ -370,28 +399,38 @@ function rgbToHex(r: number, g: number, b: number): string {
 
   .input-group {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    margin-top: 10px;
+    gap: 8px;
+    flex: 1;
+
+    .input-hex {
+      background-color: $neutral-white-alpha-7;
+      border: 0.5px solid $neutral-white-alpha-10;
+      border-radius: 4px;
+      padding: 6px 8px;
+    }
 
     .hex-input {
-      width: 120px;
-      padding: 6px 8px;
-      background-color: #2c2c2c;
+      background-color: transparent;
       border: none;
       border-radius: 4px;
+      border: none;
+      outline: none;
       color: #fff;
+      flex: 1;
+      width: 0px;
     }
 
     .opacity-input-group {
       display: flex;
       align-items: center;
+      gap: 8px;
 
       .opacity-input {
-        width: 60px;
-        padding: 6px 8px;
-        background-color: #2c2c2c;
+        width: 30px;
+        background-color: transparent;
         border: none;
+        outline: none;
         border-radius: 4px;
         color: #fff;
         text-align: right;

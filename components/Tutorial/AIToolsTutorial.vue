@@ -33,13 +33,13 @@
   </div>
 
   <vi-modal
-    modal-title="尚未有發布的模型"
+    :modal-title="$t('landing-tutorial-modal-unpublished_model_title')"
     :is-show="isShowModal"
     @close="isShowModal = false"
     size="small"
   >
     <vi-typography type="body-small" class="tutorial-modal--title">{{
-      $t('ai-tools-tutorial-description')
+      $t('landing-tutorial-modal-unpublished_model_message')
     }}</vi-typography>
     <template #footer>
       <div class="tutorial-modal--footer">
@@ -152,13 +152,17 @@ const handleCloseTooltip = () => {
 }
 
 .tutorial-modal {
-  &--title {
-    padding: 16px 0px;
-  }
   &--footer {
     display: flex;
     gap: 16px;
     justify-content: end;
   }
+}
+:deep(.body.small) {
+  border: none !important;
+  outline: 1px solid $neutral-white-alpha-10 !important;
+}
+:deep(.modal-icon-close) {
+  padding: 0 !important;
 }
 </style>
