@@ -4,6 +4,7 @@
     :is-show="show"
     @close="onClose"
     size="large"
+    close-on-click-modal
   >
     <vi-form :model="model" :rules="rules" @submit="() => {}">
       <div class="modal-content">
@@ -35,6 +36,7 @@
                       :placeholder="
                         $t('landing-project_mgmt-title-event_period_setting')
                       "
+                      @keydown="(event: KeyboardEvent) => event.preventDefault()"
                       required
                       width="100%"
                       :error="Boolean(errorMsg)"

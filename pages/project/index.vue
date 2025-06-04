@@ -267,6 +267,9 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
 };
 
 const onAction = async (project?: IProject, action = '') => {
+  if (project) {
+    onShowAction(project.id, false);
+  }
   switch (action) {
     case 'create':
       await getTenantMetric();
@@ -293,9 +296,6 @@ const onAction = async (project?: IProject, action = '') => {
       break;
     default:
       break;
-  }
-  if (project) {
-    onShowAction(project.id, false);
   }
 };
 
