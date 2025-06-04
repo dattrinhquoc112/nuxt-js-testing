@@ -4,6 +4,7 @@
     :is-show="show"
     @close="onClose"
     size="full-screen"
+    close-on-click-modal
   >
     <vi-form :model="model" :rules="rules" @submit="() => {}">
       <div class="modal-content">

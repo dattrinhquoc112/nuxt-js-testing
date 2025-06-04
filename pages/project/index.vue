@@ -255,6 +255,9 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
 };
 
 const onAction = (project?: IProject, action = '') => {
+  if (project) {
+    onShowAction(project.id, false);
+  }
   switch (action) {
     case 'create':
       navigateTo('/project/editor');
@@ -276,9 +279,6 @@ const onAction = (project?: IProject, action = '') => {
       break;
     default:
       break;
-  }
-  if (project) {
-    onShowAction(project.id, false);
   }
 };
 
