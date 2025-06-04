@@ -1,0 +1,241 @@
+import type { UPLOAD_RESPONSE } from '~/stores/interface/response/upload';
+import { useUploadStore } from '@/stores/upload';
+import { useProjectStore } from '~/stores/project';
+import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
+
+export const useWebEditor = (sections: Ref<any[]>, listTemplate: any[]) => {
+  const route = useRoute();
+  const router = useRouter();
+  const { uploadFile } = useUploadStore();
+  const listMaterials = ref<any[]>([]);
+
+  const {
+    createProject,
+    updateContentProject,
+    getContentProject,
+    setVersionContent,
+  } = useProjectStore();
+
+  const checkMaterials = (
+    objSelecting: any,
+    newFileUri: string,
+    type = 'UPDATE'
+  ) => {
+    if (!listMaterials.value.length) return;
+    const materialIndex = listMaterials.value.findIndex(
+      (item) =>
+        item.fileUri === objSelecting.urlImage ||
+        item.fileUri === objSelecting.urlVideo
+    );
+    if (materialIndex === -1) return;
+    if (type === 'DELETE') {
+      listMaterials.value.splice(materialIndex, 1);
+      return;
+    }
+
+    listMaterials.value[materialIndex].fileUri = newFileUri;
+  };
+
+  const updateMaterial = (
+    dataApi: UPLOAD_RESPONSE,
+    file: File,
+    indexSection: number,
+    fileUri: string,
+    type: string = 'MEDIA'
+  ) => {
+    const findMaterial = listMaterials.value.find(
+      (item) => item.fileUri === fileUri
+    );
+
+    if (findMaterial) {
+      findMaterial.indexSection = indexSection;
+      findMaterial.type = type;
+      findMaterial.fileUri = dataApi.fileUri;
+      findMaterial.fileSize = file.size;
+    } else {
+      listMaterials.value.push({
+        indexSection,
+        id: null,
+        type,
+        thumbnail: 'string',
+        fileUri: dataApi.fileUri,
+        fileSize: file.size,
+      });
+    }
+  };
+
+  const uploadAllImage = async (key: string, type: string = 'MEDIA') => {
+    if (!sections.value.length) return;
+
+    await Promise.all(
+      sections.value.map(async (item: any, index: number) => {
+        if (item?.[key]?.file) {
+          const res: UPLOAD_RESPONSE | undefined = await uploadFile(
+            item[key].file
+          );
+          if (!res) return;
+          if (item[key].urlImage) {
+            updateMaterial(
+              res,
+              item[key].file,
+              index,
+              item[key].urlImage,
+              type
+            );
+            item[key].urlImage = res?.fileUri;
+          }
+          if (item[key].urlVideo) {
+            updateMaterial(
+              res,
+              item[key].file,
+              index,
+              item[key].urlVideo,
+              type
+            );
+            item[key].urlVideo = res?.fileUri;
+          }
+        }
+      })
+    );
+  };
+
+  const updateAllImageAudio = async () => {
+    if (!sections.value.length) return;
+    const listAudio: any[] = [];
+    sections.value.forEach(async (item: any) => {
+      if (item?.listAudio) {
+        item.listAudio.forEach((itemAudio: any) => {
+          if (itemAudio.audio?.file) {
+            listAudio.push(itemAudio.audio);
+          }
+        });
+      }
+    });
+    if (listAudio.length) {
+      await Promise.all(
+        listAudio.map(async (item: any, index: number) => {
+          if (item?.file) {
+            const res: UPLOAD_RESPONSE | undefined = await uploadFile(
+              item.file
+            );
+            if (!res) return;
+            if (item.urlImage) {
+              updateMaterial(res, item.file, index, item.urlImage);
+              item.urlImage = res?.fileUri;
+            }
+            if (item.urlVideo) {
+              updateMaterial(res, item.file, index, item.urlVideo);
+              item.urlVideo = res?.fileUri;
+            }
+          }
+        })
+      );
+    }
+  };
+
+  const convertDataSections = () => {
+    return {
+      sections: sections.value.map((section: SECTION_ITEM, index: number) => {
+        let audioSettings: any = [];
+        if (section.id === 'audio-section') {
+          audioSettings = section.listAudio?.map(
+            (item: AUDIO_ITEM, orderAudio) => {
+              return {
+                order: orderAudio.toString(),
+                audioAppProjectId: item.audio.setting.voiceModelId.value,
+                speed: item.audio.setting.speed,
+                pitch: item.audio.setting.pitch,
+                demoPersistence: 'TEMPORARY',
+                sentences: item.audio.setting.listPhrase.map((sen) => ({
+                  text: sen.text,
+                  fileUri: sen.audioUrl,
+                  demoId: 123123,
+                })),
+              };
+            }
+          );
+        }
+
+        const materials = listMaterials.value
+          .filter((i) => i.indexSection === index)
+          .map((i) => ({
+            id: i.id,
+            type: i.type,
+            thumbnail: i.thumbnail,
+            fileUri: i.fileUri,
+            fileSize: i.fileSize,
+          }));
+
+        return {
+          template: section.id,
+          order: index,
+          settings: {
+            generalSettings: resetAllFileToNull(section),
+            audioSettings,
+          },
+          materials,
+        };
+      }),
+    };
+  };
+
+  const fetchContentProject = async () => {
+    if (!route.query?.id) {
+      sections.value = JSON.parse(JSON.stringify([listTemplate[0]]));
+    } else {
+      const data = await getContentProject(route.query.id as string);
+      if (data.data.version)
+        setVersionContent({
+          idProject: route.query.id as string,
+          version: data.data.version,
+        });
+      if (!data.data.sections.length) return;
+      sections.value = data.data.sections.map(
+        (item: any, indexSection: number) => {
+          if (item.materials?.length) {
+            listMaterials.value = listMaterials.value.concat(
+              item.materials.map((i: any) => ({
+                indexSection,
+                id: i.id,
+                type: i.type,
+                thumbnail: i.thumbnail,
+                fileUri: i.fileUri,
+                fileSize: i.fileSize,
+              }))
+            );
+          }
+          return item.settings.generalSettings;
+        }
+      );
+    }
+  };
+
+  const handleSaveTemplate = async () => {
+    let idProjectRes;
+    if (!route.query?.id) {
+      idProjectRes = (await createProject('未命名專案')).data?.id;
+    } else {
+      idProjectRes = route.query?.id;
+    }
+
+    await Promise.all([
+      uploadAllImage('backgroundSection'),
+      uploadAllImage('boxImage'),
+      updateAllImageAudio(),
+    ]);
+    const payload = convertDataSections();
+    const res = await updateContentProject(idProjectRes, payload);
+    if (res.data.version)
+      setVersionContent({
+        idProject: idProjectRes,
+        version: res.data.version,
+      });
+    router.push({
+      query: {
+        id: idProjectRes,
+      },
+    });
+  };
+
+  return { handleSaveTemplate, fetchContentProject, checkMaterials };
+};
