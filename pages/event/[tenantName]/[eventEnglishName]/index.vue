@@ -9,10 +9,13 @@
 
 <script lang="ts" setup>
 import { useEventStore } from '~/stores/event';
+import useSDKTracking from '@/composables/SDKTracking';
 
 definePageMeta({
   layout: 'public',
 });
 
 const { sectionsPublic } = useEventStore();
+// handle add Tracking SDK
+// const { handleClickEvent } = useSDKTracking({ pageName: '', tenantID: '' });
 </script>

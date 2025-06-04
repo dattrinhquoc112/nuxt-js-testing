@@ -110,6 +110,7 @@
       @click.stop="clickParent"
     >
       <source :src="getImage(section.backgroundSection.urlVideo)" />
+      <source :src="getImage(section.backgroundSection.urlVideo)" />
     </video>
     <div class="left">
       <div

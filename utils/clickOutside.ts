@@ -1,16 +1,31 @@
-export default {
-  beforeMount(element: any, binding: any) {
-    // eslint-disable-next-line no-param-reassign
-    element.clickOutsideEvent = (event: MouseEvent) => {
-      if (
-        !(element === event.target || element.contains(event.target as Node))
-      ) {
+import type { DirectiveBinding, ObjectDirective } from 'vue';
+
+const clickOutsideDirective: ObjectDirective<
+  HTMLElement,
+  (event: MouseEvent) => void
+> = {
+  beforeMount(
+    el: HTMLElement,
+    binding: DirectiveBinding<(event: MouseEvent) => void>
+  ) {
+    const handler = (event: MouseEvent) => {
+      if (!(el === event.target || el.contains(event.target as Node))) {
         binding.value(event);
       }
     };
-    document.addEventListener('click', element.clickOutsideEvent);
+
+    (el as any).__clickOutsideHandler__ = handler;
+
+    document.addEventListener('click', handler, true);
   },
-  unmounted(element: any) {
-    document.removeEventListener('click', element.clickOutsideEvent);
+
+  unmounted(el: HTMLElement) {
+    const handler = (el as any).__clickOutsideHandler__;
+    if (handler) {
+      document.removeEventListener('click', handler, true);
+      delete (el as any).__clickOutsideHandler__;
+    }
   },
 };
+
+export default clickOutsideDirective;

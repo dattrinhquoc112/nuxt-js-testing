@@ -11,6 +11,7 @@
           >{{ $t('landing-project_mgmt-button-clone_project') }}</vi-button
         >
         <vi-button
+          v-if="model.project?.status !== 'ENDED'"
           width="65px"
           type="dangerous-default"
           @click="onAction('unpublish')"
@@ -141,6 +142,7 @@ const onUnpublish = async () => {
   try {
     await unpublishProject(model.project.id);
     toastMessage(t('landing-common-message-unpublished'));
+    navigateTo('/project');
   } catch (error) {
     toastMessage(t('landing-common-message-unpublished-error'));
   }

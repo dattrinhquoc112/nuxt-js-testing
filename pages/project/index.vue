@@ -107,9 +107,13 @@
             <div class="wrapper-time-edit">
               <div class="time-edit">
                 {{
-                  item.updatedAt &&
+                  (item.updatedAt || item.createdAt) &&
                   $t('landing-project_mgmt-description-last_edited', {
-                    date: getDates([item.updatedAt]),
+                    date: getDates(
+                      [item.updatedAt || item.createdAt],
+                      '-',
+                      'MMMM, DD HH:mm'
+                    ),
                   })
                 }}
               </div>

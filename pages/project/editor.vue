@@ -36,12 +36,14 @@
     </vi-scroll>
   </LayoutEditor>
   <popup-setting-project
+    v-if="isShowActivitySettingModal"
     :show="isShowActivitySettingModal"
     :project="project"
     @close="isShowActivitySettingModal = false"
     @submit="handleSubmitSettingProject"
   />
   <popup-edit-project
+    v-if="isShowEditInfoModal"
     :show="isShowEditInfoModal"
     :value="webEditorName"
     @close="isShowEditInfoModal = false"
@@ -74,13 +76,9 @@
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
-import {
-  RWD_MODE,
-  DEFAULT_WEB_EDITOR_NAME,
-  SIDE_BAR_ACTION,
-} from '~/constants/common';
 import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
+import { SIDE_BAR_ACTION, RWD_MODE } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
@@ -110,7 +108,7 @@ const handleEvent = () => {};
 const projectName = ref();
 const route = useRoute();
 const editorID = ref('');
-const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
+const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const project = ref();
 
 const configVersion = ref({
@@ -170,7 +168,7 @@ const handleCheckCOnditionPublish = async () => {
   if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
     try {
       await publishProject(editorID.value);
-      toastMessage(t(' landing-project_mgmt-menu-published'));
+      toastMessage(t('landing-project_mgmt-menu-published'));
       navigateTo(ROUTE.PROJECT_LIST);
     } catch (error: any) {
       const errCode = error?.data?.statusMessage;

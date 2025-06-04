@@ -16,50 +16,62 @@
             color="#fff"
             class="editor-layout__left__back"
           />
-          <vi-typography
-            type="headline-xs"
-            class="editor-layout__left__text truncate"
-          >
-            {{ projectName }}
-          </vi-typography>
-          <vi-icon
-            v-if="!isOpenSettingEvent"
-            name="ic_chevron_down"
-            size="16"
-            color="#fff"
-            class="editor-layout__left__dropdown"
-            @click="isOpenSettingEvent = true"
-          />
-          <vi-icon
-            v-if="isOpenSettingEvent"
-            name="ic_chevron_up"
-            size="16"
-            color="#fff"
-            class="editor-layout__left__dropdown"
-            @click="isOpenSettingEvent = false"
-          />
           <div
-            v-if="isOpenSettingEvent"
-            class="editor-layout__left__event-list"
+            class="editor-layout__left"
+            v-click-outside="() => (isOpenSettingEvent = false)"
           >
-            <vi-button
-              type="standard-default"
-              class="no-rounded"
-              @click="emit('handleEditInfo')"
+            <vi-typography
+              type="headline-xs"
+              class="editor-layout__left__text truncate cursor-pointer"
+              @click="isOpenSettingEvent = !isOpenSettingEvent"
             >
-              <vi-typography type="body-large" class="cursor-pointer">
-                {{ $t('landing-project_mgmt-modal-title_edit_project_info') }}
-              </vi-typography>
-            </vi-button>
-            <vi-button
-              type="standard-default"
-              class="no-rounded"
-              @click="emit('handleActivitySettings')"
+              {{ projectName }}
+            </vi-typography>
+            <vi-icon
+              v-if="!isOpenSettingEvent"
+              name="ic_chevron_down"
+              size="16"
+              color="#fff"
+              class="editor-layout__left__dropdown"
+              @click="isOpenSettingEvent = true"
+            />
+            <vi-icon
+              v-if="isOpenSettingEvent"
+              name="ic_chevron_up"
+              size="16"
+              color="#fff"
+              class="editor-layout__left__dropdown"
+              @click="isOpenSettingEvent = false"
+            />
+            <div
+              v-if="isOpenSettingEvent"
+              class="editor-layout__left__event-list"
             >
-              <vi-typography type="body-large" class="cursor-pointer">
-                {{ $t('landing-project_mgmt-title-event_settings') }}
-              </vi-typography>
-            </vi-button>
+              <vi-button
+                type="standard-default"
+                class="no-rounded"
+                @click="
+                  emit('handleEditInfo');
+                  isOpenSettingEvent = false;
+                "
+              >
+                <vi-typography type="body-large" class="cursor-pointer">
+                  {{ $t('landing-project_mgmt-modal-title_edit_project_info') }}
+                </vi-typography>
+              </vi-button>
+              <vi-button
+                type="standard-default"
+                class="no-rounded"
+                @click="
+                  emit('handleActivitySettings');
+                  isOpenSettingEvent = false;
+                "
+              >
+                <vi-typography type="body-large" class="cursor-pointer">
+                  {{ $t('landing-project_mgmt-title-event_settings') }}
+                </vi-typography>
+              </vi-button>
+            </div>
           </div>
         </div>
       </template>
