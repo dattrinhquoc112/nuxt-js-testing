@@ -76,8 +76,6 @@ const emit = defineEmits<{
 const { getVoiceModelList } = useEditorStore();
 const isShowModal = ref(false);
 const openTutorialModal = async () => {
-  emit('handleOpenAITools');
-  emit('update:modelValue', false);
   const res = await getVoiceModelList();
   if (!(res.data.length > 0)) {
     emit('handleOpenAITools');
