@@ -3,6 +3,7 @@
     :modal-title="$t('landing-project_mgmt-modal-title_edit_project_info')"
     :is-show="show"
     @close="emit('close')"
+    size="small"
   >
     <vi-form :model="model" :rules="rules">
       <vi-form-item prop="name">
@@ -11,6 +12,9 @@
             v-model="model.name"
             required
             :label="$t('landing-project_mgmt-modal-project_name')"
+            :placeholder="
+              $t('landing-project_mgmt-placeholder-placeholder_project_name')
+            "
             width="100%"
             :error="Boolean(errorMsg)"
             :hint="errorMsg"
@@ -28,7 +32,7 @@
           type="standard-primary"
           width="fit-content"
           :disabled="!model.name"
-          >{{ $t('common-action-button-button_confirm.1') }}</vi-button
+          >{{ $t('common-action-button-button_confirm') }}</vi-button
         >
         <vi-button
           type-button="button"
