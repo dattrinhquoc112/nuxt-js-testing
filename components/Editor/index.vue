@@ -177,8 +177,12 @@ const sections = ref<SECTION_ITEM[] | []>([]);
 const history = ref<any[]>(
   JSON.parse(JSON.stringify([[props.listTemplate[0]]]))
 );
+const route = useRoute();
+const idParam = Array.isArray(route.query?.id)
+  ? route.query.id[0] || ''
+  : route.query?.id || '';
 const { fetchContentProject, handleSaveTemplate, checkMaterials } =
-  useWebEditor(sections, props.listTemplate);
+  useWebEditor(sections, idParam);
 const currentIndex = ref<number>(0);
 
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(

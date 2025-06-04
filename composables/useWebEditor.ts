@@ -215,11 +215,6 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
         idProject: idWebEditorRef.value,
         version: res.data.version,
       });
-    router.push({
-      query: {
-        id: idWebEditorRef.value,
-      },
-    });
   };
   const setIDWebEditor = (id: string) => {
     idWebEditorRef.value = id;
