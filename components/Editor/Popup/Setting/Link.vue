@@ -34,6 +34,7 @@
         size="small"
         :hint="messageError"
         :error="Boolean(messageError)"
+        ellipsis-on-blur
       />
     </div>
   </div>
