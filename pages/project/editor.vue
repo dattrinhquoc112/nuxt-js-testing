@@ -1,32 +1,34 @@
 <template>
   <LayoutEditor
+    :rwd-mode="RWDMode"
     :isShowListSection="isShowListSection"
     @handle-undo="handleUndo"
-    :rwd-mode="RWDMode"
     :history-status="historyStatus"
     @handle-redo="handleRedo"
-    @handleSwitchLayout="(e) => SwitchToRWD(e)"
-    @handle-play="handlePreview"
-    @scroll-editor="handleHiddenAllControl"
-    @handle-switcher-layout="checkVersionAndUpdate({}, 'switch-layout')"
+    @handle-switch-layout="
+      (keyAction) =>
+        checkVersionAndUpdate({ keyAction }, ACTION_LIST.SWITCH_RWD)
+    "
+    @handle-play="checkVersionAndUpdate({}, ACTION_LIST.PREVIEW)"
     @handle-release="handleCheckCOnditionPublish"
-    @handle-store-changes="checkVersionAndUpdate({}, 'save')"
+    @handle-store-changes="checkVersionAndUpdate({}, ACTION_LIST.SAVE)"
     @click-sidebar="
-      (keyAction) => checkVersionAndUpdate({ keyAction }, 'show-section')
+      (keyAction) =>
+        checkVersionAndUpdate({ keyAction }, ACTION_LIST.SHOW_SECTION)
     "
     @handle-back="handleBack"
     @handle-activity-settings="isShowActivitySettingModal = true"
     @handle-edit-info="isShowEditInfoModal = true"
-    @handle-switch-layout="() => {}"
     :project-name="webEditorName"
+    @scroll-editor="handleHiddenAllControl"
   >
     <vi-scroll
       class="editor__content"
       :class="{ 'editor__content--mobile': RWDMode === RWD_MODE.MOBILE }"
     >
       <editor
-        :rwd-mode="RWDMode"
         ref="editorRef"
+        :rwd-mode="RWDMode"
         :list-template="listTemplateCurrent"
         :is-show-list-section="isShowListSection"
         @close-section="isShowListSection = ''"
@@ -110,6 +112,11 @@ const route = useRoute();
 const editorID = ref('');
 const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
 const project = ref();
+
+const configVersion = ref({
+  keyAction: '',
+  type: '',
+});
 const handleGetProjectDetail = async (id: any) => {
   const detailProject = await getProject(id);
   if (detailProject) {
@@ -128,8 +135,12 @@ watch(
 
 const handlePreview = () => {
   const sections = editorRef.value?.sections;
-  localStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
+  sessionStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
   window.open(ROUTE.EDITOR_PREVIEW, '_blank');
+};
+
+const SwitchToRWD = (e: any) => {
+  RWDMode.value = e;
 };
 watch(
   () => route.query.id,
@@ -238,25 +249,30 @@ const handleClickSideBar = (keyAction: string) => {
     listTemplateCurrent.value = TEMPLATES_AUDIO;
   }
 };
-
+const ACTION_LIST = {
+  SAVE: 'save',
+  SHOW_SECTION: 'show-section',
+  SWITCH_RWD: 'switch-RWD',
+  PREVIEW: 'preview',
+};
+const listAction = {
+  [ACTION_LIST.SAVE]: handleSaveTemplate,
+  [ACTION_LIST.SHOW_SECTION]: (keyAction: string) =>
+    handleClickSideBar(keyAction),
+  [ACTION_LIST.SWITCH_RWD]: (keyAction: string) => SwitchToRWD(keyAction),
+  [ACTION_LIST.PREVIEW]: handlePreview,
+};
 const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
+  configVersion.value = {
+    keyAction,
+    type,
+  };
   try {
     const isLatestVersion = await checkIsLatestVersion();
     if (!isLatestVersion) {
       isShowModal.confirmReplace = true;
     } else {
-      switch (type) {
-        case 'save':
-          handleSaveTemplate();
-          break;
-        case 'switch-layout':
-          break;
-        case 'show-section':
-          handleClickSideBar(keyAction);
-          break;
-        default:
-          break;
-      }
+      listAction[type]?.(keyAction);
     }
   } catch (error) {
     return Promise.reject(error);
@@ -272,14 +288,11 @@ const handleUpdateToNewVersion = async () => {
     title: t('landing-editor-message-version_updated'),
     width: '348px',
   });
+  listAction[configVersion.value.type]?.(configVersion.value.keyAction);
 };
 
 const handleHiddenAllControl = () => {
   editorRef.value?.hiddenBoxControl();
-};
-
-const SwitchToRWD = (e: any) => {
-  RWDMode.value = e;
 };
 
 const handleLeave = () => {

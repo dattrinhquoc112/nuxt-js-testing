@@ -158,12 +158,15 @@
       @close="modal.close"
       @edit="modal.confirm"
     />
+    <Tutorial :tutorial-type="TUTORIAL_TYPE.HOME_PAGE" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import useMetric from '~/composables/metric';
+import Tutorial from '@/components/Tutorial/Tutorial.vue';
 import useProjects from '~/composables/projects';
+import { TUTORIAL_TYPE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
 

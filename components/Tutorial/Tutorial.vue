@@ -106,9 +106,13 @@ import TutorialStep0 from '@/components/Tutorial/Components/TutorialStep0.vue';
 import TutorialStep1 from '@/components/Tutorial/Components/TutorialStep1.vue';
 import TutorialStep2 from '@/components/Tutorial/Components/TutorialStep2.vue';
 import TutorialStep3 from '@/components/Tutorial/Components/TutorialStep3.vue';
-import { USER_VISITED_HOME_PAGE } from '@/constants/storage';
+import {
+  USER_VISITED_HOME_PAGE,
+  USER_VISITED_WEB_EDITOR,
+} from '@/constants/storage';
+import { TUTORIAL_TYPE } from '~/constants/common';
 
-defineProps({
+const props = defineProps({
   tutorialType: {
     type: String,
     required: true,
@@ -140,10 +144,15 @@ const handleCompleteGuild = () => {
 };
 onMounted(() => {
   // Check if the user is visiting the site for the first time. If so, show the guide.
-  const isVisited = localStorage.getItem(USER_VISITED_HOME_PAGE);
-  if (!isVisited) {
+  const isVisitedHomePage = localStorage.getItem(USER_VISITED_HOME_PAGE);
+  const isVisitedWebEditor = localStorage.getItem(USER_VISITED_WEB_EDITOR);
+  if (!isVisitedHomePage && props.tutorialType === TUTORIAL_TYPE.HOME_PAGE) {
     isOpenTutorial.value = true;
     localStorage.setItem(USER_VISITED_HOME_PAGE, USER_VISITED_HOME_PAGE);
+  }
+  if (!isVisitedWebEditor && props.tutorialType === TUTORIAL_TYPE.WEB_EDITOR) {
+    isOpenTutorial.value = true;
+    localStorage.setItem(USER_VISITED_WEB_EDITOR, USER_VISITED_WEB_EDITOR);
   }
 });
 </script>

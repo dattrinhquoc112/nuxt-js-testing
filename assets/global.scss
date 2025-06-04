@@ -111,6 +111,7 @@ html {
   width: 100%;
   padding-top: calc(600 / 1376 * 100%);
   position: relative;
+  background-color: var;
   .video-background {
     position: absolute;
     top: 0;
@@ -119,19 +120,20 @@ html {
     height: 100%;
     z-index: 5;
   }
+  &.bg-img {
+    background-image: var(--bg-image);
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+  }
+  &.bg-color {
+    background-color: var(--bg-color);
+  }
   &.section-one {
     position: relative;
     width: 100%;
     aspect-ratio: 172 / 75;
-    &.bg-img {
-      background-image: var(--bg-image);
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
-    }
-    &.bg-color {
-      background-color: var(--bg-color);
-    }
+
     .content--destop {
       position: absolute;
       z-index: 10;
@@ -220,6 +222,7 @@ html {
     }
 
     &--mobile {
+      padding: 0;
       aspect-ratio: 5 / 8;
       padding: 0;
       display: flex;
@@ -232,15 +235,6 @@ html {
     width: 100%;
     aspect-ratio: 172 / 75;
     position: relative;
-    &.bg-img {
-      background-image: var(--bg-image);
-      background-position: center;
-      background-size: contain;
-      background-repeat: no-repeat;
-    }
-    &.bg-color {
-      background-color: var(--bg-color);
-    }
     .left {
       position: absolute;
       width: 50%;
@@ -380,6 +374,22 @@ html {
             word-break: break-word;
           }
         }
+      }
+    }
+    &--mobile {
+      padding: 0;
+      & .list-audio {
+        display: flex;
+        flex-direction: column;
+      }
+      &__1 {
+        aspect-ratio: 125/272;
+      }
+      &__2 {
+        aspect-ratio: 125/452;
+      }
+      &__3 {
+        aspect-ratio: 125/632;
       }
     }
   }

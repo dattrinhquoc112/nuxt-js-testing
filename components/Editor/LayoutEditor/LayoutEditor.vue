@@ -2,6 +2,7 @@
   <div class="bg-black">
     <div class="editor__bg">
       <NavigatorEditor
+        :rwdMode="rwdMode"
         :projectName="projectName"
         :historyStatus="historyStatus"
         @handle-undo="$emit('handleUndo')"
@@ -44,9 +45,9 @@ defineProps<{
     redoButtonEnable: boolean;
     undoButtonEnable: boolean;
   };
-  rwdMode: string;
   projectName: string;
   isShowListSection: string;
+  rwdMode: string;
 }>();
 
 const emit = defineEmits<{

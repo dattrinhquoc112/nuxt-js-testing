@@ -34,8 +34,6 @@
 </template>
 
 <script lang="ts" setup>
-import { RWD_MODE } from '~/constants/common';
-
 const props = defineProps({
   templateSelected: {
     type: Object,

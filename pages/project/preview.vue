@@ -30,7 +30,7 @@ onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
 });
 onMounted(() => {
-  const sections = localStorage.getItem(WEB_EDITOR_PREVIEW);
+  const sections = sessionStorage.getItem(WEB_EDITOR_PREVIEW);
   sectionList.value = JSON.parse(sections || '{}');
   handleResize();
   window.addEventListener('resize', handleResize);
