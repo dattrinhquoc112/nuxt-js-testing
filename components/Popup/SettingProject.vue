@@ -65,6 +65,7 @@
                     )
                   "
                   required
+                  @change="onChangeEnglishName"
                   width="100%"
                   :error="Boolean(errorMsg)"
                   :hint="errorMsg"
@@ -394,11 +395,6 @@ const rules = {
       }),
       trigger: 'change',
     },
-    {
-      regex: /^[a-z0-9\-._~]+$/,
-      message: t('error_fe-data-validation-input_format_invalid'),
-      trigger: 'change',
-    },
   ],
   metaTitle: [
     {
@@ -468,7 +464,7 @@ const rules = {
   ],
 };
 
-const { getProjectUrl, getImage } = useProjects();
+const { getProjectUrl, getImage, handleEventEnglishName } = useProjects();
 const { editProject } = useProjectStore();
 const { uploadFile } = useUploadStore();
 
@@ -508,6 +504,10 @@ const onChangeOGImage = (obj: { url: string; file: File }) => {
   model.ogImageUri = obj.url;
   model.ogImageFile = obj.file;
 };
+
+const onChangeEnglishName = debounce((value: string) => {
+  model.eventEnglishName = handleEventEnglishName(value);
+}, 500);
 
 const initProject = async () => {
   if (props.project) {

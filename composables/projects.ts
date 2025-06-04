@@ -1,6 +1,5 @@
 import { useTenantStore } from '~/stores/tenant';
 import { useUploadStore } from '~/stores/upload';
-import type { IProject } from '~/types/project';
 
 export default function useProjects() {
   const { t } = useI18n();
@@ -13,6 +12,14 @@ export default function useProjects() {
       return new URL(`${host}/event/${tenantName}/${eventEnglishName}`).href;
     }
     return '';
+  };
+
+  const handleEventEnglishName = (input: string): string => {
+    return input
+      .toLowerCase()
+      .replace(/[^a-z0-9\-._~]/g, '-')
+      .replace(/-+/g, '-')
+      .replace(/^-+|-+$/g, '');
   };
 
   const getStatus = (status: string) => {
@@ -46,5 +53,6 @@ export default function useProjects() {
     getProjectUrl,
     getStatus,
     getImage,
+    handleEventEnglishName,
   };
 }
