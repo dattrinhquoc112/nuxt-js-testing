@@ -3,18 +3,14 @@ import { useUploadStore } from '@/stores/upload';
 import { useProjectStore } from '~/stores/project';
 import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
 
-export const useWebEditor = (sections: Ref<any[]>, listTemplate: any[]) => {
-  const route = useRoute();
+export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
+  const idWebEditorRef = ref(IDWebEditor);
   const router = useRouter();
   const { uploadFile } = useUploadStore();
   const listMaterials = ref<any[]>([]);
 
-  const {
-    createProject,
-    updateContentProject,
-    getContentProject,
-    setVersionContent,
-  } = useProjectStore();
+  const { updateContentProject, getContentProject, setVersionContent } =
+    useProjectStore();
 
   const checkMaterials = (
     objSelecting: any,
@@ -180,62 +176,58 @@ export const useWebEditor = (sections: Ref<any[]>, listTemplate: any[]) => {
   };
 
   const fetchContentProject = async () => {
-    if (!route.query?.id) {
-      sections.value = JSON.parse(JSON.stringify([listTemplate[0]]));
-    } else {
-      const data = await getContentProject(route.query.id as string);
-      if (data.data.version)
-        setVersionContent({
-          idProject: route.query.id as string,
-          version: data.data.version,
-        });
-      if (!data.data.sections.length) return;
-      sections.value = data.data.sections.map(
-        (item: any, indexSection: number) => {
-          if (item.materials?.length) {
-            listMaterials.value = listMaterials.value.concat(
-              item.materials.map((i: any) => ({
-                indexSection,
-                id: i.id,
-                type: i.type,
-                thumbnail: i.thumbnail,
-                fileUri: i.fileUri,
-                fileSize: i.fileSize,
-              }))
-            );
-          }
-          return item.settings.generalSettings;
+    const data = await getContentProject(idWebEditorRef.value);
+    if (data.data.version)
+      setVersionContent({
+        idProject: idWebEditorRef.value,
+        version: data.data.version,
+      });
+    if (!data.data.sections.length) return;
+    sections.value = data.data.sections.map(
+      (item: any, indexSection: number) => {
+        if (item.materials?.length) {
+          listMaterials.value = listMaterials.value.concat(
+            item.materials.map((i: any) => ({
+              indexSection,
+              id: i.id,
+              type: i.type,
+              thumbnail: i.thumbnail,
+              fileUri: i.fileUri,
+              fileSize: i.fileSize,
+            }))
+          );
         }
-      );
-    }
+        return item.settings.generalSettings;
+      }
+    );
   };
 
   const handleSaveTemplate = async () => {
-    let idProjectRes;
-    if (!route.query?.id) {
-      idProjectRes = (await createProject('未命名專案')).data?.id;
-    } else {
-      idProjectRes = route.query?.id;
-    }
-
     await Promise.all([
       uploadAllImage('backgroundSection'),
       uploadAllImage('boxImage'),
       updateAllImageAudio(),
     ]);
     const payload = convertDataSections();
-    const res = await updateContentProject(idProjectRes, payload);
+    const res = await updateContentProject(idWebEditorRef.value, payload);
     if (res.data.version)
       setVersionContent({
-        idProject: idProjectRes,
+        idProject: idWebEditorRef.value,
         version: res.data.version,
       });
     router.push({
       query: {
-        id: idProjectRes,
+        id: idWebEditorRef.value,
       },
     });
   };
-
-  return { handleSaveTemplate, fetchContentProject, checkMaterials };
+  const setIDWebEditor = (id: string) => {
+    idWebEditorRef.value = id;
+  };
+  return {
+    handleSaveTemplate,
+    fetchContentProject,
+    checkMaterials,
+    setIDWebEditor,
+  };
 };
