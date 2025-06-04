@@ -30,7 +30,7 @@
       <vi-button
         type="standard-default"
         width="fit-content"
-        @click="modal.setting.open"
+        @click="modal.open"
         >{{ $t('landing-project_mgmt-button-edit_info') }}</vi-button
       >
     </div>
@@ -56,14 +56,18 @@
       </div>
     </div>
   </div>
-  <popup-setting-project
-    :show="modal.setting.show"
-    :project="props.project"
-    @close="modal.setting.close"
+  <popup-edit-project
+    v-if="modal.show"
+    :show="modal.show"
+    :title="modal.title"
+    :value="project?.name"
+    @close="modal.close"
+    @edit="modal.confirm"
   />
 </template>
 <script setup lang="ts">
 import useProjects from '~/composables/projects';
+import { useProjectStore } from '~/stores/project';
 import type { IProject } from '~/types/project';
 
 const props = defineProps({
@@ -77,19 +81,34 @@ const emit = defineEmits<{
   (e: 'update:project', value: IProject): void;
 }>();
 
+const { t } = useI18n();
+
 const { getStatus, getImage } = useProjects();
+const { editProject } = useProjectStore();
+
 const modal = reactive({
-  setting: {
-    show: false,
-    close: (value: IProject) => {
-      emit('update:project', value);
-      modal.setting.show = false;
-    },
-    open: () => {
-      modal.setting.show = true;
-    },
+  show: false,
+  title: t('landing-project_mgmt-modal-title_edit_project_info'),
+  open: () => {
+    modal.show = true;
+  },
+  confirm: (name: string) => onEditProject(name),
+  close: () => {
+    modal.show = false;
   },
 });
+
+async function onEditProject(name: string) {
+  if (props.project?.id) {
+    await editProject(props.project?.id, { name });
+    toastMessage(t('landing-common-message-saved'));
+    emit('update:project', {
+      ...props.project,
+      name,
+    } as IProject);
+  }
+  modal.close();
+}
 </script>
 <style lang="scss" scoped>
 .button-action {

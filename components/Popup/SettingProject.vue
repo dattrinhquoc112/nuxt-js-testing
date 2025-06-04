@@ -68,7 +68,7 @@
                     )
                   "
                   required
-                  @change="onChangeEnglishName"
+                  @change="onChangeEventEnglishName"
                   width="100%"
                   :error="Boolean(errorMsg)"
                   :hint="errorMsg"
@@ -543,7 +543,7 @@ const onChangeOGImage = (obj: { url: string; file: File }) => {
   model.ogImageFile = obj.file;
 };
 
-const onChangeEnglishName = debounce((value: string) => {
+const onChangeEventEnglishName = debounce((value: string) => {
   model.eventEnglishName = handleEventEnglishName(value);
 }, 500);
 

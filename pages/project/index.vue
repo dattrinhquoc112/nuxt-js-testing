@@ -60,10 +60,16 @@
           class="not-found"
           v-show="!loading.search && model.projects.length === 0"
         >
-          <img src="/assets/icons/searchNotFound.svg" />
+          <img src="/assets/icons/empty-folder.svg" />
           <vi-typography type="subtitle-large">{{
             $t('landing-project_mgmt-description-no_content')
           }}</vi-typography>
+          <vi-button
+            type="standard-default"
+            @click="onAction(undefined, 'create')"
+          >
+            {{ t('landing-project_mgmt-button-create') }}
+          </vi-button>
         </div>
         <div
           v-show="!loading.search && model.projects.length > 0"
@@ -101,9 +107,13 @@
             <div class="wrapper-time-edit">
               <div class="time-edit">
                 {{
-                  item.updatedAt &&
+                  (item.updatedAt || item.createdAt) &&
                   $t('landing-project_mgmt-description-last_edited', {
-                    date: getDates([item.updatedAt]),
+                    date: getDates(
+                      [item.updatedAt || item.createdAt],
+                      '-',
+                      'MMMM, DD HH:mm'
+                    ),
                   })
                 }}
               </div>
