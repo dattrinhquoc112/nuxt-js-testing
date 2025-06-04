@@ -5,17 +5,20 @@
     @handle-undo="handleUndo"
     :history-status="historyStatus"
     @handle-redo="handleRedo"
-    @handleSwitchLayout="(e) => SwitchToRWD(e)"
-    @handle-play="handlePreview"
+    @handle-switch-layout="
+      (keyAction) =>
+        checkVersionAndUpdate({ keyAction }, ACTION_LIST.SWITCH_RWD)
+    "
+    @handle-play="checkVersionAndUpdate({}, ACTION_LIST.PREVIEW)"
     @handle-release="handleCheckCOnditionPublish"
-    @handle-store-changes="checkVersionAndUpdate({}, 'save')"
+    @handle-store-changes="checkVersionAndUpdate({}, ACTION_LIST.SAVE)"
     @click-sidebar="
-      (keyAction) => checkVersionAndUpdate({ keyAction }, 'show-section')
+      (keyAction) =>
+        checkVersionAndUpdate({ keyAction }, ACTION_LIST.SHOW_SECTION)
     "
     @handle-back="handleBack"
     @handle-activity-settings="isShowActivitySettingModal = true"
     @handle-edit-info="isShowEditInfoModal = true"
-    @handle-switch-layout="() => {}"
     :project-name="webEditorName"
     @scroll-editor="handleHiddenAllControl"
   >
@@ -101,13 +104,17 @@ const isShowModal = reactive({
 });
 const editorRef = ref();
 const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
-const handleEvent = () => {};
 const isShowEditInfoModal = ref(false);
 const isShowActivitySettingModal = ref(false);
 const route = useRoute();
 const editorID = ref('');
 const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
 const project = ref();
+
+const configVersion = ref({
+  keyAction: '',
+  type: '',
+});
 const handleGetProjectDetail = async (id: any) => {
   const detailProject = await getProject(id);
   if (detailProject) {
@@ -240,25 +247,30 @@ const handleClickSideBar = (keyAction: string) => {
     listTemplateCurrent.value = TEMPLATES_AUDIO;
   }
 };
-
+const ACTION_LIST = {
+  SAVE: 'save',
+  SHOW_SECTION: 'show-section',
+  SWITCH_RWD: 'switch-RWD',
+  PREVIEW: 'preview',
+};
+const listAction = {
+  [ACTION_LIST.SAVE]: handleSaveTemplate,
+  [ACTION_LIST.SHOW_SECTION]: (keyAction: string) =>
+    handleClickSideBar(keyAction),
+  [ACTION_LIST.SWITCH_RWD]: (keyAction: string) => SwitchToRWD(keyAction),
+  [ACTION_LIST.PREVIEW]: handlePreview,
+};
 const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
+  configVersion.value = {
+    keyAction,
+    type,
+  };
   try {
     const isLatestVersion = await checkIsLatestVersion();
     if (!isLatestVersion) {
       isShowModal.confirmReplace = true;
     } else {
-      switch (type) {
-        case 'save':
-          handleSaveTemplate();
-          break;
-        case 'switch-layout':
-          break;
-        case 'show-section':
-          handleClickSideBar(keyAction);
-          break;
-        default:
-          break;
-      }
+      listAction[type]?.(keyAction);
     }
   } catch (error) {
     return Promise.reject(error);
@@ -274,6 +286,7 @@ const handleUpdateToNewVersion = async () => {
     title: t('landing-editor-message-version_updated'),
     width: '348px',
   });
+  listAction[configVersion.value.type]?.(configVersion.value.keyAction);
 };
 
 const handleHiddenAllControl = () => {

@@ -89,10 +89,8 @@
               icon-before="ic_device_desktop"
               no-text
               size="24"
-              :class="{ active: activeDevice === RWD_MODE.DESKTOP }"
-              :text-color="
-                activeDevice === RWD_MODE.DESKTOP ? '#030C11' : '#fff'
-              "
+              :class="{ active: rwdMode === RWD_MODE.DESKTOP }"
+              :text-color="rwdMode === RWD_MODE.DESKTOP ? '#030C11' : '#fff'"
               @click="() => handleSwitchLayout(RWD_MODE.DESKTOP)"
             ></vi-button>
 
@@ -101,10 +99,8 @@
               icon-before="ic_device_mobile"
               no-text
               size="24"
-              :class="{ active: activeDevice === RWD_MODE.MOBILE }"
-              :text-color="
-                activeDevice === RWD_MODE.MOBILE ? '#030C11' : '#fff'
-              "
+              :class="{ active: rwdMode === RWD_MODE.MOBILE }"
+              :text-color="rwdMode === RWD_MODE.MOBILE ? '#030C11' : '#fff'"
               @click="() => handleSwitchLayout(RWD_MODE.MOBILE)"
             ></vi-button>
           </div>
@@ -143,12 +139,11 @@ import { useEditorStore } from '~/stores/editor';
 
 import { RWD_MODE } from '~/constants/common';
 
-const activeDevice = ref(RWD_MODE.DESKTOP);
-
 const isOpenSettingEvent = ref(false);
 defineProps<{
   historyStatus: any;
   projectName: string;
+  rwdMode: string;
 }>();
 const emit = defineEmits<{
   handleUndo: [];
@@ -164,7 +159,6 @@ const emit = defineEmits<{
 const { loading } = useEditorStore();
 
 const handleSwitchLayout = (device: string) => {
-  activeDevice.value = device;
   emit('handleSwitchLayout', device);
 };
 

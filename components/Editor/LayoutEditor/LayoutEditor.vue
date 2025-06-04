@@ -2,6 +2,7 @@
   <div class="bg-black">
     <div class="editor__bg">
       <NavigatorEditor
+        :rwdMode="rwdMode"
         :projectName="projectName"
         :historyStatus="historyStatus"
         @handle-undo="$emit('handleUndo')"
