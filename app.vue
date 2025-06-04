@@ -7,6 +7,7 @@
 </template>
 <script setup lang="ts">
 import { useState } from '#app';
+import useSeo from './composables/seo';
 import { KEY_LOCAL_STORAGE } from './utils/constants';
 import { getChangeStorage } from './utils/triggerStorage';
 
@@ -31,4 +32,7 @@ const handleCheckChange = () => {
 };
 
 onMounted(handleCheckChange);
+
+// use seo
+useSeo();
 </script>
