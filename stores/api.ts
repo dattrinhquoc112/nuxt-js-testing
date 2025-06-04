@@ -20,7 +20,7 @@ export const useApiStore = defineStore('api', () => {
             width: '348px',
             type: 'error',
           });
-          // navigateTo('/auth/logout');
+          navigateTo('/auth/logout');
         }
         break;
       default:
@@ -57,6 +57,8 @@ export const useApiStore = defineStore('api', () => {
         let endpoint = 'call';
         if (payload.platform) {
           endpoint = 'platformCall';
+        } else if (payload.landingWeb) {
+          endpoint = 'landingWeb';
         }
         if (payload.audio) {
           endpoint = 'audioCall';
