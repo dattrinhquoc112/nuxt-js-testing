@@ -36,12 +36,14 @@
     </vi-scroll>
   </LayoutEditor>
   <popup-setting-project
+    v-if="isShowActivitySettingModal"
     :show="isShowActivitySettingModal"
     :project="project"
     @close="isShowActivitySettingModal = false"
     @submit="handleSubmitSettingProject"
   />
   <popup-edit-project
+    v-if="isShowEditInfoModal"
     :show="isShowEditInfoModal"
     :value="webEditorName"
     @close="isShowEditInfoModal = false"
@@ -74,11 +76,7 @@
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { ROUTE } from '@/constants/route';
-import {
-  DEFAULT_WEB_EDITOR_NAME,
-  SIDE_BAR_ACTION,
-  RWD_MODE,
-} from '@/constants/common';
+import { SIDE_BAR_ACTION, RWD_MODE } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { TEMPLATES_AUDIO, TEMPLATES_SECTION } from '~/types/templates';
@@ -108,7 +106,7 @@ const isShowEditInfoModal = ref(false);
 const isShowActivitySettingModal = ref(false);
 const route = useRoute();
 const editorID = ref('');
-const webEditorName = ref(DEFAULT_WEB_EDITOR_NAME);
+const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const project = ref();
 
 const configVersion = ref({
