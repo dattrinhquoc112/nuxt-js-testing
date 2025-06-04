@@ -173,7 +173,6 @@ import { TUTORIAL_TYPE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
 import { TEMPLATES_SECTION } from '~/types/templates';
-import { ROUTE } from '@/constants/route';
 
 interface Model {
   page: number;

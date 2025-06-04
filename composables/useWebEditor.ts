@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import type { UPLOAD_RESPONSE } from '~/stores/interface/response/upload';
 import { useUploadStore } from '@/stores/upload';
 import { useProjectStore } from '~/stores/project';
@@ -5,7 +6,7 @@ import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
 
 export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
   const idWebEditorRef = ref(IDWebEditor);
-  const router = useRouter();
+  const initSections = ref();
   const { uploadFile } = useUploadStore();
   const listMaterials = ref<any[]>([]);
 
@@ -183,6 +184,7 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
         version: data.data.version,
       });
     if (!data.data.sections.length) return;
+    initSections.value = data.data.sections;
     sections.value = data.data.sections.map(
       (item: any, indexSection: number) => {
         if (item.materials?.length) {
@@ -219,10 +221,14 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
   const setIDWebEditor = (id: string) => {
     idWebEditorRef.value = id;
   };
+  const checkChanges = () => {
+    return _.isEqual(initSections.value, sections.value);
+  };
   return {
     handleSaveTemplate,
     fetchContentProject,
     checkMaterials,
     setIDWebEditor,
+    checkChanges,
   };
 };
