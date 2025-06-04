@@ -8,6 +8,7 @@ export const RWD_MODE = {
 };
 export const DEBOUND_TIME_SAVE_HISTORY = 300;
 export const MAXIMUM_WEB_EDITOR_NAME = 50;
+export const BREAK_POINT_MOBILE = 600;
 
 export const MESSAGE_TYPES = {
   SUCCESS: 'success',

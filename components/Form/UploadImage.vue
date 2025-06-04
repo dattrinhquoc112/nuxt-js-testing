@@ -115,12 +115,12 @@ const onFileChange = (event: Event) => {
   if (selected?.type === 'image/png' || selected?.type === 'image/jpeg') {
     const img = new Image();
     const objectUrl = URL.createObjectURL(selected);
+    const isSizeValid = selected.size <= maxFileSize;
+    const isDimensionValid =
+      img.width <= props.limit.width && img.height <= props.limit.height;
+
     img.onload = () => {
-      if (
-        img.width <= props.limit.width &&
-        img.height <= props.limit.height &&
-        selected.size <= maxFileSize
-      ) {
+      if (isSizeValid && isDimensionValid) {
         model.value.fileInput = selected;
         model.value.imageURL = objectUrl;
         emits('change', {
@@ -130,11 +130,19 @@ const onFileChange = (event: Event) => {
       } else {
         URL.revokeObjectURL(objectUrl);
         target.value = '';
-        window.VIUIKit.VIMessage({
-          title: t('error_fe-file-validation-file_format_unsupported'),
-          width: '348px',
-          type: 'error',
-        });
+        if (!isSizeValid) {
+          window.VIUIKit.VIMessage({
+            title: t('error_fe-file-validation-file_size_exceeded'),
+            width: '348px',
+            type: 'error',
+          });
+        } else if (!isDimensionValid) {
+          window.VIUIKit.VIMessage({
+            title: t('error_fe-file-validation-file_dimensions_exceeded'),
+            width: '348px',
+            type: 'error',
+          });
+        }
       }
     };
 
