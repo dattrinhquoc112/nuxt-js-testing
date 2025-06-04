@@ -1,16 +1,17 @@
 <template>
   <vi-modal
-    modal-title="編輯專案資訊"
+    :modal-title="$t('landing-project_mgmt-title-event_settings')"
     :is-show="show"
     @close="onClose"
     size="large"
+    close-on-click-modal
   >
     <vi-form :model="model" :rules="rules" @submit="() => {}">
       <div class="modal-content">
         <div class="section-column">
-          <vi-typography class="color-white-60" type="subtitle-large">{{
+          <!-- <vi-typography class="color-white-60" type="subtitle-large">{{
             $t('landing-project_mgmt-section-event_time')
-          }}</vi-typography>
+          }}</vi-typography> -->
           <div class="grid-two">
             <div class="section-column">
               <vi-date-picker
@@ -21,11 +22,12 @@
                 type="daterange"
                 @close="model.isShowDate = false"
                 @accept="model.isShowDate = false"
+                allow-set-time
               >
                 <vi-form-item prop="date">
                   <template #default="{ errorMsg }">
                     <vi-input
-                      :value="model.date"
+                      v-model="model.date"
                       size="large"
                       type="text"
                       :label="
@@ -34,6 +36,7 @@
                       :placeholder="
                         $t('landing-project_mgmt-title-event_period_setting')
                       "
+                      @keydown="(event: KeyboardEvent) => event.preventDefault()"
                       required
                       width="100%"
                       :error="Boolean(errorMsg)"
@@ -48,9 +51,9 @@
           </div>
         </div>
         <div class="section-column">
-          <vi-typography class="color-white-60" type="subtitle-large">{{
+          <!-- <vi-typography class="color-white-60" type="subtitle-large">{{
             $t('landing-project_mgmt-section-url_section')
-          }}</vi-typography>
+          }}</vi-typography> -->
           <div class="grid-two">
             <vi-form-item prop="eventEnglishName">
               <template #default="{ errorMsg }">
@@ -69,6 +72,8 @@
                   width="100%"
                   :error="Boolean(errorMsg)"
                   :hint="errorMsg"
+                  :max="50"
+                  is-count
                 />
               </template>
             </vi-form-item>
@@ -386,6 +391,13 @@ const rules = {
       }),
       trigger: 'change',
     },
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-event_period_setting'),
+      }),
+      trigger: 'blur',
+    },
   ],
   eventEnglishName: [
     {
@@ -393,6 +405,18 @@ const rules = {
       message: t('error_fe-data-validation-field_required_empty', {
         field_name: t('landing-project_mgmt-title-event_name_en'),
       }),
+      trigger: 'change',
+    },
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-event_name_en'),
+      }),
+      trigger: 'blur',
+    },
+    {
+      max: 50,
+      message: t('error_fe-data-validation-input_length_exceeded'),
       trigger: 'change',
     },
   ],
@@ -403,6 +427,13 @@ const rules = {
         field_name: t('landing-project_mgmt-title-meta_title'),
       }),
       trigger: 'change',
+    },
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-meta_title'),
+      }),
+      trigger: 'blur',
     },
     {
       max: 60,
@@ -448,6 +479,13 @@ const rules = {
         field_name: t('landing-project_mgmt-title-og_title'),
       }),
       trigger: 'change',
+    },
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-og_title'),
+      }),
+      trigger: 'blur',
     },
     {
       max: 95,

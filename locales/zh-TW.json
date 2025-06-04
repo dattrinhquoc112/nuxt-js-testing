@@ -296,6 +296,7 @@
   "landing-project_mgmt-button-copy": "複製",
   "landing-project_mgmt-modal-title_edit_project_info": "編輯專案資訊",
   "landing-project_mgmt-modal-project_name": "專案名稱",
+  "landing-project_mgmt-placeholder-placeholder_project_name": "請填寫專案名稱",
   "landing-common-message-saved": "已儲存",
   "landing-common-message-copied": "已複製",
   "landing-project_mgmt-modal-title_unpublish_event": "取消發布活動",
