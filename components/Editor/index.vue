@@ -65,6 +65,13 @@
     />
     <editor-popup-setting-link
       :isShow="isShowPopup.addLink"
+      :link="
+        objectSelecting &&
+        typeof objectSelecting === 'object' &&
+        'link' in objectSelecting
+          ? objectSelecting.link
+          : ''
+      "
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingLink"
       @move-popup-to-top="handleMoveTopPopup"

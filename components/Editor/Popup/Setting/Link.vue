@@ -73,24 +73,17 @@ const props = defineProps({
   },
 });
 
-watch(
-  () => props.link,
-  (newVal) => {
-    const isValidLink = isValidURL(newVal);
-    if (!isValidLink) {
-      messageError.value = t('error_fe-data-validation-input_format_invalid');
-      emit('change-link', '');
-    } else {
-      messageError.value = '';
-      emit('change-link', newVal);
-    }
+watch(linkRef, (newVal) => {
+  const isValidLink = isValidURL(newVal);
+  if (!isValidLink) {
+    messageError.value = t('error_fe-data-validation-input_format_invalid');
+    emit('change-link', '');
+  } else {
+    messageError.value = '';
+    emit('change-link', newVal);
   }
-);
-
-watch(linkRef, () => {
-  // handle validate link
-  emit('change-link', linkRef.value);
 });
+
 watch(
   () => props.link,
   (newVal) => {
