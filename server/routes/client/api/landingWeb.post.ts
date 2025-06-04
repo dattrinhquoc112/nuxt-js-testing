@@ -55,8 +55,10 @@ export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
   }
 
   const payload = await readBody(event);
+
   const headers = {
     ...payload.headers,
+    'X-Path': `${process.env.NUXT_APP_HOST}/event`,
   };
   if (token) {
     headers.Cookie = convertCookieObjectToString({
