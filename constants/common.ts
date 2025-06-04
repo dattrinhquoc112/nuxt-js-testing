@@ -7,7 +7,6 @@ export const RWD_MODE = {
   MOBILE: 'MOBILE',
 };
 export const DEBOUND_TIME_SAVE_HISTORY = 300;
-export const DEFAULT_WEB_EDITOR_NAME = '未命名專案';
 export const MAXIMUM_WEB_EDITOR_NAME = 50;
 
 export const MESSAGE_TYPES = {
