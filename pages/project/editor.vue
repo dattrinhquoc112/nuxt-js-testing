@@ -168,7 +168,7 @@ const handleCheckCOnditionPublish = async () => {
   if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
     try {
       await publishProject(editorID.value);
-      toastMessage(t(' landing-project_mgmt-menu-published'));
+      toastMessage(t('landing-project_mgmt-menu-published'));
       navigateTo(ROUTE.PROJECT_LIST);
     } catch (error: any) {
       const errCode = error?.data?.statusMessage;
