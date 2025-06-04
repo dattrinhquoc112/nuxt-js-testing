@@ -60,10 +60,16 @@
           class="not-found"
           v-show="!loading.search && model.projects.length === 0"
         >
-          <img src="/assets/icons/searchNotFound.svg" />
+          <img src="/assets/icons/empty-folder.svg" />
           <vi-typography type="subtitle-large">{{
             $t('landing-project_mgmt-description-no_content')
           }}</vi-typography>
+          <vi-button
+            type="standard-default"
+            @click="onAction(undefined, 'create')"
+          >
+            {{ t('landing-project_mgmt-button-create') }}
+          </vi-button>
         </div>
         <div
           v-show="!loading.search && model.projects.length > 0"

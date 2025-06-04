@@ -31,7 +31,7 @@
           @click="emit('edit', model.name)"
           type="standard-primary"
           width="fit-content"
-          :disabled="!model.name"
+          :disabled="!model.name || model.name === props.value"
           >{{ $t('common-action-button-button_confirm') }}</vi-button
         >
         <vi-button
