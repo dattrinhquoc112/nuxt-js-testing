@@ -151,7 +151,7 @@
       @close="modal.close"
       @edit="modal.confirm"
     />
-    <Tutorial :tutorial-type="TUTORIAL_TYPE.WEB_EDITOR" />
+    <Tutorial :tutorial-type="TUTORIAL_TYPE.HOME_PAGE" />
   </div>
 </template>
 
