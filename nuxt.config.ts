@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     apiChallengeMethod: process.env.NUXT_API_CHALLENGE_METHOD,
     apiGrantType: process.env.NUXT_API_GRANT_TYPE,
     apiClientSecret: process.env.NUXT_API_CLIENT_SECRET,
+    jwtSecretKey: process.env.JWT_SECRET_KEY,
     public: {
       timeRefreshSessionId: process.env.NUXT_TIME_REFRESH_SESSION_ID,
       apiRedirectUri: process.env.NUXT_API_REDIRECT_URI,
