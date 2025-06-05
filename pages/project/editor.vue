@@ -49,7 +49,6 @@
     @close="isShowEditInfoModal = false"
     @edit="handleEditEditor"
   />
-
   <EditorReminderPU
     v-model:model="isOpenReminderPU"
     @handle-click="
@@ -82,6 +81,8 @@ import { toastMessage } from '#imports';
 import { TEMPLATES_AUDIO, TEMPLATES_SECTION } from '~/types/templates';
 import { useEditorStore } from '~/stores/editor';
 import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
+import html2canvas from 'html2canvas';
+import { useUploadStore } from '~/stores/upload';
 
 const { getProject, editProject, createProject, publishProject } =
   useProjectStore();
@@ -108,6 +109,7 @@ const route = useRoute();
 const editorID = ref('');
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const project = ref();
+const { uploadFile } = useUploadStore();
 
 const configVersion = ref({
   keyAction: '',
@@ -228,6 +230,21 @@ const handleSubmitSettingProject = async (payload: any) => {
 };
 
 const handleSaveTemplate = async () => {
+  const element = document.querySelector('#editor .section');
+  if (element) {
+    const res = await html2canvas(element as HTMLElement).then(
+      async (canvas) => {
+        canvas.toBlob(async (blob: any) => {
+          if (blob) {
+            const file = new File([blob], 'image.png', { type: 'image/png' });
+            const res2 = await uploadFile(file);
+            return res2;
+          }
+        }, 'image/png');
+      }
+    );
+  }
+
   setLoading('updateContent', true);
   await editorRef.value.handleSaveTemplate();
   setLoading('updateContent', false);

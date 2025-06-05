@@ -187,7 +187,6 @@ interface Model {
 definePageMeta({
   layout: 'app',
 });
-
 const { t } = useI18n();
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const sections = ref([TEMPLATES_SECTION[0]]);

@@ -133,7 +133,7 @@ import {
 const modelValue = ref(true);
 const showSelectAITools = ref(false);
 let debounceTimer: any = null;
-const MAX_HISTORY = 20;
+const MAX_HISTORY = 21;
 const iSaveHistory = ref(false);
 
 definePageMeta({
