@@ -179,6 +179,7 @@ import useProjects from '~/composables/projects';
 import { TUTORIAL_TYPE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
+import { TEMPLATES_SECTION } from '~/types/templates';
 
 interface Model {
   page: number;
@@ -195,9 +196,13 @@ definePageMeta({
 });
 
 const { t } = useI18n();
+const webEditorName = ref(t('landing-editor-title-untitled_project'));
+const sections = ref([TEMPLATES_SECTION[0]]);
+const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
 
 const { getStatus, getImage } = useProjects();
-const { getProjectList, copyProject, editProject } = useProjectStore();
+const { getProjectList, copyProject, editProject, createProject } =
+  useProjectStore();
 
 const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
 
@@ -265,7 +270,17 @@ const onCopyProject = async (project: IProject) => {
   fetchProjectList();
   toastMessage(t('landing-common-message-copied'));
 };
-
+const onCreateProject = async () => {
+  const res = await createProject(webEditorName.value);
+  if (res) {
+    const { id } = res.data;
+    setIDWebEditor(id);
+    try {
+      handleSaveTemplate();
+      navigateTo(`/project/editor?id=${id}`);
+    } catch (err) {}
+  }
+};
 const onEditProject = async (payload: IUpdateProjectPayload) => {
   if (model.project) {
     await editProject(model.project.id, payload);
@@ -286,7 +301,7 @@ const onAction = async (project?: IProject, action = '') => {
       if (metricInfo.isLimitedProject || metricInfo.isLimitedCapacity) {
         handleModal();
       } else {
-        navigateTo('/project/editor');
+        onCreateProject();
       }
       break;
     case 'edit':

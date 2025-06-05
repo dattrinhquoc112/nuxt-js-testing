@@ -177,8 +177,16 @@ const sections = ref<SECTION_ITEM[] | []>([]);
 const history = ref<any[]>(
   JSON.parse(JSON.stringify([[props.listTemplate[0]]]))
 );
-const { fetchContentProject, handleSaveTemplate, checkMaterials } =
-  useWebEditor(sections, props.listTemplate);
+const route = useRoute();
+const idParam = Array.isArray(route.query?.id)
+  ? route.query.id[0] || ''
+  : route.query?.id || '';
+const {
+  fetchContentProject,
+  handleSaveTemplate,
+  checkMaterials,
+  checkChanges,
+} = useWebEditor(sections, idParam);
 const currentIndex = ref<number>(0);
 
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
@@ -545,11 +553,6 @@ const historyStatus = computed(() => ({
   redoButtonEnable: currentIndex.value !== history.value.length - 1,
   undoButtonEnable: currentIndex.value !== 0,
 }));
-const isSectionDirty = (): boolean => {
-  const result =
-    JSON.stringify(sections.value) === JSON.stringify([props.listTemplate[0]]);
-  return result;
-};
 
 onMounted(() => {
   fetchContentProject();
@@ -559,11 +562,11 @@ defineExpose({
   redo,
   undo,
   historyStatus,
-  isSectionDirty,
   hiddenBoxControl,
   handleSaveTemplate,
   sections,
   fetchContentProject,
+  checkChanges,
 });
 </script>
 

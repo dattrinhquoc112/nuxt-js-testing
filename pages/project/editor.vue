@@ -304,7 +304,7 @@ const handleSaveDraft = () => {
   navigateTo(ROUTE.PROJECT_LIST);
 };
 const handleBack = () => {
-  const isSectionDirty = editorRef.value?.isSectionDirty();
+  const isSectionDirty = editorRef.value.checkChanges();
   if (isSectionDirty) {
     navigateTo(ROUTE.PROJECT_LIST);
   } else {
