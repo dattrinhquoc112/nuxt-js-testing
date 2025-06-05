@@ -42,6 +42,7 @@ const { locale } = useI18n();
     flex-direction: column;
     margin-top: 16px;
     overflow-wrap: break-word;
+    text-transform: capitalize;
   }
 }
 </style>
