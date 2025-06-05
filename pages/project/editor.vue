@@ -233,7 +233,7 @@ const handleSaveTemplate = async () => {
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
   window.VIUIKit.VIMessage({
-    title: t('notification-status-action-save_success'),
+    title: t('landing-common-message-saved'),
     width: '348px',
   });
 };

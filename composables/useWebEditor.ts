@@ -232,5 +232,6 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
     checkMaterials,
     setIDWebEditor,
     checkChanges,
+    initSections,
   };
 };
