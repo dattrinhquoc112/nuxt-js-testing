@@ -2,9 +2,11 @@
   <div class="app-container">
     <project-free-trial-warning-modal
       :is-show-modal="modalMetric.warningLimitProject"
+      @close="modalMetric.warningLimitProject = false"
     />
     <project-reach-maximum-warning-modal
       :is-show-modal="modalMetric.warningLimitCapacity"
+      @close="modalMetric.warningLimitCapacity = false"
     />
     <div class="header">
       <vi-typography type="subtitle-large">{{
