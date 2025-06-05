@@ -4,7 +4,9 @@ import type { ITenantMetric } from '~/types/tenant';
 interface Metric {
   label: string;
   value: number;
+  valueUnit?: string;
   total: number;
+  totalUnit?: string;
   percent: number;
   description: string;
 }
@@ -56,11 +58,19 @@ export default function useMetric() {
           (elem) => elem.metric === 'TOTAL_CAPACITY_USED'
         )?.value || 0
       ),
+      valueUnit:
+        tenantMetricValue?.metrics.find(
+          (elem) => elem.metric === 'TOTAL_CAPACITY_USED'
+        )?.unit || 'GB',
       total: Number(
         tenantMetricValue?.metrics.find(
           (elem) => elem.metric === 'TOTAL_CAPACITY'
         )?.value || 0
       ),
+      totalUnit:
+        tenantMetricValue?.metrics.find(
+          (elem) => elem.metric === 'TOTAL_CAPACITY'
+        )?.unit || 'GB',
       percent: 0,
       description: '',
     };
@@ -71,11 +81,11 @@ export default function useMetric() {
         : 0;
 
     dataCapacity.description = `${t('landing-common-field-storage_used', {
-      value: dataCapacity.value,
-      unit: 'MB',
+      size: dataCapacity.value,
+      unit: dataCapacity.valueUnit,
     })}/${t('landing-common-field-storage_total', {
-      limit: dataCapacity.total,
-      unit: 'MB',
+      size: dataCapacity.total,
+      unit: dataCapacity.totalUnit,
     })}`;
 
     metricInfo.isLimitedProject =
