@@ -225,6 +225,21 @@ const showOptionForRightImage = (elementButton: HTMLElement) => {
   window.addEventListener('click', hiddenBoxControlWhenClick);
 };
 
+const showOptionForLeftImage = (elementButton: HTMLElement) => {
+  hiddenBoxControl();
+  const coordinates = elementButton.getBoundingClientRect();
+  const pageY = coordinates.bottom - coordinates.height / 2;
+  const pageX = coordinates.right;
+
+  emit('set-position-control', {
+    pageY,
+    pageX,
+  });
+
+  emit('show-popup-change-image');
+  window.addEventListener('click', hiddenBoxControlWhenClick);
+};
+
 const handleShowOption = (event: any, index: number) => {
   if (event.target?.closest('.section-wrap')) {
     emit('set-index-section-selected', index);
@@ -268,11 +283,18 @@ const handleShowOption = (event: any, index: number) => {
         showOptionForText(event.target);
       });
     }
-    if (event.target?.classList.contains('right-section-image')) {
+    if (event.target?.closest('.right-section-image:not(.reverse)')) {
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         emit('set-selected-element', event.target);
         showOptionForRightImage(event.target);
+      });
+    }
+    if (event.target?.closest('.right-section-image.reverse')) {
+      emit('set-key-element-selected', 'boxImage');
+      nextTick(() => {
+        emit('set-selected-element', event.target);
+        showOptionForLeftImage(event.target);
       });
     }
     if (event.target?.closest('.card-audio')) {
