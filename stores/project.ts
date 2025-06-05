@@ -82,6 +82,14 @@ export const useProjectStore = defineStore('project', () => {
     });
   }
 
+  async function closeProject(id: string) {
+    return apiStore.apiRequest({
+      method: MethodEnum.POST,
+      endpoint: `/api/v1/projects/${id}/close`,
+      proxy: true,
+    });
+  }
+
   async function getProjectAnalysis(id: string) {
     return apiStore.apiRequest({
       method: MethodEnum.GET,
@@ -132,6 +140,7 @@ export const useProjectStore = defineStore('project', () => {
     getProject,
     publishProject,
     unpublishProject,
+    closeProject,
     getProjectAnalysis,
     updateContentProject,
     getContentProject,

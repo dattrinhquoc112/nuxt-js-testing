@@ -11,11 +11,18 @@
           >{{ $t('landing-project_mgmt-button-clone_project') }}</vi-button
         >
         <vi-button
-          v-if="model.project?.status !== 'ENDED'"
+          v-if="model.project?.status === 'PUBLISHED'"
           width="65px"
           type="dangerous-default"
           @click="onAction('unpublish')"
           >{{ $t('landing-project_mgmt-button-unpublish') }}</vi-button
+        >
+        <vi-button
+          v-if="model.project?.status === 'STARTED'"
+          width="65px"
+          type="dangerous-default"
+          @click="onAction('close')"
+          >{{ $t('landing-project_mgmt-button-close_event') }}</vi-button
         >
       </div>
     </div>
@@ -83,7 +90,8 @@ const id = route.params.id as string;
 
 const { t } = useI18n();
 
-const { getProject, copyProject, unpublishProject } = useProjectStore();
+const { getProject, copyProject, unpublishProject, closeProject } =
+  useProjectStore();
 
 const loading = reactive({
   detail: false,
@@ -145,7 +153,19 @@ const onUnpublish = async () => {
     toastMessage(t('landing-common-message-unpublished'));
     navigateTo('/project');
   } catch (error) {
-    toastMessage(t('landing-common-message-unpublished-error'));
+    toastMessage(t('error_fe-system-general-system_operation_failed'));
+  }
+  modal.close();
+};
+
+const onCloseProject = async () => {
+  if (!model.project) return;
+  try {
+    await closeProject(model.project.id);
+    toastMessage(t('landing-common-message-event_closed'));
+    navigateTo('/project');
+  } catch (error) {
+    toastMessage(t('error_fe-system-general-system_operation_failed'));
   }
   modal.close();
 };
@@ -160,6 +180,14 @@ const onAction = (action: string) => {
       modal.description = t('landing-project_mgmt-modal-unpublish_description');
       modal.open();
       modal.confirm = onUnpublish;
+      break;
+    case 'close':
+      modal.title = t('landing-project_mgmt-button-close_event');
+      modal.description = t(
+        'landing-project_mgmt-modal-close_event_description'
+      );
+      modal.open();
+      modal.confirm = onCloseProject;
       break;
     default:
       break;
