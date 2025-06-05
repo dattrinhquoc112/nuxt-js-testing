@@ -16,7 +16,7 @@ function generateToken() {
     type: 'LANDING_WEB_ACCESS',
   };
 
-  const jwtSecretKey = process.env.JWT_SECRET_KEY;
+  const { jwtSecretKey } = useRuntimeConfig();
   if (!jwtSecretKey) throw new Error('Missing JWT_SECRET_KEY env var');
 
   return jwt.sign(payload, jwtSecretKey, {
