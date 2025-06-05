@@ -3,7 +3,6 @@ import { MethodEnum } from '~/stores/interface/api';
 
 export default function useSeo() {
   const route = useRoute();
-  const url = useRequestURL();
   const tenantName = route.params.tenantName as string;
   const eventEnglishName = route.params.eventEnglishName as string;
   const { setSessionPublic } = useEventStore();
@@ -40,17 +39,11 @@ export default function useSeo() {
           body: {
             method: MethodEnum.GET,
             endpoint: `/api/v1/projects/published-content?tenantName=${tenantName}&eventEnglishName=${eventEnglishName}`,
-            proxy: true,
-            landingWeb: true,
-            headers: {
-              'X-PATH': `${url.origin}/event`,
-            },
           },
         }),
       { server: true }
     );
-
-    if (!data.value.data.sections.length) return;
+    if (!data.value?.data?.sections?.length) return;
     const sectionsPublic = data.value.data.sections.map(
       (item: any) => item.settings.generalSettings
     );
