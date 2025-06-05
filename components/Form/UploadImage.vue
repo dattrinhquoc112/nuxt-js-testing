@@ -40,7 +40,13 @@
         </vi-typography>
       </div>
     </div>
-    <input ref="inputFileElement" type="file" hidden @change="onFileChange" />
+    <input
+      ref="inputFileElement"
+      type="file"
+      accept=".png, .jpg, image/png, image/jpeg"
+      hidden
+      @change="onFileChange"
+    />
   </div>
 </template>
 <script setup lang="ts">
@@ -70,14 +76,9 @@ const props = defineProps({
   limit: {
     type: Object,
     default: () => ({
-      size: 15,
-    }),
-  },
-  recommend: {
-    type: Object,
-    default: () => ({
       width: 1200,
       height: 628,
+      size: 15,
     }),
   },
   imageModel: {
@@ -99,8 +100,8 @@ const inputFileElement = ref<HTMLInputElement>();
 const { t } = useI18n();
 
 const description = `影像格式 : JPEG, PNG 
-建議尺寸 : ${props.recommend.width} x ${props.recommend.height} 以上 
-檔案最大限制 : ${props.limit.size} MB`;
+建議尺寸 : 1200 x 628 以上 
+檔案最大限制 : 15 MB`;
 
 const selectImage = () => {
   inputFileElement.value?.click();
@@ -115,9 +116,11 @@ const onFileChange = (event: Event) => {
     const img = new Image();
     const objectUrl = URL.createObjectURL(selected);
     const isSizeValid = selected.size <= maxFileSize;
+    const isDimensionValid =
+      img.width <= props.limit.width && img.height <= props.limit.height;
 
     img.onload = () => {
-      if (isSizeValid) {
+      if (isSizeValid && isDimensionValid) {
         model.value.fileInput = selected;
         model.value.imageURL = objectUrl;
         emits('change', {
@@ -130,6 +133,12 @@ const onFileChange = (event: Event) => {
         if (!isSizeValid) {
           window.VIUIKit.VIMessage({
             title: t('error_fe-file-validation-file_size_exceeded'),
+            width: '348px',
+            type: 'error',
+          });
+        } else if (!isDimensionValid) {
+          window.VIUIKit.VIMessage({
+            title: t('error_fe-file-validation-file_dimensions_exceeded'),
             width: '348px',
             type: 'error',
           });

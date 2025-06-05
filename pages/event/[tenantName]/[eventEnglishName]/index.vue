@@ -5,6 +5,7 @@
     :section="section"
     :rwd-mode="rwdMode"
     is-public
+    @handle-play-audio="handleAudioClick"
   />
 </template>
 
@@ -13,12 +14,21 @@ import { useEventStore } from '~/stores/event';
 import useSDKTracking from '@/composables/SDKTracking';
 import useCheckRWD from '~/composables/checkRwd';
 
+const route = useRoute();
+const eventEnglishName = route.params.eventEnglishName as string;
+
 definePageMeta({
   layout: 'public',
 });
 
-const { sectionsPublic } = useEventStore();
+const { sectionsPublic, tenantID } = useEventStore();
 const { rwdMode } = useCheckRWD();
-// handle add Tracking SDK
-// const { handleClickEvent } = useSDKTracking({ pageName: '', tenantID: '' });
+const { handleClickEvent } = useSDKTracking({
+  pageName: eventEnglishName,
+  tenantID,
+});
+
+const handleAudioClick = (audioId: number) => {
+  handleClickEvent(audioId);
+};
 </script>

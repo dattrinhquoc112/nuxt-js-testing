@@ -149,6 +149,8 @@ watch(
       webEditorName.value = data.name;
       const res = await getProject(editorID.value);
       project.value = res.data;
+    } else {
+      navigateTo(ROUTE.PROJECT_LIST);
     }
   },
   {
@@ -171,8 +173,8 @@ const handleCheckCOnditionPublish = async () => {
       toastMessage(t('landing-project_mgmt-menu-published'));
       navigateTo(ROUTE.PROJECT_LIST);
     } catch (error: any) {
-      const errCode = error?.data?.statusMessage;
-      if (errCode && errCode === 'PROJECT_URL_DUPLICATE') {
+      const errCode = error?.data?.data?.detail;
+      if (errCode && errCode === 'LD_PROJECT_URL_DUPLICATED') {
         isOpenReminderPU.value = true;
       }
     }
@@ -233,7 +235,7 @@ const handleSaveTemplate = async () => {
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
   window.VIUIKit.VIMessage({
-    title: t('notification-status-action-save_success'),
+    title: t('landing-common-message-saved'),
     width: '348px',
   });
 };

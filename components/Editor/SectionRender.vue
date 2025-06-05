@@ -17,18 +17,11 @@
       section.backgroundSection.urlImage
     )});--bg-color:${section.backgroundSection.color};`"
   >
-    <video
-      v-if="section.backgroundSection.urlVideo"
-      :key="section.backgroundSection.urlVideo"
-      @click.stop="clickParent"
+    <editor-box-video
       class="video-background"
-      autoplay
-      muted
-      loop
-      playsinline
-    >
-      <source :src="getImage(section.backgroundSection.urlVideo)" />
-    </video>
+      @click.stop="clickParent"
+      :urlVideo="section.backgroundSection.urlVideo"
+    />
 
     <div
       :class="[
@@ -99,19 +92,11 @@
       section.backgroundSection.urlImage
     )});--bg-color:${section.backgroundSection.color};`"
   >
-    <video
-      v-if="section.backgroundSection.urlVideo"
-      :key="section.backgroundSection.urlVideo"
+    <editor-box-video
       class="video-background"
-      autoplay
-      muted
-      loop
-      playsinline
       @click.stop="clickParent"
-    >
-      <source :src="getImage(section.backgroundSection.urlVideo)" />
-      <source :src="getImage(section.backgroundSection.urlVideo)" />
-    </video>
+      :urlVideo="section.backgroundSection.urlVideo"
+    />
     <div class="left">
       <div
         class="text-head"
@@ -136,24 +121,20 @@
       >
     </div>
 
-    <div class="right right-section-image">
+    <div
+      class="right right-section-image"
+      :class="section?.id === 'section-two-reverse' ? 'reverse' : ''"
+    >
       <img
         @click.stop="clickParent"
         v-if="section.boxImage.urlImage"
         :src="getImage(section.boxImage.urlImage)"
       />
-      <video
-        v-if="section.boxImage.urlVideo"
-        :key="section.boxImage.urlVideo"
+      <editor-box-video
         class="right-section-video-background"
-        autoplay
-        muted
-        loop
-        playsinline
         @click.stop="clickParent"
-      >
-        <source :src="getImage(section.boxImage.urlVideo)" />
-      </video>
+        :urlVideo="section.boxImage.urlVideo"
+      />
     </div>
   </section>
   <section
@@ -176,18 +157,11 @@
       section.backgroundSection.urlImage
     )});--bg-color:${section.backgroundSection.color};`"
   >
-    <video
-      v-if="section.backgroundSection.urlVideo"
-      :key="section.backgroundSection.urlVideo"
+    <editor-box-video
       class="video-background"
-      autoplay
-      muted
-      loop
-      playsinline
       @click.stop="clickParent"
-    >
-      <source :src="getImage(section.backgroundSection.urlVideo)" />
-    </video>
+      :urlVideo="section.backgroundSection.urlVideo"
+    />
     <div class="wrap-content">
       <div
         class="text-title"
@@ -204,18 +178,12 @@
           :data-index="audioIndex"
         >
           <div class="audio-image">
-            <video
+            <editor-box-video
               v-if="audio.audio.urlVideo"
-              :key="audio.audio.urlVideo"
               class="video-background"
-              autoplay
-              muted
-              loop
-              playsinline
               @click.stop="clickParent"
-            >
-              <source :src="getImage(audio.audio.urlVideo)" />
-            </video>
+              :urlVideo="audio.audio.urlVideo"
+            />
             <img
               v-else
               @click.stop="clickParent"

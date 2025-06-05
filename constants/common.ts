@@ -21,3 +21,4 @@ export const SIDE_BAR_ACTION = {
   CLICKED_CAPACITY: 'clicked_capacity',
 };
 export type MessageType = (typeof MESSAGE_TYPES)[keyof typeof MESSAGE_TYPES];
+export const MAX_HISTORY_EDITOR = 20;

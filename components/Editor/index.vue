@@ -113,10 +113,11 @@
 
 <script lang="ts" setup>
 import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
-
+import _ from 'lodash';
 import { type RGBA } from '@/types/color';
 import {
   DEBOUND_TIME_SAVE_HISTORY,
+  MAX_HISTORY_EDITOR,
   RWD_MODE,
   SIDE_BAR_ACTION,
 } from '@/constants/common';
@@ -133,14 +134,13 @@ import {
 const modelValue = ref(true);
 const showSelectAITools = ref(false);
 let debounceTimer: any = null;
-const MAX_HISTORY = 20;
 const iSaveHistory = ref(false);
 
 definePageMeta({
   layout: 'default',
 });
 
-const props = defineProps({
+defineProps({
   isShowListSection: {
     type: String,
     default: '',
@@ -174,9 +174,7 @@ const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
 });
 const isChanged = ref(false);
 const sections = ref<SECTION_ITEM[] | []>([]);
-const history = ref<any[]>(
-  JSON.parse(JSON.stringify([[props.listTemplate[0]]]))
-);
+const history = ref<any[]>([]);
 const route = useRoute();
 const idParam = Array.isArray(route.query?.id)
   ? route.query.id[0] || ''
@@ -186,6 +184,7 @@ const {
   handleSaveTemplate,
   checkMaterials,
   checkChanges,
+  initSections,
 } = useWebEditor(sections, idParam);
 const currentIndex = ref<number>(0);
 
@@ -207,7 +206,15 @@ const initPopupSetting = {
 const isShowPopup = ref({
   ...initPopupSetting,
 });
-
+watch(
+  initSections,
+  (newVal: any[]) => {
+    if (newVal) {
+      history.value.push(_.cloneDeep(newVal));
+    }
+  },
+  { immediate: true }
+);
 const objectSelecting = computed<OBJ_SECTION_ITEM>(() => {
   const sectionIndex = indexSectionSelected.value;
   const key = keyElementSelected.value;
@@ -442,7 +449,7 @@ watch(
       debounceTimer = setTimeout(() => {
         history.value.push(JSON.parse(JSON.stringify(newVal)));
         currentIndex.value++;
-        if (history.value.length > MAX_HISTORY) {
+        if (history.value.length > MAX_HISTORY_EDITOR + 1) {
           history.value.shift();
           history.value = history.value.slice(0, currentIndex.value + 1);
 

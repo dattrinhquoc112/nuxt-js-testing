@@ -53,11 +53,7 @@ export default function useSDKTracking(sdkInfo: {
         },
       })
     );
-  const handleClickEvent = (clickInfo: {
-    sec: string;
-    type: string;
-    audioId: string;
-  }) =>
+  const handleClickEvent = (audioId: number) =>
     SDKInstance.value.passEvent(
       new window.webTrackingSDK.events.ClickEvent({
         eventId: EVENT_KEY.CONTENT_CLICK.EVENT_ID,
@@ -69,7 +65,7 @@ export default function useSDKTracking(sdkInfo: {
         click_info: {
           sec: 'ai',
           type: 'audio_tta',
-          audio_id: clickInfo.audioId,
+          audio_id: audioId,
         },
       })
     );

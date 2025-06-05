@@ -5,7 +5,7 @@ export default function useSeo() {
   const route = useRoute();
   const tenantName = route.params.tenantName as string;
   const eventEnglishName = route.params.eventEnglishName as string;
-  const { setSessionPublic } = useEventStore();
+  const { setSessionPublic, setTenantID } = useEventStore();
 
   function applySeoTags(seo: any) {
     const metaTags = [
@@ -48,6 +48,7 @@ export default function useSeo() {
       (item: any) => item.settings.generalSettings
     );
     setSessionPublic(sectionsPublic);
+    setTenantID(data.value.data.tenantId);
     applySeoTags(data.value.data);
   };
   if (route.meta.layout === 'public' && tenantName && eventEnglishName) {
