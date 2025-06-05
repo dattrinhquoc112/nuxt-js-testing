@@ -58,7 +58,7 @@ export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
 
   const headers = {
     ...payload.headers,
-    'X-Path': `${process.env.NUXT_APP_HOST}/event`,
+    'X-Path': `${useRuntimeConfig().urlFeHost}/event`,
   };
   if (token) {
     headers.Cookie = convertCookieObjectToString({
