@@ -117,6 +117,7 @@ import AIToolsTutorial from '@/components/Tutorial/AIToolsTutorial.vue';
 import { type RGBA } from '@/types/color';
 import {
   DEBOUND_TIME_SAVE_HISTORY,
+  MAX_HISTORY_EDITOR,
   RWD_MODE,
   SIDE_BAR_ACTION,
 } from '@/constants/common';
@@ -443,7 +444,7 @@ watch(
       debounceTimer = setTimeout(() => {
         history.value.push(JSON.parse(JSON.stringify(newVal)));
         currentIndex.value++;
-        if (history.value.length > MAX_HISTORY) {
+        if (history.value.length > MAX_HISTORY_EDITOR + 1) {
           history.value.shift();
           history.value = history.value.slice(0, currentIndex.value + 1);
 
