@@ -162,8 +162,8 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
             fileUri: i.fileUri,
             fileSize: i.fileSize,
           }));
-
         return {
+          id: section?.idApi || null,
           template: section.id,
           order: index,
           settings: {
@@ -176,16 +176,16 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
     };
   };
 
-  const fetchContentProject = async () => {
-    const data = await getContentProject(idWebEditorRef.value);
-    if (data.data.version)
+  const mapDataToSection = (response: any) => {
+    listMaterials.value = [];
+    if (response.data.version)
       setVersionContent({
         idProject: idWebEditorRef.value,
-        version: data.data.version,
+        version: response.data.version,
       });
-    if (!data.data.sections.length) return;
-    initSections.value = data.data.sections;
-    sections.value = data.data.sections.map(
+    if (!response.data.sections.length) return;
+
+    sections.value = response.data.sections.map(
       (item: any, indexSection: number) => {
         if (item.materials?.length) {
           listMaterials.value = listMaterials.value.concat(
@@ -199,9 +199,15 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
             }))
           );
         }
-        return item.settings.generalSettings;
+        return { ...item.settings.generalSettings, idApi: item.id };
       }
     );
+    initSections.value = _.cloneDeep(sections.value);
+  };
+
+  const fetchContentProject = async () => {
+    const data = await getContentProject(idWebEditorRef.value);
+    mapDataToSection(data);
   };
 
   const handleSaveTemplate = async () => {
@@ -212,11 +218,7 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
     ]);
     const payload = convertDataSections();
     const res = await updateContentProject(idWebEditorRef.value, payload);
-    if (res.data.version)
-      setVersionContent({
-        idProject: idWebEditorRef.value,
-        version: res.data.version,
-      });
+    mapDataToSection(res);
   };
   const setIDWebEditor = (id: string) => {
     idWebEditorRef.value = id;

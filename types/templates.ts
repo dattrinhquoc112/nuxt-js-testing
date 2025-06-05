@@ -70,6 +70,7 @@ export interface AUDIO_ITEM {
   textProduction: TEXT_ITEM;
 }
 export interface SECTION_ITEM {
+  idApi?: string;
   id: string;
   textTitle?: TEXT_ITEM;
   textDes?: TEXT_ITEM;
