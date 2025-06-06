@@ -208,6 +208,8 @@ const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
 const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
 
+const refetchMetric = inject(PROVIDE.FETCH_METRIC) as () => void;
+
 const loading = reactive({
   search: false,
 });
@@ -260,6 +262,7 @@ const fetchProjectList = debounce(async () => {
     nameKeyword: model.search,
   });
   model.projects = res.data;
+  refetchMetric();
   loading.search = false;
 }, 500);
 
