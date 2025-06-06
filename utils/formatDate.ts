@@ -25,6 +25,7 @@ export default function formatDate(
   ];
 
   const map: Record<string, string> = {
+    MMMM: monthNames[d.getMonth()],
     YYYY: d.getFullYear().toString(),
     MM: String(d.getMonth() + 1).padStart(2, '0'),
     DD: String(d.getDate()).padStart(2, '0'),
@@ -34,10 +35,11 @@ export default function formatDate(
     ss: String(d.getSeconds()).padStart(2, '0'),
     A: ampm,
     a: ampm.toLowerCase(),
-    MMMM: monthNames[d.getMonth()],
   };
 
-  return formatStr
-    .replace(/MMMM/g, map['MMMM'])
-    .replace(/YYYY|MM|DD|HH|hh|mm|ss|A|a/g, (match) => map[match]);
+  // Sort tokens by length (desc) to avoid partial replacements (e.g., MM inside MMMM)
+  const tokens = Object.keys(map).sort((a, b) => b.length - a.length);
+  const pattern = new RegExp(tokens.join('|'), 'g');
+
+  return formatStr.replace(pattern, (match) => map[match]);
 }
