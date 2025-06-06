@@ -175,8 +175,8 @@
 </template>
 
 <script lang="ts" setup>
-import useMetric from '~/composables/metric';
 import Tutorial from '@/components/Tutorial/Tutorial.vue';
+import useMetric from '~/composables/metric';
 import useProjects from '~/composables/projects';
 import { TUTORIAL_TYPE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
@@ -205,7 +205,6 @@ const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
-
 const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
 
 const loading = reactive({
