@@ -57,6 +57,7 @@
       :class="classPopupSettingImage"
       :isShow="isShowPopup.imageSetting"
       :positionControlCurrent="positionControlCurrent"
+      @reset-file="handleResetFile"
       @close="closePopupChangeImage"
       @change-image="handleChangeImage"
       @change-video="handleChangeVideo"
@@ -129,12 +130,11 @@ import {
   type BUTTON_EXTERNAL_ITEM,
   type TEXT_ITEM,
   type BACKGROUND_SECTION,
+  TEMPLATES_AUDIO,
+  TEMPLATES_SECTION,
+  type BOX_IMAGE,
+  type AUDIO_SETTING,
 } from '~/types/templates';
-
-const modelValue = ref(true);
-const showSelectAITools = ref(false);
-let debounceTimer: any = null;
-const iSaveHistory = ref(false);
 
 definePageMeta({
   layout: 'default',
@@ -156,6 +156,12 @@ defineProps({
 });
 
 const emit = defineEmits(['closeSection']);
+
+const modelValue = ref(true);
+const showSelectAITools = ref(false);
+let debounceTimer: any = null;
+const iSaveHistory = ref(false);
+
 const templateSelected = ref();
 const buttonColor = ref<RGBA>({
   r: 255,
@@ -206,6 +212,8 @@ const initPopupSetting = {
 const isShowPopup = ref({
   ...initPopupSetting,
 });
+const allTemplate = TEMPLATES_SECTION.concat(TEMPLATES_AUDIO);
+
 watch(
   initSections,
   (newVal: any[]) => {
@@ -296,6 +304,49 @@ const handleChangeVideo = ({
   if (keyElementSelected.value === 'backgroundSection') {
     obj.class = '';
     obj.color = '';
+  }
+};
+const handleResetFile = () => {
+  let obj;
+  if (indexSectionSelected.value === undefined) return;
+  const sectionCurrent = sections.value[indexSectionSelected.value];
+  const templateCurrent = allTemplate.find(
+    (item) => item.id === sectionCurrent.id
+  );
+  if (keyElementSelected.value === 'backgroundSection') {
+    obj = objectSelecting.value as BACKGROUND_SECTION;
+    checkMaterials(obj, '', 'DELETE');
+    if (obj.urlImage === templateCurrent?.backgroundSection?.urlImage) {
+      obj.urlImage = '';
+    } else {
+      obj.urlImage = templateCurrent?.backgroundSection?.urlImage;
+    }
+    obj.file = templateCurrent?.backgroundSection?.file;
+    obj.urlVideo = templateCurrent?.backgroundSection?.urlVideo;
+    obj.color = templateCurrent?.backgroundSection?.color;
+    obj.class = templateCurrent?.backgroundSection?.class;
+  }
+  if (keyElementSelected.value === 'boxImage') {
+    obj = objectSelecting.value as BOX_IMAGE;
+    checkMaterials(obj, '', 'DELETE');
+    if (obj.urlImage === templateCurrent?.boxImage?.urlImage) {
+      obj.urlImage = '';
+    } else {
+      obj.urlImage = templateCurrent?.boxImage?.urlImage;
+    }
+    obj.file = templateCurrent?.boxImage?.file;
+    obj.urlVideo = templateCurrent?.boxImage?.urlVideo;
+  }
+  if (keyElementSelected.value === 'audio') {
+    obj = objectSelecting.value as AUDIO_SETTING;
+    checkMaterials(obj, '', 'DELETE');
+    if (obj.urlImage === templateCurrent?.listAudio?.[0]?.audio.urlImage) {
+      obj.urlImage = '';
+    } else {
+      obj.urlImage = templateCurrent?.listAudio?.[0]?.audio.urlImage;
+    }
+    obj.file = templateCurrent?.listAudio?.[0]?.audio.file;
+    obj.urlVideo = templateCurrent?.listAudio?.[0]?.audio.urlVideo;
   }
 };
 const handleChangeText = (event: MouseEvent) => {

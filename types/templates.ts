@@ -37,21 +37,21 @@ export interface BUTTON_EXTERNAL_ITEM {
   style: STYLE;
 }
 export interface BACKGROUND_SECTION {
-  file: File | null;
-  urlImage: string;
-  color: string;
-  urlVideo: string;
-  class: string;
+  file: File | null | undefined;
+  urlImage: string | undefined;
+  color: string | undefined;
+  urlVideo: string | undefined;
+  class: string | undefined;
 }
 export interface BOX_IMAGE {
-  urlImage: string;
-  urlVideo: string;
-  file: File | null;
+  urlImage: string | undefined;
+  urlVideo: string | undefined;
+  file: File | null | undefined;
 }
 export interface AUDIO_SETTING {
-  urlImage: string;
-  urlVideo: string;
-  file: File | null;
+  urlImage: string | undefined;
+  urlVideo: string | undefined;
+  file: File | null | undefined;
   setting: {
     voiceModelId: any;
     pitch: number | null;
