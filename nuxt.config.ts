@@ -109,7 +109,7 @@ export default defineNuxtConfig({
           // TODO: 確認 prod 是否需要
           'http://0.0.0.0:3000', // 允許來自任何 IP 的請求
           ...(process.env.NUXT_NODE_ENV === 'local'
-            ? ['ws:', 'https://vyin-landing-page.sotatek.works']
+            ? ['ws:', 'http://localhost:3000']
             : []),
           import.meta.env.VITE_APP_UI_KIT_LINK,
           import.meta.env.NUXT_PUBLIC_API_HOST,
