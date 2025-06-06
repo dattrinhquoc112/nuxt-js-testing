@@ -2,7 +2,7 @@
   "name": "beanfun-nuxt3-ssr-template",
   "private": true,
   "scripts": {
-    "dev": "nuxt dev --port 3000 --host 0.0.0.0",
+    "dev": "nuxt dev --port 4001 --host 0.0.0.0",
     "build": "nuxt build",
     "build:dev": "nuxt build --dotenv .env.dev",
     "build:test": "nuxt build --dotenv .env.test",
