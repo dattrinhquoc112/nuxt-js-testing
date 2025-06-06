@@ -33,6 +33,13 @@
         :is-show-list-section="isShowListSection"
         @close-section="isShowListSection = ''"
       />
+      <div class="section-snapshot">
+        <editor-section-render
+          :read-only="true"
+          :section="sectionSnapshot"
+          :rwd-mode="RWD_MODE.DESKTOP"
+        />
+      </div>
     </vi-scroll>
   </LayoutEditor>
   <popup-setting-project
@@ -82,9 +89,12 @@ import { toastMessage } from '#imports';
 import { TEMPLATES_AUDIO, TEMPLATES_SECTION } from '~/types/templates';
 import { useEditorStore } from '~/stores/editor';
 import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
+import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 
 const { getProject, editProject, createProject, publishProject } =
   useProjectStore();
+
+const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 definePageMeta({
   layout: 'editor',
 });
@@ -129,6 +139,9 @@ watch(
   }
 );
 
+const sectionSnapshot = computed(() => {
+  return editorRef.value?.sections[0];
+});
 const handlePreview = () => {
   const sections = editorRef.value?.sections;
   sessionStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
@@ -230,6 +243,11 @@ const handleSubmitSettingProject = async (payload: any) => {
 const handleSaveTemplate = async () => {
   setLoading('updateContent', true);
   await editorRef.value.handleSaveTemplate();
+  const file = await handleGetThumbnailSnapshot();
+  const fileUri = file?.fileUri;
+  if (fileUri) {
+    await editProject(editorID.value, { thumbnail: fileUri });
+  }
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
   window.VIUIKit.VIMessage({

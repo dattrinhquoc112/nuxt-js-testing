@@ -94,6 +94,13 @@ html {
   flex: 0 0 75%;
   max-width: 75%;
 }
+.my-auto {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.h-fit {
+  height: fit-content;
+}
 .col-10 {
   flex: 0 0 83.333%;
   max-width: 83.333%;
@@ -106,7 +113,12 @@ html {
   flex: 0 0 100%;
   max-width: 100%;
 }
-
+.section-snapshot {
+  width: 1376px;
+  position: absolute;
+  left: -9999px;
+  top: 0;
+}
 .section-wrap {
   width: 100%;
   padding-top: calc(600 / 1376 * 100%);

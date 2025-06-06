@@ -65,12 +65,14 @@
             $t('landing-project_mgmt-description-no_content')
           }}</vi-typography>
           <vi-button
+            :is-loading="isLoadingCreate"
             type="standard-default"
             @click="onAction(undefined, 'create')"
           >
             {{ t('landing-project_mgmt-button-create') }}
           </vi-button>
         </div>
+
         <div
           v-show="!loading.search && model.projects.length > 0"
           class="item"
@@ -79,7 +81,19 @@
           @click="onClickProject(item)"
         >
           <div class="item-thumbnail">
-            <custom-image :src="getImage(item.thumbnail)" />
+            <div
+              class="blur-container"
+              :style="{ backgroundImage: `url(${getImage(item.thumbnail)})` }"
+            >
+              <div
+                class="img-wrapper"
+                :style="{ backgroundImage: `url(${getImage(item.thumbnail)})` }"
+              ></div>
+              <custom-image
+                :src="getImage(item.thumbnail)"
+                class="img-content h-fit"
+              />
+            </div>
           </div>
           <div class="item-info">
             <div class="status-active">{{ getStatus(item.status) }}</div>
@@ -164,15 +178,23 @@
     />
     <Tutorial :tutorial-type="TUTORIAL_TYPE.HOME_PAGE" />
   </div>
+  <div class="section-snapshot">
+    <editor-section-render
+      :read-only="true"
+      :section="sections[0]"
+      :rwd-mode="RWD_MODE.DESKTOP"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import Tutorial from '@/components/Tutorial/Tutorial.vue';
 import useProjects from '~/composables/projects';
-import { TUTORIAL_TYPE } from '~/constants/common';
+import { TUTORIAL_TYPE, RWD_MODE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
 import { TEMPLATES_SECTION } from '~/types/templates';
+import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 
 interface Model {
   page: number;
@@ -187,12 +209,12 @@ interface Model {
 definePageMeta({
   layout: 'app',
 });
-
 const { t } = useI18n();
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const sections = ref([TEMPLATES_SECTION[0]]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
 
+const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
@@ -200,7 +222,7 @@ const { getProjectList, copyProject, editProject, createProject } =
 const loading = reactive({
   search: false,
 });
-
+const isLoadingCreate = ref(false);
 const model = reactive<Model>({
   page: 0,
   size: 150,
@@ -262,12 +284,19 @@ const onCopyProject = async (project: IProject) => {
   toastMessage(t('landing-common-message-copied'));
 };
 const onCreateProject = async () => {
+  isLoadingCreate.value = true;
   const res = await createProject(webEditorName.value);
   if (res) {
     const { id } = res.data;
     setIDWebEditor(id);
     try {
       handleSaveTemplate();
+      const file = await handleGetThumbnailSnapshot();
+      const fileUri = file?.fileUri;
+      if (fileUri) {
+        await editProject(id, { thumbnail: fileUri });
+      }
+      isLoadingCreate.value = false;
       navigateTo(`/project/editor?id=${id}`);
     } catch (err) {}
   }
@@ -473,5 +502,32 @@ watch(
       background-color: $neutral-white-alpha-10;
     }
   }
+}
+
+.img-content {
+  z-index: 100;
+}
+.blur-container {
+  position: relative;
+
+  overflow: hidden;
+  border-radius: 4px;
+}
+.img-wrapper {
+  position: absolute;
+  inset: 0;
+  background-color: lightgray;
+  background-position: 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(12px);
+  z-index: 0;
+}
+.img-content {
+  position: relative;
+  z-index: 1;
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 </style>
