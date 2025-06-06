@@ -22,6 +22,20 @@ export default function useProjects() {
       .replace(/^-+|-+$/g, '');
   };
 
+  const handleKeyword = (newValue: string, maxKeywords = 10): string => {
+    let keywords = newValue
+      .split(',')
+      .map((k) => k.trim())
+      .filter((k) => k !== '');
+
+    if (keywords.length > maxKeywords) {
+      keywords = keywords.slice(0, maxKeywords);
+    }
+
+    const finalValue = keywords.join(',') + (newValue.endsWith(',') ? ',' : '');
+    return finalValue;
+  };
+
   const getStatus = (status: string) => {
     const trans: { [key: string]: string } = {
       PENDING_PUBLISH: t('landing-status-label-status_pending'),
@@ -54,5 +68,6 @@ export default function useProjects() {
     getStatus,
     getImage,
     handleEventEnglishName,
+    handleKeyword,
   };
 }

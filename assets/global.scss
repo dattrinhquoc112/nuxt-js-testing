@@ -115,10 +115,11 @@ html {
   .video-background {
     position: absolute;
     top: 0;
-    left: 0;
-    width: 100%;
+    left: 50%;
+    transform: translateX(-50%);
     height: 100%;
     z-index: 5;
+    object-fit: contain;
   }
   &.bg-img {
     background-image: var(--bg-image);

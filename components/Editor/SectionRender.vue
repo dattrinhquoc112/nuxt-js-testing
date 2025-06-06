@@ -185,7 +185,7 @@
               :urlVideo="audio.audio.urlVideo"
             />
             <img
-              v-else
+              v-if="audio.audio.urlImage"
               @click.stop="clickParent"
               :src="getImage(audio.audio.urlImage)"
               alt=""

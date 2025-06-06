@@ -38,7 +38,7 @@
   <popup-setting-project
     v-if="isShowActivitySettingModal"
     :show="isShowActivitySettingModal"
-    :project="project"
+    v-model:project="project"
     @close="isShowActivitySettingModal = false"
     @submit="handleSubmitSettingProject"
   />
@@ -340,7 +340,7 @@ const handleRedo = () => {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    overflow: hidden;
+    // overflow: hidden;
     height: calc(100vh - 64px);
     &--mobile {
       width: 375px;
