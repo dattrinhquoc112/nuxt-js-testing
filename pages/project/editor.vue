@@ -33,6 +33,13 @@
         :is-show-list-section="isShowListSection"
         @close-section="isShowListSection = ''"
       />
+      <div class="section-snapshot">
+        <editor-section-render
+          :read-only="true"
+          :section="sectionSnapshot"
+          :rwd-mode="RWD_MODE.DESKTOP"
+        />
+      </div>
     </vi-scroll>
   </LayoutEditor>
   <popup-setting-project
@@ -49,6 +56,7 @@
     @close="isShowEditInfoModal = false"
     @edit="handleEditEditor"
   />
+
   <EditorReminderPU
     v-model:model="isOpenReminderPU"
     @handle-click="
@@ -81,11 +89,12 @@ import { toastMessage } from '#imports';
 import { TEMPLATES_AUDIO, TEMPLATES_SECTION } from '~/types/templates';
 import { useEditorStore } from '~/stores/editor';
 import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
-import html2canvas from 'html2canvas';
-import { useUploadStore } from '~/stores/upload';
+import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 
 const { getProject, editProject, createProject, publishProject } =
   useProjectStore();
+
+const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 definePageMeta({
   layout: 'editor',
 });
@@ -109,7 +118,6 @@ const route = useRoute();
 const editorID = ref('');
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const project = ref();
-const { uploadFile } = useUploadStore();
 
 const configVersion = ref({
   keyAction: '',
@@ -131,6 +139,9 @@ watch(
   }
 );
 
+const sectionSnapshot = computed(() => {
+  return editorRef.value?.sections[0];
+});
 const handlePreview = () => {
   const sections = editorRef.value?.sections;
   sessionStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
@@ -230,27 +241,18 @@ const handleSubmitSettingProject = async (payload: any) => {
 };
 
 const handleSaveTemplate = async () => {
-  const element = document.querySelector('#editor .section');
-  if (element) {
-    const res = await html2canvas(element as HTMLElement).then(
-      async (canvas) => {
-        canvas.toBlob(async (blob: any) => {
-          if (blob) {
-            const file = new File([blob], 'image.png', { type: 'image/png' });
-            const res2 = await uploadFile(file);
-            return res2;
-          }
-        }, 'image/png');
-      }
-    );
-  }
-
   setLoading('updateContent', true);
   await editorRef.value.handleSaveTemplate();
+  const file = await handleGetThumbnailSnapshot();
+  const fileUri = file?.fileUri;
+  if (fileUri) {
+    console.log(fileUri, 'fileUri');
+    await editProject(editorID.value, { thumbnail: fileUri });
+  }
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
   window.VIUIKit.VIMessage({
-    title: t('notification-status-action-save_success'),
+    title: t('landing-common-message-saved'),
     width: '348px',
   });
 };
@@ -361,5 +363,12 @@ const handleRedo = () => {
       width: 375px;
     }
   }
+}
+.section-snapshot {
+  width: 1376px;
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  visibility: hidden;
 }
 </style>

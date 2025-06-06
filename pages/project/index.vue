@@ -71,6 +71,7 @@
             {{ t('landing-project_mgmt-button-create') }}
           </vi-button>
         </div>
+
         <div
           v-show="!loading.search && model.projects.length > 0"
           class="item"
@@ -79,7 +80,19 @@
           @click="onClickProject(item)"
         >
           <div class="item-thumbnail">
-            <custom-image :src="getImage(item.thumbnail)" />
+            <div
+              class="blur-container"
+              :style="{ backgroundImage: `url(${getImage(item.thumbnail)})` }"
+            >
+              <div
+                class="img-wrapper"
+                :style="{ backgroundImage: `url(${getImage(item.thumbnail)})` }"
+              ></div>
+              <custom-image
+                :src="getImage(item.thumbnail)"
+                class="img-content h-fit"
+              />
+            </div>
           </div>
           <div class="item-info">
             <div class="status-active">{{ getStatus(item.status) }}</div>
@@ -472,5 +485,32 @@ watch(
       background-color: $neutral-white-alpha-10;
     }
   }
+}
+
+.img-content {
+  z-index: 100;
+}
+.blur-container {
+  position: relative;
+
+  overflow: hidden;
+  border-radius: 4px;
+}
+.img-wrapper {
+  position: absolute;
+  inset: 0;
+  background-color: lightgray;
+  background-position: 50%;
+  background-size: cover;
+  background-repeat: no-repeat;
+  filter: blur(12px);
+  z-index: 0;
+}
+.img-content {
+  position: relative;
+  z-index: 1;
+  color: white;
+  border-radius: 4px;
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 </style>
