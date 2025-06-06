@@ -146,6 +146,16 @@ html {
       }
     }
   }
+
+  &.section-copyright {
+    padding-top: 260px;
+    .content-copyright {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+  }
   &.section-one {
     aspect-ratio: 172 / 75;
     .content--destop {

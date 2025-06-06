@@ -145,6 +145,7 @@ onMounted(() => {
   });
 });
 provide(PROVIDE.USER_INFO, userDetail);
+provide(PROVIDE.FETCH_METRIC, getTenantMetric);
 </script>
 
 <style lang="scss" scoped>

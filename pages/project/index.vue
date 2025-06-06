@@ -200,13 +200,18 @@ definePageMeta({
 
 const { t } = useI18n();
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
-const sections = ref(TEMPLATES_SECTION.slice(0, 2));
+const sections = ref([
+  ...TEMPLATES_SECTION.slice(0, 2),
+  TEMPLATES_SECTION[TEMPLATES_SECTION.length - 1],
+]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
 
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
 const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
+
+const refetchMetric = inject(PROVIDE.FETCH_METRIC) as () => void;
 
 const loading = reactive({
   search: false,
@@ -260,6 +265,7 @@ const fetchProjectList = debounce(async () => {
     nameKeyword: model.search,
   });
   model.projects = res.data;
+  refetchMetric();
   loading.search = false;
 }, 500);
 

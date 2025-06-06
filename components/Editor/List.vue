@@ -188,6 +188,26 @@ const showOptionForSectionLogo = (elementSection: HTMLElement) => {
   window.addEventListener('click', hiddenBoxControlWhenClick);
 };
 
+const showOptionForSectionCopyright = (elementSection: HTMLElement) => {
+  if (!boxControlElement.value) return;
+  emit('hidden-all-popup-setting');
+
+  boxControlElement.value.setAttribute('class', 'box-control');
+  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
+
+  const coordinates = elementSection.getBoundingClientRect();
+  const pageY = coordinates.top - 48;
+  const pageX = coordinates.left + coordinates.width / 2;
+  emit('set-show-control', true);
+
+  emit('set-position-control', {
+    pageY,
+    pageX,
+  });
+
+  window.addEventListener('click', hiddenBoxControlWhenClick);
+};
+
 const showOptionForImageLogo = (elementSection: HTMLElement) => {
   if (!boxControlElement.value) return;
   emit('hidden-all-popup-setting');
@@ -289,6 +309,13 @@ const handleShowOption = (event: any, index: number) => {
         nextTick(() => {
           emit('set-selected-element', event.target);
           showOptionForSectionLogo(event.target);
+        });
+      } else if (event.target?.classList.contains('section-copyright')) {
+        emit('set-class-element-selected', 'section-copyright');
+        emit('set-key-element-selected', 'copyright');
+        nextTick(() => {
+          emit('set-selected-element', event.target);
+          showOptionForSectionCopyright(event.target);
         });
       } else {
         emit('set-class-element-selected', 'section-wrap');

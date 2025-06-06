@@ -227,6 +227,14 @@
       </div>
     </div>
   </section>
+  <section
+    v-if="section.id === 'copyright'"
+    class="section-wrap section-copyright"
+    @click.stop="(event) => emit('show-option', event)"
+    :style="`background-color:${section.copyright.backgroundColor};`"
+  >
+    <div class="content-copyright">copyright © All rights reserved</div>
+  </section>
 </template>
 
 <script lang="ts" setup>
