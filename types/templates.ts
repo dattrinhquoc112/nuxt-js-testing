@@ -75,10 +75,14 @@ export interface LOGO_ITEM {
   file: File | null | undefined;
   backgroundColor: string;
 }
+export interface COPYRIGHT_ITEM {
+  backgroundColor: string;
+}
 export interface SECTION_ITEM {
   idApi?: string;
   id: string;
   textTitle?: TEXT_ITEM;
+  copyright?: COPYRIGHT_ITEM;
   logo?: LOGO_ITEM;
   textDes?: TEXT_ITEM;
   textProduct?: TEXT_ITEM;
@@ -362,6 +366,12 @@ export const TEMPLATES_SECTION: SECTION_ITEM[] = [
       urlVideo: '',
     },
     imageDemo: sectionDemo5,
+  },
+  {
+    id: 'copyright',
+    copyright: {
+      backgroundColor: '#000',
+    },
   },
 ];
 export const TEMPLATES_AUDIO: SECTION_ITEM[] = [

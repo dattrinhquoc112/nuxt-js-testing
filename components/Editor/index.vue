@@ -134,6 +134,7 @@ import {
   type BOX_IMAGE,
   type AUDIO_SETTING,
   type LOGO_ITEM,
+  type COPYRIGHT_ITEM,
 } from '~/types/templates';
 
 definePageMeta({
@@ -273,6 +274,9 @@ watch(buttonColor, () => {
     },${oppositeColor.a / 100})`;
   } else if (keyElementSelected.value === 'logo') {
     const other = obj as LOGO_ITEM;
+    other.backgroundColor = colorChange;
+  } else if (keyElementSelected.value === 'copyright') {
+    const other = obj as COPYRIGHT_ITEM;
     other.backgroundColor = colorChange;
   } else if (keyElementSelected.value === 'backgroundSection') {
     const bg = obj as BACKGROUND_SECTION;
@@ -457,6 +461,7 @@ const hiddenBoxControl = () => {
 
 const moveDown = () => {
   if (indexSectionSelected.value === undefined) return;
+  if (indexSectionSelected.value === sections.value.length - 2) return;
   if (sections.value.length < 2) return;
   if (indexSectionSelected.value < sections.value.length - 1) {
     const templateDraft = sections.value[indexSectionSelected.value];
@@ -468,6 +473,7 @@ const moveDown = () => {
 
 const moveUp = () => {
   if (indexSectionSelected.value === undefined) return;
+  if (indexSectionSelected.value === 1) return;
   if (sections.value.length < 2) return;
   if (indexSectionSelected.value !== 0) {
     const templateDraft = sections.value[indexSectionSelected.value];

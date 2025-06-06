@@ -117,18 +117,8 @@ const handleChange = (event: Event) => {
     if (fileSize > 100 * 1024) {
       errorMessage.value = t('error_fe-file-validation-file_size_exceeded');
     } else {
-      const img = new Image();
-      img.onload = () => {
-        if (img.width > 120 || img.height > 40) {
-          errorMessage.value = t(
-            'error_fe-file-validation-file_format_unsupported'
-          );
-        } else {
-          errorMessage.value = '';
-          emit('change-image', { objectUrl, file });
-        }
-      };
-      img.src = objectUrl;
+      errorMessage.value = '';
+      emit('change-image', { objectUrl, file });
     }
     input.value = '';
     return;
@@ -138,36 +128,15 @@ const handleChange = (event: Event) => {
     if (fileSize > 500 * 1024) {
       errorMessage.value = t('error_fe-file-validation-file_size_exceeded');
     } else {
-      const img = new Image();
-      img.onload = () => {
-        if (img.width < 800 || img.height < 628) {
-          errorMessage.value = t(
-            'error_fe-file-validation-file_format_unsupported'
-          );
-        } else {
-          errorMessage.value = '';
-          emit('change-image', { objectUrl, file });
-        }
-      };
-      img.src = objectUrl;
+      errorMessage.value = '';
+      emit('change-image', { objectUrl, file });
     }
   } else if (fileType.startsWith('video')) {
     if (fileSize > 5 * 1024 * 1024) {
       errorMessage.value = t('error_fe-file-validation-file_size_exceeded');
     } else {
-      const video = document.createElement('video');
-      video.onloadedmetadata = () => {
-        if (video.videoWidth < 800 || video.videoHeight < 628) {
-          errorMessage.value = t(
-            'error_fe-file-validation-file_format_unsupported'
-          );
-        } else {
-          errorMessage.value = '';
-          emit('change-video', { objectUrl, file });
-        }
-      };
-      video.remove();
-      video.src = objectUrl;
+      errorMessage.value = '';
+      emit('change-video', { objectUrl, file });
     }
   }
   input.value = '';

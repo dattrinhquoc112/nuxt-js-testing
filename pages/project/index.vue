@@ -200,7 +200,10 @@ definePageMeta({
 
 const { t } = useI18n();
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
-const sections = ref(TEMPLATES_SECTION.slice(0, 2));
+const sections = ref([
+  ...TEMPLATES_SECTION.slice(0, 2),
+  TEMPLATES_SECTION[TEMPLATES_SECTION.length - 1],
+]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
 
 const { getStatus, getImage } = useProjects();
