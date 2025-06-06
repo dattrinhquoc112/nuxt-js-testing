@@ -20,6 +20,8 @@
             :hint="errorMsg"
             is-count
             :max="50"
+            @keydown="blockSpecialCharacters"
+            :allowed-regex="/^[A-Za-z0-9 ]+$/"
           />
         </template>
       </vi-form-item>
@@ -81,6 +83,11 @@ const rules = {
       max: 50,
       message: t('error_fe-data-validation-input_length_exceeded'),
       trigger: 'blur',
+    },
+    {
+      regex: /^[a-zA-Z0-9](?:[a-zA-Z0-9 ]*[a-zA-Z0-9])?$/,
+      message: t('error_fe-data-validation-input_format_invalid'),
+      trigger: 'change',
     },
   ],
 };

@@ -38,7 +38,7 @@
   <popup-setting-project
     v-if="isShowActivitySettingModal"
     :show="isShowActivitySettingModal"
-    :project="project"
+    v-model:project="project"
     @close="isShowActivitySettingModal = false"
     @submit="handleSubmitSettingProject"
   />
