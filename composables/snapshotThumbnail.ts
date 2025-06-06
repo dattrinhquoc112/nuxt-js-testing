@@ -24,7 +24,7 @@ export default function useSnapshotThumbnail() {
   }
 
   const handleGetThumbnailSnapshot = async (
-    selector: string = '.section-snapshot #editor .section'
+    selector: string = '.section-snapshot'
   ) => {
     const element = document.querySelector(selector);
     if (element && element instanceof HTMLElement) {

@@ -65,6 +65,7 @@
             $t('landing-project_mgmt-description-no_content')
           }}</vi-typography>
           <vi-button
+            :is-loading="isLoadingCreate"
             type="standard-default"
             @click="onAction(undefined, 'create')"
           >
@@ -177,15 +178,23 @@
     />
     <Tutorial :tutorial-type="TUTORIAL_TYPE.HOME_PAGE" />
   </div>
+  <div class="section-snapshot">
+    <editor-section-render
+      :read-only="true"
+      :section="sections[0]"
+      :rwd-mode="RWD_MODE.DESKTOP"
+    />
+  </div>
 </template>
 
 <script lang="ts" setup>
 import Tutorial from '@/components/Tutorial/Tutorial.vue';
 import useProjects from '~/composables/projects';
-import { TUTORIAL_TYPE } from '~/constants/common';
+import { TUTORIAL_TYPE, RWD_MODE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
 import { TEMPLATES_SECTION } from '~/types/templates';
+import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 
 interface Model {
   page: number;
@@ -205,6 +214,7 @@ const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const sections = ref([TEMPLATES_SECTION[0]]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
 
+const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
@@ -212,7 +222,7 @@ const { getProjectList, copyProject, editProject, createProject } =
 const loading = reactive({
   search: false,
 });
-
+const isLoadingCreate = ref(false);
 const model = reactive<Model>({
   page: 0,
   size: 150,
@@ -274,12 +284,19 @@ const onCopyProject = async (project: IProject) => {
   toastMessage(t('landing-common-message-copied'));
 };
 const onCreateProject = async () => {
+  isLoadingCreate.value = true;
   const res = await createProject(webEditorName.value);
   if (res) {
     const { id } = res.data;
     setIDWebEditor(id);
     try {
       handleSaveTemplate();
+      const file = await handleGetThumbnailSnapshot();
+      const fileUri = file?.fileUri;
+      if (fileUri) {
+        await editProject(id, { thumbnail: fileUri });
+      }
+      isLoadingCreate.value = false;
       navigateTo(`/project/editor?id=${id}`);
     } catch (err) {}
   }

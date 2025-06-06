@@ -246,7 +246,6 @@ const handleSaveTemplate = async () => {
   const file = await handleGetThumbnailSnapshot();
   const fileUri = file?.fileUri;
   if (fileUri) {
-    console.log(fileUri, 'fileUri');
     await editProject(editorID.value, { thumbnail: fileUri });
   }
   setLoading('updateContent', false);
@@ -363,12 +362,5 @@ const handleRedo = () => {
       width: 375px;
     }
   }
-}
-.section-snapshot {
-  width: 1376px;
-  position: absolute;
-  left: -9999px;
-  top: 0;
-  visibility: hidden;
 }
 </style>
