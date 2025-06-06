@@ -63,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import useMetric from '~/composables/metric';
 import { useAuthStore } from '~/stores/auth';
 import type {
   ITenantDetail,
@@ -71,17 +72,15 @@ import type {
 } from '~/stores/interface/response/share';
 import { useTenantStore } from '~/stores/tenant';
 import { useUserStore } from '~/stores/user';
-import type { ITenantMetric } from '~/types/tenant';
 
 const { t } = useI18n();
 const userDetail = ref<IUser>();
 const tenantDetail = ref<ITenantDetail>();
 const isExpand = ref(true);
-const tenantMetric = ref<ITenantMetric>();
 const { getDetailInfoUser } = useUserStore();
 const { getTenantByID, setCurrentTenantInfo } = useTenantStore();
 const { getInfoUserFromCookie } = useAuthStore();
-// const { getTenantMetrics } = useTenantStore();
+const { tenantMetric, getTenantMetric } = useMetric();
 
 const isShowAvatar = ref(true);
 const onAvatarError = () => {
@@ -139,23 +138,10 @@ const onBack = () => {
   window.location.href = import.meta.env.VITE_APP_PLATFORM_URL;
 };
 
-const onGetTenantMetric = async () => {
-  // TODO: wait BE
-  try {
-    // const tenantId = getInfoUserFromCookie()?.tenant_id;
-    // const res = await getTenantMetrics(tenantId as string);
-    // if (res.isSuccess) {
-    //   tenantMetric.value = res.data;
-    // }
-  } catch (error) {
-    console.error({ error });
-  }
-};
-
 onMounted(() => {
   fetchCurrentUser().then(() => {
     fetchTenantInfo();
-    onGetTenantMetric();
+    getTenantMetric();
   });
 });
 provide(PROVIDE.USER_INFO, userDetail);

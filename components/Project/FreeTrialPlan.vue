@@ -5,47 +5,40 @@
         $t('common-form-title-free_plan')
       }}</vi-typography>
     </div>
-    <div class="content">
-      <div class="info">
-        <vi-typography type="featured-small">{{
-          $t('common-form-field-field_storage')
-        }}</vi-typography>
-        <vi-typography type="featured-small">
-          {{ props.tenantMetric?.metrics[0].value }}/{{
-            props.tenantMetric?.metrics[0].limit
-          }}</vi-typography
-        >
+    <div class="content-container">
+      <div class="content" v-for="(metric, index) in metrics" :key="index">
+        <div class="info">
+          <vi-typography type="featured-small">{{
+            metric.label
+          }}</vi-typography>
+          <vi-typography type="featured-small">
+            {{ metric.description }}</vi-typography
+          >
+        </div>
+        <vi-progress
+          v-model="metric.percent"
+          class="progress-bar"
+          progress-width="100%"
+        />
       </div>
-      <vi-progress
-        :key="projectCreatedPercent"
-        v-model="projectCreatedPercent"
-        class="progress-bar"
-        progress-width="100%"
-      />
     </div>
   </div>
 </template>
 
 <script lang="ts" setup>
+import useMetric from '~/composables/metric';
 import type { ITenantMetric } from '~/types/tenant';
 
 const props = defineProps<{
   tenantMetric: ITenantMetric | undefined;
 }>();
 
-const projectCreatedPercent = ref<number>(0);
-const trainingCreatedPercent = ref<number>(0);
+const { metrics, handleMetrics } = useMetric();
 
 watch(
   () => props.tenantMetric,
   () => {
-    projectCreatedPercent.value =
-      (Number(props.tenantMetric?.metrics[0].value) * 100) /
-      Number(props.tenantMetric?.metrics[0].limit);
-
-    trainingCreatedPercent.value =
-      (Number(props.tenantMetric?.metrics[1].value) * 100) /
-      Number(props.tenantMetric?.metrics[1].limit);
+    handleMetrics(props.tenantMetric);
   },
   { immediate: true }
 );
@@ -60,10 +53,18 @@ watch(
   background: $neutral-white-alpha-7;
   width: 100%;
 
+  .content-container {
+    display: flex;
+    padding: 16px 16px 24px 16px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    align-self: stretch;
+  }
+
   .content {
     display: flex;
     flex-direction: column;
-    padding: 16px 16px 24px 16px;
     width: 100%;
     gap: 4px;
     .info {

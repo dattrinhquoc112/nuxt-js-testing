@@ -1,5 +1,13 @@
 <template>
   <div class="app-container">
+    <project-free-trial-warning-modal
+      :is-show-modal="modalMetric.warningLimitProject"
+      @close="modalMetric.warningLimitProject = false"
+    />
+    <project-reach-maximum-warning-modal
+      :is-show-modal="modalMetric.warningLimitCapacity"
+      @close="modalMetric.warningLimitCapacity = false"
+    />
     <div class="header">
       <vi-typography type="subtitle-large">{{
         $t('app-navigation-menu-projects')
@@ -189,6 +197,7 @@
 
 <script lang="ts" setup>
 import Tutorial from '@/components/Tutorial/Tutorial.vue';
+import useMetric from '~/composables/metric';
 import useProjects from '~/composables/projects';
 import { TUTORIAL_TYPE, RWD_MODE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
@@ -218,6 +227,7 @@ const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
+const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
 
 const loading = reactive({
   search: false,
@@ -311,13 +321,15 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
   }
 };
 
-const onAction = (project?: IProject, action = '') => {
-  if (project) {
-    onShowAction(project.id, false);
-  }
+const onAction = async (project?: IProject, action = '') => {
   switch (action) {
     case 'create':
-      onCreateProject();
+      await getTenantMetric();
+      if (metricInfo.isLimitedProject || metricInfo.isLimitedCapacity) {
+        handleModal();
+      } else {
+        onCreateProject();
+      }
       break;
     case 'edit':
       modal.title = t('landing-project_mgmt-modal-title_edit_project_info');
