@@ -54,9 +54,10 @@
     />
 
     <editor-popup-setting-image
-      :class="classPopupSettingImage"
+      :class="classPopupSetting"
       :isShow="isShowPopup.imageSetting"
       :positionControlCurrent="positionControlCurrent"
+      :is-logo="keyElementSelected === 'logo'"
       @reset-file="handleResetFile"
       @close="closePopupChangeImage"
       @change-image="handleChangeImage"
@@ -99,9 +100,7 @@
       @change-size="handleChangeSize"
     />
     <editor-popup-setting-color
-      :class="
-        keyElementSelected === 'backgroundSection' ? 'for-bg-section' : ''
-      "
+      :class="classPopupSetting"
       :isShow="isShowPopup.colorSetting"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingColor"
@@ -134,6 +133,8 @@ import {
   TEMPLATES_SECTION,
   type BOX_IMAGE,
   type AUDIO_SETTING,
+  type LOGO_ITEM,
+  type COPYRIGHT_ITEM,
 } from '~/types/templates';
 
 definePageMeta({
@@ -250,9 +251,10 @@ const handleSetPositionControl = (data: { pageX: number; pageY: number }) => {
   positionControlCurrent.value = data;
 };
 
-const classPopupSettingImage = computed(() => {
+const classPopupSetting = computed(() => {
   if (keyElementSelected.value === 'backgroundSection') return 'for-bg-section';
   if (keyElementSelected.value === 'boxImage') return 'for-box-image';
+  if (keyElementSelected.value === 'logo') return 'for-box-logo';
   return '';
 });
 
@@ -270,10 +272,13 @@ watch(buttonColor, () => {
     button.style.color = `rgba(${oppositeColor.r},${oppositeColor.g},${
       oppositeColor.b
     },${oppositeColor.a / 100})`;
-  } else if (keyElementSelected.value !== 'backgroundSection') {
-    const other = obj as TEXT_ITEM;
-    other.style.color = colorChange;
-  } else {
+  } else if (keyElementSelected.value === 'logo') {
+    const other = obj as LOGO_ITEM;
+    other.backgroundColor = colorChange;
+  } else if (keyElementSelected.value === 'copyright') {
+    const other = obj as COPYRIGHT_ITEM;
+    other.backgroundColor = colorChange;
+  } else if (keyElementSelected.value === 'backgroundSection') {
     const bg = obj as BACKGROUND_SECTION;
     bg.class = 'bg-color';
     bg.color = colorChange;
@@ -283,6 +288,9 @@ watch(buttonColor, () => {
     bg.file = null;
     revokeObjectURL(bg.urlVideo);
     revokeObjectURL(bg.urlImage);
+  } else {
+    const other = obj as TEXT_ITEM;
+    other.style.color = colorChange;
   }
 });
 const handleChangeVideo = ({
@@ -452,6 +460,7 @@ const hiddenBoxControl = () => {
 
 const moveDown = () => {
   if (indexSectionSelected.value === undefined) return;
+  if (indexSectionSelected.value === sections.value.length - 2) return;
   if (sections.value.length < 2) return;
   if (indexSectionSelected.value < sections.value.length - 1) {
     const templateDraft = sections.value[indexSectionSelected.value];
@@ -463,6 +472,7 @@ const moveDown = () => {
 
 const moveUp = () => {
   if (indexSectionSelected.value === undefined) return;
+  if (indexSectionSelected.value === 1) return;
   if (sections.value.length < 2) return;
   if (indexSectionSelected.value !== 0) {
     const templateDraft = sections.value[indexSectionSelected.value];

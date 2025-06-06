@@ -9,6 +9,7 @@ import audioDemo1 from '@/assets/images/listSection/audio_1.png';
 import audioDemo2 from '@/assets/images/listSection/audio_2.png';
 import audioDemo3 from '@/assets/images/listSection/audio_3.png';
 import audioCard from '@/assets/images/listSection/audio_card.png';
+import logoDemo from '@/assets/images/demo/logo.png';
 
 export interface TemplateProps {
   id: string;
@@ -69,10 +70,20 @@ export interface AUDIO_ITEM {
   textSubtitle: TEXT_ITEM;
   textProduction: TEXT_ITEM;
 }
+export interface LOGO_ITEM {
+  urlImage: string | undefined;
+  file: File | null | undefined;
+  backgroundColor: string;
+}
+export interface COPYRIGHT_ITEM {
+  backgroundColor: string;
+}
 export interface SECTION_ITEM {
   idApi?: string;
   id: string;
   textTitle?: TEXT_ITEM;
+  copyright?: COPYRIGHT_ITEM;
+  logo?: LOGO_ITEM;
   textDes?: TEXT_ITEM;
   textProduct?: TEXT_ITEM;
   buttonExternal?: BUTTON_EXTERNAL_ITEM;
@@ -87,6 +98,14 @@ export type OBJ_SECTION_ITEM =
   | undefined;
 
 export const TEMPLATES_SECTION: SECTION_ITEM[] = [
+  {
+    id: 'logo',
+    logo: {
+      file: null,
+      urlImage: logoDemo,
+      backgroundColor: '#000',
+    },
+  },
   {
     id: 'section-one-center',
     textProduct: {
@@ -347,6 +366,12 @@ export const TEMPLATES_SECTION: SECTION_ITEM[] = [
       urlVideo: '',
     },
     imageDemo: sectionDemo5,
+  },
+  {
+    id: 'copyright',
+    copyright: {
+      backgroundColor: '#000',
+    },
   },
 ];
 export const TEMPLATES_AUDIO: SECTION_ITEM[] = [
