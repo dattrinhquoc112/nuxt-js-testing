@@ -88,8 +88,9 @@ export default function useMetric() {
       unit: dataCapacity.totalUnit,
     })}`;
 
-    metricInfo.isLimitedProject = true;
-    metricInfo.isLimitedCapacity = true;
+    metricInfo.isLimitedProject =
+      dataProjectCount.value >= dataProjectCount.total;
+    metricInfo.isLimitedCapacity = dataCapacity.value >= dataCapacity.total;
 
     metrics.value.push(dataProjectCount);
     metrics.value.push(dataCapacity);
