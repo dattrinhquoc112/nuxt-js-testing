@@ -168,6 +168,45 @@ const showOptionForSection = (elementSection: HTMLElement) => {
 
   window.addEventListener('click', hiddenBoxControlWhenClick);
 };
+const showOptionForSectionLogo = (elementSection: HTMLElement) => {
+  if (!boxControlElement.value) return;
+  emit('hidden-all-popup-setting');
+
+  boxControlElement.value.setAttribute('class', 'box-control');
+  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
+
+  const coordinates = elementSection.getBoundingClientRect();
+  const pageY = coordinates.bottom;
+  const pageX = coordinates.left + coordinates.width / 2;
+  emit('set-show-control', true);
+
+  emit('set-position-control', {
+    pageY,
+    pageX,
+  });
+
+  window.addEventListener('click', hiddenBoxControlWhenClick);
+};
+
+const showOptionForImageLogo = (elementSection: HTMLElement) => {
+  if (!boxControlElement.value) return;
+  emit('hidden-all-popup-setting');
+
+  boxControlElement.value.setAttribute('class', 'box-control');
+  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
+
+  const coordinates = elementSection.getBoundingClientRect();
+  const pageY = coordinates.bottom;
+  const pageX = coordinates.left + coordinates.width / 2;
+  emit('set-show-control', true);
+
+  emit('set-position-control', {
+    pageY,
+    pageX,
+  });
+
+  window.addEventListener('click', hiddenBoxControlWhenClick);
+};
 
 const showOptionForAudioImage = (elementSelected: HTMLElement) => {
   if (!boxControlElement.value) return;
@@ -244,11 +283,28 @@ const handleShowOption = (event: any, index: number) => {
   if (event.target?.closest('.section-wrap')) {
     emit('set-index-section-selected', index);
     if (event.target?.classList.contains('section-wrap')) {
-      emit('set-class-element-selected', 'section-wrap');
-      emit('set-key-element-selected', 'backgroundSection');
+      if (event.target?.classList.contains('section-logo')) {
+        emit('set-class-element-selected', 'section-logo');
+        emit('set-key-element-selected', 'logo');
+        nextTick(() => {
+          emit('set-selected-element', event.target);
+          showOptionForSectionLogo(event.target);
+        });
+      } else {
+        emit('set-class-element-selected', 'section-wrap');
+        emit('set-key-element-selected', 'backgroundSection');
+        nextTick(() => {
+          emit('set-selected-element', event.target);
+          showOptionForSection(event.target);
+        });
+      }
+    }
+    if (event.target?.classList.contains('section-logo-image')) {
+      emit('set-class-element-selected', 'section-logo-image');
+      emit('set-key-element-selected', 'logo');
       nextTick(() => {
         emit('set-selected-element', event.target);
-        showOptionForSection(event.target);
+        showOptionForImageLogo(event.target);
       });
     }
     if (event.target?.classList.contains('button-href')) {
@@ -332,7 +388,7 @@ const handleShowOption = (event: any, index: number) => {
 
 const initHover = () => {
   const editor = document.getElementById('editor');
-  let defaultOutline = '';
+  let defaultBorder = '';
 
   const handleHover = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
@@ -342,16 +398,16 @@ const initHover = () => {
 
     if (props.templateSelected.value) return;
 
-    defaultOutline = target.style.outline;
+    defaultBorder = target.style.border;
 
     if (editor && target !== editor && editor.contains(target)) {
-      target.style.outline = '2px dashed rgba(37, 137, 255, 1)';
+      target.style.border = '2px dashed rgba(37, 137, 255, 1)';
     }
   };
 
   const handleOut = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    target.style.outline = defaultOutline;
+    target.style.border = defaultBorder;
   };
 
   editor?.addEventListener('mouseover', handleHover);

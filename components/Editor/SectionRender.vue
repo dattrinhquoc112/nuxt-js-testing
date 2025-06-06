@@ -1,5 +1,20 @@
 <template>
   <section
+    v-if="section.id === 'logo'"
+    class="section-wrap section-logo"
+    @click.stop="(event) => emit('show-option', event)"
+    :style="`background-color:${section.logo.backgroundColor};`"
+  >
+    <div class="section-logo-wrap">
+      <img
+        class="section-logo-image"
+        :src="getImage(section.logo.urlImage)"
+        alt=""
+      />
+    </div>
+  </section>
+
+  <section
     v-if="
       section?.id === 'section-one-center' ||
       section?.id === 'section-one-left' ||
