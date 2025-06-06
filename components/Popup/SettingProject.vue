@@ -109,6 +109,7 @@
                     :max="60"
                     is-count
                     width="100%"
+                    :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_-]+$/"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
                   />
@@ -132,6 +133,7 @@
                     height="210px"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
+                    :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_-]+$/"
                   />
                 </template>
               </vi-form-item>
