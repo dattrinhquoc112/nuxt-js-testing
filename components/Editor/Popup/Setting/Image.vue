@@ -38,7 +38,11 @@
       <input
         ref="inputFile"
         type="file"
-        accept="image/jpeg, image/png, video/mp4, video/mov"
+        :accept="
+          isLogo
+            ? 'image/gif, image/jpeg, image/png'
+            : 'image/jpeg, image/png, video/mp4, video/mov'
+        "
         @change="handleChange"
         hidden
       />
@@ -48,9 +52,15 @@
         </vi-typography>
       </div>
       <div class="neutral-white-alpha-60-text mt-8">
-        <vi-typography type="body-small">{{
-          $t('landing-editor-modal-media_description')
-        }}</vi-typography>
+        <vi-typography
+          v-if="!isLogo"
+          type="body-small"
+          class="text-des-media"
+          >{{ $t('landing-editor-modal-media_description') }}</vi-typography
+        >
+        <vi-typography v-else type="body-small" class="text-des-media">
+          {{ $t('landing-editor-modal-media_logo_description') }}
+        </vi-typography>
       </div>
       <div class="box-button">
         <vi-button @click="inputFile?.click()" type="standard-default">{{
@@ -83,6 +93,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isLogo: {
+    type: Boolean,
+    default: false,
+  },
 });
 const inputFile = ref<HTMLElement>();
 const popupElement = ref<HTMLElement>();
@@ -98,6 +112,27 @@ const handleChange = (event: Event) => {
   const fileSize = file.size;
   const fileType = file.type;
   const objectUrl = URL.createObjectURL(file);
+
+  if (props.isLogo) {
+    if (fileSize > 100 * 1024) {
+      errorMessage.value = t('error_fe-file-validation-file_size_exceeded');
+    } else {
+      const img = new Image();
+      img.onload = () => {
+        if (img.width > 120 || img.height > 40) {
+          errorMessage.value = t(
+            'error_fe-file-validation-file_format_unsupported'
+          );
+        } else {
+          errorMessage.value = '';
+          emit('change-image', { objectUrl, file });
+        }
+      };
+      img.src = objectUrl;
+    }
+    input.value = '';
+    return;
+  }
 
   if (fileType.startsWith('image')) {
     if (fileSize > 500 * 1024) {
@@ -170,6 +205,9 @@ const handleChange = (event: Event) => {
   &.for-box-image {
     transform: translateX(calc(-100% + 32px)) translateY(-50%);
   }
+  &.for-box-logo {
+    transform: translateX(-26px) translateY(0);
+  }
   .header {
     padding: 16px 16px 8px 16px;
     display: flex;
@@ -185,6 +223,9 @@ const handleChange = (event: Event) => {
       display: flex;
       cursor: pointer;
     }
+  }
+  .text-des-media {
+    white-space: pre-line;
   }
   .box-button {
     display: flex;

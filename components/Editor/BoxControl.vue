@@ -100,6 +100,22 @@ const listOptionControl = computed<
       },
     ];
   }
+  if (props.classElementSelected === 'section-logo') {
+    return [
+      {
+        icon: 'ic_color',
+        fn: 'showPopupSettingColor',
+      },
+    ];
+  }
+  if (props.classElementSelected === 'section-logo-image') {
+    return [
+      {
+        icon: 'ic_picture',
+        fn: 'showPopupChangeImage',
+      },
+    ];
+  }
   return [
     {
       icon: 'ic_arrow_up',
@@ -149,6 +165,8 @@ const listOptionControl = computed<
   &.for-text-title,
   &.for-audio-text-subtitle,
   &.for-audio-text-product,
+  &.for-section-logo,
+  &.for-section-logo-image,
   &.for-audio-image,
   &.for-text-head {
     transform: translateX(-50%);
