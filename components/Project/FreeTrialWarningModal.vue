@@ -39,7 +39,6 @@ const props = defineProps({
 .container {
   .description {
     color: $neutral-white-alpha-100;
-    margin: 24px 0;
   }
 }
 </style>
