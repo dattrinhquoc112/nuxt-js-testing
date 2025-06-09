@@ -16,7 +16,10 @@
       v-for="itemControl in listOptionControl"
       :key="itemControl.icon"
       class="item"
-      :class="itemControl?.classStyle ? itemControl?.classStyle : ''"
+      :class="[
+        itemControl?.classStyle ? itemControl?.classStyle : '',
+        { disabled: itemControl.disabled },
+      ]"
       @click="emit('action-event', itemControl?.fn)"
     >
       <vi-icon
@@ -39,18 +42,36 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  indexSectionSelected: {
+    type: Number,
+    default: undefined,
+  },
+  sections: {
+    type: Array,
+    default: () => [],
+  },
   classElementSelected: {
     type: String,
     default: '',
   },
 });
 
+const isDisabledMoveUp = computed(
+  () =>
+    props.indexSectionSelected === undefined || props.indexSectionSelected === 1
+);
+const isDisabledMoveDown = computed(
+  () =>
+    props.indexSectionSelected === undefined ||
+    props.indexSectionSelected === props.sections.length - 2
+);
 const listOptionControl = computed<
   {
     icon: string;
     fn: string;
     classStyle?: string;
     color?: string;
+    disabled?: boolean;
   }[]
 >(() => {
   if (
@@ -128,10 +149,12 @@ const listOptionControl = computed<
     {
       icon: 'ic_arrow_up',
       fn: 'moveUp',
+      disabled: isDisabledMoveUp.value,
     },
     {
       icon: 'ic_arrow_down',
       fn: 'moveDown',
+      disabled: isDisabledMoveDown.value,
     },
     {
       icon: 'ic_color',
@@ -201,6 +224,10 @@ const listOptionControl = computed<
       &:hover {
         background-color: unset;
       }
+    }
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.5;
     }
   }
 }
