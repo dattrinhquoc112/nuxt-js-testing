@@ -1,5 +1,20 @@
 <template>
   <section
+    v-if="section.id === 'logo'"
+    class="section-wrap section-logo"
+    @click.stop="(event) => emit('show-option', event)"
+    :style="`background-color:${section.logo.backgroundColor};`"
+  >
+    <div class="section-logo-wrap">
+      <img
+        class="section-logo-image"
+        :src="getImage(section.logo.urlImage)"
+        alt=""
+      />
+    </div>
+  </section>
+
+  <section
     v-if="
       section?.id === 'section-one-center' ||
       section?.id === 'section-one-left' ||
@@ -185,7 +200,7 @@
               :urlVideo="audio.audio.urlVideo"
             />
             <img
-              v-else
+              v-if="audio.audio.urlImage"
               @click.stop="clickParent"
               :src="getImage(audio.audio.urlImage)"
               alt=""
@@ -211,6 +226,14 @@
         </div>
       </div>
     </div>
+  </section>
+  <section
+    v-if="section.id === 'copyright'"
+    class="section-wrap section-copyright"
+    @click.stop="(event) => emit('show-option', event)"
+    :style="`background-color:${section.copyright.backgroundColor};`"
+  >
+    <div class="content-copyright">copyright © All rights reserved</div>
   </section>
 </template>
 

@@ -212,6 +212,7 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
 
   const handleSaveTemplate = async () => {
     await Promise.all([
+      uploadAllImage('logo'),
       uploadAllImage('backgroundSection'),
       uploadAllImage('boxImage'),
       updateAllImageAudio(),

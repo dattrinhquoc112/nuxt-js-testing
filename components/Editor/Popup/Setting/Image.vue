@@ -28,31 +28,45 @@
     </div>
     <div class="pa-16">
       <div class="box-input">
-        <div class="input-image" @click="inputImage?.click()">
-          <input
-            ref="inputImage"
-            accept=".png, .jpg, image/png, image/jpeg"
-            type="file"
-            hidden
-            @change="onImageChange"
-          />
+        <div class="input-image">
           <img src="/assets/images/input_imgage.png" alt="" />
         </div>
-        <div class="input-image" @click="inputVideo?.click()">
-          <input ref="inputVideo" type="file" hidden @change="onVideoChange" />
+        <div class="input-image">
           <img src="/assets/images/input_video.png" alt="" />
         </div>
       </div>
+      <input
+        ref="inputFile"
+        type="file"
+        :accept="
+          isLogo
+            ? 'image/gif, image/jpeg, image/png'
+            : 'image/jpeg, image/png, video/mp4, video/mov'
+        "
+        @change="handleChange"
+        hidden
+      />
+      <div v-if="errorMessage" class="system-danger-danger-text">
+        <vi-typography type="caption-large-300">
+          {{ errorMessage }}
+        </vi-typography>
+      </div>
       <div class="neutral-white-alpha-60-text mt-8">
-        <vi-typography type="body-small">{{
-          $t('landing-editor-modal-media_description')
-        }}</vi-typography>
+        <vi-typography
+          v-if="!isLogo"
+          type="body-small"
+          class="text-des-media"
+          >{{ $t('landing-editor-modal-media_description') }}</vi-typography
+        >
+        <vi-typography v-else type="body-small" class="text-des-media">
+          {{ $t('landing-editor-modal-media_logo_description') }}
+        </vi-typography>
       </div>
       <div class="box-button">
-        <vi-button type="standard-default">{{
+        <vi-button @click="inputFile?.click()" type="standard-default">{{
           $t('landing-editor-button-media_upload')
         }}</vi-button>
-        <vi-button type="dangerous-default">{{
+        <vi-button @click="$emit('reset-file')" type="dangerous-default">{{
           $t('common-action-button-button_delete')
         }}</vi-button>
       </div>
@@ -63,7 +77,12 @@
 <script lang="ts" setup>
 import useCheckHeightPopup from '~/composables/checkHeightPopupSetting';
 
-const emit = defineEmits(['close', 'change-image', 'change-video']);
+const emit = defineEmits([
+  'close',
+  'change-image',
+  'change-video',
+  'reset-file',
+]);
 
 const props = defineProps({
   positionControlCurrent: {
@@ -74,31 +93,53 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isLogo: {
+    type: Boolean,
+    default: false,
+  },
 });
-const inputImage = ref<HTMLElement>();
-const inputVideo = ref<HTMLElement>();
+const inputFile = ref<HTMLElement>();
 const popupElement = ref<HTMLElement>();
 useCheckHeightPopup(props, popupElement, emit);
+const errorMessage = ref<string>();
+const { t } = useI18n();
 
-const onImageChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const selected = target.files?.[0];
-  if (!selected) return;
-  if (selected?.type === 'image/png' || selected?.type === 'image/jpeg') {
-    const objectUrl = URL.createObjectURL(selected);
-    emit('change-image', { objectUrl, file: selected });
-    target.value = '';
+const handleChange = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  const file = input.files ? input.files[0] : null;
+  if (!file) return;
+
+  const fileSize = file.size;
+  const fileType = file.type;
+  const objectUrl = URL.createObjectURL(file);
+
+  if (props.isLogo) {
+    if (fileSize > 100 * 1024) {
+      errorMessage.value = t('error_fe-file-validation-file_size_exceeded');
+    } else {
+      errorMessage.value = '';
+      emit('change-image', { objectUrl, file });
+    }
+    input.value = '';
+    return;
   }
-};
-const onVideoChange = (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const selected = target.files?.[0];
-  if (!selected) return;
-  // if (selected?.type === 'image/png' || selected?.type === 'image/jpeg') {
-  const objectUrl = URL.createObjectURL(selected);
-  emit('change-video', { objectUrl, file: selected });
-  target.value = '';
-  // }
+
+  if (fileType.startsWith('image')) {
+    if (fileSize > 500 * 1024) {
+      errorMessage.value = t('error_fe-file-validation-file_size_exceeded');
+    } else {
+      errorMessage.value = '';
+      emit('change-image', { objectUrl, file });
+    }
+  } else if (fileType.startsWith('video')) {
+    if (fileSize > 5 * 1024 * 1024) {
+      errorMessage.value = t('error_fe-file-validation-file_size_exceeded');
+    } else {
+      errorMessage.value = '';
+      emit('change-video', { objectUrl, file });
+    }
+  }
+  input.value = '';
 };
 </script>
 
@@ -133,6 +174,9 @@ const onVideoChange = (event: Event) => {
   &.for-box-image {
     transform: translateX(calc(-100% + 32px)) translateY(-50%);
   }
+  &.for-box-logo {
+    transform: translateX(-26px) translateY(0);
+  }
   .header {
     padding: 16px 16px 8px 16px;
     display: flex;
@@ -148,6 +192,9 @@ const onVideoChange = (event: Event) => {
       display: flex;
       cursor: pointer;
     }
+  }
+  .text-des-media {
+    white-space: pre-line;
   }
   .box-button {
     display: flex;

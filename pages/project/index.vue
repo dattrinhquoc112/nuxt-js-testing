@@ -1,12 +1,13 @@
 <template>
   <div class="app-container">
     <project-free-trial-warning-modal
-      :is-show-modal="modalMetric.warningLimitProject"
-      @close="modalMetric.warningLimitProject = false"
-    />
-    <project-reach-maximum-warning-modal
-      :is-show-modal="modalMetric.warningLimitCapacity"
-      @close="modalMetric.warningLimitCapacity = false"
+      :is-show-modal="
+        modalMetric.warningLimitProject || modalMetric.warningLimitCapacity
+      "
+      @close="
+        modalMetric.warningLimitProject = false;
+        modalMetric.warningLimitCapacity = false;
+      "
     />
     <div class="header">
       <vi-typography type="subtitle-large">{{
@@ -220,7 +221,10 @@ definePageMeta({
 });
 const { t } = useI18n();
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
-const sections = ref([TEMPLATES_SECTION[0]]);
+const sections = ref([
+  ...TEMPLATES_SECTION.slice(0, 2),
+  TEMPLATES_SECTION[TEMPLATES_SECTION.length - 1],
+]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
 
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
@@ -228,6 +232,8 @@ const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
 const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
+
+const refetchMetric = inject(PROVIDE.FETCH_METRIC) as () => void;
 
 const loading = reactive({
   search: false,
@@ -281,6 +287,7 @@ const fetchProjectList = debounce(async () => {
     nameKeyword: model.search,
   });
   model.projects = res.data;
+  refetchMetric();
   loading.search = false;
 }, 500);
 

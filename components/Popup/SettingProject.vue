@@ -109,6 +109,7 @@
                     :max="60"
                     is-count
                     width="100%"
+                    :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_\-\^\[\]\$]+$/"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
                   />
@@ -132,6 +133,7 @@
                     height="210px"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
+                    :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_\-\^\[\]\$]+$/"
                   />
                 </template>
               </vi-form-item>
@@ -151,6 +153,10 @@
                     height="210px"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
+                    :max="150"
+                    :count-exclude-pattern="/[\s\,]/g"
+                    @change="onChangeKeyWord"
+                    is-count
                   />
                 </template>
               </vi-form-item>
@@ -281,7 +287,7 @@
           type="standard-primary"
           width="fit-content"
           :disabled="disabledSubmit()"
-          >{{ $t('common-action-button-button_confirm.1') }}</vi-button
+          >{{ $t('common-action-button-button_confirm') }}</vi-button
         >
         <vi-button
           type-button="button"
@@ -327,7 +333,7 @@ const props = defineProps({
     default: undefined,
   },
 });
-const emit = defineEmits(['close', 'submit']);
+const emit = defineEmits(['close', 'submit', 'update:project']);
 
 const loading = reactive({
   update: false,
@@ -451,7 +457,7 @@ const rules = {
   metaKeyword: [
     {
       regex:
-        /^([\p{L}\p{N} .'&+/_-]{1,25})(,([\p{L}\p{N} .'&+/_-]{1,25})){0,9}$/u,
+        /^([\p{L}\p{N} .'\[\]\^&+/_$-]{1,25})(,([\p{L}\p{N} .'\[\]\^&+/_$-]{1,25})){0,9},?$/u,
       message: t('error_fe-data-validation-input_format_invalid'),
       trigger: 'change',
     },
@@ -502,11 +508,13 @@ const rules = {
   ],
 };
 
-const { getProjectUrl, getImage, handleEventEnglishName } = useProjects();
+const { getProjectUrl, getImage, handleEventEnglishName, handleKeyword } =
+  useProjects();
 const { editProject } = useProjectStore();
 const { uploadFile } = useUploadStore();
 
 const onEditProject = async () => {
+  if (disabledSubmit()) return;
   loading.update = true;
   const payload: IUpdateProjectPayload = {
     startTime: new Date(model.dates[0]).toISOString(),
@@ -532,6 +540,9 @@ const onEditProject = async () => {
     model.project = res.data;
     toastMessage(t('landing-common-message-saved'));
     loading.update = false;
+    emit('update:project', {
+      ...model.project,
+    });
     emit('close');
   } else {
     emit('submit', payload);
@@ -545,7 +556,11 @@ const onChangeOGImage = (obj: { url: string; file: File }) => {
 
 const onChangeEventEnglishName = debounce((value: string) => {
   model.eventEnglishName = handleEventEnglishName(value);
-}, 500);
+}, 150);
+
+const onChangeKeyWord = debounce((value: string) => {
+  model.metaKeyword = handleKeyword(value);
+}, 150);
 
 const initProject = async () => {
   if (props.project) {

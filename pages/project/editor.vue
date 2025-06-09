@@ -331,7 +331,7 @@ const handleRedo = () => {
     width: 100%;
     margin-left: auto;
     margin-right: auto;
-    overflow: hidden;
+    // overflow: hidden;
     height: calc(100vh - 64px);
     &--mobile {
       width: 375px;

@@ -1,5 +1,4 @@
-export default (url: string) => {
-  if (url) {
-    URL.revokeObjectURL(url);
-  }
+export default (url: string | undefined) => {
+  if (!url) return;
+  URL.revokeObjectURL(url);
 };

@@ -57,14 +57,14 @@
             @click="modal.close"
             type="primary-default"
             width="fit-content"
-            >{{ $t('common-action-button-button_close') }}</vi-button
+            >{{ modal.btn.close }}</vi-button
           >
           <vi-button
             type-button="button"
             @click="modal.confirm"
             type="dangerous-primary"
             width="fit-content"
-            >{{ $t('landing-project_mgmt-button-unpublish') }}</vi-button
+            >{{ modal.btn.confirm }}</vi-button
           >
         </div>
       </template>
@@ -119,6 +119,10 @@ const modal = reactive({
   isShow: false,
   title: '',
   description: '',
+  btn: {
+    confirm: '',
+    close: t('common-action-button-button_close'),
+  },
   open: () => {
     modal.isShow = true;
   },
@@ -178,6 +182,7 @@ const onAction = (action: string) => {
     case 'unpublish':
       modal.title = t('landing-project_mgmt-modal-title_unpublish_event');
       modal.description = t('landing-project_mgmt-modal-unpublish_description');
+      modal.btn.confirm = t('landing-project_mgmt-button-unpublish');
       modal.open();
       modal.confirm = onUnpublish;
       break;
@@ -186,6 +191,7 @@ const onAction = (action: string) => {
       modal.description = t(
         'landing-project_mgmt-modal-close_event_description'
       );
+      modal.btn.confirm = t('landing-project_mgmt-button-close_event');
       modal.open();
       modal.confirm = onCloseProject;
       break;
