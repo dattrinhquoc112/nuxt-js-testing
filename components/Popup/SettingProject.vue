@@ -109,7 +109,7 @@
                     :max="60"
                     is-count
                     width="100%"
-                    :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_-]+$/"
+                    :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_\-\^\[\]\$]+$/"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
                   />
