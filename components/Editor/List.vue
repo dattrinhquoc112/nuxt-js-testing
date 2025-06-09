@@ -126,177 +126,89 @@ const hiddenBoxControlWhenClick = (event: MouseEvent) => {
   window.removeEventListener('click', hiddenBoxControlWhenClick);
 };
 
-const showOptionForButtonHref = (elementButton: HTMLElement) => {
+const handleSetPosition = (
+  elementButton: HTMLElement,
+  callBackCalcPosition: Function
+) => {
   if (!boxControlElement.value) return;
-
   emit('hidden-all-popup-setting');
-
   boxControlElement.value.setAttribute('class', 'box-control');
   boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
 
   const coordinates = elementButton.getBoundingClientRect();
-  const pageY = coordinates.bottom + 12;
-  const pageX = coordinates.left + coordinates.width / 2;
-  emit('set-show-control', true);
-
+  const { pageX, pageY, isPopupImage } = callBackCalcPosition(coordinates);
   emit('set-position-control', {
     pageY,
     pageX,
   });
 
+  if (isPopupImage) {
+    emit('show-popup-change-image');
+  } else {
+    emit('set-show-control', true);
+  }
+
   window.addEventListener('click', hiddenBoxControlWhenClick);
 };
-const showOptionForSection = (elementSection: HTMLElement) => {
+
+const getPositionForButtonHref = (coordinates: any) => {
+  const pageY = coordinates.bottom + 12;
+  const pageX = coordinates.left + coordinates.width / 2;
+  return { pageY, pageX };
+};
+
+const getPositionForSection = (coordinates: any) => {
   if (!boxControlElement.value) return;
-  emit('hidden-all-popup-setting');
-
-  boxControlElement.value.setAttribute('class', 'box-control');
-  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
-
-  const coordinates = elementSection.getBoundingClientRect();
   const heightBoxControl = boxControlElement.value.clientHeight
     ? boxControlElement.value.clientHeight / 2
     : 0;
   const pageY = coordinates.height / 2 - heightBoxControl + coordinates.top;
   const pageX = coordinates.width - 60 + coordinates.left;
-  emit('set-show-control', true);
-
-  emit('set-position-control', {
-    pageY,
-    pageX,
-  });
-
-  window.addEventListener('click', hiddenBoxControlWhenClick);
+  return { pageX, pageY };
 };
-const showOptionForSectionLogo = (elementSection: HTMLElement) => {
-  if (!boxControlElement.value) return;
-  emit('hidden-all-popup-setting');
 
-  boxControlElement.value.setAttribute('class', 'box-control');
-  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
-
-  const coordinates = elementSection.getBoundingClientRect();
+const getPositionForSectionLogo = (coordinates: any) => {
   const pageY = coordinates.bottom;
   const pageX = coordinates.left + coordinates.width / 2;
-  emit('set-show-control', true);
-
-  emit('set-position-control', {
-    pageY,
-    pageX,
-  });
-
-  window.addEventListener('click', hiddenBoxControlWhenClick);
+  return { pageX, pageY };
 };
 
-const showOptionForSectionCopyright = (elementSection: HTMLElement) => {
-  if (!boxControlElement.value) return;
-  emit('hidden-all-popup-setting');
-
-  boxControlElement.value.setAttribute('class', 'box-control');
-  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
-
-  const coordinates = elementSection.getBoundingClientRect();
+const getPositionForSectionCopyright = (coordinates: any) => {
   const pageY = coordinates.top - 48;
   const pageX = coordinates.left + coordinates.width / 2;
-  emit('set-show-control', true);
-
-  emit('set-position-control', {
-    pageY,
-    pageX,
-  });
-
-  window.addEventListener('click', hiddenBoxControlWhenClick);
+  return { pageX, pageY };
 };
 
-const showOptionForImageLogo = (elementSection: HTMLElement) => {
-  if (!boxControlElement.value) return;
-  emit('hidden-all-popup-setting');
-
-  boxControlElement.value.setAttribute('class', 'box-control');
-  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
-
-  const coordinates = elementSection.getBoundingClientRect();
+const getPositionForImageLogo = (coordinates: any) => {
   const pageY = coordinates.bottom;
   const pageX = coordinates.left + coordinates.width / 2;
-  emit('set-show-control', true);
-
-  emit('set-position-control', {
-    pageY,
-    pageX,
-  });
-
-  window.addEventListener('click', hiddenBoxControlWhenClick);
+  return { pageX, pageY };
 };
 
-const showOptionForAudioImage = (elementSelected: HTMLElement) => {
-  if (!boxControlElement.value) return;
-  emit('hidden-all-popup-setting');
-
-  boxControlElement.value.setAttribute('class', 'box-control');
-  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
-
-  const coordinates = elementSelected.getBoundingClientRect();
+const getPositionForAudioImage = (coordinates: any) => {
   const pageY = coordinates.bottom + 12;
   const pageX = coordinates.left + coordinates.width / 2;
-  emit('set-show-control', true);
-
-  emit('set-position-control', {
-    pageY,
-    pageX,
-  });
-
-  window.addEventListener('click', hiddenBoxControlWhenClick);
+  return { pageX, pageY };
 };
 
-const showOptionForText = (elementButton: HTMLElement) => {
-  if (!boxControlElement.value) return;
-  emit('hidden-all-popup-setting');
-
-  boxControlElement.value.setAttribute('class', 'box-control');
-  boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
-
-  const coordinates = elementButton.getBoundingClientRect();
+const getPositionForText = (coordinates: any) => {
   const pageY = coordinates.bottom + 12;
   const pageX = coordinates.left + coordinates.width / 2;
-  emit('set-show-control', true);
-
-  emit('set-position-control', {
-    pageY,
-    pageX,
-  });
-
-  window.addEventListener('click', hiddenBoxControlWhenClick);
+  return { pageX, pageY };
 };
 
-const showOptionForRightImage = (elementButton: HTMLElement) => {
+const getPositionForRightImage = (coordinates: any) => {
   hiddenBoxControl();
-
-  const coordinates = elementButton.getBoundingClientRect();
   const pageY = coordinates.bottom - coordinates.height / 2;
   const pageX = coordinates.left;
-
-  emit('set-position-control', {
-    pageY,
-    pageX,
-  });
-
-  emit('show-popup-change-image');
-  window.addEventListener('click', hiddenBoxControlWhenClick);
+  return { pageY, pageX, isPopupImage: true };
 };
 
-const showOptionForLeftImage = (elementButton: HTMLElement) => {
+const getPositionForLeftImage = (coordinates: any) => {
   hiddenBoxControl();
-  const coordinates = elementButton.getBoundingClientRect();
   const pageY = coordinates.bottom - coordinates.height / 2;
   const pageX = coordinates.right;
-
-  emit('set-position-control', {
-    pageY,
-    pageX,
-  });
-
-  emit('show-popup-change-image');
-  window.addEventListener('click', hiddenBoxControlWhenClick);
+  return { pageY, pageX, isPopupImage: true };
 };
 
 const handleShowOption = (event: any, index: number) => {
@@ -308,21 +220,21 @@ const handleShowOption = (event: any, index: number) => {
         emit('set-key-element-selected', 'logo');
         nextTick(() => {
           emit('set-selected-element', event.target);
-          showOptionForSectionLogo(event.target);
+          handleSetPosition(event.target, getPositionForSectionLogo);
         });
       } else if (event.target?.classList.contains('section-copyright')) {
         emit('set-class-element-selected', 'section-copyright');
         emit('set-key-element-selected', 'copyright');
         nextTick(() => {
           emit('set-selected-element', event.target);
-          showOptionForSectionCopyright(event.target);
+          handleSetPosition(event.target, getPositionForSectionCopyright);
         });
       } else {
         emit('set-class-element-selected', 'section-wrap');
         emit('set-key-element-selected', 'backgroundSection');
         nextTick(() => {
           emit('set-selected-element', event.target);
-          showOptionForSection(event.target);
+          handleSetPosition(event.target, getPositionForSection);
         });
       }
     }
@@ -331,7 +243,7 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-key-element-selected', 'logo');
       nextTick(() => {
         emit('set-selected-element', event.target);
-        showOptionForImageLogo(event.target);
+        handleSetPosition(event.target, getPositionForImageLogo);
       });
     }
     if (event.target?.classList.contains('button-href')) {
@@ -339,7 +251,7 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-key-element-selected', 'buttonExternal');
       nextTick(() => {
         emit('set-selected-element', event.target);
-        showOptionForButtonHref(event.target);
+        handleSetPosition(event.target, getPositionForButtonHref);
       });
     }
     if (event.target?.classList.contains('text-title')) {
@@ -347,7 +259,7 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-key-element-selected', 'textTitle');
       nextTick(() => {
         emit('set-selected-element', event.target);
-        showOptionForText(event.target);
+        handleSetPosition(event.target, getPositionForText);
       });
     }
     if (event.target?.classList.contains('text-head')) {
@@ -355,7 +267,7 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-key-element-selected', 'textProduct');
       nextTick(() => {
         emit('set-selected-element', event.target);
-        showOptionForText(event.target);
+        handleSetPosition(event.target, getPositionForText);
       });
     }
     if (event.target?.classList.contains('text-des')) {
@@ -363,21 +275,21 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-key-element-selected', 'textDes');
       nextTick(() => {
         emit('set-selected-element', event.target);
-        showOptionForText(event.target);
+        handleSetPosition(event.target, getPositionForText);
       });
     }
     if (event.target?.closest('.right-section-image:not(.reverse)')) {
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         emit('set-selected-element', event.target);
-        showOptionForRightImage(event.target);
+        handleSetPosition(event.target, getPositionForRightImage);
       });
     }
     if (event.target?.closest('.right-section-image.reverse')) {
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         emit('set-selected-element', event.target);
-        showOptionForLeftImage(event.target);
+        handleSetPosition(event.target, getPositionForLeftImage);
       });
     }
     if (event.target?.closest('.card-audio')) {
@@ -388,7 +300,7 @@ const handleShowOption = (event: any, index: number) => {
         emit('set-key-element-selected', 'audio');
         nextTick(() => {
           emit('set-selected-element', event.target);
-          showOptionForAudioImage(event.target);
+          handleSetPosition(event.target, getPositionForAudioImage);
         });
       }
       if (event.target?.classList.contains('audio-text-subtitle')) {
@@ -396,7 +308,7 @@ const handleShowOption = (event: any, index: number) => {
         emit('set-key-element-selected', 'textSubtitle');
         nextTick(() => {
           emit('set-selected-element', event.target);
-          showOptionForText(event.target);
+          handleSetPosition(event.target, getPositionForText);
         });
       }
       if (event.target?.classList.contains('audio-text-product')) {
@@ -404,7 +316,7 @@ const handleShowOption = (event: any, index: number) => {
         emit('set-key-element-selected', 'textProduction');
         nextTick(() => {
           emit('set-selected-element', event.target);
-          showOptionForText(event.target);
+          handleSetPosition(event.target, getPositionForText);
         });
       }
     } else {
@@ -429,7 +341,7 @@ const initHover = () => {
     defaultBorder = target.style.border;
 
     if (editor && target !== editor && editor.contains(target)) {
-      target.style.border = '2px dashed rgba(37, 137, 255, 1)';
+      target.style.border = '2px solid #1EDD00';
     }
   };
 
