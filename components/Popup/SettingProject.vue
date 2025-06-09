@@ -133,7 +133,7 @@
                     height="210px"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
-                    :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_-]+$/"
+                    :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_\-\^\[\]\$]+$/"
                   />
                 </template>
               </vi-form-item>
