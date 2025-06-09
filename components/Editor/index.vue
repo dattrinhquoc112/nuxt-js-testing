@@ -48,6 +48,8 @@
 
     <editor-box-control
       :positionControlCurrent="positionControlCurrent"
+      :indexSectionSelected="indexSectionSelected"
+      :sections="sections"
       :isShowControl="isShowControl"
       :classElementSelected="classElementSelected"
       @action-event="(key) => (defineAction[key as keyof typeof defineAction])()"
