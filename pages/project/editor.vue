@@ -22,6 +22,14 @@
     :project-name="webEditorName"
     @scroll-editor="handleHiddenAllControl"
   >
+    <vi-alert
+      :text-title="$t('landing-common-message-storage_near_limit')"
+      :text-content="
+        $t('landing-common-message-storage_warning', { percent: '75' })
+      "
+    >
+      <vi-icon name="ic_alert" size="24" color="#fff" />
+    </vi-alert>
     <vi-scroll
       class="editor__content"
       :class="{ 'editor__content--mobile': RWDMode === RWD_MODE.MOBILE }"
@@ -45,9 +53,8 @@
   <popup-setting-project
     v-if="isShowActivitySettingModal"
     :show="isShowActivitySettingModal"
-    :project="project"
+    v-model:project="project"
     @close="isShowActivitySettingModal = false"
-    @submit="handleSubmitSettingProject"
   />
   <popup-edit-project
     v-if="isShowEditInfoModal"
@@ -90,7 +97,9 @@ import { TEMPLATES_AUDIO, TEMPLATES_SECTION } from '~/types/templates';
 import { useEditorStore } from '~/stores/editor';
 import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
+import useMetric from '@/composables/metric';
 
+const { metrics, tenantMetric, metricInfo, modalMetric } = useMetric();
 const { getProject, editProject, createProject, publishProject } =
   useProjectStore();
 
@@ -99,7 +108,6 @@ definePageMeta({
   layout: 'editor',
 });
 const RWDMode = ref(RWD_MODE.DESKTOP);
-const router = useRouter();
 const isOpenReminderPU = ref(false);
 const { setLoading } = useEditorStore();
 const { checkIsLatestVersion } = useProjectStore();
@@ -203,39 +211,6 @@ const handleEditEditor = async (name: string) => {
     if (res.data) {
       webEditorName.value = res.data.name;
       toastMessage(t('landing-common-message-saved'));
-    }
-  } else {
-    const res = await createProject(name);
-    editorID.value = res.data.id;
-    router.push({
-      query: {
-        id: res.data.id,
-      },
-    });
-    const resEdit = await editProject(editorID.value, { name });
-    if (resEdit.data) {
-      webEditorName.value = resEdit.data.name;
-      toastMessage(t('landing-common-message-saved'));
-    }
-  }
-};
-
-const handleSubmitSettingProject = async (payload: any) => {
-  isShowActivitySettingModal.value = false;
-  if (!editorID.value) {
-    const res = await createProject(webEditorName.value);
-    if (res) {
-      editorID.value = res.data.id;
-      router.push({
-        query: {
-          id: res.data.id,
-        },
-      });
-      const resEdit = await editProject(editorID.value, payload);
-      if (resEdit) {
-        project.value = resEdit.data;
-        toastMessage(t('landing-common-message-saved'));
-      }
     }
   }
 };

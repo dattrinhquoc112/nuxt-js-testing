@@ -1,7 +1,7 @@
 import { useTenantStore } from '~/stores/tenant';
 import type { ITenantMetric } from '~/types/tenant';
 
-interface Metric {
+export interface Metric {
   label: string;
   value: number;
   valueUnit?: string;
