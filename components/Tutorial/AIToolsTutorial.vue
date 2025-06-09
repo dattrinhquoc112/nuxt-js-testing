@@ -42,14 +42,14 @@
           width="fit-content"
           @click="() => (isShowModal = false)"
         >
-          {{ $t('return') }}
+          {{ $t('common-action-button-button_back') }}
         </vi-button>
         <vi-button
           type="standard-primary"
           width="fit-content"
           @click="handleNavigatePage"
         >
-          {{ $t('go') }}
+          {{ $t('common-action-button-button_go') }}
         </vi-button>
       </div>
     </template>

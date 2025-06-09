@@ -4,6 +4,7 @@
     :is-show="show"
     @close="emit('close')"
     size="small"
+    :close-on-click-modal="false"
   >
     <vi-form :model="model" :rules="rules">
       <vi-form-item prop="name">
