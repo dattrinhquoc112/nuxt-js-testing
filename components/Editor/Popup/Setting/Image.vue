@@ -190,7 +190,6 @@ const handleChange = (event: Event) => {
     padding: 41px 28px 41px 24px;
     .input-image {
       display: flex;
-      cursor: pointer;
     }
   }
   .text-des-media {
