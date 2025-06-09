@@ -424,7 +424,7 @@
   "landing-editor-section-material_project_usage": "Project Usage",
   "landing-editor-section-material_title_material": "Uploaded Materials",
   "landing-common-message-storage_near_limit": "Storage Nearly Full",
-  "landing-common-message-storage_warning": "You have used over 75% of your free plan storage. Please monitor your storage usage.",
+  "landing-common-message-storage_warning": "You have used over {percent}% of your free plan storage. Please monitor your storage usage.",
   "landing-editor-modal-version_diff_title": "Content differs from current version",
   "landing-editor-modal-version_diff_message": "Content differs from current version. Would you like to update or save the existing version?",
   "landing-editor-button-save_current_version": "Save Current Version",

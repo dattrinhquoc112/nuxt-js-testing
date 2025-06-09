@@ -424,7 +424,7 @@
   "landing-editor-section-material_project_usage": "本專案使用容量",
   "landing-editor-section-material_title_material": "已上傳素材",
   "landing-common-message-storage_near_limit": "容量接近上限",
-  "landing-common-message-storage_warning": "您已使用了超過75%的免費方案容量，請多留意空間使用狀況。",
+  "landing-common-message-storage_warning": "您已使用了超過{percent}%的免費方案容量，請多留意空間使用狀況。",
   "landing-editor-modal-version_diff_title": "內容與現行版本有差異",
   "landing-editor-modal-version_diff_message": "內容與現行版本有差異，是否更新或是儲存現有版本？",
   "landing-editor-button-save_current_version": "儲存現有版本",

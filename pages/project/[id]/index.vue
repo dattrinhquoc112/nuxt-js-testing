@@ -201,6 +201,7 @@ const onAction = (action: string) => {
 
 const fetchProject = async () => {
   loading.detail = true;
+  console.log(id);
   const res = await getProject(id);
   model.project = res.data;
   loading.detail = false;

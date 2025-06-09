@@ -94,6 +94,13 @@ html {
   flex: 0 0 75%;
   max-width: 75%;
 }
+.my-auto {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+.h-fit {
+  height: fit-content;
+}
 .col-10 {
   flex: 0 0 83.333%;
   max-width: 83.333%;
@@ -106,12 +113,18 @@ html {
   flex: 0 0 100%;
   max-width: 100%;
 }
-
+.section-snapshot {
+  width: 1376px;
+  position: absolute;
+  left: -9999px;
+  top: 0;
+}
 .section-wrap {
   width: 100%;
   padding-top: calc(600 / 1376 * 100%);
   position: relative;
   .video-background {
+    width: 100%;
     position: absolute;
     top: 0;
     left: 50%;
@@ -119,6 +132,20 @@ html {
     height: 100%;
     z-index: 5;
     object-fit: contain;
+    display: flex;
+    video {
+      width: 100%;
+      object-fit: cover;
+    }
+    .icon-sound {
+      position: absolute;
+      bottom: 16px;
+      right: 16px;
+      padding: 8px;
+      display: flex;
+      cursor: pointer;
+      user-select: none;
+    }
   }
   &.bg-img {
     background-image: var(--bg-image);
@@ -301,6 +328,21 @@ html {
       }
       .right-section-video-background {
         width: 100%;
+        height: 100%;
+        display: flex;
+        video {
+          width: 100%;
+          object-fit: cover;
+        }
+        .icon-sound {
+          position: absolute;
+          bottom: 56px;
+          right: 56px;
+          padding: 8px;
+          display: flex;
+          cursor: pointer;
+          user-select: none;
+        }
       }
     }
     &.reverse {
@@ -367,6 +409,7 @@ html {
               width: 100%;
               height: 100%;
               z-index: 5;
+              transform: translateX(0);
             }
             img {
               width: 100%;

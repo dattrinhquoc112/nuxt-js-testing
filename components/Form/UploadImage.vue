@@ -40,13 +40,7 @@
         </vi-typography>
       </div>
     </div>
-    <input
-      ref="inputFileElement"
-      type="file"
-      accept=".png, .jpg, image/png, image/jpeg"
-      hidden
-      @change="onFileChange"
-    />
+    <input ref="inputFileElement" type="file" hidden @change="onFileChange" />
   </div>
 </template>
 <script setup lang="ts">
