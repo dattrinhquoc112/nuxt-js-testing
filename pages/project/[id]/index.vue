@@ -85,7 +85,7 @@ definePageMeta({
 });
 
 const route = useRoute();
-const id = route.params.id as string;
+const id = route.query.id as string;
 
 const { t } = useI18n();
 

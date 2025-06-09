@@ -419,7 +419,8 @@ const initHover = () => {
 
   const handleHover = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
-    if (target.closest('.icon-play')) {
+    const listItemNotHover = ['.icon-play', '.icon-sound'];
+    if (listItemNotHover.some((item) => Boolean(target.closest(item)))) {
       return;
     }
 

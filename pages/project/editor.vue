@@ -22,6 +22,14 @@
     :project-name="webEditorName"
     @scroll-editor="handleHiddenAllControl"
   >
+    <vi-alert
+      :text-title="$t('landing-common-message-storage_near_limit')"
+      :text-content="
+        $t('landing-common-message-storage_warning', { percent: '75' })
+      "
+    >
+      <vi-icon name="ic_alert" size="24" color="#fff" />
+    </vi-alert>
     <vi-scroll
       class="editor__content"
       :class="{ 'editor__content--mobile': RWDMode === RWD_MODE.MOBILE }"
@@ -33,6 +41,13 @@
         :is-show-list-section="isShowListSection"
         @close-section="isShowListSection = ''"
       />
+      <div class="section-snapshot">
+        <editor-section-render
+          :read-only="true"
+          :section="sectionSnapshot"
+          :rwd-mode="RWD_MODE.DESKTOP"
+        />
+      </div>
     </vi-scroll>
   </LayoutEditor>
   <popup-setting-project
@@ -40,7 +55,6 @@
     :show="isShowActivitySettingModal"
     v-model:project="project"
     @close="isShowActivitySettingModal = false"
-    @submit="handleSubmitSettingProject"
   />
   <popup-edit-project
     v-if="isShowEditInfoModal"
@@ -76,20 +90,24 @@
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
-import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
 import { SIDE_BAR_ACTION, RWD_MODE } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
+import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
+import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
+import useMetric from '@/composables/metric';
 
+const { metrics, tenantMetric, metricInfo, modalMetric } = useMetric();
 const { getProject, editProject, createProject, publishProject } =
   useProjectStore();
+
+const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 definePageMeta({
   layout: 'editor',
 });
 const RWDMode = ref(RWD_MODE.DESKTOP);
-const router = useRouter();
 const isOpenReminderPU = ref(false);
 const { setLoading } = useEditorStore();
 const { checkIsLatestVersion } = useProjectStore();
@@ -131,6 +149,9 @@ watch(
   }
 );
 
+const sectionSnapshot = computed(() => {
+  return editorRef.value?.sections[0];
+});
 const handlePreview = () => {
   const sections = editorRef.value?.sections;
   sessionStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
@@ -193,45 +214,17 @@ const handleEditEditor = async (name: string) => {
       webEditorName.value = res.data.name;
       toastMessage(t('landing-common-message-saved'));
     }
-  } else {
-    const res = await createProject(name);
-    editorID.value = res.data.id;
-    router.push({
-      query: {
-        id: res.data.id,
-      },
-    });
-    const resEdit = await editProject(editorID.value, { name });
-    if (resEdit.data) {
-      webEditorName.value = resEdit.data.name;
-      toastMessage(t('landing-common-message-saved'));
-    }
-  }
-};
-
-const handleSubmitSettingProject = async (payload: any) => {
-  isShowActivitySettingModal.value = false;
-  if (!editorID.value) {
-    const res = await createProject(webEditorName.value);
-    if (res) {
-      editorID.value = res.data.id;
-      router.push({
-        query: {
-          id: res.data.id,
-        },
-      });
-      const resEdit = await editProject(editorID.value, payload);
-      if (resEdit) {
-        project.value = resEdit.data;
-        toastMessage(t('landing-common-message-saved'));
-      }
-    }
   }
 };
 
 const handleSaveTemplate = async () => {
   setLoading('updateContent', true);
   await editorRef.value.handleSaveTemplate();
+  const file = await handleGetThumbnailSnapshot();
+  const fileUri = file?.fileUri;
+  if (fileUri) {
+    await editProject(editorID.value, { thumbnail: fileUri });
+  }
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
   window.VIUIKit.VIMessage({
@@ -300,9 +293,9 @@ const handleLeave = () => {
   isShowModal.confirmSave = false;
 };
 
-const handleSaveDraft = () => {
-  // TODO: implement save draft logic
+const handleSaveDraft = async () => {
   isShowModal.confirmSave = false;
+  await handleSaveTemplate();
   navigateTo(ROUTE.PROJECT_LIST);
 };
 const handleBack = () => {

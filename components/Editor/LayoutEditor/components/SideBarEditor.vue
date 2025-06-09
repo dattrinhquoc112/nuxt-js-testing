@@ -54,6 +54,7 @@
         @click="
           () => {
             activeSidebarButton = SIDEBAR_BUTTONS[2];
+            isOpenMaterialManagement = true;
             handleAction(SIDEBAR_BUTTONS[2], SIDE_BAR_ACTION.CLICKED_CAPACITY);
           }
         "
@@ -65,11 +66,13 @@
       </vi-button>
     </div>
   </div>
+  <material-management v-model="isOpenMaterialManagement" />
 </template>
 <script setup lang="ts">
 import { SIDE_BAR_ACTION } from '~/constants/common';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
+const isOpenMaterialManagement = ref(false);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const activeSidebarButton = ref();
 const emit = defineEmits(['click-sidebar']);

@@ -35,6 +35,7 @@ export interface IProject {
 export interface IUpdateProjectPayload {
   name?: string;
   startTime?: string;
+  thumbnail?: string;
   endTime?: string;
   eventEnglishName?: string;
   eventOfficialUrl?: string;
