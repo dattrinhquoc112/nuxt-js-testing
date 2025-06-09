@@ -93,9 +93,7 @@ const model = ref<Model>({
 const inputFileElement = ref<HTMLInputElement>();
 const { t } = useI18n();
 
-const description = `影像格式 : JPEG, PNG 
-建議尺寸 : 1200 x 628 以上 
-檔案最大限制 : 15 MB`;
+const description = t('landing-project_mgmt-description-image_requirements');
 
 const selectImage = () => {
   inputFileElement.value?.click();
@@ -208,5 +206,6 @@ watch(
 .description {
   color: $neutral-white-alpha-60;
   white-space: pre-wrap;
+  word-break: normal;
 }
 </style>

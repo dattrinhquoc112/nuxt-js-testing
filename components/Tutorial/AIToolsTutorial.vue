@@ -11,9 +11,11 @@
       </common-close-container>
     </template>
     <template #content>
-      <vi-typography type="subtitle-large">{{ $t('audio-tts') }}</vi-typography>
+      <vi-typography type="subtitle-large">{{
+        $t('landing-editor-section-title_audio_tts')
+      }}</vi-typography>
       <vi-typography type="body-small">{{
-        $t('ai-tools-tutorial-description')
+        $t('landing-editor-section-description_audio_tts')
       }}</vi-typography>
       <img
         src="/assets/images/ai-tool-tutorial-banner.png"

@@ -5,7 +5,7 @@
     @close="emit('update:model', false)"
     size="small"
   >
-    <vi-typography type="body-small" class="my-24">
+    <vi-typography type="body-small">
       專案尚未填寫活動設定，設定完成後才能發佈活動。
     </vi-typography>
     <template #footer>
@@ -40,8 +40,5 @@ const emit = defineEmits<{
 }
 .ml-auto {
   margin-left: auto;
-}
-.my-24 {
-  margin: 24px 0px;
 }
 </style>
