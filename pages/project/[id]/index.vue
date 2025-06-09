@@ -85,7 +85,7 @@ definePageMeta({
 });
 
 const route = useRoute();
-const id = route.query.id as string;
+const id = route.params.id as string;
 
 const { t } = useI18n();
 
@@ -201,6 +201,7 @@ const onAction = (action: string) => {
 
 const fetchProject = async () => {
   loading.detail = true;
+  console.log(id);
   const res = await getProject(id);
   model.project = res.data;
   loading.detail = false;
