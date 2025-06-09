@@ -299,9 +299,9 @@ const handleLeave = () => {
   isShowModal.confirmSave = false;
 };
 
-const handleSaveDraft = () => {
-  // TODO: implement save draft logic
+const handleSaveDraft = async () => {
   isShowModal.confirmSave = false;
+  await handleSaveTemplate();
   navigateTo(ROUTE.PROJECT_LIST);
 };
 const handleBack = () => {

@@ -56,29 +56,36 @@ export default function useMetric() {
       label: t('common-form-field-field_storage'),
       value: Number(
         tenantMetricValue?.metrics.find(
-          (elem) => elem.metric === 'TOTAL_CAPACITY_USED'
+          (elem) => elem.metric === METRICS_KEY.TOTAL_CAPACITY_USED
         )?.value || 0
       ),
       valueUnit:
         tenantMetricValue?.metrics.find(
-          (elem) => elem.metric === 'TOTAL_CAPACITY_USED'
+          (elem) => elem.metric === METRICS_KEY.TOTAL_CAPACITY_USED
         )?.unit || 'GB',
       total: Number(
         tenantMetricValue?.metrics.find(
-          (elem) => elem.metric === 'TOTAL_CAPACITY'
+          (elem) => elem.metric === METRICS_KEY.TOTAL_CAPACITY
         )?.value || 0
       ),
       totalUnit:
         tenantMetricValue?.metrics.find(
-          (elem) => elem.metric === 'TOTAL_CAPACITY'
+          (elem) => elem.metric === METRICS_KEY.TOTAL_CAPACITY
         )?.unit || 'GB',
       percent: 0,
       description: '',
     };
 
+    const dataCapacityValue = convertToKB(
+      `${dataCapacity.value}${dataCapacity.valueUnit}`
+    );
+    const dataCapacityTotal = convertToKB(
+      `${dataCapacity.total}${dataCapacity.totalUnit}`
+    );
+
     dataCapacity.percent =
-      dataCapacity.value && dataCapacity.total
-        ? (dataCapacity.value * 100) / dataCapacity.total
+      dataCapacityValue && dataCapacityTotal
+        ? (dataCapacityValue * 100) / dataCapacityTotal
         : 0;
 
     dataCapacity.description = `${t('landing-common-field-storage_used', {

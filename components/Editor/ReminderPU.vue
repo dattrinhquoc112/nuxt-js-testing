@@ -1,12 +1,12 @@
 <template>
   <vi-modal
-    modal-title="未達發布條件"
+    :modal-title="$t('landing-project_mgmt-modal-title_release_condition')"
     :is-show="model"
     @close="emit('update:model', false)"
     size="small"
   >
-    <vi-typography type="body-small" class="my-24">
-      專案尚未填寫活動設定，設定完成後才能發佈活動。
+    <vi-typography type="body-small">
+      {{ $t('landing-project_mgmt-modal-description_release_condition') }}
     </vi-typography>
     <template #footer>
       <div class="btn-confirm">
@@ -40,8 +40,5 @@ const emit = defineEmits<{
 }
 .ml-auto {
   margin-left: auto;
-}
-.my-24 {
-  margin: 24px 0px;
 }
 </style>

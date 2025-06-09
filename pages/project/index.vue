@@ -118,12 +118,7 @@
                   {{ getDates([item?.startTime || '', item?.endTime || '']) }}
                 </div>
                 <div class="long-time">
-                  {{
-                    item.startTime &&
-                    $t('landing-project_mgmt-description-days_until_start', {
-                      days: getDaysCount(item.startTime, new Date()),
-                    })
-                  }}
+                  {{ getLeftDays(item) }}
                 </div>
               </div>
             </div>
@@ -377,6 +372,23 @@ const onClickProject = (item: IProject) => {
   } else {
     navigateTo(`/project/${item.id}`);
   }
+};
+
+const getLeftDays = (item: IProject) => {
+  let str = '';
+
+  if (item.status === 'NOT_STARTED') {
+    str = t('landing-project_mgmt-description-days_until_start', {
+      days: getDaysCount(new Date(), item?.startTime),
+    });
+  } else if (item.status === 'STARTED') {
+    str = t('landing-project_mgmt-description-days_until_end', {
+      days: getDaysCount(new Date(), item?.endTime),
+    });
+  } else {
+    str = '';
+  }
+  return str;
 };
 
 onMounted(() => {

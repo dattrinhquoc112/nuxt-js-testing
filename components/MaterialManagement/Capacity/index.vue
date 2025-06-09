@@ -40,5 +40,10 @@ const materialListMedia = computed(() => {
     margin: 16px 0px;
     color: $neutral-white-alpha-80;
   }
+  &--media {
+    gap: 8px;
+    display: flex;
+    flex-direction: column;
+  }
 }
 </style>

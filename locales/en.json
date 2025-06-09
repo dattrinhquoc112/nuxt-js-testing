@@ -263,7 +263,6 @@
   "error_fe-system-general-system_error_try_again": "System error, please try again later",
   "planning-an-event-webpage-process": "規劃活動網頁流程",
   "start": "開始",
-  "return": "返回",
   "next-step": "下一步",
   "finish": "完成",
   "welcome-to-the-web-application-module": " 歡迎使用網頁應用模組，我們將帶你一起規劃活動網頁。",
@@ -271,9 +270,6 @@
   "create-a-web-application-project": "建立網頁應用專案",
   "edit-web-page-content-and-set-event-information": "編輯網頁內容並設定活動資訊",
   "ai-tools": "AI Tools",
-  "audio-tts": "Audio TTS",
-  "ai-tools-tutorial-description": "運用訓練的聲音模型，客製化設定語句，提供訪問者驚喜感！",
-  "go": "前往",
   "tutorial-for-beginners": "新手教學",
   "tutorial-for-beginners-desc": "歡迎使用網頁編輯器，我們將帶你一起製作活動網頁。",
   "planning-an-event-webpage-process_ai-tools-desc": "這個空間可以製作你的活動網頁，可以輕鬆將 AI Tool 工具放在網頁。",
@@ -310,8 +306,8 @@
   "landing-common-message-event_closed": "Event closed",
   "landing-common-title-project_count_title": "Project Count",
   "landing-common-title-storage_space_title": "Storage Space",
-  "landing-common-field-storage_used": "{size} GB used",
-  "landing-common-field-storage_total": "({size} GB total)",
+  "landing-common-field-storage_used": "{size} {unit} used",
+  "landing-common-field-storage_total": "({size} {unit} total)",
   "landing-navigation-menu-event_info": "Event Information",
   "landing-navigation-menu-event_analytics": "Event Analytics",
   "landing-status-label-status_pending": "Pending",
@@ -437,5 +433,7 @@
   "landing-editor-button-save_progress": "Save progress",
   "landing-editor-message-progress_saved": "Progress saved",
   "landing-common-modal-free_plan_limit_title": "Free trial plan limit reached",
-  "landing-common-modal-free_plan_limit_message": "Free plan limit reached. Please stay tuned for future plans"
+  "landing-common-modal-free_plan_limit_message": "Free plan limit reached. Please stay tuned for future plans",
+  "landing-project_mgmt-modal-title_release_condition": "Release Conditions Not Met",
+  "landing-project_mgmt-modal-description_release_condition": "Please complete the activity settings first to publish this activity."
 }
