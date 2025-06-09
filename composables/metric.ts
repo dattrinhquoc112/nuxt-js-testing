@@ -1,3 +1,4 @@
+import { METRICS_KEY } from '~/constants/common';
 import { useTenantStore } from '~/stores/tenant';
 import type { ITenantMetric } from '~/types/tenant';
 
@@ -101,7 +102,42 @@ export default function useMetric() {
     tenantMetric.value = res.data;
     handleMetrics(tenantMetric.value);
   };
-
+  const checkReachLimit = async (): Promise<Boolean> => {
+    const res = await getMetrics();
+    const { metrics } = res?.data;
+    if (metrics) {
+      const totalCapacity = metrics.find(
+        (item: any) => item.metric === METRICS_KEY.TOTAL_CAPACITY
+      );
+      const totalCapacityUsed = metrics.find(
+        (item: any) => item.metric === METRICS_KEY.TOTAL_CAPACITY_USED
+      );
+      if (!totalCapacityUsed.value) {
+        return false;
+      }
+      if (
+        (totalCapacity.value && totalCapacityUsed.value) ||
+        !totalCapacityUsed.value
+      ) {
+        const threshold = 0.75;
+        const totalCapacityKb = convertToKB(
+          `${totalCapacity.value}${totalCapacity.unit}`
+        );
+        const totalCapacityUsedKb = convertToKB(
+          `${totalCapacityUsed.value}${totalCapacityUsed.unit}`
+        );
+        if (
+          totalCapacityUsedKb &&
+          totalCapacityKb &&
+          totalCapacityUsedKb > totalCapacityKb * threshold
+        ) {
+          return false;
+        }
+      }
+      return true;
+    }
+    return true;
+  };
   const handleModal = () => {
     modalMetric.warningLimitProject = metricInfo.isLimitedProject;
     modalMetric.warningLimitCapacity = metricInfo.isLimitedCapacity;
@@ -114,5 +150,6 @@ export default function useMetric() {
     handleModal,
     handleMetrics,
     getTenantMetric,
+    checkReachLimit,
   };
 }

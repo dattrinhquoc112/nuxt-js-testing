@@ -1,5 +1,5 @@
 <template>
-  <div class="capacity-list" v-if="materialList.length > 0">
+  <div class="capacity-list" v-if="materialList?.length > 0">
     <vi-typography type="subtitle-large" class="container--title">
       {{ $t('landing-editor-section-material_title_material') }}</vi-typography
     >
