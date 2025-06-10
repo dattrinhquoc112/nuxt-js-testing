@@ -30,6 +30,18 @@
         @handle-change-text="(event) => emit('handle-change-text', event)"
       />
     </div>
+    <div
+      v-show="isShowLabelElement"
+      ref="labelElementSelecting"
+      class="label-element-selecting"
+    >
+      <template v-if="typeLabel.isButtonHref">
+        <vi-typography type="caption-large-300">
+          {{ $t('landing-editor-section-section_button') }}
+        </vi-typography>
+        <vi-icon name="ic_link" size="16" color="#fff"></vi-icon>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -60,13 +72,17 @@ const emit = defineEmits([
   'set-class-element-selected',
   'set-key-element-selected',
   'set-index-section-selected',
-  'show-popup-change-image',
   'set-selected-element',
   'handle-change-text',
   'set-hover-position',
   'set-index-audio',
 ]);
 
+const isShowLabelElement = ref<Boolean>(false);
+const labelElementSelecting = ref<HTMLElement>();
+const typeLabel = ref({
+  isButtonHref: false,
+});
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
   null
 );
@@ -136,17 +152,12 @@ const handleSetPosition = (
   boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
 
   const coordinates = elementButton.getBoundingClientRect();
-  const { pageX, pageY, isPopupImage } = callBackCalcPosition(coordinates);
+  const { pageX, pageY } = callBackCalcPosition(coordinates);
   emit('set-position-control', {
     pageY,
     pageX,
   });
-
-  if (isPopupImage) {
-    emit('show-popup-change-image');
-  } else {
-    emit('set-show-control', true);
-  }
+  emit('set-show-control', true);
 
   window.addEventListener('click', hiddenBoxControlWhenClick);
 };
@@ -198,17 +209,15 @@ const getPositionForText = (coordinates: any) => {
 };
 
 const getPositionForRightImage = (coordinates: any) => {
-  hiddenBoxControl();
   const pageY = coordinates.bottom - coordinates.height / 2;
-  const pageX = coordinates.left;
-  return { pageY, pageX, isPopupImage: true };
+  const pageX = coordinates.left - 10;
+  return { pageY, pageX };
 };
 
 const getPositionForLeftImage = (coordinates: any) => {
-  hiddenBoxControl();
   const pageY = coordinates.bottom - coordinates.height / 2;
-  const pageX = coordinates.right;
-  return { pageY, pageX, isPopupImage: true };
+  const pageX = coordinates.right - 40;
+  return { pageY, pageX };
 };
 
 const handleShowOption = (event: any, index: number) => {
@@ -279,6 +288,7 @@ const handleShowOption = (event: any, index: number) => {
       });
     }
     if (event.target?.closest('.right-section-image:not(.reverse)')) {
+      emit('set-class-element-selected', 'box-image');
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         emit('set-selected-element', event.target);
@@ -286,6 +296,7 @@ const handleShowOption = (event: any, index: number) => {
       });
     }
     if (event.target?.closest('.right-section-image.reverse')) {
+      emit('set-class-element-selected', 'box-image');
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         emit('set-selected-element', event.target);
@@ -325,6 +336,25 @@ const handleShowOption = (event: any, index: number) => {
   }
 };
 
+const handleSetLabel = (target: HTMLElement) => {
+  const coordinates = target.getBoundingClientRect();
+  const pageY = coordinates.top;
+  const pageX = coordinates.left;
+  if (target.classList.contains('button-href')) {
+    typeLabel.value.isButtonHref = true;
+    isShowLabelElement.value = true;
+  } else {
+    typeLabel.value.isButtonHref = false;
+  }
+  if (!labelElementSelecting.value) return;
+  labelElementSelecting.value.style.left = `${pageX}px`;
+  labelElementSelecting.value.style.top = `${pageY}px`;
+};
+
+const handleRemoveLabel = () => {
+  isShowLabelElement.value = false;
+};
+
 const initHover = () => {
   const editor = document.getElementById('editor');
   let defaultBorder = '';
@@ -342,12 +372,14 @@ const initHover = () => {
 
     if (editor && target !== editor && editor.contains(target)) {
       target.style.border = '2px solid #1EDD00';
+      handleSetLabel(target);
     }
   };
 
   const handleOut = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     target.style.border = defaultBorder;
+    handleRemoveLabel();
   };
 
   editor?.addEventListener('mouseover', handleHover);
@@ -365,7 +397,7 @@ onMounted(initHover);
 }
 #editor {
   flex: 1;
-  background-color: #1e1e1e;
+  background-color: #fff;
   overflow-y: auto;
   color: white;
   .section {
@@ -435,6 +467,16 @@ onMounted(initHover);
         background: rgba(37, 137, 255, 0.3);
       }
     }
+  }
+  .label-element-selecting {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    position: fixed;
+    width: fit-content;
+    background-color: $brand-green-200-main;
+    padding: 1px 6px;
+    transform: translateY(-100%);
   }
   :deep(.selected) {
     outline: 2px solid rgba(30, 221, 0, 1);

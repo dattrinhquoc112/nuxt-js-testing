@@ -129,7 +129,10 @@ const listOptionControl = computed<
       },
     ];
   }
-  if (props.classElementSelected === 'section-logo-image') {
+  if (
+    props.classElementSelected === 'section-logo-image' ||
+    props.classElementSelected === 'box-image'
+  ) {
     return [
       {
         icon: 'ic_picture',
