@@ -5,7 +5,7 @@
     @close="$emit('close')"
     size="small"
   >
-    <vi-typography type="body-small" class="editor-leave__title">
+    <vi-typography type="body-small">
       {{ $t('landing-editor-modal-save_before_leave_message') }}
     </vi-typography>
     <template #footer>

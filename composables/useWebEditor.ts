@@ -8,30 +8,54 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
   const idWebEditorRef = ref(IDWebEditor);
   const initSections = ref();
   const { uploadFile } = useUploadStore();
-  const listMaterials = ref<any[]>([]);
+  interface MATERIAL_ITEM {
+    indexSection?: number;
+    id?: string | null;
+    type?: string;
+    thumbnail?: string;
+    fileUri?: string;
+    fileSize?: number | null;
+  }
+  const listMaterials = ref<MATERIAL_ITEM[]>([]);
 
   const { updateContentProject, getContentProject, setVersionContent } =
     useProjectStore();
+
+  const checkTotalStorage = () => {};
 
   const checkMaterials = (
     objSelecting: any,
     newFileUri: string,
     file: File | null,
     type = 'UPDATE'
-  ) => {
-    if (!listMaterials.value.length) return;
-    const materialIndex = listMaterials.value.findIndex(
+  ): Boolean => {
+    if (!listMaterials.value.length) return true;
+    const materialOld = listMaterials.value.find(
       (item) =>
         item.fileUri === objSelecting.urlImage ||
         item.fileUri === objSelecting.urlVideo
     );
-    if (materialIndex === -1) return;
-    if (type === 'DELETE') {
-      listMaterials.value.splice(materialIndex, 1);
-      return;
+    if (!materialOld) {
+      // kiem tra dung luong voi truong hop them moi
+      // file.size
+      // checkTotalStorage()
+      // neu qua dung luong return true'
+      return true;
     }
 
-    listMaterials.value[materialIndex].fileUri = newFileUri;
+    if (type === 'DELETE') {
+      listMaterials.value.splice(listMaterials.value.indexOf(materialOld), 1);
+      return false;
+    }
+
+    // kiem tra dung luong voi truong hop update
+    // truyen vao file?.size va  materialOld.fileSize
+    // checkTotalStorage()
+    // file?.size - materialOld.fileSize
+    // neu qua dung luong return true'
+    materialOld.fileUri = newFileUri;
+    materialOld.fileSize = file?.size;
+    return true;
   };
 
   const updateMaterial = (
@@ -228,6 +252,25 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
   const checkChanges = () => {
     return _.isEqual(initSections.value, sections.value);
   };
+
+  const updateIndexMaterial = (indexBefore: number, indexAfter: number) => {
+    listMaterials.value.forEach((item: MATERIAL_ITEM) => {
+      if (item.indexSection === indexBefore) {
+        item.indexSection = indexAfter;
+      } else if (item.indexSection === indexAfter) {
+        item.indexSection = indexBefore;
+      }
+    });
+  };
+
+  const deleteIndexMaterial = (indexDelete: number) => {
+    listMaterials.value.forEach((item: MATERIAL_ITEM) => {
+      if (item.indexSection === indexDelete) {
+        listMaterials.value.splice(listMaterials.value.indexOf(item), 1);
+      }
+    });
+  };
+
   return {
     handleSaveTemplate,
     fetchContentProject,
@@ -235,5 +278,7 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
     setIDWebEditor,
     checkChanges,
     initSections,
+    updateIndexMaterial,
+    deleteIndexMaterial,
   };
 };

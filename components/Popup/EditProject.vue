@@ -23,6 +23,7 @@
             :max="50"
             @keydown="blockSpecialCharacters"
             :allowed-regex="/^[A-Za-z0-9 ]+$/"
+            size="large"
           />
         </template>
       </vi-form-item>

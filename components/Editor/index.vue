@@ -193,8 +193,11 @@ const {
   handleSaveTemplate,
   checkMaterials,
   checkChanges,
+  updateIndexMaterial,
+  deleteIndexMaterial,
   initSections,
 } = useWebEditor(sections, idParam);
+
 const currentIndex = ref<number>(0);
 
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
@@ -304,9 +307,10 @@ const handleChangeVideo = ({
 }) => {
   const obj = objectSelecting.value as BACKGROUND_SECTION;
   if (!obj) return;
+  const isOverStorage = checkMaterials(obj, urlVideo, file);
+  if (isOverStorage) return;
   revokeObjectURL(obj.urlVideo);
   revokeObjectURL(obj.urlImage);
-  checkMaterials(obj, urlVideo, file);
   obj.urlImage = '';
   obj.urlVideo = urlVideo;
   obj.file = file;
@@ -385,9 +389,10 @@ const handleChangeImage = ({
 }) => {
   const obj = objectSelecting.value as BACKGROUND_SECTION;
   if (!obj) return;
+  const isOverStorage = checkMaterials(obj, urlImage, file);
+  if (isOverStorage) return;
   revokeObjectURL(obj.urlImage);
   revokeObjectURL(obj.urlVideo);
-  checkMaterials(obj, urlImage, file);
   obj.urlVideo = '';
   obj.file = file;
   obj.urlImage = urlImage;
@@ -469,6 +474,10 @@ const moveDown = () => {
     sections.value[indexSectionSelected.value] =
       sections.value[indexSectionSelected.value + 1];
     sections.value[indexSectionSelected.value + 1] = templateDraft;
+    updateIndexMaterial(
+      indexSectionSelected.value,
+      indexSectionSelected.value + 1
+    );
   }
 };
 
@@ -481,6 +490,10 @@ const moveUp = () => {
     sections.value[indexSectionSelected.value] =
       sections.value[indexSectionSelected.value - 1];
     sections.value[indexSectionSelected.value - 1] = templateDraft;
+    updateIndexMaterial(
+      indexSectionSelected.value,
+      indexSectionSelected.value - 1
+    );
   }
 };
 
@@ -604,6 +617,7 @@ const closePopupSettingText = () => {
 const handleDeleteSection = () => {
   if (indexSectionSelected.value === undefined) return;
   sections.value.splice(indexSectionSelected.value, 1);
+  deleteIndexMaterial(indexSectionSelected.value);
   iSaveHistory.value = true;
   hiddenBoxControl();
 };

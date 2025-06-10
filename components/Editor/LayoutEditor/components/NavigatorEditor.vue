@@ -50,6 +50,7 @@
               <vi-button
                 type="standard-default"
                 class="no-rounded"
+                width="fit-content"
                 @click="
                   emit('handleEditInfo');
                   isOpenSettingEvent = false;
@@ -62,6 +63,7 @@
               <vi-button
                 type="standard-default"
                 class="no-rounded"
+                width="fit-content"
                 @click="
                   emit('handleActivitySettings');
                   isOpenSettingEvent = false;
@@ -203,14 +205,13 @@ const navigateProjectList = () => {
       top: 40px;
       z-index: 40;
       display: flex;
-      width: 180px;
       background-color: $brand-navy-800;
       border-radius: 4px;
       border: 0.5px solid $neutral-white-alpha-15;
       box-shadow: 0px 4px 8px 0px rgba(3, 12, 17, 0.8);
-      overflow: hidden;
       flex-direction: column;
       text-align: left;
+      white-space: nowrap;
       &--btn {
         margin-right: auto;
       }
