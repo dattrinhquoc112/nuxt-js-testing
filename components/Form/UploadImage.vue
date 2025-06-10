@@ -190,7 +190,7 @@ watch(
     align-items: center;
     justify-content: center;
     img {
-      object-fit: contain;
+      object-fit: fill;
     }
   }
   .info-upload {
