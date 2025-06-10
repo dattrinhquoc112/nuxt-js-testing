@@ -30,6 +30,18 @@
         @handle-change-text="(event) => emit('handle-change-text', event)"
       />
     </div>
+    <div
+      v-show="isShowLabelElement"
+      ref="labelElementSelecting"
+      class="label-element-selecting"
+    >
+      <template v-if="typeLabel.isButtonHref">
+        <vi-typography type="caption-large-300">
+          {{ $t('landing-editor-section-section_button') }}
+        </vi-typography>
+        <vi-icon name="ic_link" size="16" color="#fff"></vi-icon>
+      </template>
+    </div>
   </div>
 </template>
 
@@ -67,6 +79,11 @@ const emit = defineEmits([
   'set-index-audio',
 ]);
 
+const isShowLabelElement = ref<Boolean>(false);
+const labelElementSelecting = ref<HTMLElement>();
+const typeLabel = ref({
+  isButtonHref: false,
+});
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
   null
 );
@@ -325,6 +342,25 @@ const handleShowOption = (event: any, index: number) => {
   }
 };
 
+const handleSetLabel = (target: HTMLElement) => {
+  const coordinates = target.getBoundingClientRect();
+  const pageY = coordinates.top;
+  const pageX = coordinates.left;
+  if (target.classList.contains('button-href')) {
+    typeLabel.value.isButtonHref = true;
+    isShowLabelElement.value = true;
+  } else {
+    typeLabel.value.isButtonHref = false;
+  }
+  if (!labelElementSelecting.value) return;
+  labelElementSelecting.value.style.left = `${pageX}px`;
+  labelElementSelecting.value.style.top = `${pageY}px`;
+};
+
+const handleRemoveLabel = () => {
+  isShowLabelElement.value = false;
+};
+
 const initHover = () => {
   const editor = document.getElementById('editor');
   let defaultBorder = '';
@@ -342,12 +378,14 @@ const initHover = () => {
 
     if (editor && target !== editor && editor.contains(target)) {
       target.style.border = '2px solid #1EDD00';
+      handleSetLabel(target);
     }
   };
 
   const handleOut = (e: MouseEvent) => {
     const target = e.target as HTMLElement;
     target.style.border = defaultBorder;
+    handleRemoveLabel();
   };
 
   editor?.addEventListener('mouseover', handleHover);
@@ -435,6 +473,16 @@ onMounted(initHover);
         background: rgba(37, 137, 255, 0.3);
       }
     }
+  }
+  .label-element-selecting {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    position: fixed;
+    width: fit-content;
+    background-color: $brand-green-200-main;
+    padding: 1px 6px;
+    transform: translateY(-100%);
   }
   :deep(.selected) {
     outline: 2px solid rgba(30, 221, 0, 1);
