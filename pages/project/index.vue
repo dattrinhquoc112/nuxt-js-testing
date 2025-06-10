@@ -22,25 +22,23 @@
     </div>
     <div class="content custom-content">
       <div class="row">
-        <div class="col col-3">
-          <vi-input
-            v-model="model.search"
-            width="100%"
-            class="mt-12"
-            type="text"
-            start-icon="ic_search"
-            :placeholder="$t('landing-project_mgmt-placeholder-search')"
-            :max="30"
-          >
-            <template v-if="model.search" #end-icon>
-              <vi-icon
-                name="ic_close"
-                class="btn-clear"
-                @click="model.search = ''"
-              />
-            </template>
-          </vi-input>
-        </div>
+        <vi-input
+          v-model="model.search"
+          width="354.667px"
+          class="mt-12"
+          type="text"
+          start-icon="ic_search"
+          :placeholder="$t('landing-project_mgmt-placeholder-search')"
+          :max="30"
+        >
+          <template v-if="model.search" #end-icon>
+            <vi-icon
+              name="ic_close"
+              class="btn-clear"
+              @click="model.search = ''"
+            />
+          </template>
+        </vi-input>
       </div>
       <div class="type-project">
         <vi-button
@@ -54,7 +52,9 @@
           "
           @click="model.status = item.value"
         >
-          {{ item.label }}
+          <vi-typography type="subtitle-small">
+            {{ item.label }}
+          </vi-typography>
         </vi-button>
       </div>
       <div class="list-page">
@@ -105,25 +105,29 @@
             </div>
           </div>
           <div class="item-info">
-            <div class="status-active">{{ getStatus(item.status) }}</div>
+            <vi-typography type="caption-large-500" class="status-active">{{
+              getStatus(item.status)
+            }}</vi-typography>
             <div class="wrapper-title">
               <div>
-                <div class="title-page">{{ item.name }}</div>
-                <div class="url-page">
+                <vi-typography type="subtitle-large" class="title-page">{{
+                  item.name
+                }}</vi-typography>
+                <vi-typography type="caption-large-300" class="url-page">
                   {{ item?.eventOfficialUrl }}
-                </div>
+                </vi-typography>
               </div>
               <div>
-                <div class="period-time">
+                <vi-typography type="subtitle-large" class="period-time">
                   {{ getPeriodTime(item) }}
-                </div>
-                <div class="long-time">
+                </vi-typography>
+                <vi-typography type="caption-large-300" class="long-time">
                   {{ getLeftDays(item) }}
-                </div>
+                </vi-typography>
               </div>
             </div>
             <div class="wrapper-time-edit">
-              <div class="time-edit">
+              <vi-typography type="caption-large-300" class="time-edit">
                 {{
                   (item.updatedAt || item.createdAt) &&
                   $t('landing-project_mgmt-description-last_edited', {
@@ -134,7 +138,7 @@
                     ),
                   })
                 }}
-              </div>
+              </vi-typography>
               <div
                 class="action-container"
                 v-click-outside="() => onShowAction(item.id, false)"
@@ -580,5 +584,8 @@ watch(
   z-index: 1;
   color: white;
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+}
+.input-search {
+  width: 354.667px;
 }
 </style>

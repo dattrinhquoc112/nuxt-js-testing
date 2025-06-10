@@ -203,6 +203,8 @@
               <form-upload-image
                 :imageModel="modelOGImage"
                 @change="onChangeOGImage"
+                :label="$t('landing-project_mgmt-title-upload_image_title')"
+                required
               />
               <vi-form-item prop="ogTitle">
                 <template #default="{ errorMsg }">
@@ -259,7 +261,7 @@
                 :class="{
                   'color-white-60': !model.ogTitle,
                 }"
-                type="subtitle-large"
+                type="headline-xs"
                 >{{
                   model.ogTitle || $t('landing-project_mgmt-title-og_title')
                 }}</vi-typography
@@ -556,7 +558,7 @@ const onChangeOGImage = (obj: { url: string; file: File }) => {
 
 const onChangeEventEnglishName = debounce((value: string) => {
   model.eventEnglishName = handleEventEnglishName(value);
-}, 150);
+}, 300);
 
 const onChangeKeyWord = debounce((value: string) => {
   model.metaKeyword = handleKeyword(value);
@@ -661,9 +663,9 @@ watch(
   border: 1px solid $neutral-white-alpha-10;
   height: fit-content;
   .og-image {
-    max-width: 100%;
+    width: 100%;
     align-self: center;
-    object-fit: contain;
+    object-fit: fill;
   }
   .none-image {
     height: 167px;

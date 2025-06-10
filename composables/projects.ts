@@ -15,11 +15,7 @@ export default function useProjects() {
   };
 
   const handleEventEnglishName = (input: string): string => {
-    return input
-      .toLowerCase()
-      .replace(/[^a-z0-9\-._~]/g, '-')
-      .replace(/-+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    return input.toLowerCase().replace(/[^a-z0-9\-._~]/g, '-');
   };
 
   const handleKeyword = (newValue: string, maxKeywords = 10): string => {
