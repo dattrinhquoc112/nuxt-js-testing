@@ -85,6 +85,7 @@
     @handle-save-current="handleSaveTemplate"
     @handle-update-new="handleUpdateToNewVersion"
   />
+  <popup-reach-limit-noti v-model="isOpenReachLimitNoti" />
 </template>
 
 <script setup lang="ts">
@@ -99,9 +100,13 @@ import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMetric from '@/composables/metric';
 
-const { metrics, tenantMetric, metricInfo, modalMetric } = useMetric();
-const { getProject, editProject, createProject, publishProject } =
-  useProjectStore();
+const isOpenReachLimitNoti = ref(false);
+const { checkReachLimit } = useMetric();
+
+const materialList = ref([]);
+provide('materialList', materialList);
+
+const { getProject, editProject, publishProject } = useProjectStore();
 
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 definePageMeta({
@@ -180,29 +185,32 @@ watch(
 );
 
 const handleCheckCOnditionPublish = async () => {
-  const isFinishSetupEvent =
-    project.value?.metaTitle &&
-    project.value?.ogTitle &&
-    project.value?.eventEnglishName &&
-    project.value.startTime &&
-    project.value.endTime;
-  const isFinishedSetupAudio = true;
-
-  if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
-    try {
-      await publishProject(editorID.value);
-      toastMessage(t('landing-project_mgmt-menu-published'));
-      navigateTo(ROUTE.PROJECT_LIST);
-    } catch (error: any) {
-      const errCode = error?.data?.data?.detail;
-      if (errCode && errCode === 'LD_PROJECT_URL_DUPLICATED') {
-        isOpenReminderPU.value = true;
-      }
-    }
+  const isLitmit = await checkReachLimit();
+  if (isLitmit) {
+    isOpenReachLimitNoti.value = true;
   } else {
-    isOpenReminderPU.value = true;
+    const isFinishSetupEvent =
+      project.value?.metaTitle &&
+      project.value?.ogTitle &&
+      project.value?.eventEnglishName &&
+      project.value.startTime &&
+      project.value.endTime;
+    const isFinishedSetupAudio = true;
+    if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
+      try {
+        await publishProject(editorID.value);
+        toastMessage(t('landing-project_mgmt-menu-published'));
+        navigateTo(ROUTE.PROJECT_LIST);
+      } catch (error: any) {
+        const errCode = error?.data?.data?.detail;
+        if (errCode && errCode === 'LD_PROJECT_URL_DUPLICATED') {
+          isOpenReminderPU.value = true;
+        }
+      }
+    } else {
+      isOpenReminderPU.value = true;
+    }
   }
-  return !!isFinishSetupEvent && !!isFinishedSetupAudio;
 };
 
 const handleEditEditor = async (name: string) => {

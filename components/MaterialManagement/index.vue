@@ -30,6 +30,9 @@ const route = useRoute();
 const { getTenantMetric, tenantMetric } = useMetric();
 const { getMaterials } = useMaterial();
 const materialList = ref();
+const props = defineProps({
+  modelValue: Boolean,
+});
 
 watch(
   () => route.query.id,
@@ -48,12 +51,11 @@ watch(
     immediate: true,
   }
 );
+
 onMounted(async () => {
   getTenantMetric();
 });
-defineProps({
-  modelValue: Boolean,
-});
+
 defineEmits<{
   'update:modelValue': [e: Boolean];
 }>();

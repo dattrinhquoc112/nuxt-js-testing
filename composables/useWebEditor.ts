@@ -16,6 +16,7 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
   const checkMaterials = (
     objSelecting: any,
     newFileUri: string,
+    file: File | null,
     type = 'UPDATE'
   ) => {
     if (!listMaterials.value.length) return;

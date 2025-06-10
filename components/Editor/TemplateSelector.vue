@@ -42,7 +42,7 @@
     </div>
     <div class="templates">
       <div
-        v-for="(template, index) in listTemplate"
+        v-for="(template, index) in listTemplate.slice(0, 4)"
         :key="index"
         class="template"
         :class="{
@@ -51,6 +51,33 @@
         @click="() => emit('click-template', template)"
       >
         <img :src="template.imageDemo" alt="" />
+      </div>
+      <div class="neutral-white-alpha-60-text mb-16">
+        <vi-typography
+          type="subtitle-large"
+          v-if="type === SIDE_BAR_ACTION.CLICKED_SESSION"
+          >Gallery / Showcase</vi-typography
+        >
+      </div>
+
+      <div
+        v-for="(template, index) in listTemplate.slice(4, 7)"
+        :key="index"
+        class="template"
+        :class="{
+          selected: templateSelected?.id === template.id,
+        }"
+        @click="() => emit('click-template', template)"
+      >
+        <img :src="template.imageDemo" alt="" />
+      </div>
+
+      <div class="neutral-white-alpha-60-text mb-16">
+        <vi-typography
+          type="subtitle-large"
+          v-if="type === SIDE_BAR_ACTION.CLICKED_SESSION"
+          >Features / Benefits</vi-typography
+        >
       </div>
     </div>
   </vi-scroll>

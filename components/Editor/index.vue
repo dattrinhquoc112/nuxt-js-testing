@@ -284,7 +284,7 @@ watch(buttonColor, () => {
     const bg = obj as BACKGROUND_SECTION;
     bg.class = 'bg-color';
     bg.color = colorChange;
-    checkMaterials(bg, '', 'DELETE');
+    checkMaterials(bg, '', null, 'DELETE');
     bg.urlVideo = '';
     bg.urlImage = '';
     bg.file = null;
@@ -306,7 +306,7 @@ const handleChangeVideo = ({
   if (!obj) return;
   revokeObjectURL(obj.urlVideo);
   revokeObjectURL(obj.urlImage);
-  checkMaterials(obj, urlVideo);
+  checkMaterials(obj, urlVideo, file);
   obj.urlImage = '';
   obj.urlVideo = urlVideo;
   obj.file = file;
@@ -324,7 +324,7 @@ const handleResetFile = () => {
   );
   if (keyElementSelected.value === 'backgroundSection') {
     obj = objectSelecting.value as BACKGROUND_SECTION;
-    checkMaterials(obj, '', 'DELETE');
+    checkMaterials(obj, '', null, 'DELETE');
     if (obj.urlImage === templateCurrent?.backgroundSection?.urlImage) {
       obj.urlImage = '';
     } else {
@@ -337,7 +337,7 @@ const handleResetFile = () => {
   }
   if (keyElementSelected.value === 'boxImage') {
     obj = objectSelecting.value as BOX_IMAGE;
-    checkMaterials(obj, '', 'DELETE');
+    checkMaterials(obj, '', null, 'DELETE');
     if (obj.urlImage === templateCurrent?.boxImage?.urlImage) {
       obj.urlImage = '';
     } else {
@@ -348,7 +348,7 @@ const handleResetFile = () => {
   }
   if (keyElementSelected.value === 'audio') {
     obj = objectSelecting.value as AUDIO_SETTING;
-    checkMaterials(obj, '', 'DELETE');
+    checkMaterials(obj, '', null, 'DELETE');
     if (obj.urlImage === templateCurrent?.listAudio?.[0]?.audio.urlImage) {
       obj.urlImage = '';
     } else {
@@ -387,7 +387,7 @@ const handleChangeImage = ({
   if (!obj) return;
   revokeObjectURL(obj.urlImage);
   revokeObjectURL(obj.urlVideo);
-  checkMaterials(obj, urlImage);
+  checkMaterials(obj, urlImage, file);
   obj.urlVideo = '';
   obj.file = file;
   obj.urlImage = urlImage;
