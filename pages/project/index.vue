@@ -115,7 +115,7 @@
               </div>
               <div>
                 <div class="period-time">
-                  {{ getDates([item?.startTime || '', item?.endTime || '']) }}
+                  {{ getPeriodTime(item) }}
                 </div>
                 <div class="long-time">
                   {{ getLeftDays(item) }}
@@ -389,6 +389,11 @@ const getLeftDays = (item: IProject) => {
     str = '';
   }
   return str;
+};
+
+const getPeriodTime = (item: IProject) => {
+  if (item.status === 'PENDING_PUBLISH') return '';
+  return getDates([item?.startTime || '', item?.endTime || '']);
 };
 
 onMounted(() => {
