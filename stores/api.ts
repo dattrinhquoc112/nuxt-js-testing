@@ -24,11 +24,11 @@ export const useApiStore = defineStore('api', () => {
         }
         break;
       default:
-        window.VIUIKit.VIMessage({
-          title: message,
-          width: '348px',
-          type: 'error',
-        });
+        // window.VIUIKit.VIMessage({
+        //   title: message,
+        //   width: '348px',
+        //   type: 'error',
+        // });
         break;
     }
     return Promise.reject(error);

@@ -7,17 +7,15 @@
     />
     <div class="tooltip-container__desc">
       <vi-typography type="subtitle-large">
-        {{ $t('section') }}
+        {{ $t('landing-editor-menu-title_section') }}
       </vi-typography>
       <vi-typography type="body-small" class="text-wrap-auto">
-        提供多樣活動網頁模板，添加 Section 到你的網頁，讓你的網頁更有特色
+        {{ $t('landing-tutorial-subtitle-subtitle_general_section') }}
       </vi-typography>
     </div>
   </div>
 </template>
-<script setup lang="ts">
-const { locale } = useI18n();
-</script>
+<script setup lang="ts"></script>
 
 <style lang="scss" scoped>
 .tooltip-container {
