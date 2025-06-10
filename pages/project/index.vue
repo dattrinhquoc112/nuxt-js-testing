@@ -91,11 +91,11 @@
         >
           <div class="item-thumbnail">
             <div
-              class="blur-container"
+              :class="{ 'blur-container': item.thumbnail }"
               :style="{ backgroundImage: `url(${getImage(item.thumbnail)})` }"
             >
               <div
-                class="img-wrapper"
+                :class="{ 'img-wrapper': !!item.thumbnail }"
                 :style="{ backgroundImage: `url(${getImage(item.thumbnail)})` }"
               ></div>
               <custom-image
@@ -575,7 +575,6 @@ watch(
   position: relative;
   z-index: 1;
   color: white;
-  border-radius: 4px;
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 </style>
