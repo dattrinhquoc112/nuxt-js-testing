@@ -72,7 +72,6 @@ const emit = defineEmits([
   'set-class-element-selected',
   'set-key-element-selected',
   'set-index-section-selected',
-  'show-popup-change-image',
   'set-selected-element',
   'handle-change-text',
   'set-hover-position',
@@ -153,17 +152,12 @@ const handleSetPosition = (
   boxControlElement.value.classList.add(`for-${props.classElementSelected}`);
 
   const coordinates = elementButton.getBoundingClientRect();
-  const { pageX, pageY, isPopupImage } = callBackCalcPosition(coordinates);
+  const { pageX, pageY } = callBackCalcPosition(coordinates);
   emit('set-position-control', {
     pageY,
     pageX,
   });
-
-  if (isPopupImage) {
-    emit('show-popup-change-image');
-  } else {
-    emit('set-show-control', true);
-  }
+  emit('set-show-control', true);
 
   window.addEventListener('click', hiddenBoxControlWhenClick);
 };
@@ -215,17 +209,15 @@ const getPositionForText = (coordinates: any) => {
 };
 
 const getPositionForRightImage = (coordinates: any) => {
-  hiddenBoxControl();
   const pageY = coordinates.bottom - coordinates.height / 2;
-  const pageX = coordinates.left;
-  return { pageY, pageX, isPopupImage: true };
+  const pageX = coordinates.left - 10;
+  return { pageY, pageX };
 };
 
 const getPositionForLeftImage = (coordinates: any) => {
-  hiddenBoxControl();
   const pageY = coordinates.bottom - coordinates.height / 2;
-  const pageX = coordinates.right;
-  return { pageY, pageX, isPopupImage: true };
+  const pageX = coordinates.right - 40;
+  return { pageY, pageX };
 };
 
 const handleShowOption = (event: any, index: number) => {
@@ -296,6 +288,7 @@ const handleShowOption = (event: any, index: number) => {
       });
     }
     if (event.target?.closest('.right-section-image:not(.reverse)')) {
+      emit('set-class-element-selected', 'box-image');
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         emit('set-selected-element', event.target);
@@ -303,6 +296,7 @@ const handleShowOption = (event: any, index: number) => {
       });
     }
     if (event.target?.closest('.right-section-image.reverse')) {
+      emit('set-class-element-selected', 'box-image');
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         emit('set-selected-element', event.target);
@@ -403,7 +397,7 @@ onMounted(initHover);
 }
 #editor {
   flex: 1;
-  background-color: #1e1e1e;
+  background-color: #fff;
   overflow-y: auto;
   color: white;
   .section {
