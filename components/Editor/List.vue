@@ -20,7 +20,6 @@
       <div
         v-if="templateSelected?.id && hoverPosition?.index === index"
         class="hover-zone"
-        @click="emit('add-section', index)"
         :class="hoverPosition.zone"
       ></div>
       <editor-section-render
@@ -91,6 +90,11 @@ const boxControlElement = computed(() =>
 );
 
 const onHoverSection = (e: MouseEvent, index: number) => {
+  if (index === 0 || index === props.sections.length - 1) {
+    hoverPosition.value = null;
+    emit('set-hover-position', null);
+    return;
+  }
   if (!props.templateSelected) return;
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
   const halfway = rect.top + rect.height / 2;
@@ -360,6 +364,7 @@ const initHover = () => {
   let defaultBorder = '';
 
   const handleHover = (e: MouseEvent) => {
+    if (props.templateSelected?.id) return;
     const target = e.target as HTMLElement;
     const listItemNotHover = ['.icon-play', '.icon-sound'];
     if (listItemNotHover.some((item) => Boolean(target.closest(item)))) {
@@ -419,8 +424,10 @@ onMounted(initHover);
       color: white;
       background-color: rgba(255, 44, 240, 1);
       border-radius: 999px;
-      z-index: 20;
+      z-index: 21;
       white-space: nowrap;
+      cursor: pointer;
+      user-select: none;
 
       &.top {
         top: -10px;
