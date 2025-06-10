@@ -225,7 +225,7 @@ const handleEditEditor = async (name: string) => {
   }
 };
 
-const handleSaveTemplate = async () => {
+const handleSaveTemplate = async (messageSuccess: string = '') => {
   setLoading('updateContent', true);
   await editorRef.value.handleSaveTemplate();
   const file = await handleGetThumbnailSnapshot();
@@ -236,7 +236,7 @@ const handleSaveTemplate = async () => {
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
   window.VIUIKit.VIMessage({
-    title: t('landing-common-message-saved'),
+    title: messageSuccess || t('landing-common-message-saved'),
     width: '348px',
   });
 };
@@ -303,7 +303,7 @@ const handleLeave = () => {
 
 const handleSaveDraft = async () => {
   isShowModal.confirmSave = false;
-  await handleSaveTemplate();
+  await handleSaveTemplate(t('landing-editor-message-progress_saved'));
   navigateTo(ROUTE.PROJECT_LIST);
 };
 const handleBack = () => {
