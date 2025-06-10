@@ -26,7 +26,7 @@
         @click="emit('close')"
       ></vi-icon>
     </div>
-    <div class="pa-16">
+    <div class="pa-16 pb-0">
       <vi-input
         v-model.trim="linkRef"
         width="100%"
@@ -100,8 +100,8 @@ useCheckHeightPopup(props, popupElement, emit);
 .popup-setting-link {
   position: fixed;
   z-index: 20;
-  width: 320px;
-  padding-bottom: 16px;
+  width: 322px;
+  padding-bottom: 10px;
   border-radius: 8px;
   border: 1px solid $neutral-white-alpha-10;
   background: $brand-navy-800;
@@ -119,6 +119,9 @@ useCheckHeightPopup(props, popupElement, emit);
     display: flex;
     align-items: center;
     width: 100%;
+  }
+  .pb-0 {
+    padding-bottom: 0px;
   }
 }
 </style>

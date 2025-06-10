@@ -138,10 +138,10 @@ export default function useMetric() {
           totalCapacityKb &&
           totalCapacityUsedKb > totalCapacityKb * threshold
         ) {
-          return false;
+          return true;
         }
       }
-      return true;
+      return false;
     }
     return true;
   };

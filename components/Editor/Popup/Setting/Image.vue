@@ -63,12 +63,18 @@
         </vi-typography>
       </div>
       <div class="box-button">
-        <vi-button @click="inputFile?.click()" type="standard-default">{{
-          $t('landing-editor-button-media_upload')
-        }}</vi-button>
-        <vi-button @click="$emit('reset-file')" type="dangerous-default">{{
-          $t('common-action-button-button_delete')
-        }}</vi-button>
+        <vi-button
+          @click="inputFile?.click()"
+          type="standard-default"
+          size="small"
+          >{{ $t('landing-editor-button-media_upload') }}</vi-button
+        >
+        <vi-button
+          @click="$emit('reset-file')"
+          type="dangerous-default"
+          size="small"
+          >{{ $t('common-action-button-button_delete') }}</vi-button
+        >
       </div>
     </div>
   </div>
@@ -171,7 +177,7 @@ const handleChange = (event: Event) => {
 .popup-setting-image {
   position: fixed;
   z-index: 20;
-  width: 320px;
+  width: 322px;
   padding-bottom: 16px;
   border-radius: 8px;
   border: 1px solid $neutral-white-alpha-10;

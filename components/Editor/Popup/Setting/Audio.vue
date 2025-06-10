@@ -243,7 +243,7 @@ onMounted(() => {
 .popup-setting-audio {
   position: fixed;
   z-index: 20;
-  width: 320px;
+  width: 322px;
   height: calc(100vh - 100px);
   padding-bottom: 16px;
   border-radius: 8px;

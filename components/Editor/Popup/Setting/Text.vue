@@ -95,7 +95,7 @@ useCheckHeightPopup(props, popupElement, emit);
 .popup-setting-text {
   position: fixed;
   z-index: 20;
-  width: 320px;
+  width: 322px;
   padding-bottom: 16px;
   border-radius: 8px;
   border: 1px solid $neutral-white-alpha-10;

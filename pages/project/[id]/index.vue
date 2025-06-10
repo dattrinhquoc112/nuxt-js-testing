@@ -8,10 +8,13 @@
           width="65px"
           type="standard-default"
           @click="onAction('copy')"
+          :disabled="loading.copy"
           >{{ $t('landing-project_mgmt-button-clone_project') }}</vi-button
         >
         <vi-button
-          v-if="model.project?.status === 'PUBLISHED'"
+          v-if="
+            ['PUBLISHED', 'NOT_STARTED'].includes(model.project?.status || '')
+          "
           width="65px"
           type="dangerous-default"
           @click="onAction('unpublish')"
@@ -94,6 +97,7 @@ const { getProject, copyProject, unpublishProject, closeProject } =
 
 const loading = reactive({
   detail: false,
+  copy: false,
 });
 
 const tabs = reactive({
@@ -140,13 +144,16 @@ const breadcrumbItems = computed(() => [
 ]);
 
 const onCopy = async () => {
-  if (!model.project) return;
+  if (!model.project || loading.copy) return;
+  loading.copy = true;
   try {
-    await copyProject(model.project.id, `${model.project.name} Copy`);
+    await copyProject(model.project.id, `${model.project.name}_copy`);
     toastMessage(t('landing-common-message-copied'));
-  } catch (error) {
-    toastMessage(t('landing-common-message-copied-error'));
+    navigateTo(`/project`);
+  } catch (error: any) {
+    toastMessage(t('landing-common-message-copied-error'), 'error');
   }
+  loading.copy = false;
 };
 
 const onUnpublish = async () => {
@@ -182,6 +189,7 @@ const onAction = (action: string) => {
       modal.title = t('landing-project_mgmt-modal-title_unpublish_event');
       modal.description = t('landing-project_mgmt-modal-unpublish_description');
       modal.btn.confirm = t('landing-project_mgmt-button-unpublish');
+      modal.btn.close = t('common-action-button-button_cancel');
       modal.open();
       modal.confirm = onUnpublish;
       break;
@@ -191,6 +199,7 @@ const onAction = (action: string) => {
         'landing-project_mgmt-modal-close_event_description'
       );
       modal.btn.confirm = t('landing-project_mgmt-button-close_event');
+      modal.btn.close = t('common-action-button-button_cancel');
       modal.open();
       modal.confirm = onCloseProject;
       break;
@@ -201,7 +210,6 @@ const onAction = (action: string) => {
 
 const fetchProject = async () => {
   loading.detail = true;
-  console.log(id);
   const res = await getProject(id);
   model.project = res.data;
   loading.detail = false;

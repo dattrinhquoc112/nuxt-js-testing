@@ -336,9 +336,7 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
 };
 
 const onAction = async (project?: IProject, action = '') => {
-  if (project) {
-    onShowAction(project.id, false);
-  }
+  onShowAction(project?.id || '', false);
   switch (action) {
     case 'create':
       await getTenantMetric();
@@ -474,6 +472,9 @@ watch(
           line-height: 24px;
           letter-spacing: 0.25px;
           color: #fff;
+        }
+        .period-time {
+          color: $neutral-white-alpha-60;
         }
         .url-page,
         .long-time {
