@@ -91,11 +91,11 @@
         >
           <div class="item-thumbnail">
             <div
-              class="blur-container"
+              :class="{ 'blur-container': item.thumbnail }"
               :style="{ backgroundImage: `url(${getImage(item.thumbnail)})` }"
             >
               <div
-                class="img-wrapper"
+                :class="{ 'img-wrapper': !!item.thumbnail }"
                 :style="{ backgroundImage: `url(${getImage(item.thumbnail)})` }"
               ></div>
               <custom-image
@@ -115,7 +115,7 @@
               </div>
               <div>
                 <div class="period-time">
-                  {{ getDates([item?.startTime || '', item?.endTime || '']) }}
+                  {{ getPeriodTime(item) }}
                 </div>
                 <div class="long-time">
                   {{ getLeftDays(item) }}
@@ -189,6 +189,7 @@
       :rwd-mode="RWD_MODE.DESKTOP"
     />
   </div>
+  <popup-reach-limit-noti v-model="isOpenReachLimitNoti" />
 </template>
 
 <script lang="ts" setup>
@@ -221,12 +222,18 @@ const sections = ref([
   TEMPLATES_SECTION[TEMPLATES_SECTION.length - 1],
 ]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
-
+const isOpenReachLimitNoti = ref(false);
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
-const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
+const {
+  metricInfo,
+  modalMetric,
+  getTenantMetric,
+  handleModal,
+  checkReachLimit,
+} = useMetric();
 
 const refetchMetric = inject(PROVIDE.FETCH_METRIC) as () => void;
 
@@ -291,9 +298,14 @@ const onShowAction = (projectID: string, show = true) => {
 };
 
 const onCopyProject = async (project: IProject) => {
-  await copyProject(project.id, `${project.name}_copy`);
-  fetchProjectList();
-  toastMessage(t('landing-common-message-copied'));
+  const isLimit = await checkReachLimit();
+  if (isLimit) {
+    isOpenReachLimitNoti.value = true;
+  } else {
+    await copyProject(project.id, `${project.name}_copy`);
+    fetchProjectList();
+    toastMessage(t('landing-common-message-copied'));
+  }
 };
 const onCreateProject = async () => {
   isLoadingCreate.value = true;
@@ -324,9 +336,7 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
 };
 
 const onAction = async (project?: IProject, action = '') => {
-  if (project) {
-    onShowAction(project.id, false);
-  }
+  onShowAction(project?.id || '', false);
   switch (action) {
     case 'create':
       await getTenantMetric();
@@ -380,6 +390,11 @@ const getLeftDays = (item: IProject) => {
     str = '';
   }
   return str;
+};
+
+const getPeriodTime = (item: IProject) => {
+  if (item.status === 'PENDING_PUBLISH') return '';
+  return getDates([item?.startTime || '', item?.endTime || '']);
 };
 
 onMounted(() => {
@@ -457,6 +472,9 @@ watch(
           line-height: 24px;
           letter-spacing: 0.25px;
           color: #fff;
+        }
+        .period-time {
+          color: $neutral-white-alpha-60;
         }
         .url-page,
         .long-time {
@@ -561,7 +579,6 @@ watch(
   position: relative;
   z-index: 1;
   color: white;
-  border-radius: 4px;
   text-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
 }
 </style>

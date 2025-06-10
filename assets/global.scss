@@ -13,6 +13,9 @@ html {
 .text-wrap-auto {
   text-wrap: auto !important;
 }
+.d-flex {
+  display: flex;
+}
 .cursor-pointer {
   cursor: pointer;
 }
@@ -381,6 +384,7 @@ html {
     }
   }
   &.section-audio {
+    padding-top: calc(816 / 1376 * 100%);
     .wrap-content {
       position: absolute;
       width: fit-content;

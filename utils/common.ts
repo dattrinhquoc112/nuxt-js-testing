@@ -11,6 +11,10 @@ export const convertFileSize = (bytes: number): string => {
   return `${(bytes / MB).toFixed(1)}MB`;
 };
 
+export const convertToFileSize = () => {
+  return '';
+};
+
 export function convertToKB(valueStr: string) {
   if (typeof valueStr !== 'string') {
     return null;

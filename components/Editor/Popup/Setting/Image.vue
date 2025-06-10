@@ -38,11 +38,7 @@
       <input
         ref="inputFile"
         type="file"
-        :accept="
-          isLogo
-            ? 'image/gif, image/jpeg, image/png'
-            : 'image/jpeg, image/png, video/mp4, video/mov'
-        "
+        :accept="getAcceptFile"
         @change="handleChange"
         hidden
       />
@@ -52,23 +48,33 @@
         </vi-typography>
       </div>
       <div class="neutral-white-alpha-60-text mt-8">
+        <vi-typography v-if="isAudio" type="body-small" class="text-des-media"
+          >影像格式：JPEG, PNG</vi-typography
+        >
         <vi-typography
-          v-if="!isLogo"
+          v-else-if="isLogo"
           type="body-small"
           class="text-des-media"
-          >{{ $t('landing-editor-modal-media_description') }}</vi-typography
+        >
+          {{ $t('landing-editor-modal-media_logo_description') }}</vi-typography
         >
         <vi-typography v-else type="body-small" class="text-des-media">
-          {{ $t('landing-editor-modal-media_logo_description') }}
+          {{ $t('landing-editor-modal-media_description') }}
         </vi-typography>
       </div>
       <div class="box-button">
-        <vi-button @click="inputFile?.click()" type="standard-default">{{
-          $t('landing-editor-button-media_upload')
-        }}</vi-button>
-        <vi-button @click="$emit('reset-file')" type="dangerous-default">{{
-          $t('common-action-button-button_delete')
-        }}</vi-button>
+        <vi-button
+          @click="inputFile?.click()"
+          type="standard-default"
+          size="small"
+          >{{ $t('landing-editor-button-media_upload') }}</vi-button
+        >
+        <vi-button
+          @click="$emit('reset-file')"
+          type="dangerous-default"
+          size="small"
+          >{{ $t('common-action-button-button_delete') }}</vi-button
+        >
       </div>
     </div>
   </div>
@@ -97,12 +103,25 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isAudio: {
+    type: Boolean,
+    default: false,
+  },
 });
 const inputFile = ref<HTMLElement>();
 const popupElement = ref<HTMLElement>();
 useCheckHeightPopup(props, popupElement, emit);
 const errorMessage = ref<string>();
 const { t } = useI18n();
+const getAcceptFile = computed(() => {
+  if (props.isAudio) {
+    return 'image/jpeg, image/png';
+  }
+  if (props.isLogo) {
+    return 'image/gif, image/jpeg, image/png';
+  }
+  return 'image/jpeg, image/png, video/mp4, video/mov';
+});
 
 const handleChange = (event: Event) => {
   const input = event.target as HTMLInputElement;
@@ -112,6 +131,17 @@ const handleChange = (event: Event) => {
   const fileSize = file.size;
   const fileType = file.type;
   const objectUrl = URL.createObjectURL(file);
+
+  if (props.isAudio) {
+    if (fileSize > 500 * 1024) {
+      errorMessage.value = t('error_fe-file-validation-file_size_exceeded');
+    } else {
+      errorMessage.value = '';
+      emit('change-image', { objectUrl, file });
+    }
+    input.value = '';
+    return;
+  }
 
   if (props.isLogo) {
     if (fileSize > 100 * 1024) {
@@ -147,7 +177,7 @@ const handleChange = (event: Event) => {
 .popup-setting-image {
   position: fixed;
   z-index: 20;
-  width: 320px;
+  width: 322px;
   padding-bottom: 16px;
   border-radius: 8px;
   border: 1px solid $neutral-white-alpha-10;
