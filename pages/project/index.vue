@@ -51,6 +51,8 @@
               : 'standard-default'
           "
           @click="model.status = item.value"
+          class="btn-status"
+          size="small"
         >
           <vi-typography type="subtitle-small">
             {{ item.label }}
@@ -69,9 +71,19 @@
           class="not-found"
           v-show="!loading.search && model.projects.length === 0"
         >
-          <img src="/assets/icons/empty-folder.svg" />
+          <img
+            :src="
+              model.search
+                ? '/assets/icons/searchNotFound.svg'
+                : '/assets/icons/empty-folder.svg'
+            "
+          />
           <vi-typography type="subtitle-large">{{
-            $t('landing-project_mgmt-description-no_content')
+            $t(
+              model.search
+                ? 'landing-project_mgmt-description-no_search_results'
+                : 'landing-project_mgmt-description-no_content'
+            )
           }}</vi-typography>
           <vi-button
             :is-loading="isLoadingCreate"
@@ -422,6 +434,7 @@ watch(
   button {
     border-radius: 1000px;
     text-transform: capitalize;
+    padding: 8px 16px;
   }
 }
 .custom-content {
