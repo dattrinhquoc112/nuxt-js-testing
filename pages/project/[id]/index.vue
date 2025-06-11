@@ -48,6 +48,8 @@
       :modal-title="modal.title"
       :is-show="modal.isShow"
       @close="modal.close"
+      size="small"
+      :close-on-click-modal="false"
     >
       <vi-typography class="description" type="body-small">{{
         modal.description
