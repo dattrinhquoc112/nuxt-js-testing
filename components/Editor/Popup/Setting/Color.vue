@@ -408,6 +408,7 @@ const onInputPercent = (event: Event) => {
       border: 0.5px solid $neutral-white-alpha-10;
       border-radius: 4px;
       padding: 6px 8px;
+      height: 32px;
     }
 
     .hex-input {
