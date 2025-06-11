@@ -119,6 +119,7 @@ export default defineNuxtConfig({
           'https://uat-track.beanfun.com',
           import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
           'https://actions.google.com',
+          'https://content.voiceclone.dev.vyin.ai',
         ],
         'img-src': [
           "'self'",
@@ -134,6 +135,7 @@ export default defineNuxtConfig({
           'https://actions.google.com',
           'http://localhost:3001',
           'https://vyin-landing-page.sotatek.works/',
+          'https://content.voiceclone.dev.vyin.ai',
         ],
         'object-src': ["'none'"],
         'frame-src': ["'self'"],

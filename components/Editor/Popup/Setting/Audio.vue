@@ -70,12 +70,10 @@
         }}</vi-typography>
         <div class="custom-audio">
           <vi-audio
-            :audio-file="audioFile"
+            :audio-file="audioSelecting.setting.listPhrase?.[0]?.audioUrl"
             width="100%"
             :show-timer="false"
             :is-show-audio-size="false"
-            :is-show-status="isLoadingGetDemo"
-            :is-show-control-buttons="!isLoadingGetDemo"
             :show-file-info="false"
             :is-show-progress="false"
           />
@@ -100,18 +98,27 @@
             type="textarea"
             size="large"
             :label="
-              $t('landing-editor-modal-tts_sentence_number', { num: index })
+              $t('landing-editor-modal-tts_sentence_number', { num: index + 1 })
             "
             :is-count="true"
             :max="50"
-            end-label-icon="ic_close"
             :placeholder="$t('landing-editor-modal-tts_placeholder_enter_text')"
             @change="() => handleCreateDemo(index)"
-          />
+          >
+            <template #end-label-icon>
+              <vi-icon
+                class="cursor-pointer"
+                name="ic_close"
+                color="#fff"
+                size="16"
+                @click.stop="() => handleDeletePhrase(index)"
+              ></vi-icon>
+            </template>
+          </vi-input>
           <div class="audio-box">
             <div class="custom-audio">
               <vi-audio
-                :audio-file="audioFile"
+                :audio-file="item?.audioUrl"
                 width="100%"
                 :show-timer="false"
                 :is-show-audio-size="false"
@@ -125,6 +132,7 @@
       </div>
 
       <vi-button
+        v-show="audioSelecting.setting.listPhrase?.length < 5"
         @click="addPhrase"
         class="mt-24"
         type="standard-default"
@@ -176,8 +184,6 @@ const mapPitch = {
 const arraySpeed = [0.5, 1, 1.5];
 const arrayPitch = [0.5, 1, 1.5];
 
-const audioFile = 'https://actions.google.com/sounds/v1/alarms/alarm_clock.ogg';
-
 const itemPhrase = {
   text: '',
   audio: '',
@@ -192,6 +198,9 @@ const popupElement = ref<HTMLElement>();
 const addPhrase = () => {
   audioSelecting.value.setting.listPhrase.push(_.cloneDeep(itemPhrase));
 };
+const handleDeletePhrase = (index: number) => {
+  audioSelecting.value.setting.listPhrase.splice(index, 1);
+};
 const handleCreateDemo = _.debounce(async (index: number) => {
   if (!audioSelecting.value.setting.voiceModelId.value) return;
   try {
@@ -199,13 +208,13 @@ const handleCreateDemo = _.debounce(async (index: number) => {
     const res = await createDemo(
       audioSelecting.value.setting.voiceModelId.value as string,
       {
-        pitch:
-          mapPitch[audioSelecting.value.setting.speed as keyof typeof mapPitch],
-        speed:
-          mapSpeed[audioSelecting.value.setting.pitch as keyof typeof mapSpeed],
+        pitch: audioSelecting.value.setting.pitch,
+        speed: audioSelecting.value.setting.speed,
         text: audioSelecting.value.setting.listPhrase[index].text,
       }
     );
+    audioSelecting.value.setting.listPhrase[index].id = res.data?.demoId;
+    audioSelecting.value.setting.listPhrase[index].audioUrl = res.data?.demoUri;
   } catch (error) {
   } finally {
     isLoadingGetDemo.value = false;
@@ -220,15 +229,15 @@ const fetchListVoiceModel = async () => {
   }));
 };
 
-watch(
-  () => audioSelecting.value?.setting?.voiceModelId.value,
-  async () => {
-    if (!audioSelecting.value?.setting?.voiceModelId.value) return;
-    const res = await getListDemos(
-      audioSelecting.value.setting.voiceModelId.value
-    );
-  }
-);
+// watch(
+//   () => audioSelecting.value?.setting?.voiceModelId.value,
+//   async () => {
+//     if (!audioSelecting.value?.setting?.voiceModelId.value) return;
+//     const res = await getListDemos(
+//       audioSelecting.value.setting.voiceModelId.value
+//     );
+//   }
+// );
 
 useCheckHeightPopup(props, popupElement, emit);
 
@@ -388,4 +397,3 @@ onMounted(() => {
   }
 }
 </style>
-~/stores/editor

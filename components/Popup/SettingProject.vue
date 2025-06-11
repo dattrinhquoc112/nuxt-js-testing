@@ -36,9 +36,10 @@
                       @keydown="(event: KeyboardEvent) => event.preventDefault()"
                       required
                       width="100%"
-                      :error="Boolean(errorMsg)"
+                      :error="Boolean(errorMsg) || Boolean()"
                       :hint="errorMsg"
                       @focus="model.isShowDate = true"
+                      readonly
                     />
                   </template>
                 </vi-form-item>
@@ -65,8 +66,11 @@
                   @change="onChangeEventEnglishName"
                   @blur="onBlurEventEnglishName"
                   width="100%"
-                  :error="Boolean(errorMsg)"
-                  :hint="errorMsg"
+                  :error="
+                    Boolean(errorMsg) ||
+                    Boolean(serverErrorMsg.eventEnglishName)
+                  "
+                  :hint="errorMsg || serverErrorMsg.eventEnglishName"
                   :max="50"
                   is-count
                 />
@@ -338,7 +342,7 @@ const loading = reactive({
 });
 
 const model = reactive<Model>({
-  dates: [new Date().toISOString(), new Date().toISOString()],
+  dates: [],
   date: '',
   isShowDate: false,
   eventEnglishName: '',
@@ -358,6 +362,10 @@ const modelOGImage = reactive<{
   imageURL: '',
   fileInput: null,
   isShowImage: true,
+});
+
+const serverErrorMsg = reactive({
+  eventEnglishName: '',
 });
 
 const disabledSubmit = () => {
@@ -401,6 +409,19 @@ const rules = {
         field_name: t('landing-project_mgmt-title-event_period_setting'),
       }),
       trigger: 'blur',
+    },
+    {
+      callback: () => {
+        if (model.dates.length === 2) {
+          return (
+            new Date(model.dates[0]).getTime() <=
+            new Date(model.dates[1]).getTime()
+          );
+        }
+        return true;
+      },
+      message: t('landing-error-action-project_invalid_end_time'),
+      trigger: 'change',
     },
   ],
   eventEnglishName: [
@@ -534,14 +555,27 @@ const onEditProject = async () => {
     };
   }
   if (props.project?.id) {
-    const res = await editProject(props.project?.id, payload);
-    model.project = res.data;
-    toastMessage(t('landing-common-message-saved'));
-    loading.update = false;
-    emit('update:project', {
-      ...model.project,
-    });
-    emit('close');
+    try {
+      const res = await editProject(props.project?.id, payload);
+      model.project = res.data;
+      toastMessage(t('landing-common-message-saved'));
+      loading.update = false;
+      emit('update:project', {
+        ...model.project,
+      });
+      emit('close');
+    } catch (error: any) {
+      if (
+        error?.data?.data?.detail ===
+        ERROR_CODE.LD_EVENT_ENGLISH_NAME_DUPLICATED
+      ) {
+        serverErrorMsg.eventEnglishName = t(
+          'landing-error-action-project_duplicate_name'
+        );
+      } else {
+        toastMessage(error?.data?.data?.detail, 'error');
+      }
+    }
   } else {
     emit('submit', payload);
   }
@@ -554,6 +588,7 @@ const onChangeOGImage = (obj: { url: string; file: File }) => {
 
 const onChangeEventEnglishName = debounce((value: string) => {
   model.eventEnglishName = handleEventEnglishName(value);
+  serverErrorMsg.eventEnglishName = '';
 }, 300);
 
 const onBlurEventEnglishName = () => {

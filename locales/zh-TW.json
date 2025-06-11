@@ -436,5 +436,7 @@
   "landing-common-modal-free_plan_limit_title": "免費體驗方案已達上限",
   "landing-common-modal-free_plan_limit_message": "免費方案已達上限，敬請期待未來推出的方案",
   "landing-project_mgmt-modal-title_release_condition": "未達發布條件",
-  "landing-project_mgmt-modal-description_release_condition": "專案尚未填寫活動設定，設定完成後才能發佈活動。"
+  "landing-project_mgmt-modal-description_release_condition": "專案尚未填寫活動設定，設定完成後才能發佈活動。",
+  "landing-error-action-project_invalid_end_time": "活動結束時間不得早於或等於開始時間",
+  "landing-error-action-project_duplicate_name": "活動英文名稱重複，請更換活動英文名稱"
 }
