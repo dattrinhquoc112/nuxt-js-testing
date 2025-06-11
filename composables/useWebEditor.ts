@@ -73,7 +73,6 @@ export const useWebEditor = (
       options?.handleExceedLimit();
       return true;
     }
-    console.log(file, 'huhuhu');
     materialOld.fileUri = newFileUri;
     materialOld.fileSize = file?.size;
     if (file) {
