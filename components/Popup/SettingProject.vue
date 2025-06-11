@@ -9,9 +9,6 @@
     <vi-form :model="model" :rules="rules" @submit="() => {}">
       <div class="modal-content">
         <div class="section-column">
-          <!-- <vi-typography class="color-white-60" type="subtitle-large">{{
-            $t('landing-project_mgmt-section-event_time')
-          }}</vi-typography> -->
           <div class="grid-two">
             <div class="section-column">
               <vi-date-picker
@@ -51,9 +48,6 @@
           </div>
         </div>
         <div class="section-column">
-          <!-- <vi-typography class="color-white-60" type="subtitle-large">{{
-            $t('landing-project_mgmt-section-url_section')
-          }}</vi-typography> -->
           <div class="grid-two">
             <vi-form-item prop="eventEnglishName">
               <template #default="{ errorMsg }">
