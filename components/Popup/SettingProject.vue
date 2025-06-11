@@ -9,9 +9,6 @@
     <vi-form :model="model" :rules="rules" @submit="() => {}">
       <div class="modal-content">
         <div class="section-column">
-          <!-- <vi-typography class="color-white-60" type="subtitle-large">{{
-            $t('landing-project_mgmt-section-event_time')
-          }}</vi-typography> -->
           <div class="grid-two">
             <div class="section-column">
               <vi-date-picker
@@ -51,9 +48,6 @@
           </div>
         </div>
         <div class="section-column">
-          <!-- <vi-typography class="color-white-60" type="subtitle-large">{{
-            $t('landing-project_mgmt-section-url_section')
-          }}</vi-typography> -->
           <div class="grid-two">
             <vi-form-item prop="eventEnglishName">
               <template #default="{ errorMsg }">
@@ -69,6 +63,7 @@
                   "
                   required
                   @change="onChangeEventEnglishName"
+                  @blur="onBlurEventEnglishName"
                   width="100%"
                   :error="Boolean(errorMsg)"
                   :hint="errorMsg"
@@ -140,6 +135,7 @@
               <vi-form-item prop="metaKeyword">
                 <template #default="{ errorMsg }">
                   <vi-input
+                    class="word-break-normal"
                     v-model="model.metaKeyword"
                     size="large"
                     type="textarea"
@@ -560,6 +556,10 @@ const onChangeEventEnglishName = debounce((value: string) => {
   model.eventEnglishName = handleEventEnglishName(value);
 }, 300);
 
+const onBlurEventEnglishName = () => {
+  model.eventEnglishName = model.eventEnglishName.trim();
+};
+
 const onChangeKeyWord = debounce((value: string) => {
   model.metaKeyword = handleKeyword(value);
 }, 150);
@@ -628,6 +628,9 @@ watch(
   padding-bottom: 8px;
   white-space: pre-wrap;
   word-break: break-all;
+}
+.word-break-normal {
+  word-break: normal;
 }
 .grid-two {
   display: grid;

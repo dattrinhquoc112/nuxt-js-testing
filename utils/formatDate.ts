@@ -37,7 +37,6 @@ export default function formatDate(
     a: ampm.toLowerCase(),
   };
 
-  // Sort tokens by length (desc) to avoid partial replacements (e.g., MM inside MMMM)
   const tokens = Object.keys(map).sort((a, b) => b.length - a.length);
   const pattern = new RegExp(tokens.join('|'), 'g');
 
