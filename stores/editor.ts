@@ -39,12 +39,10 @@ export const useEditorStore = defineStore('editor', () => {
       method: MethodEnum.POST,
       endpoint: `/api/v1/projects/${projectId}/demos`,
       proxy: true,
-      audio: true,
       data: {
         text: data.text,
         speed: data.speed,
         pitch: data.pitch,
-        demoPersistence: 'TEMPORARY',
       },
     });
   }

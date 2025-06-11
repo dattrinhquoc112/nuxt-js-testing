@@ -422,9 +422,9 @@ html {
             }
             .icon-play {
               position: absolute;
+              background-color: white;
               width: 40px;
               height: 40px;
-              background-color: white;
               border-radius: 50%;
               bottom: 80px;
               left: 50%;
@@ -432,6 +432,44 @@ html {
               display: flex;
               align-items: center;
               justify-content: center;
+              .player-container {
+                display: flex;
+                flex-direction: column;
+                align-items: unset;
+                width: 100%;
+                gap: 8px;
+                .progress-container {
+                  display: none;
+                  margin: 0;
+                }
+                .control-buttons {
+                  width: fit-content;
+                  margin-left: auto;
+                  margin-right: auto;
+                  button {
+                    margin-right: 0;
+                    img {
+                      width: 24px;
+                      height: 24px;
+                    }
+                  }
+                }
+                .status-container {
+                  width: 32px;
+                  height: 32px;
+                  justify-content: center;
+                  margin-left: auto;
+                  border-radius: 100px;
+                  background: $neutral-white-alpha-90;
+                  .spin-loading {
+                    background-color: transparent;
+                    .img-loading {
+                      width: 16px !important;
+                      height: 16px !important;
+                    }
+                  }
+                }
+              }
             }
           }
           .audio-text-subtitle {
