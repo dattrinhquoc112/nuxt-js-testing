@@ -1,4 +1,8 @@
-export default (fromDate?: string | Date, toDate?: string | Date): number => {
+export default (
+  fromDate?: string | Date,
+  toDate?: string | Date,
+  includeLastDay = true
+): number => {
   if (!fromDate || !toDate) return 0;
   const from = new Date(fromDate);
   const to = new Date(toDate);
@@ -9,5 +13,5 @@ export default (fromDate?: string | Date, toDate?: string | Date): number => {
   const diffInMs: number = to.getTime() - from.getTime();
   const diffInDays: number = diffInMs / (1000 * 60 * 60 * 24);
 
-  return diffInDays;
+  return diffInDays + (includeLastDay ? 1 : 0);
 };
