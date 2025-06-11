@@ -69,15 +69,17 @@
         />
         <div
           class="not-found"
-          v-show="!loading.search && model.projects.length === 0"
+          v-show="
+            !loading.search && model.projects.length === 0 && model.firstLoaded
+          "
         >
-          <img v-if="model.search" src="/assets/icons/searchNotFound.svg" />
-          <img v-else src="/assets/icons/empty-folder.svg" />
+          <img v-if="model.empty" src="/assets/icons/empty-folder.svg" />
+          <img v-else src="/assets/icons/searchNotFound.svg" />
           <vi-typography type="subtitle-large">{{
             $t(
-              model.search
-                ? 'landing-project_mgmt-description-no_search_results'
-                : 'landing-project_mgmt-description-no_content'
+              model.empty
+                ? 'landing-project_mgmt-description-no_content'
+                : 'landing-project_mgmt-description-no_search_results'
             )
           }}</vi-typography>
           <vi-button
@@ -221,6 +223,8 @@ interface Model {
   listStatus: { value: string; label: string }[];
   project?: IProject;
   projects: IProject[];
+  empty: boolean;
+  firstLoaded: boolean;
 }
 
 definePageMeta({
@@ -258,6 +262,8 @@ const model = reactive<Model>({
   size: 150,
   search: '',
   status: 'ALL',
+  empty: false,
+  firstLoaded: false,
   projects: [],
   listStatus: [
     {
@@ -300,7 +306,11 @@ const fetchProjectList = debounce(async () => {
     status: model.status,
     nameKeyword: model.search,
   });
-  model.projects = res.data;
+  model.projects = res.data || [];
+  if (!model.firstLoaded) {
+    model.empty = model.projects.length === 0;
+  }
+  model.firstLoaded = true;
   refetchMetric();
   loading.search = false;
 }, 500);
