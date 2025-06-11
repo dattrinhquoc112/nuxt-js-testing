@@ -15,49 +15,29 @@
     <template #content>
       <MaterialManagementContent
         :tenantMetric="tenantMetric || { name: '', metrics: [] }"
-        :materialList
+        :materialList="materialList || []"
       />
-      <MaterialManagementCapacity :materialList />
+      <MaterialManagementCapacity :materialList="materialList || []" />
     </template>
   </SideBarItemContainer>
 </template>
 <script setup lang="ts">
 import useMetric from '~/composables/metric';
-import { useMaterial } from '~/stores/material';
 import SideBarItemContainer from '../Common/SideBarItemContainer.vue';
 
-const route = useRoute();
-const { getTenantMetric, tenantMetric } = useMetric();
-const { getMaterials } = useMaterial();
-const materialList = ref();
-const props = defineProps({
+const materialList = inject<Ref<never[]> | undefined>('materialList');
+
+const { tenantMetric, getTenantMetric } = useMetric();
+defineProps({
   modelValue: Boolean,
-});
-
-watch(
-  () => route.query.id,
-  async (newId) => {
-    if (newId) {
-      try {
-        const idStr = Array.isArray(newId) ? newId[0] : newId;
-        if (typeof idStr === 'string') {
-          const res = await getMaterials(idStr);
-          materialList.value = res.data;
-        }
-      } catch (error) {}
-    }
-  },
-  {
-    immediate: true,
-  }
-);
-
-onMounted(async () => {
-  getTenantMetric();
 });
 
 defineEmits<{
   'update:modelValue': [e: Boolean];
 }>();
+
+onMounted(() => {
+  getTenantMetric();
+});
 </script>
 <style scoped lang="scss"></style>

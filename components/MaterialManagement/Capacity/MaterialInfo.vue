@@ -20,7 +20,11 @@
         {{ getFileName(material.fileUri)[0] }}
       </span>
       <span class="material-info--file__format">
-        {{ getFileName(material.fileUri)[1] }}
+        {{
+          getFileName(material.fileUri)[1]
+            ? getFileName(material.fileUri)[1]
+            : material?.extension
+        }}
       </span>
       <span class="material-info--file__size">
         {{ convertFileSize(material?.fileSize) }}
@@ -33,6 +37,7 @@ import useProjects from '~/composables/projects';
 
 const { getImage } = useProjects();
 interface MaterialItem {
+  extension: string;
   type: string;
   fileUri: string;
   fileSize: number;

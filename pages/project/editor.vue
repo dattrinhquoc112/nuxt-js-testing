@@ -25,7 +25,7 @@
     <vi-alert
       :text-title="$t('landing-common-message-storage_near_limit')"
       :text-content="
-        $t('landing-common-message-storage_warning', { percent: '75' })
+        $t('landing-common-message-storage_warning', { percent: percentUsage })
       "
     >
       <vi-icon name="ic_alert" size="24" color="#fff" />
@@ -36,6 +36,7 @@
     >
       <editor
         ref="editorRef"
+        :limitFileSize
         :rwd-mode="RWDMode"
         :list-template="listTemplateCurrent"
         :is-show-list-section="isShowListSection"
@@ -93,7 +94,7 @@ import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
 import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
-import { SIDE_BAR_ACTION, RWD_MODE } from '@/constants/common';
+import { SIDE_BAR_ACTION, RWD_MODE, METRICS_KEY } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
@@ -101,10 +102,7 @@ import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMetric from '@/composables/metric';
 
 const isOpenReachLimitNoti = ref(false);
-const { checkReachLimit } = useMetric();
-
-const materialList = ref([]);
-provide('materialList', materialList);
+const { tenantMetric, checkReachLimit, getTenantMetric } = useMetric();
 
 const { getProject, editProject, publishProject } = useProjectStore();
 
@@ -133,7 +131,17 @@ const route = useRoute();
 const editorID = ref('');
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const project = ref();
-
+const materialList = ref();
+watch(
+  () => editorRef.value?.listMaterials,
+  (newVal) => {
+    if (newVal) {
+      materialList.value = newVal;
+    }
+  },
+  { immediate: true }
+);
+provide('materialList', materialList);
 const configVersion = ref({
   keyAction: '',
   type: '',
@@ -147,6 +155,10 @@ const handleGetProjectDetail = async (id: any) => {
   return {};
 };
 
+const percentUsage = computed(() => {
+  return 75;
+});
+
 watch(
   () => editorRef.value?.historyStatus,
   (newVal) => {
@@ -155,7 +167,7 @@ watch(
 );
 
 const sectionSnapshot = computed(() => {
-  return editorRef.value?.sections[0];
+  return editorRef.value?.sections[1];
 });
 const handlePreview = () => {
   const sections = editorRef.value?.sections;
@@ -320,6 +332,19 @@ const handleUndo = () => {
 const handleRedo = () => {
   editorRef.value?.redo();
 };
+const limitFileSize = computed(() => {
+  const limitFileSizeRes = tenantMetric.value?.metrics.find(
+    (item) => item.metric === METRICS_KEY.TOTAL_CAPACITY
+  );
+  if (limitFileSizeRes) {
+    const totalCapacity = `${limitFileSizeRes.value}${limitFileSizeRes.unit} `;
+    return convertToKB(totalCapacity);
+  }
+  return 0;
+});
+onMounted(() => {
+  getTenantMetric();
+});
 </script>
 
 <style lang="scss" scoped>

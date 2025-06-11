@@ -3,8 +3,17 @@ import type { UPLOAD_RESPONSE } from '~/stores/interface/response/upload';
 import { useUploadStore } from '@/stores/upload';
 import { useProjectStore } from '~/stores/project';
 import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
+import { THRESH_HOLD } from '~/constants/common';
+import { checkReachLimit } from '~/utils/common';
 
-export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
+export const useWebEditor = (
+  sections: Ref<any[]>,
+  IDWebEditor: string,
+  limitFileSize?: Ref<number>,
+  options?: {
+    handleExceedLimit: () => void;
+  }
+) => {
   const idWebEditorRef = ref(IDWebEditor);
   const initSections = ref();
   const { uploadFile } = useUploadStore();
@@ -15,13 +24,12 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
     thumbnail?: string;
     fileUri?: string;
     fileSize?: number | null;
+    extension?: string;
   }
   const listMaterials = ref<MATERIAL_ITEM[]>([]);
 
   const { updateContentProject, getContentProject, setVersionContent } =
     useProjectStore();
-
-  const checkTotalStorage = () => {};
 
   const checkMaterials = (
     objSelecting: any,
@@ -29,33 +37,49 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
     file: File | null,
     type = 'UPDATE'
   ): Boolean => {
-    if (!listMaterials.value.length) return true;
+    if (!listMaterials.value.length) return false;
     const materialOld = listMaterials.value.find(
       (item) =>
         item.fileUri === objSelecting.urlImage ||
         item.fileUri === objSelecting.urlVideo
     );
+    // Handle upload a new material
     if (!materialOld) {
-      // kiem tra dung luong voi truong hop them moi
-      // file.size
-      // checkTotalStorage()
-      // neu qua dung luong return true'
-      return true;
+      const isLimit = checkReachLimit(
+        listMaterials.value,
+        limitFileSize?.value || 0,
+        convertToKB(`${file?.size}B`) || 0,
+        THRESH_HOLD
+      );
+      if (isLimit) {
+        options?.handleExceedLimit();
+      }
+      return isLimit;
     }
-
+    // Handle remove a material
     if (type === 'DELETE') {
       listMaterials.value.splice(listMaterials.value.indexOf(materialOld), 1);
       return false;
     }
-
-    // kiem tra dung luong voi truong hop update
-    // truyen vao file?.size va  materialOld.fileSize
-    // checkTotalStorage()
-    // file?.size - materialOld.fileSize
-    // neu qua dung luong return true'
+    // Handle change a material
+    const differenceValue = (file?.size || 0) - (materialOld.fileSize ?? 0);
+    const isLimit = checkReachLimit(
+      listMaterials.value,
+      limitFileSize?.value || 0,
+      convertToKB(`${differenceValue}B`) || 0,
+      THRESH_HOLD
+    );
+    if (isLimit) {
+      options?.handleExceedLimit();
+      return true;
+    }
     materialOld.fileUri = newFileUri;
     materialOld.fileSize = file?.size;
-    return true;
+    if (file) {
+      const [, ext] = file.type.split('/');
+      materialOld.extension = ext;
+    }
+    return false;
   };
 
   const updateMaterial = (
@@ -280,5 +304,6 @@ export const useWebEditor = (sections: Ref<any[]>, IDWebEditor: string) => {
     initSections,
     updateIndexMaterial,
     deleteIndexMaterial,
+    listMaterials,
   };
 };
