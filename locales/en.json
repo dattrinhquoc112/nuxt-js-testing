@@ -296,6 +296,7 @@
   "landing-project_mgmt-button-copy": "Copy",
   "landing-project_mgmt-modal-title_edit_project_info": "Edit Project Information",
   "landing-project_mgmt-modal-project_name": "Project Name",
+  "landing-project_mgmt-placeholder-placeholder_project_name": "Please enter project name",
   "landing-common-message-saved": "Saved",
   "landing-common-message-copied": "Copied",
   "landing-project_mgmt-modal-title_unpublish_event": "Unpublish Event",

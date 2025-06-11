@@ -15,7 +15,9 @@
     <div class="header">
       <vi-icon name="ic_text" size="24" color="#fff"></vi-icon>
       <div class="ml-8 mr-auto neutral-white-alpha-90-text">
-        <vi-typography type="subtitle-large">Text Setting</vi-typography>
+        <vi-typography type="subtitle-large">{{
+          $t('landing-editor-modal-text_setting')
+        }}</vi-typography>
       </div>
       <vi-icon
         class="neutral-white-alpha-60-text cursor-pointer"
@@ -26,7 +28,9 @@
     </div>
     <div class="box-setting">
       <div class="neutral-white-alpha-60-text">
-        <vi-typography type="subtitle-large">Align</vi-typography>
+        <vi-typography type="subtitle-large">{{
+          $t('landing-editor-modal-text_field_align')
+        }}</vi-typography>
       </div>
       <div class="list">
         <div class="item" @click="emit('change-align', 'left')">
@@ -40,7 +44,9 @@
         </div>
       </div>
       <div class="neutral-white-alpha-60-text mt-24">
-        <vi-typography type="subtitle-large">Size</vi-typography>
+        <vi-typography type="subtitle-large">{{
+          $t('landing-editor-modal-text_field_size')
+        }}</vi-typography>
       </div>
       <div
         @click="emit('change-size', '48px')"
