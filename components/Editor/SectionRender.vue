@@ -206,7 +206,14 @@
               alt=""
             />
             <div class="icon-play">
-              <vi-icon name="ic_play" size="24" color="#000" />
+              <vi-audio
+                width="100%"
+                :audio-file="audio.audio.setting.listPhrase?.[0]?.audioUrl"
+                :show-timer="false"
+                :is-show-audio-size="false"
+                :is-show-status="false"
+                :show-file-info="false"
+              />
             </div>
           </div>
           <div
