@@ -227,7 +227,7 @@ const sections = ref([
 ]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
 
-const isOpenReachLimitNoti = ref(false);
+const isOpenReachLimitNoti = ref(true);
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
@@ -303,6 +303,7 @@ const onShowAction = (projectID: string, show = true) => {
 };
 
 const onCopyProject = async (project: IProject) => {
+  console.log(project, 'test');
   const isLimit = await checkReachLimit();
   if (isLimit) {
     isOpenReachLimitNoti.value = true;

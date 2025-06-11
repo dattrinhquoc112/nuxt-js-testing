@@ -109,6 +109,7 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
       @change-color="(rgba:RGBA) => (buttonColor = rgba)"
     />
+    <popup-reach-limit-noti v-model="isOpenReachLimitNoti" />
   </div>
 </template>
 
@@ -162,7 +163,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['closeSection']);
-
+const isOpenReachLimitNoti = ref(false);
 const modelValue = ref(true);
 const showSelectAITools = ref(false);
 let debounceTimer: any = null;
@@ -192,7 +193,9 @@ const idParam = Array.isArray(route.query?.id)
   ? route.query.id[0] || ''
   : route.query?.id || '';
 const limitSize = ref(0);
-const handleExceedLimit = () => {};
+const handleExceedLimit = () => {
+  isOpenReachLimitNoti.value = true;
+};
 
 const {
   fetchContentProject,
