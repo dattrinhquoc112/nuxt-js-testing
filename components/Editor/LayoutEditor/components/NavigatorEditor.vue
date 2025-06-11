@@ -122,6 +122,7 @@
             icon-before="ic_play"
             no-text
             color="#fff"
+            type="standard-default"
             @click="$emit('handlePlay')"
           />
           <vi-button

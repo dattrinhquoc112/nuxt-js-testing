@@ -15,7 +15,14 @@ export default function useProjects() {
   };
 
   const handleEventEnglishName = (input: string): string => {
-    return input.toLowerCase().replace(/[^a-z0-9\-._~]/g, '-');
+    const leadingSpaces = input.match(/^(\s*)/)?.[0] ?? '';
+    const trailingSpaces = input.match(/(\s*)$/)?.[0] ?? '';
+
+    const trimmedCore = input.trim();
+
+    const replaced = trimmedCore.toLowerCase().replace(/[^a-z0-9\-._~]/g, '-');
+
+    return leadingSpaces + replaced + trailingSpaces;
   };
 
   const handleKeyword = (newValue: string, maxKeywords = 10): string => {

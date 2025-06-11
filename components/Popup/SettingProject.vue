@@ -69,6 +69,7 @@
                   "
                   required
                   @change="onChangeEventEnglishName"
+                  @blur="onBlurEventEnglishName"
                   width="100%"
                   :error="Boolean(errorMsg)"
                   :hint="errorMsg"
@@ -140,6 +141,7 @@
               <vi-form-item prop="metaKeyword">
                 <template #default="{ errorMsg }">
                   <vi-input
+                    class="word-break-normal"
                     v-model="model.metaKeyword"
                     size="large"
                     type="textarea"
@@ -560,6 +562,10 @@ const onChangeEventEnglishName = debounce((value: string) => {
   model.eventEnglishName = handleEventEnglishName(value);
 }, 300);
 
+const onBlurEventEnglishName = () => {
+  model.eventEnglishName = model.eventEnglishName.trim();
+};
+
 const onChangeKeyWord = debounce((value: string) => {
   model.metaKeyword = handleKeyword(value);
 }, 150);
@@ -628,6 +634,9 @@ watch(
   padding-bottom: 8px;
   white-space: pre-wrap;
   word-break: break-all;
+}
+.word-break-normal {
+  word-break: normal;
 }
 .grid-two {
   display: grid;
