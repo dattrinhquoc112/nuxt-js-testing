@@ -71,13 +71,8 @@
           class="not-found"
           v-show="!loading.search && model.projects.length === 0"
         >
-          <img
-            :src="
-              model.search
-                ? '/assets/icons/searchNotFound.svg'
-                : '/assets/icons/empty-folder.svg'
-            "
-          />
+          <img v-if="model.search" src="/assets/icons/searchNotFound.svg" />
+          <img v-else src="/assets/icons/empty-folder.svg" />
           <vi-typography type="subtitle-large">{{
             $t(
               model.search
