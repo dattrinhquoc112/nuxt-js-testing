@@ -1,4 +1,5 @@
 import { useTenantStore } from '~/stores/tenant';
+import { useUploadStore } from '~/stores/upload';
 import type { IProject } from '~/types/project';
 import { useUploadStore } from '~/stores/upload';
 
@@ -8,9 +9,12 @@ export default function useProjects() {
   const { getFileURL } = useUploadStore();
   const tenantName = getCurrentTenantInfo()?.name;
   const getProjectUrl = (project?: IProject): string => {
-    if (!project) return '';
-    const host = window.location.origin;
-    return new URL(`${host}/${tenantName}/${project.name}`).href;
+    if (project?.eventEnglishName && tenantName) {
+      const host = window.location.origin;
+      return new URL(`${host}/event/${tenantName}/${project.eventEnglishName}`)
+        .href;
+    }
+    return '';
   };
 
   const getStatus = (status: string) => {

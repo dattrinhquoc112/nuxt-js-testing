@@ -33,7 +33,7 @@
           size="small"
           width="81px"
         >
-          上傳圖片
+          {{ $t('landing-project_mgmt-button-upload_image_button') }}
         </vi-button>
         <vi-typography class="description" type="caption-large-500">
           {{ description }}
@@ -50,6 +50,12 @@
   </div>
 </template>
 <script setup lang="ts">
+interface Model {
+  imageURL: string;
+  fileInput: File | null;
+  isShowImage: boolean;
+}
+
 const props = defineProps({
   label: {
     type: String,
@@ -75,16 +81,20 @@ const props = defineProps({
       size: 15,
     }),
   },
+  imageModel: {
+    type: Object as PropType<Model>,
+    default: () => ({
+      imageURL: '',
+      fileInput: null,
+      isShowImage: true,
+    }),
+  },
 });
 const emits = defineEmits(['change']);
-const model = ref<{
-  imageURL: string;
-  fileInput: File | null;
-  isShowImage: boolean;
-}>({
-  imageURL: '',
-  fileInput: null,
-  isShowImage: true,
+const model = ref<Model>({
+  imageURL: props.imageModel.imageURL,
+  fileInput: props.imageModel.fileInput,
+  isShowImage: props.imageModel.isShowImage,
 });
 const inputFileElement = ref<HTMLInputElement>();
 const { t } = useI18n();
@@ -151,6 +161,13 @@ const onFileChange = (event: Event) => {
 function onImageError() {
   model.value.isShowImage = false;
 }
+
+watch(
+  () => JSON.stringify(props.imageModel),
+  () => {
+    model.value = { ...props.imageModel };
+  }
+);
 </script>
 <style lang="scss" scoped>
 .upload-container {
