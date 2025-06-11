@@ -41,7 +41,7 @@ const props = defineProps({
   },
   materialList: {
     default: [],
-    required: true,
+    required: false,
   },
 });
 const MetricsMapping = computed(() => {

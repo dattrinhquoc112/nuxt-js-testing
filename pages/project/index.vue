@@ -189,7 +189,7 @@
   <div class="section-snapshot">
     <editor-section-render
       :read-only="true"
-      :section="sections[0]"
+      :section="sections[1]"
       :rwd-mode="RWD_MODE.DESKTOP"
     />
   </div>
@@ -226,6 +226,7 @@ const sections = ref([
   TEMPLATES_SECTION[TEMPLATES_SECTION.length - 1],
 ]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
+
 const isOpenReachLimitNoti = ref(false);
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 const { getStatus, getImage } = useProjects();

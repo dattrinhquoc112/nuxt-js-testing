@@ -91,7 +91,6 @@
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
     />
-
     <editor-popup-setting-text
       :isShow="isShowPopup.textSetting"
       :positionControlCurrent="positionControlCurrent"
@@ -143,7 +142,7 @@ definePageMeta({
   layout: 'default',
 });
 
-defineProps({
+const props = defineProps({
   isShowListSection: {
     type: String,
     default: '',
@@ -155,6 +154,10 @@ defineProps({
   rwdMode: {
     type: String,
     default: '',
+  },
+  limitFileSize: {
+    type: Number,
+    default: 0,
   },
 });
 
@@ -188,6 +191,9 @@ const route = useRoute();
 const idParam = Array.isArray(route.query?.id)
   ? route.query.id[0] || ''
   : route.query?.id || '';
+const limitSize = ref(0);
+const handleExceedLimit = () => {};
+
 const {
   fetchContentProject,
   handleSaveTemplate,
@@ -196,10 +202,21 @@ const {
   updateIndexMaterial,
   deleteIndexMaterial,
   initSections,
-} = useWebEditor(sections, idParam);
+  listMaterials,
+} = useWebEditor(sections, idParam, limitSize, {
+  handleExceedLimit,
+});
 
 const currentIndex = ref<number>(0);
-
+watch(
+  () => props.limitFileSize,
+  (newVal) => {
+    limitSize.value = newVal;
+  },
+  {
+    immediate: true,
+  }
+);
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
   null
 );
@@ -652,6 +669,7 @@ defineExpose({
   fetchContentProject,
   sections,
   checkChanges,
+  listMaterials,
 });
 </script>
 

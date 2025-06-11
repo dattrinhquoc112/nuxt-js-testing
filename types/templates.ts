@@ -43,6 +43,7 @@ export interface BACKGROUND_SECTION {
   color: string | undefined;
   urlVideo: string | undefined;
   class: string | undefined;
+  name?: string;
 }
 export interface BOX_IMAGE {
   urlImage: string | undefined;
@@ -96,7 +97,14 @@ export type OBJ_SECTION_ITEM =
   | SECTION_ITEM[keyof SECTION_ITEM]
   | AUDIO_ITEM[keyof AUDIO_ITEM]
   | undefined;
-
+export interface MATERIAL_ITEM {
+  indexSection?: number;
+  id?: string | null;
+  type?: string;
+  thumbnail?: string;
+  fileUri?: string;
+  fileSize?: number | null;
+}
 export const TEMPLATES_SECTION: SECTION_ITEM[] = [
   {
     id: 'logo',
