@@ -23,6 +23,7 @@ interface MaterialItem {
   type: string;
   fileUri: string;
   fileSize: number;
+  extension: string;
 }
 
 const props = defineProps<{

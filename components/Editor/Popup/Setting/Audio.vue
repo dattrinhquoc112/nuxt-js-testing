@@ -206,7 +206,6 @@ const handleCreateDemo = _.debounce(async (index: number) => {
         text: audioSelecting.value.setting.listPhrase[index].text,
       }
     );
-    console.log('res: ', res.data);
   } catch (error) {
   } finally {
     isLoadingGetDemo.value = false;
@@ -228,7 +227,6 @@ watch(
     const res = await getListDemos(
       audioSelecting.value.setting.voiceModelId.value
     );
-    console.log(res.data);
   }
 );
 

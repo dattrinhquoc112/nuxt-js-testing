@@ -83,6 +83,11 @@ const props = defineProps({
     default: '',
   },
 });
+watch(isOpenMaterialManagement, (newVal) => {
+  if (!newVal) {
+    activeSidebarButton.value = '';
+  }
+});
 watch(
   () => props.isShowListSection,
   (newVal) => {

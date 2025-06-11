@@ -28,7 +28,9 @@ export const useUploadStore = defineStore('upload', () => {
         return presignedUrl.data as UPLOAD_RESPONSE;
       }
       throw new Error('Not found pre-signed URL');
-    } catch (error) {}
+    } catch (error) {
+      throw new Error('Upload file failed!');
+    }
   }
 
   function getFileURL(path: string) {
