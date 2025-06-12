@@ -27,6 +27,7 @@
       @handleOpenAITools="showSelectAITools = true"
       @handleCloseTooltip="emit('closeSection')"
     />
+
     <editor-list
       :rwd-mode="rwdMode"
       :templateSelected="templateSelected"
@@ -44,7 +45,6 @@
       @set-hover-position="(val) => (hoverPosition = val)"
       @set-index-audio="(val) => (indexAudioSelected = val)"
     />
-
     <editor-box-control
       :positionControlCurrent="positionControlCurrent"
       :indexSectionSelected="indexSectionSelected"
@@ -307,7 +307,10 @@ watch(buttonColor, () => {
     const bg = obj as BACKGROUND_SECTION;
     bg.class = 'bg-color';
     bg.color = colorChange;
-    checkMaterials(bg, '', null, 'DELETE');
+    checkMaterials({
+      objSelecting: bg,
+      type: 'DELETE,',
+    });
     bg.urlVideo = '';
     bg.urlImage = '';
     bg.file = null;
@@ -328,7 +331,12 @@ const handleChangeVideo = ({
 }) => {
   const obj = objectSelecting.value as BACKGROUND_SECTION;
   if (!obj) return;
-  const isOverStorage = checkMaterials(obj, urlVideo, file);
+  const isOverStorage = checkMaterials({
+    objSelecting: obj,
+    newFileUri: urlVideo,
+    file,
+    indexSection: indexSectionSelected.value,
+  });
   if (isOverStorage) return;
   revokeObjectURL(obj.urlVideo);
   revokeObjectURL(obj.urlImage);
@@ -349,7 +357,10 @@ const handleResetFile = () => {
   );
   if (keyElementSelected.value === 'backgroundSection') {
     obj = objectSelecting.value as BACKGROUND_SECTION;
-    checkMaterials(obj, '', null, 'DELETE');
+    checkMaterials({
+      objSelecting: obj,
+      type: 'DELETE,',
+    });
     if (obj.urlImage === templateCurrent?.backgroundSection?.urlImage) {
       obj.urlImage = '';
     } else {
@@ -362,7 +373,10 @@ const handleResetFile = () => {
   }
   if (keyElementSelected.value === 'boxImage') {
     obj = objectSelecting.value as BOX_IMAGE;
-    checkMaterials(obj, '', null, 'DELETE');
+    checkMaterials({
+      objSelecting: obj,
+      type: 'DELETE,',
+    });
     if (obj.urlImage === templateCurrent?.boxImage?.urlImage) {
       obj.urlImage = '';
     } else {
@@ -373,7 +387,10 @@ const handleResetFile = () => {
   }
   if (keyElementSelected.value === 'audio') {
     obj = objectSelecting.value as AUDIO_SETTING;
-    checkMaterials(obj, '', null, 'DELETE');
+    checkMaterials({
+      objSelecting: obj,
+      type: 'DELETE,',
+    });
     if (obj.urlImage === templateCurrent?.listAudio?.[0]?.audio.urlImage) {
       obj.urlImage = '';
     } else {
@@ -410,7 +427,12 @@ const handleChangeImage = ({
 }) => {
   const obj = objectSelecting.value as BACKGROUND_SECTION;
   if (!obj) return;
-  const isOverStorage = checkMaterials(obj, urlImage, file);
+  const isOverStorage = checkMaterials({
+    objSelecting: obj,
+    newFileUri: urlImage,
+    file,
+    indexSection: indexSectionSelected.value,
+  });
   if (isOverStorage) return;
   revokeObjectURL(obj.urlImage);
   revokeObjectURL(obj.urlVideo);

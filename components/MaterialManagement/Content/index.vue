@@ -6,7 +6,6 @@
     <div class="container--list">
       <common-info-bar
         v-for="(item, index) in MetricsMapping"
-        z
         :key="index"
         :label-left="item.label"
         :label-right="item.valueText"

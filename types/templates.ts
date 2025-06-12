@@ -63,6 +63,7 @@ export interface AUDIO_SETTING {
       id: string | number | null;
       text: string;
       audioUrl: string;
+      isLoading: boolean;
     }[];
   };
 }
@@ -414,6 +415,7 @@ export const TEMPLATES_AUDIO: SECTION_ITEM[] = [
                 id: null,
                 text: '',
                 audioUrl: '',
+                isLoading: false,
               },
             ],
           },
@@ -486,6 +488,7 @@ export const TEMPLATES_AUDIO: SECTION_ITEM[] = [
                 id: null,
                 text: '',
                 audioUrl: '',
+                isLoading: false,
               },
             ],
           },
@@ -532,6 +535,7 @@ export const TEMPLATES_AUDIO: SECTION_ITEM[] = [
                 id: 'null',
                 text: '',
                 audioUrl: '',
+                isLoading: false,
               },
             ],
           },
@@ -604,6 +608,7 @@ export const TEMPLATES_AUDIO: SECTION_ITEM[] = [
                 id: null,
                 text: '',
                 audioUrl: '',
+                isLoading: false,
               },
             ],
           },
@@ -650,6 +655,7 @@ export const TEMPLATES_AUDIO: SECTION_ITEM[] = [
                 id: null,
                 text: '',
                 audioUrl: '',
+                isLoading: false,
               },
             ],
           },
@@ -696,6 +702,7 @@ export const TEMPLATES_AUDIO: SECTION_ITEM[] = [
                 id: null,
                 text: '',
                 audioUrl: '',
+                isLoading: false,
               },
             ],
           },
