@@ -30,7 +30,7 @@ export default function useMetric() {
     metrics.value = [];
     // project count
     const dataProjectCount: Metric = {
-      label: t('common-form-field-field_project_count'),
+      label: t('landing-common-title-project_count_title'),
       value: Number(
         tenantMetricValue?.metrics.find(
           (elem) => elem.metric === 'PROJECTS_CREATED'
