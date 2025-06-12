@@ -143,7 +143,7 @@ export default function useMetric() {
       }
       return false;
     }
-    return true;
+    return false;
   };
   const handleModal = () => {
     modalMetric.warningLimitProject = metricInfo.isLimitedProject;
