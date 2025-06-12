@@ -53,7 +53,7 @@ export default function useMetric() {
 
     // Capacity
     const dataCapacity: Metric = {
-      label: t('common-form-field-field_storage'),
+      label: t('landing-common-title-storage_space_title'),
       value: Number(
         tenantMetricValue?.metrics.find(
           (elem) => elem.metric === METRICS_KEY.TOTAL_CAPACITY_USED

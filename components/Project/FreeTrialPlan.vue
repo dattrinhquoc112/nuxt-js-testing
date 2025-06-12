@@ -1,17 +1,17 @@
 <template>
   <div class="free-trial-container">
     <div class="header">
-      <vi-typography type="body-small">{{
+      <vi-typography type="subtitle-small">{{
         $t('common-form-title-free_plan')
       }}</vi-typography>
     </div>
     <div class="content-container">
       <div class="content" v-for="(metric, index) in metrics" :key="index">
         <div class="info">
-          <vi-typography type="featured-small">{{
+          <vi-typography type="caption-large-500">{{
             metric.label
           }}</vi-typography>
-          <vi-typography type="featured-small">
+          <vi-typography type="caption-large-500">
             {{ metric.description }}</vi-typography
           >
         </div>
@@ -67,6 +67,7 @@ watch(
     flex-direction: column;
     width: 100%;
     gap: 4px;
+    color: $neutral-white-alpha-80;
     .info {
       display: flex;
       justify-content: space-between;
