@@ -510,6 +510,7 @@ watch(
           line-height: 18px;
           letter-spacing: 0.03px;
           color: $neutral-white-alpha-60;
+          text-align: right;
         }
       }
       .wrapper-time-edit {
