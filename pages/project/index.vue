@@ -84,6 +84,7 @@
             )
           }}</vi-typography>
           <vi-button
+            v-if="model.empty"
             :is-loading="isLoadingCreate"
             type="standard-default"
             @click="onAction(undefined, 'create')"
