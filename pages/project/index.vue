@@ -14,6 +14,7 @@
         $t('app-navigation-menu-projects')
       }}</vi-typography>
       <vi-button
+        :is-loading="isLoadingCreate"
         class="ml-auto"
         icon-before="ic_add"
         @click="onAction(undefined, 'create')"

@@ -31,18 +31,25 @@ export const useWebEditor = (
   const { updateContentProject, getContentProject, setVersionContent } =
     useProjectStore();
 
-  const checkMaterials = (
-    objSelecting: any,
-    newFileUri: string,
-    file: File | null,
-    type = 'UPDATE'
-  ): Boolean => {
-    if (!listMaterials.value.length) return false;
+  const checkMaterials = ({
+    objSelecting,
+    newFileUri = '',
+    file = null,
+    type = 'UPDATE',
+    indexSection = null,
+  }: {
+    objSelecting: any;
+    newFileUri?: string;
+    file?: File | null;
+    indexSection?: number | null;
+    type?: string;
+  }): Boolean => {
     const materialOld = listMaterials.value.find(
       (item) =>
         item.fileUri === objSelecting.urlImage ||
         item.fileUri === objSelecting.urlVideo
     );
+
     // Handle upload a new material
     if (!materialOld) {
       const isLimit = checkReachLimit(
@@ -53,6 +60,15 @@ export const useWebEditor = (
       );
       if (isLimit) {
         options?.handleExceedLimit();
+      } else {
+        if (!indexSection) return isLimit;
+        listMaterials.value.push({
+          indexSection,
+          type: 'MEDIA',
+          id: null,
+          fileUri: newFileUri,
+          fileSize: file?.size,
+        });
       }
       return isLimit;
     }
@@ -191,11 +207,10 @@ export const useWebEditor = (
                 audioAppProjectId: item.audio.setting.voiceModelId.value,
                 speed: item.audio.setting.speed,
                 pitch: item.audio.setting.pitch,
-                demoPersistence: 'TEMPORARY',
                 sentences: item.audio.setting.listPhrase.map((sen) => ({
                   text: sen.text,
                   fileUri: sen.audioUrl,
-                  demoId: 123123,
+                  demoId: sen.id,
                 })),
               };
             }
