@@ -122,8 +122,12 @@
                 width="100%"
                 :show-timer="false"
                 :is-show-audio-size="false"
-                :is-show-status="isLoadingGetDemo"
-                :is-show-control-buttons="!isLoadingGetDemo"
+                :is-show-status="
+                  audioSelecting.setting.listPhrase[index].isLoading
+                "
+                :is-show-control-buttons="
+                  !audioSelecting.setting.listPhrase[index].isLoading
+                "
                 :show-file-info="false"
               />
             </div>
@@ -192,7 +196,6 @@ const itemPhrase = {
 const { getVoiceModelList, getListDemos, createDemo } = useEditorStore();
 
 const listModel = ref<{ text: string; value: string }[]>([]);
-const isLoadingGetDemo = ref(false);
 
 const popupElement = ref<HTMLElement>();
 const addPhrase = () => {
@@ -204,7 +207,8 @@ const handleDeletePhrase = (index: number) => {
 const handleCreateDemo = _.debounce(async (index: number) => {
   if (!audioSelecting.value.setting.voiceModelId.value) return;
   try {
-    isLoadingGetDemo.value = true;
+    audioSelecting.value.setting.listPhrase[index].isLoading = true;
+
     const res = await createDemo(
       audioSelecting.value.setting.voiceModelId.value as string,
       {
@@ -217,9 +221,9 @@ const handleCreateDemo = _.debounce(async (index: number) => {
     audioSelecting.value.setting.listPhrase[index].audioUrl = res.data?.demoUri;
   } catch (error) {
   } finally {
-    isLoadingGetDemo.value = false;
+    audioSelecting.value.setting.listPhrase[index].isLoading = false;
   }
-}, 500);
+}, 1000);
 
 const fetchListVoiceModel = async () => {
   const listModelApi = (await getVoiceModelList()).data;
