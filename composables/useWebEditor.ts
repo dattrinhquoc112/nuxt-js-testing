@@ -12,6 +12,7 @@ export const useWebEditor = (
   limitFileSize?: Ref<number>,
   options?: {
     handleExceedLimit: () => void;
+    indexSectionSelected: Ref<number | undefined>;
   }
 ) => {
   const idWebEditorRef = ref(IDWebEditor);
@@ -36,12 +37,10 @@ export const useWebEditor = (
     newFileUri = '',
     file = null,
     type = 'UPDATE',
-    indexSection = null,
   }: {
     objSelecting: any;
     newFileUri?: string;
     file?: File | null;
-    indexSection?: number | null;
     type?: string;
   }): Boolean => {
     const materialOld = listMaterials.value.find(
@@ -61,9 +60,9 @@ export const useWebEditor = (
       if (isLimit) {
         options?.handleExceedLimit();
       } else {
-        if (!indexSection) return isLimit;
+        if (options?.indexSectionSelected?.value === undefined) return isLimit;
         listMaterials.value.push({
-          indexSection,
+          indexSection: options.indexSectionSelected.value,
           type: 'MEDIA',
           id: null,
           fileUri: newFileUri,
@@ -119,7 +118,7 @@ export const useWebEditor = (
         indexSection,
         id: null,
         type,
-        thumbnail: 'string',
+        thumbnail: dataApi.fileUri,
         fileUri: dataApi.fileUri,
         fileSize: file.size,
       });
@@ -164,30 +163,34 @@ export const useWebEditor = (
   const updateAllImageAudio = async () => {
     if (!sections.value.length) return;
     const listAudio: any[] = [];
-    sections.value.forEach(async (item: any) => {
+    sections.value.forEach(async (item: any, index: number) => {
       if (item?.listAudio) {
         item.listAudio.forEach((itemAudio: any) => {
           if (itemAudio.audio?.file) {
-            listAudio.push(itemAudio.audio);
+            listAudio.push({ ...itemAudio.audio, indexSection: index });
           }
         });
       }
     });
     if (listAudio.length) {
       await Promise.all(
-        listAudio.map(async (item: any, index: number) => {
+        listAudio.map(async (item: any, indexAudio) => {
           if (item?.file) {
             const res: UPLOAD_RESPONSE | undefined = await uploadFile(
               item.file
             );
             if (!res) return;
             if (item.urlImage) {
-              updateMaterial(res, item.file, index, item.urlImage);
-              item.urlImage = res?.fileUri;
+              updateMaterial(res, item.file, item.indexSection, item.urlImage);
+              sections.value[item.indexSection].listAudio[
+                indexAudio
+              ].audio.urlImage = res?.fileUri;
             }
             if (item.urlVideo) {
-              updateMaterial(res, item.file, index, item.urlVideo);
-              item.urlVideo = res?.fileUri;
+              updateMaterial(res, item.file, item.indexSection, item.urlVideo);
+              sections.value[item.indexSection].listAudio[
+                indexAudio
+              ].audio.urlVideo = res?.fileUri;
             }
           }
         })
@@ -218,7 +221,7 @@ export const useWebEditor = (
         }
 
         const materials = listMaterials.value
-          .filter((i) => i.indexSection === index)
+          .filter((i) => Number(i.indexSection) === index)
           .map((i) => ({
             id: i.id,
             type: i.type,
@@ -226,6 +229,7 @@ export const useWebEditor = (
             fileUri: i.fileUri,
             fileSize: i.fileSize,
           }));
+
         return {
           id: section?.idApi || null,
           template: section.id,
@@ -266,6 +270,7 @@ export const useWebEditor = (
         return { ...item.settings.generalSettings, idApi: item.id };
       }
     );
+
     initSections.value = _.cloneDeep(sections.value);
   };
 
@@ -303,8 +308,65 @@ export const useWebEditor = (
   };
 
   const deleteIndexMaterial = (indexDelete: number) => {
-    listMaterials.value.forEach((item: MATERIAL_ITEM) => {
+    listMaterials.value.splice(0).forEach((item: MATERIAL_ITEM) => {
+      if (!item.indexSection) return;
+
       if (item.indexSection === indexDelete) {
+        listMaterials.value.splice(listMaterials.value.indexOf(item), 1);
+      }
+      if (item.indexSection > indexDelete) {
+        item.indexSection -= 1;
+      }
+    });
+  };
+
+  const getSizeFileFromUri = (uri: string) => {
+    return fetch(uri, { method: 'HEAD' }).then((response) => {
+      const fileSize = response.headers.get('content-length');
+      return fileSize;
+    });
+  };
+
+  const addMaterialAudio = async (data: {
+    id: string;
+    text: string;
+    audioUrl: string;
+    isLoading: boolean;
+  }) => {
+    const fileSize = await getSizeFileFromUri(data.audioUrl);
+    if (!fileSize) {
+      return;
+    }
+
+    const isLimit = checkReachLimit(
+      listMaterials.value,
+      limitFileSize?.value || 0,
+      convertToKB(`${fileSize}B`) || 0,
+      THRESH_HOLD
+    );
+    if (isLimit) {
+      options?.handleExceedLimit();
+    } else {
+      listMaterials.value.push({
+        indexSection: options?.indexSectionSelected?.value,
+        type: 'AUDIO_TTS',
+        thumbnail: '',
+        fileUri: data.audioUrl,
+        fileSize: convertToKB(`${fileSize}B`),
+      });
+    }
+  };
+
+  const removeMaterialAudio = (
+    data: {
+      id: string;
+      text: string;
+      audioUrl: string;
+      isLoading: boolean;
+    }[]
+  ) => {
+    listMaterials.value.forEach((item) => {
+      if (item.type === 'AUDIO_TTS' && item.fileUri === data[0].audioUrl) {
         listMaterials.value.splice(listMaterials.value.indexOf(item), 1);
       }
     });
@@ -320,5 +382,7 @@ export const useWebEditor = (
     updateIndexMaterial,
     deleteIndexMaterial,
     listMaterials,
+    addMaterialAudio,
+    removeMaterialAudio,
   };
 };
