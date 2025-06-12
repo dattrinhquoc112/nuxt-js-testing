@@ -90,7 +90,7 @@ const onAvatarError = () => {
 const navOptions = [
   {
     id: 1,
-    text: '專案列表',
+    text: t('app-navigation-menu-projects'),
     nameIcon: 'ic_project',
     link: '/project',
   },
