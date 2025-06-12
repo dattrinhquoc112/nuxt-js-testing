@@ -2,9 +2,16 @@
   <div class="information-container">
     <div class="information-iitem mw-360">
       <custom-image :src="getImage(project?.thumbnail)" />
-      <vi-button class="br-1000" type="standard-default" width="fit-content">{{
-        getStatus(props.project?.status || '')
-      }}</vi-button>
+      <vi-button
+        class="btn-status"
+        type="standard-default"
+        width="fit-content"
+        size="small"
+      >
+        <vi-typography type="caption-large-500">{{
+          getStatus(props.project?.status || '')
+        }}</vi-typography>
+      </vi-button>
       <vi-typography type="headline-xs">{{ project?.name }}</vi-typography>
       <vi-typography class="description" type="body-small">{{
         project?.startTime &&
@@ -23,28 +30,40 @@
           type="standard-subtle"
           @click="openLink(project?.eventOfficialUrl)"
         >
-          {{ $t('landing-project_mgmt-button-view_website') }}
-          <vi-icon name="ic_arrow_up_right" size="16" />
+          <vi-typography class="browser-text" type="subtitle-small">
+            {{ $t('landing-project_mgmt-button-view_website') }}
+            <vi-icon name="ic_arrow_up_right" size="16" />
+          </vi-typography>
         </vi-button>
       </div>
       <vi-button
         type="standard-default"
         width="fit-content"
         @click="modal.open"
-        >{{ $t('landing-project_mgmt-button-edit_info') }}</vi-button
+        size="small"
       >
+        <vi-typography type="subtitle-small">{{
+          $t('landing-project_mgmt-button-edit_info')
+        }}</vi-typography>
+      </vi-button>
     </div>
     <vi-divider direction="vertical" />
     <div class="information-iitem">
-      <vi-typography>{{
+      <vi-typography type="subtitle-large">{{
         $t('landing-project_mgmt-title-meta_section_title')
       }}</vi-typography>
       <div class="child-item">
-        <vi-typography>{{ project?.metaTitle }}</vi-typography>
-        <vi-typography>{{ project?.metaDescription }}</vi-typography>
-        <vi-typography>{{ project?.metaKeyword }}</vi-typography>
+        <vi-typography type="headline-xs">{{
+          project?.metaTitle
+        }}</vi-typography>
+        <vi-typography class="description" type="body-small">{{
+          project?.metaDescription
+        }}</vi-typography>
+        <vi-typography class="description" type="body-small">{{
+          project?.metaKeyword
+        }}</vi-typography>
       </div>
-      <vi-typography>{{
+      <vi-typography type="subtitle-large">{{
         $t('landing-project_mgmt-title-og_section_title')
       }}</vi-typography>
       <div class="child-item fit">
@@ -122,8 +141,10 @@ async function onEditProject(name: string) {
 .mw-360 {
   max-width: 360px;
 }
-.br-1000 {
+.btn-status {
   border-radius: 1000px !important;
+  padding: 4px 8px !important;
+  min-height: unset !important;
 }
 .description {
   color: $neutral-white-alpha-80 !important;
@@ -131,6 +152,11 @@ async function onEditProject(name: string) {
 }
 .browser-btn {
   margin-left: auto;
+  .browser-text {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
 }
 .information-container {
   display: flex;
