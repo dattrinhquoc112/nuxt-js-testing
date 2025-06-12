@@ -219,7 +219,7 @@ const handleCreateDemo = _.debounce(async (index: number) => {
   } finally {
     isLoadingGetDemo.value = false;
   }
-}, 500);
+}, 1000);
 
 const fetchListVoiceModel = async () => {
   const listModelApi = (await getVoiceModelList()).data;
