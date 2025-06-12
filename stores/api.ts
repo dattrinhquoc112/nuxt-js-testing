@@ -15,22 +15,13 @@ export const useApiStore = defineStore('api', () => {
     switch (error?.data?.statusCode) {
       case HTTP_ERRORS.UNAUTHORIZED:
         if (!pathNotAllow.includes(route.path)) {
-          window.VIUIKit.VIMessage({
-            title: message,
-            width: '348px',
-            type: 'error',
-          });
-          // navigateTo('/auth/logout');
+          navigateTo('/auth/logout');
         }
         break;
       default:
-        // window.VIUIKit.VIMessage({
-        //   title: message,
-        //   width: '348px',
-        //   type: 'error',
-        // });
         break;
     }
+    toastMessage(message, 'error');
     return Promise.reject(error);
   };
 
