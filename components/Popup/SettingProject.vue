@@ -36,8 +36,8 @@
                       @keydown="(event: KeyboardEvent) => event.preventDefault()"
                       required
                       width="100%"
-                      :error="Boolean(errorMsg) || Boolean()"
-                      :hint="errorMsg"
+                      :error="Boolean(errorMsg) || Boolean(serverErrorMsg.date)"
+                      :hint="errorMsg || serverErrorMsg.date"
                       @focus="model.isShowDate = true"
                       readonly
                     />
@@ -155,7 +155,7 @@
                     :hint="errorMsg"
                     :max="150"
                     :count-exclude-pattern="/[\s\,]/g"
-                    @change="onChangeKeyWord"
+                    @blur="onChangeKeyWord"
                     is-count
                   />
                 </template>
@@ -289,6 +289,7 @@
           type="standard-primary"
           width="fit-content"
           :disabled="disabledSubmit()"
+          :is-loading="loading.update"
           >{{ $t('common-action-button-button_confirm') }}</vi-button
         >
         <vi-button
@@ -334,6 +335,12 @@ const props = defineProps({
     type: Object as PropType<IProject>,
     default: undefined,
   },
+  errCode: {
+    type: Object,
+    default: () => ({
+      eventEnglishName: '',
+    }),
+  },
 });
 const emit = defineEmits(['close', 'submit', 'update:project']);
 
@@ -365,7 +372,8 @@ const modelOGImage = reactive<{
 });
 
 const serverErrorMsg = reactive({
-  eventEnglishName: '',
+  eventEnglishName: props.errCode?.eventEnglishName || '',
+  date: '',
 });
 
 const disabledSubmit = () => {
@@ -389,8 +397,11 @@ const disabledSubmit = () => {
       model.date &&
       model.eventEnglishName &&
       model.metaTitle &&
-      model.ogTitle
-    ) || !isChanged
+      model.ogTitle &&
+      new Date(model.dates[1]).getTime() > new Date(model.dates[0]).getTime()
+    ) ||
+    !isChanged ||
+    loading.update
   );
 };
 
@@ -409,19 +420,6 @@ const rules = {
         field_name: t('landing-project_mgmt-title-event_period_setting'),
       }),
       trigger: 'blur',
-    },
-    {
-      callback: () => {
-        if (model.dates.length === 2) {
-          return (
-            new Date(model.dates[0]).getTime() <=
-            new Date(model.dates[1]).getTime()
-          );
-        }
-        return true;
-      },
-      message: t('landing-error-action-project_invalid_end_time'),
-      trigger: 'change',
     },
   ],
   eventEnglishName: [
@@ -476,7 +474,7 @@ const rules = {
   metaKeyword: [
     {
       regex:
-        /^([\p{L}\p{N} .'\[\]\^&+/_$-]{1,25})(,([\p{L}\p{N} .'\[\]\^&+/_$-]{1,25})){0,9},?$/u,
+        /^$|^([\p{L}\p{N} .'\[\]\^&+/_$-]{1,25})(,([\p{L}\p{N} .'\[\]\^&+/_$-]{1,25})){0,9},?$/u,
       message: t('error_fe-data-validation-input_format_invalid'),
       trigger: 'change',
     },
@@ -572,8 +570,6 @@ const onEditProject = async () => {
         serverErrorMsg.eventEnglishName = t(
           'landing-error-action-project_duplicate_name'
         );
-      } else {
-        toastMessage(error?.data?.data?.detail, 'error');
       }
     }
   } else {
@@ -595,9 +591,9 @@ const onBlurEventEnglishName = () => {
   model.eventEnglishName = model.eventEnglishName.trim();
 };
 
-const onChangeKeyWord = debounce((value: string) => {
-  model.metaKeyword = handleKeyword(value);
-}, 150);
+const onChangeKeyWord = () => {
+  model.metaKeyword = handleKeyword(model.metaKeyword);
+};
 
 const initProject = async () => {
   if (props.project) {
@@ -647,7 +643,13 @@ watch(
 watch(
   () => model.dates,
   () => {
+    serverErrorMsg.date = '';
     model.date = model.dates.join(' - ');
+    if (
+      new Date(model.dates[1]).getTime() <= new Date(model.dates[0]).getTime()
+    ) {
+      serverErrorMsg.date = t('landing-error-action-project_invalid_end_time');
+    }
   },
   { deep: true }
 );
