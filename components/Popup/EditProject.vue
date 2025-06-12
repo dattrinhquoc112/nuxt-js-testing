@@ -21,8 +21,7 @@
             :hint="errorMsg"
             is-count
             :max="50"
-            @keydown="blockSpecialCharacters"
-            :allowed-regex="/^[A-Za-z0-9 ]+$/"
+            :allowed-regex="/^[\p{L}\p{N} _-]*$/u"
             size="large"
           />
         </template>
@@ -87,7 +86,7 @@ const rules = {
       trigger: 'blur',
     },
     {
-      regex: /^[a-zA-Z0-9](?:[a-zA-Z0-9 ]*[a-zA-Z0-9])?$/,
+      regex: /^[\p{L}\p{N} _-]*$/u,
       message: t('error_fe-data-validation-input_format_invalid'),
       trigger: 'change',
     },
