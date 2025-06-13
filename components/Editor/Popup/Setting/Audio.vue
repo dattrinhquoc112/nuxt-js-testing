@@ -45,6 +45,7 @@
         }}</vi-typography>
         <vi-progress
           v-model="audioSelecting.setting.speed"
+          :disabled="isDisabledAll"
           has-tick-mark
           is-show-legend
           progress-width="100%"
@@ -56,6 +57,7 @@
         }}</vi-typography>
         <vi-progress
           v-model="audioSelecting.setting.pitch"
+          :disabled="isDisabledAll"
           has-tick-mark
           is-show-legend
           progress-width="100%"
@@ -97,13 +99,13 @@
             v-model="item.text"
             type="textarea"
             size="large"
+            :disabled="isDisabledAll"
             :label="
               $t('landing-editor-modal-tts_sentence_number', { num: index + 1 })
             "
             :is-count="true"
             :max="50"
             :placeholder="$t('landing-editor-modal-tts_placeholder_enter_text')"
-            @change="() => handleCreateDemo(index)"
           >
             <template #end-label-icon>
               <vi-icon
@@ -115,9 +117,10 @@
               ></vi-icon>
             </template>
           </vi-input>
-          <div class="audio-box">
+          <div class="audio-box" :class="{ disabled: isDisabledAll }">
             <div class="custom-audio">
               <vi-audio
+                @click:play-icon.stop="handleCreateDemo(index)"
                 :audio-file="item?.audioUrl"
                 width="100%"
                 :show-timer="false"
@@ -138,6 +141,7 @@
       <vi-button
         v-show="audioSelecting.setting.listPhrase?.length < 5"
         @click="addPhrase"
+        :disabled="isDisabledAll"
         class="mt-24"
         type="standard-default"
         size="small"
@@ -155,14 +159,13 @@ import useCheckHeightPopup from '~/composables/checkHeightPopupSetting';
 import { useEditorStore } from '~/stores/editor';
 
 const emit = defineEmits([
-  'change-align',
-  'change-size',
+  'remove-material',
+  'add-material',
   'close',
   'move-popup-to-top',
   'move-popup-to-bottom',
 ]);
 
-const audioSelecting = defineModel<any>();
 const props = defineProps({
   positionControlCurrent: {
     type: Object as PropType<{ pageX: number; pageY: number }>,
@@ -172,6 +175,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+});
+const audioSelecting = defineModel<any>();
+const isDisabledAll = computed(() => {
+  return !audioSelecting.value?.setting?.voiceModelId?.value;
 });
 
 const mapSpeed = {
@@ -202,9 +209,13 @@ const addPhrase = () => {
   audioSelecting.value.setting.listPhrase.push(_.cloneDeep(itemPhrase));
 };
 const handleDeletePhrase = (index: number) => {
-  audioSelecting.value.setting.listPhrase.splice(index, 1);
+  emit(
+    'remove-material',
+    audioSelecting.value.setting.listPhrase.splice(index, 1)
+  );
 };
-const handleCreateDemo = _.debounce(async (index: number) => {
+const handleCreateDemo = async (index: number) => {
+  if (audioSelecting.value.setting.listPhrase[index].audioUrl) return;
   if (!audioSelecting.value.setting.voiceModelId.value) return;
   try {
     audioSelecting.value.setting.listPhrase[index].isLoading = true;
@@ -219,11 +230,12 @@ const handleCreateDemo = _.debounce(async (index: number) => {
     );
     audioSelecting.value.setting.listPhrase[index].id = res.data?.demoId;
     audioSelecting.value.setting.listPhrase[index].audioUrl = res.data?.demoUri;
+    emit('add-material', audioSelecting.value.setting.listPhrase[index]);
   } catch (error) {
   } finally {
     audioSelecting.value.setting.listPhrase[index].isLoading = false;
   }
-}, 1000);
+};
 
 const fetchListVoiceModel = async () => {
   const listModelApi = (await getVoiceModelList()).data;
@@ -355,6 +367,10 @@ onMounted(() => {
           padding-bottom: 16px;
           padding-right: 12px;
           padding-left: 12px;
+          &.disabled {
+            pointer-events: none;
+            opacity: 0.5;
+          }
         }
       }
     }

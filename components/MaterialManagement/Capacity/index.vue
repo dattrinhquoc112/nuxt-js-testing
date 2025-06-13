@@ -13,7 +13,13 @@
         :material="item"
       />
     </div>
-    <div class="capacity-list--audio"></div>
+    <div class="capacity-list--audio">
+      <MaterialInfo
+        v-for="(item, index) in materialListAudio"
+        :key="index"
+        :material="item"
+      />
+    </div>
   </div>
 </template>
 <script setup lang="ts">
@@ -33,6 +39,10 @@ const props = defineProps<{
 const materialListMedia = computed(() => {
   return props.materialList?.filter((item) => item.type === 'MEDIA');
 });
+
+const materialListAudio = computed(() => {
+  return props.materialList?.filter((item) => item.type === 'AUDIO_TTS');
+});
 </script>
 <style scoped lang="scss">
 .capacity-list {
@@ -41,10 +51,14 @@ const materialListMedia = computed(() => {
     margin: 16px 0px;
     color: $neutral-white-alpha-80;
   }
-  &--media {
+  &--media,
+  &--audio {
     gap: 8px;
     display: flex;
     flex-direction: column;
+  }
+  &--audio {
+    margin-top: 8px;
   }
 }
 </style>
