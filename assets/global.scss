@@ -116,6 +116,13 @@ html {
   flex: 0 0 100%;
   max-width: 100%;
 }
+
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden; 
+  text-overflow: ellipsis; 
+}
+
 .section-snapshot {
   width: 1376px;
   position: absolute;

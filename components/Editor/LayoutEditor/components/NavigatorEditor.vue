@@ -22,7 +22,7 @@
           >
             <vi-typography
               type="headline-xs"
-              class="editor-layout__left__text truncate cursor-pointer"
+              class="editor-layout__left__text truncate cursor-pointer ellipsis"
               @click="isOpenSettingEvent = !isOpenSettingEvent"
             >
               {{ projectName }}

@@ -25,7 +25,7 @@
           </div>
           <div class="neutral-white-alpha-60-text">
             <vi-typography type="caption-large-700">{{
-              item.roleOfTheTenant.name
+              $t(item.roleOfTheTenant.name)
             }}</vi-typography>
           </div>
           <div class="item-icon">
