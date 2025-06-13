@@ -10,7 +10,7 @@
         checkVersionAndUpdate({ keyAction }, ACTION_LIST.SWITCH_RWD)
     "
     @handle-play="checkVersionAndUpdate({}, ACTION_LIST.PREVIEW)"
-    @handle-release="handleCheckCOnditionPublish"
+    @handle-release="handleCheckConditionPublish"
     @handle-store-changes="checkVersionAndUpdate({}, ACTION_LIST.SAVE)"
     @click-sidebar="
       (keyAction) =>
@@ -56,6 +56,7 @@
     :show="isShowActivitySettingModal"
     v-model:project="project"
     @close="isShowActivitySettingModal = false"
+    :errCode="errCode"
   />
   <popup-edit-project
     v-if="isShowEditInfoModal"
@@ -110,6 +111,9 @@ definePageMeta({
 });
 const RWDMode = ref(RWD_MODE.DESKTOP);
 const isOpenReminderPU = ref(false);
+const errCode = reactive({
+  eventEnglishName: '',
+});
 const { setLoading } = useEditorStore();
 const { checkIsLatestVersion } = useProjectStore();
 const { t } = useI18n();
@@ -192,7 +196,8 @@ watch(
   }
 );
 
-const handleCheckCOnditionPublish = async () => {
+const handleCheckConditionPublish = async () => {
+  errCode.eventEnglishName = '';
   const isFinishSetupEvent =
     project.value?.metaTitle &&
     project.value?.ogTitle &&
@@ -206,8 +211,14 @@ const handleCheckCOnditionPublish = async () => {
       toastMessage(t('landing-project_mgmt-menu-published'));
       navigateTo(ROUTE.PROJECT_LIST);
     } catch (error: any) {
-      const errCode = error?.data?.data?.detail;
-      if (errCode && errCode === 'LD_PROJECT_URL_DUPLICATED') {
+      errCode.eventEnglishName = error?.data?.data?.detail;
+      if (
+        errCode.eventEnglishName &&
+        errCode.eventEnglishName === 'LD_PROJECT_URL_DUPLICATED'
+      ) {
+        errCode.eventEnglishName = t(
+          'landing-error-action-project_duplicate_name'
+        );
         isOpenReminderPU.value = true;
       }
     }
@@ -336,6 +347,15 @@ const limitFileSize = computed(() => {
 onMounted(() => {
   getTenantMetric();
 });
+
+watch(
+  () => isShowActivitySettingModal.value,
+  () => {
+    if (isShowActivitySettingModal.value == false) {
+      errCode.eventEnglishName = '';
+    }
+  }
+);
 </script>
 
 <style lang="scss" scoped>

@@ -87,6 +87,8 @@
       :isShow="isShowPopup.audioSetting"
       :positionControlCurrent="positionControlCurrent"
       v-model="objectSelecting"
+      @add-material="addMaterialAudio"
+      @remove-material="removeMaterialAudio"
       @close="closePopupSettingAudio"
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
@@ -206,8 +208,11 @@ const {
   deleteIndexMaterial,
   initSections,
   listMaterials,
+  addMaterialAudio,
+  removeMaterialAudio,
 } = useWebEditor(sections, idParam, limitSize, {
   handleExceedLimit,
+  indexSectionSelected,
 });
 
 const currentIndex = ref<number>(0);
@@ -335,7 +340,6 @@ const handleChangeVideo = ({
     objSelecting: obj,
     newFileUri: urlVideo,
     file,
-    indexSection: indexSectionSelected.value,
   });
   if (isOverStorage) return;
   revokeObjectURL(obj.urlVideo);
@@ -431,7 +435,6 @@ const handleChangeImage = ({
     objSelecting: obj,
     newFileUri: urlImage,
     file,
-    indexSection: indexSectionSelected.value,
   });
   if (isOverStorage) return;
   revokeObjectURL(obj.urlImage);

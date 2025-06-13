@@ -13,11 +13,14 @@
       }}</vi-typography>
     </div>
     <div class="analysis-parts">
-      <div v-for="(part, index) in model" :key="index" class="part">
-        <vi-typography class="description" type="body-small">{{
-          part.title
-        }}</vi-typography>
-        <vi-typography type="headline-l">{{ part.value }}</vi-typography>
+      <div v-for="(part, index) in model" :key="index" class="part-container">
+        <vi-divider v-if="index !== 0" class="divider" direction="vertical" />
+        <div class="part">
+          <vi-typography class="description" type="body-small">{{
+            part.title
+          }}</vi-typography>
+          <vi-typography type="headline-l">{{ part.value }}</vi-typography>
+        </div>
       </div>
     </div>
   </div>
@@ -52,9 +55,6 @@ const getTitle = (key: string) => {
   switch (key) {
     case 'averageStayTime':
       title = t('landing-project_mgmt-subtitle-average_time');
-      break;
-    case 'totalAiToolUsage':
-      title = t('landing-project_mgmt-subtitle-total_ai_usage');
       break;
     case 'totalVisits':
       title = t('landing-project_mgmt-subtitle-total_visits');
@@ -102,12 +102,21 @@ onMounted(() => {
   .analysis-parts {
     display: flex;
     flex-direction: row;
-    .part {
+    .part-container {
       flex: 1;
-      padding: 24px;
       display: flex;
-      flex-direction: column;
-      min-width: 320px;
+      flex-direction: row;
+      .divider {
+        margin-left: 16px;
+        margin-right: 16px;
+      }
+      .part {
+        flex: 1;
+        padding: 24px;
+        display: flex;
+        flex-direction: column;
+        min-width: 320px;
+      }
     }
   }
 }

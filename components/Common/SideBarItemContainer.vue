@@ -30,6 +30,7 @@
   border: 1px solid $neutral-white-alpha-10;
   background: $brand-navy-800;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25);
+  overflow-y: auto;
   &--title {
     display: flex;
     width: 100%;
