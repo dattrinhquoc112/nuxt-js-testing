@@ -339,10 +339,7 @@ const onSaveUserAvatar = async () => {
     username: userNameAndAvatar.userName,
   };
   userNameAndAvatar.avatar = res.data.avatarUri;
-  window.VIUIKit.VIMessage({
-    title: t('notification-status-action-save_success'),
-    width: '348px',
-  });
+  toastMessage(t('notification-status-action-save_success'));
 };
 
 const onSaveUserNameAndTel = async () => {
@@ -360,10 +357,7 @@ const onSaveUserNameAndTel = async () => {
     mobileCountryCode: infoNameAndTel.firstTel.value,
     mobileNumber: infoNameAndTel.lastTel,
   };
-  window.VIUIKit.VIMessage({
-    title: t('notification-status-action-save_success'),
-    width: '348px',
-  });
+  toastMessage(t('notification-status-action-save_success'));
 };
 
 const handleValidate = () => {
@@ -405,10 +399,7 @@ const onSavePassword = async () => {
     };
     await updateUser(payload);
     password.isChange = false;
-    window.VIUIKit.VIMessage({
-      title: t('notification-status-action-update_password_success'),
-      width: '348px',
-    });
+    toastMessage(t('notification-status-action-update_password_success'));
   } catch (error) {
     errorServer.value = getMessageErrorBackend(error, t);
   }
