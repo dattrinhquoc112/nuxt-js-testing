@@ -74,7 +74,7 @@ import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
 const isOpenMaterialManagement = ref(false);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
-const activeSidebarButton = ref();
+const activeSidebarButton = inject<Ref<String>>('activeSidebarButton');
 const emit = defineEmits(['click-sidebar']);
 
 const props = defineProps({
@@ -83,22 +83,32 @@ const props = defineProps({
     default: '',
   },
 });
+watch(
+  () => activeSidebarButton?.value,
+  (newVal) => {
+    if (newVal && newVal === SIDEBAR_BUTTONS[2]) {
+      isOpenMaterialManagement.value = true;
+    }
+  }
+);
 watch(isOpenMaterialManagement, (newVal) => {
-  if (!newVal) {
+  if (!newVal && activeSidebarButton) {
     activeSidebarButton.value = '';
   }
 });
 watch(
   () => props.isShowListSection,
   (newVal) => {
-    if (newVal === '') {
+    if (newVal === '' && activeSidebarButton) {
       activeSidebarButton.value = '';
     }
   }
 );
 
 const handleAction = (keyIcon: string, keyAction: any) => {
-  activeSidebarButton.value = keyIcon;
+  if (activeSidebarButton) {
+    activeSidebarButton.value = keyIcon;
+  }
   emit('click-sidebar', keyAction);
 };
 </script>

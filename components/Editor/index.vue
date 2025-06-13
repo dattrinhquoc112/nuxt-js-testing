@@ -164,7 +164,7 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['closeSection']);
+const emit = defineEmits(['closeSection', 'handleAddSection']);
 const isOpenReachLimitNoti = ref(false);
 const modelValue = ref(true);
 const showSelectAITools = ref(false);
@@ -626,6 +626,7 @@ const onClickAddSection = (index: number) => {
     );
     iSaveHistory.value = true;
     templateSelected.value = undefined;
+    emit('handleAddSection');
   }
 };
 const showPopupSettingText = () => {
