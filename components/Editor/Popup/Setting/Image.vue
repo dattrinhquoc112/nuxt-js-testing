@@ -120,7 +120,7 @@ const getAcceptFile = computed(() => {
   if (props.isLogo) {
     return 'image/gif, image/jpeg, image/png';
   }
-  return 'image/jpeg, image/png, video/mp4, video/mov';
+  return 'image/jpeg, image/png, video/mp4, video/quicktime';
 });
 
 const handleChange = (event: Event) => {
@@ -131,6 +131,15 @@ const handleChange = (event: Event) => {
   const fileSize = file.size;
   const fileType = file.type;
   const objectUrl = URL.createObjectURL(file);
+
+  const acceptedTypes = getAcceptFile.value
+    .split(',')
+    .map((type) => type.trim());
+
+  if (!acceptedTypes.includes(fileType)) {
+    errorMessage.value = t('error_fe-file-validation-file_format_unsupported');
+    return;
+  }
 
   if (props.isAudio) {
     if (fileSize > 500 * 1024) {
