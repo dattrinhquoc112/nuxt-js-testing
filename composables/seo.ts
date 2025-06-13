@@ -38,7 +38,11 @@ export default function useSeo() {
           method: MethodEnum.POST,
           body: {
             method: MethodEnum.GET,
-            endpoint: `/api/v1/projects/published-content?tenantName=${tenantName}&eventEnglishName=${eventEnglishName}`,
+            endpoint: `/api/v1/projects/published-content`,
+            params: {
+              tenantName,
+              eventEnglishName,
+            },
           },
         }),
       { server: true }
