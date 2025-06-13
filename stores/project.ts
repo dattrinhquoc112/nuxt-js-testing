@@ -58,20 +58,30 @@ export const useProjectStore = defineStore('project', () => {
   }
 
   async function editProject(id: string, data: IUpdateProjectPayload) {
-    return apiStore.apiRequest({
-      method: MethodEnum.PATCH,
-      endpoint: `/api/v1/projects/${id}`,
-      proxy: true,
-      data,
-    });
+    return apiStore.apiRequest(
+      {
+        method: MethodEnum.PATCH,
+        endpoint: `/api/v1/projects/${id}`,
+        proxy: true,
+        data,
+      },
+      {
+        showErrorMsg: false,
+      }
+    );
   }
 
   async function publishProject(id: string) {
-    return apiStore.apiRequest({
-      method: MethodEnum.POST,
-      endpoint: `/api/v1/projects/${id}/publish`,
-      proxy: true,
-    });
+    return apiStore.apiRequest(
+      {
+        method: MethodEnum.POST,
+        endpoint: `/api/v1/projects/${id}/publish`,
+        proxy: true,
+      },
+      {
+        showErrorMsg: false,
+      }
+    );
   }
 
   async function unpublishProject(id: string) {
