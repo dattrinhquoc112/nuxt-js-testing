@@ -23,9 +23,16 @@
     @scroll-editor="handleHiddenAllControl"
   >
     <vi-alert
+      v-model="isOpenAlert"
       :text-title="$t('landing-common-message-storage_near_limit')"
       :text-content="
-        $t('landing-common-message-storage_warning', { percent: percentUsage })
+        $t('landing-common-message-storage_warning', { percent: '75' })
+      "
+      @handle-content-click="
+        () => {
+          isOpenAlert = false;
+          activeSidebarButton = SIDEBAR_BUTTONS[2];
+        }
       "
     >
       <vi-icon name="ic_alert" size="24" color="#fff" />
@@ -41,6 +48,7 @@
         :list-template="listTemplateCurrent"
         :is-show-list-section="isShowListSection"
         @close-section="isShowListSection = ''"
+        @handle-add-section="handleAddSection"
       />
       <div class="section-snapshot">
         <editor-section-render
@@ -101,8 +109,11 @@ import { useEditorStore } from '~/stores/editor';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMetric from '@/composables/metric';
 
+const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
+const activeSidebarButton = ref();
+provide('activeSidebarButton', activeSidebarButton);
 const { tenantMetric, getTenantMetric } = useMetric();
-
+const isOpenAlert = ref(true);
 const { getProject, editProject, publishProject } = useProjectStore();
 
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
@@ -156,17 +167,15 @@ const handleGetProjectDetail = async (id: any) => {
   }
   return {};
 };
-
-const percentUsage = computed(() => {
-  return 75;
-});
-
 watch(
   () => editorRef.value?.historyStatus,
   (newVal) => {
     historyStatus.value = newVal;
   }
 );
+const handleAddSection = () => {
+  isOpenAlert.value = true;
+};
 
 const sectionSnapshot = computed(() => {
   return editorRef.value?.sections[1];
