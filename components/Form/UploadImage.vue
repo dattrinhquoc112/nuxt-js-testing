@@ -123,17 +123,15 @@ const onFileChange = (event: Event) => {
         URL.revokeObjectURL(objectUrl);
         target.value = '';
         if (!isSizeValid) {
-          window.VIUIKit.VIMessage({
-            title: t('error_fe-file-validation-file_size_exceeded'),
-            width: '348px',
-            type: 'error',
-          });
+          toastMessage(
+            t('error_fe-file-validation-file_size_exceeded'),
+            'error'
+          );
         } else if (!isDimensionValid) {
-          window.VIUIKit.VIMessage({
-            title: t('error_fe-file-validation-file_dimensions_exceeded'),
-            width: '348px',
-            type: 'error',
-          });
+          toastMessage(
+            t('error_fe-file-validation-file_dimensions_exceeded'),
+            'error'
+          );
         }
       }
     };
@@ -141,20 +139,18 @@ const onFileChange = (event: Event) => {
     img.onerror = () => {
       URL.revokeObjectURL(objectUrl);
       target.value = '';
-      window.VIUIKit.VIMessage({
-        title: t('error_fe-file-validation-file_format_unsupported'),
-        width: '348px',
-        type: 'error',
-      });
+      toastMessage(
+        t('error_fe-file-validation-file_format_unsupported'),
+        'error'
+      );
     };
 
     img.src = objectUrl;
   } else {
-    window.VIUIKit.VIMessage({
-      title: t('error_fe-file-validation-file_format_unsupported'),
-      width: '348px',
-      type: 'error',
-    });
+    toastMessage(
+      t('error_fe-file-validation-file_format_unsupported'),
+      'error'
+    );
     target.value = '';
   }
 };
