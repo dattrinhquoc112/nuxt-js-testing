@@ -23,6 +23,7 @@
     @scroll-editor="handleHiddenAllControl"
   >
     <vi-alert
+      v-if="isExceedLimit && isOpenAlert"
       v-model="isOpenAlert"
       :text-title="$t('landing-common-message-storage_near_limit')"
       :text-content="
@@ -102,7 +103,12 @@ import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
 import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
-import { SIDE_BAR_ACTION, RWD_MODE, METRICS_KEY } from '@/constants/common';
+import {
+  SIDE_BAR_ACTION,
+  RWD_MODE,
+  METRICS_KEY,
+  THRESH_HOLD,
+} from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
@@ -158,6 +164,25 @@ provide('materialList', materialList);
 const configVersion = ref({
   keyAction: '',
   type: '',
+});
+const isExceedLimit = computed(() => {
+  const totalMaterialSize = materialList.value?.reduce(
+    (sum: number, item: any) => sum + (item?.fileSize ?? 0),
+    0
+  );
+  const totalCapacity = tenantMetric.value?.metrics.find(
+    (item) => item.metric === METRICS_KEY.TOTAL_CAPACITY
+  );
+  if (!totalMaterialSize || !totalCapacity) {
+    return false;
+  }
+  const totalKbSize = convertToKB(`${totalMaterialSize}B`) || 0;
+  const totalCapacityKb =
+    convertToKB(`${totalCapacity.value}${totalCapacity.unit}`) || 0;
+  if (totalKbSize > totalCapacityKb * THRESH_HOLD) {
+    return true;
+  }
+  return false;
 });
 const handleGetProjectDetail = async (id: any) => {
   const detailProject = await getProject(id);
@@ -362,7 +387,7 @@ onMounted(() => {
 watch(
   () => isShowActivitySettingModal.value,
   () => {
-    if (isShowActivitySettingModal.value == false) {
+    if (isShowActivitySettingModal.value === false) {
       errCode.eventEnglishName = '';
     }
   }
