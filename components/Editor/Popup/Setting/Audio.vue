@@ -107,7 +107,7 @@
               $t('landing-editor-modal-tts_sentence_number', { num: index + 1 })
             "
             :is-count="true"
-            :max="50"
+            :max="300"
             :placeholder="$t('landing-editor-modal-tts_placeholder_enter_text')"
           >
             <template #end-label-icon>

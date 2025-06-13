@@ -45,12 +45,13 @@ export const useWebEditor = (
   }): Boolean => {
     const materialOld = listMaterials.value.find(
       (item) =>
-        item.fileUri === objSelecting.urlImage ||
-        item.fileUri === objSelecting.urlVideo
+        Boolean(item.fileUri) &&
+        (item.fileUri === objSelecting.urlImage ||
+          item.fileUri === objSelecting.urlVideo)
     );
 
     // Handle upload a new material
-    if (!materialOld) {
+    if (!materialOld && type !== 'DELETE') {
       const isLimit = checkReachLimit(
         listMaterials.value,
         limitFileSize?.value || 0,
@@ -71,6 +72,7 @@ export const useWebEditor = (
       }
       return isLimit;
     }
+    if (!materialOld) return false;
     // Handle remove a material
     if (type === 'DELETE') {
       listMaterials.value.splice(listMaterials.value.indexOf(materialOld), 1);
@@ -203,8 +205,15 @@ export const useWebEditor = (
       sections: sections.value.map((section: SECTION_ITEM, index: number) => {
         let audioSettings: any = [];
         if (section.id === 'audio-section') {
-          audioSettings = section.listAudio?.map(
+          audioSettings = section.listAudio?.flatMap(
             (item: AUDIO_ITEM, orderAudio) => {
+              if (
+                !item.audio.setting.voiceModelId?.value ||
+                !item.audio.setting.listPhrase?.length ||
+                !item.audio.setting.listPhrase?.[0]?.id
+              ) {
+                return [];
+              }
               return {
                 order: orderAudio.toString(),
                 audioAppProjectId: item.audio.setting.voiceModelId.value,
