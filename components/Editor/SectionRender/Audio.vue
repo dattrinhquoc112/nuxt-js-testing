@@ -55,7 +55,7 @@
             <div class="icon-play">
               <vi-audio
                 width="100%"
-                :audio-file="audio.audio.setting.listPhrase?.[0]?.audioUrl"
+                :audio-file="getAudioRandom[audioIndex]"
                 :show-timer="false"
                 :is-show-audio-size="false"
                 :is-show-status="false"
@@ -87,7 +87,7 @@
 import useProjects from '~/composables/projects';
 import { RWD_MODE } from '@/constants/common';
 
-defineProps({
+const props = defineProps({
   section: {
     type: Object as PropType<any>,
     default: () => ({}),
@@ -106,6 +106,18 @@ const clickParent = (event: MouseEvent) => {
   const element = event.target as HTMLElement;
   element.parentElement?.click();
 };
+
+const getAudioRandom = computed(() => {
+  return props.section.listAudio.map((audio: any) => {
+    if (audio.audio.setting.listPhrase?.length) {
+      const randomIndex = Math.floor(
+        Math.random() * audio.audio.setting.listPhrase.length
+      );
+      return audio.audio.setting.listPhrase[randomIndex].audioUrl;
+    }
+    return '';
+  });
+});
 </script>
 
 <style></style>
