@@ -2,13 +2,17 @@ import { defineStore } from 'pinia';
 import { useAuthStore } from '@/stores/auth';
 import { MethodEnum, type Payload } from '@/stores/interface/api';
 
+interface APIRequestOptions {
+  showErrorMsg?: boolean;
+}
+
 export const useApiStore = defineStore('api', () => {
   const authStore = useAuthStore();
   const route = useRoute();
   const { $i18n } = useNuxtApp();
   const { t } = $i18n;
 
-  const handleError = (error: any) => {
+  const handleError = (error: any, options?: APIRequestOptions) => {
     const message = getMessageErrorBackend(error, t) || error?.data?.message;
     const pathNotAllow = ['/auth', '/auth/'];
 
@@ -21,11 +25,18 @@ export const useApiStore = defineStore('api', () => {
       default:
         break;
     }
-    toastMessage(message, 'error');
+    if (options?.showErrorMsg === true) {
+      toastMessage(message, 'error');
+    }
     return Promise.reject(error);
   };
 
-  async function apiRequest<ResponseDataType>(payload: Payload) {
+  async function apiRequest<ResponseDataType>(
+    payload: Payload,
+    options: APIRequestOptions = {
+      showErrorMsg: true,
+    }
+  ) {
     let { headers } = payload;
     if (payload.auth) {
       headers = {
@@ -73,7 +84,7 @@ export const useApiStore = defineStore('api', () => {
       }
       return response;
     } catch (error) {
-      return handleError(error);
+      return handleError(error, options);
     }
   }
 
