@@ -23,6 +23,7 @@
   <section-audio
     :section="section"
     :rwd-mode="rwdMode"
+    @handle-play-audio="(data) => emit('handle-play-audio', data)"
     @show-option="(event:any) => emit('show-option', event)"
     @handle-change-text="(event:any) => emit('handle-change-text', event)"
   />
@@ -66,7 +67,11 @@ const props = defineProps({
     default: false,
   },
 });
-const emit = defineEmits(['show-option', 'handle-change-text']);
+const emit = defineEmits([
+  'show-option',
+  'handle-change-text',
+  'handle-play-audio',
+]);
 
 const getLinkForButton = computed(() => {
   if (!props.isPublic && !props.readOnly) return {};

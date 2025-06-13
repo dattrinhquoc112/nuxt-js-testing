@@ -314,7 +314,7 @@ watch(buttonColor, () => {
     bg.color = colorChange;
     checkMaterials({
       objSelecting: bg,
-      type: 'DELETE,',
+      type: 'DELETE',
     });
     bg.urlVideo = '';
     bg.urlImage = '';
@@ -362,7 +362,7 @@ const handleResetFile = () => {
     obj = objectSelecting.value as BACKGROUND_SECTION;
     checkMaterials({
       objSelecting: obj,
-      type: 'DELETE,',
+      type: 'DELETE',
     });
     if (obj.urlImage === templateCurrent?.backgroundSection?.urlImage) {
       obj.urlImage = '';
@@ -378,7 +378,7 @@ const handleResetFile = () => {
     obj = objectSelecting.value as BOX_IMAGE;
     checkMaterials({
       objSelecting: obj,
-      type: 'DELETE,',
+      type: 'DELETE',
     });
     if (obj.urlImage === templateCurrent?.boxImage?.urlImage) {
       obj.urlImage = '';
@@ -392,7 +392,7 @@ const handleResetFile = () => {
     obj = objectSelecting.value as AUDIO_SETTING;
     checkMaterials({
       objSelecting: obj,
-      type: 'DELETE,',
+      type: 'DELETE',
     });
     if (obj.urlImage === templateCurrent?.listAudio?.[0]?.audio.urlImage) {
       obj.urlImage = '';

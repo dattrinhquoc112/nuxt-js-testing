@@ -55,6 +55,9 @@
             <div class="icon-play">
               <vi-audio
                 width="100%"
+                @click:play-icon="
+                  emit('handle-play-audio', audio.audio.setting.voiceModelId)
+                "
                 :audio-file="getAudioRandom[audioIndex]"
                 :show-timer="false"
                 :is-show-audio-size="false"
@@ -100,7 +103,11 @@ const props = defineProps({
 
 const { getImage } = useProjects();
 
-const emit = defineEmits(['show-option', 'handle-change-text']);
+const emit = defineEmits([
+  'show-option',
+  'handle-change-text',
+  'handle-play-audio',
+]);
 
 const clickParent = (event: MouseEvent) => {
   const element = event.target as HTMLElement;
