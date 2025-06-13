@@ -56,6 +56,9 @@ const getTitle = (key: string) => {
     case 'averageStayTime':
       title = t('landing-project_mgmt-subtitle-average_time');
       break;
+    case 'totalAiToolUsage':
+      title = t('landing-project_mgmt-subtitle-total_ai_usage');
+      break;
     case 'totalVisits':
       title = t('landing-project_mgmt-subtitle-total_visits');
       break;
