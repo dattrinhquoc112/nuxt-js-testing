@@ -438,5 +438,6 @@
   "landing-project_mgmt-modal-title_release_condition": "Release Conditions Not Met",
   "landing-project_mgmt-modal-description_release_condition": "Please complete the activity settings first to publish this activity.",
   "landing-error-action-project_invalid_end_time": "End time must be later than the start time",
-  "landing-error-action-project_duplicate_name": "Event name already exists. Please use a different name"
+  "landing-error-action-project_duplicate_name": "Event name already exists. Please use a different name",
+  "landing-editor-placeholder-placeholder_voice_model": "Select voice model"
 }
