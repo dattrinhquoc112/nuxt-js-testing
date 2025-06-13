@@ -27,8 +27,8 @@ export default function useProjects() {
 
   const handleKeyword = (newValue: string, maxKeywords = 10): string => {
     let keywords = newValue
+      .trim()
       .split(',')
-      .map((k) => k.trim())
       .filter((k) => k !== '');
 
     if (keywords.length > maxKeywords) {
