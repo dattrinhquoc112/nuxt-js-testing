@@ -94,10 +94,7 @@ export const useAuthStore = defineStore('auth', () => {
         navigateTo(`${urlDecode.pathname}${urlDecode.search}`);
       } else if (response?.otpVerificationId) {
         navigateTo(`/auth/check-otp/${response.otpVerificationId}`);
-        window.VIUIKit.VIMessage({
-          title: t('notification-status-action-send_email_success'),
-          width: '348px',
-        });
+        toastMessage(t('notification-status-action-send_email_success'));
       }
     } catch (e) {
       return Promise.reject(e);
