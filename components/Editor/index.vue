@@ -167,6 +167,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  isExceedLimit: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits([
@@ -628,7 +632,9 @@ const onClickTemplate = (template: any) => {
 };
 
 const onClickAddSection = (index: number) => {
-  if (templateSelected.value) {
+  if (props.isExceedLimit) {
+    emit('handleAddSection');
+  } else if (templateSelected.value && !props.isExceedLimit) {
     const newIndex = hoverPosition.value?.zone === 'bottom' ? index + 1 : index;
     sections.value.splice(
       newIndex,
@@ -637,7 +643,6 @@ const onClickAddSection = (index: number) => {
     );
     iSaveHistory.value = true;
     templateSelected.value = undefined;
-    emit('handleAddSection');
   }
 };
 const showPopupSettingText = () => {
