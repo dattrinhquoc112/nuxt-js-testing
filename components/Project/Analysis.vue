@@ -33,6 +33,10 @@ const props = defineProps({
   },
 });
 
+defineEmits<{
+  (e: 'update:project', value: IProject): void;
+}>();
+
 const { t } = useI18n();
 
 const { getProjectAnalysis } = useProjectStore();

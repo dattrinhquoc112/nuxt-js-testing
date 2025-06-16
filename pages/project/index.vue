@@ -30,6 +30,7 @@
             type="text"
             start-icon="ic_search"
             :placeholder="$t('landing-project_mgmt-placeholder-search')"
+            :max="30"
           >
             <template v-if="model.search" #end-icon>
               <vi-icon
@@ -69,9 +70,9 @@
           v-show="!loading.search && model.projects.length === 0"
         >
           <img src="/assets/icons/searchNotFound.svg" />
-          <vi-typography type="subtitle-large"
-            >目前沒有內容， 快來創作你的 AI 聲音！</vi-typography
-          >
+          <vi-typography type="subtitle-large">{{
+            $t('landing-project_mgmt-description-no_content')
+          }}</vi-typography>
         </div>
         <div
           v-show="!loading.search && model.projects.length > 0"
@@ -81,7 +82,7 @@
           @click="onClickProject(item)"
         >
           <div class="item-thumbnail">
-            <custom-image :src="item.thumbnail" />
+            <custom-image :src="getImage(item.thumbnail)" />
           </div>
           <div class="item-info">
             <div class="status-active">{{ getStatus(item.status) }}</div>
@@ -89,7 +90,7 @@
               <div>
                 <div class="title-page">{{ item.name }}</div>
                 <div class="url-page">
-                  {{ getProjectUrl(item) }}
+                  {{ item?.eventOfficialUrl }}
                 </div>
               </div>
               <div>
@@ -185,11 +186,9 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const { getProjectUrl, getStatus } = useProjects();
-const { getProjectList, copyProject, editProject, createProject } =
-  useProjectStore();
-
 const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
+const { getStatus, getImage } = useProjects();
+const { getProjectList, copyProject, editProject } = useProjectStore();
 
 const loading = reactive({
   search: false,
@@ -235,11 +234,12 @@ const actionRef = reactive<{ [key: string]: boolean }>({});
 
 const fetchProjectList = debounce(async () => {
   loading.search = true;
+  model.search = model.search.trim();
   const res = await getProjectList({
     page: model.page,
     size: model.size,
     status: model.status,
-    nameKeyword: model.search.trim(),
+    nameKeyword: model.search,
   });
   model.projects = res.data;
   loading.search = false;
@@ -250,7 +250,7 @@ const onShowAction = (projectID: string, show = true) => {
 };
 
 const onCopyProject = async (project: IProject) => {
-  await copyProject(project.id, `${project.name} Copy`);
+  await copyProject(project.id, `${project.name}_copy`);
   fetchProjectList();
   toastMessage(t('landing-common-message-copied'));
 };
@@ -266,6 +266,9 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
 };
 
 const onAction = async (project?: IProject, action = '') => {
+  if (project) {
+    onShowAction(project.id, false);
+  }
   switch (action) {
     case 'create':
       await getTenantMetric();
@@ -292,9 +295,6 @@ const onAction = async (project?: IProject, action = '') => {
       break;
     default:
       break;
-  }
-  if (project) {
-    onShowAction(project.id, false);
   }
 };
 

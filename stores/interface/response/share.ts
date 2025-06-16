@@ -133,6 +133,7 @@ export interface IPresignedUrl extends IApiCommon {
     uploadUrl: string;
     fileKey: string;
     contentType: string | null;
+    fileUri: string;
   };
 }
 
