@@ -31,7 +31,7 @@
         <div class="input-image">
           <img src="/assets/images/input_imgage.png" alt="" />
         </div>
-        <div class="input-image">
+        <div v-if="!isAudio && !isLogo" class="input-image">
           <img src="/assets/images/input_video.png" alt="" />
         </div>
       </div>
@@ -224,9 +224,12 @@ const handleChange = (event: Event) => {
   }
   .box-input {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     padding: 41px 28px 41px 24px;
+    &:has(.input-image:nth-child(2)) {
+      justify-content: space-between;
+    }
     .input-image {
       display: flex;
     }

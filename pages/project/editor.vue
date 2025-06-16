@@ -270,10 +270,7 @@ const handleSaveTemplate = async (messageSuccess: string = '') => {
   }
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
-  window.VIUIKit.VIMessage({
-    title: messageSuccess || t('landing-common-message-saved'),
-    width: '348px',
-  });
+  toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
 };
 
 const handleClickSideBar = (keyAction: string) => {
@@ -320,10 +317,7 @@ const handleUpdateToNewVersion = async () => {
   await editorRef.value.fetchContentProject();
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
-  window.VIUIKit.VIMessage({
-    title: t('landing-editor-message-version_updated'),
-    width: '348px',
-  });
+  toastMessage(t('landing-editor-message-version_updated'));
   listAction[configVersion.value.type]?.(configVersion.value.keyAction);
 };
 

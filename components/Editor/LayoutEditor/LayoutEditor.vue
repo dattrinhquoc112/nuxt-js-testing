@@ -20,11 +20,12 @@
         @handle-back="$emit('handleBack')"
       />
       <div ref="editorContainer" class="editor__container">
-        <SideBarEditor
-          v-show="rwdMode === RWD_MODE.DESKTOP"
-          @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
-          :isShowListSection="isShowListSection"
-        />
+        <div v-show="rwdMode === RWD_MODE.DESKTOP">
+          <SideBarEditor
+            @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
+            :isShowListSection="isShowListSection"
+          />
+        </div>
         <vi-scroll id="editor_content" class="editor__content">
           <slot />
         </vi-scroll>
