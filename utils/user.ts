@@ -1,4 +1,5 @@
 export const PROVIDE = {
   USER_INFO: 'USER_INFO',
   FETCH_METRIC: 'FETCH_METRIC',
+  METRIC: 'METRIC',
 };

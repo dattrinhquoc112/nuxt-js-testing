@@ -28,9 +28,9 @@
     </div>
     <vi-scroll class="box-setting">
       <div class="title-setting">
-        <vi-typography type="body-small"
-          >已為你的音檔加入專屬六碼聲音標記（XXXXXX），你可以安心的創作(TBD)</vi-typography
-        >
+        <vi-typography type="body-small">{{
+          $t('landing-editor-modal-tts_description')
+        }}</vi-typography>
       </div>
       <vi-dropdown
         class="mt-24"
@@ -38,13 +38,15 @@
         size="small"
         :label="$t('landing-editor-modal-tts_field_choice_voice')"
         :listOption="listModel"
+        :placeholder="$t('landing-editor-placeholder-placeholder_voice_model')"
       />
       <div class="box-adjust-speech">
         <vi-typography type="subtitle-small">{{
           $t('landing-editor-modal-tts_subtitle_speed')
         }}</vi-typography>
         <vi-progress
-          v-model="audioSelecting.setting.speed"
+          :modelValue="mapSpeed[audioSelecting.setting.speed as keyof typeof mapSpeed]"
+          @update:modelValue="(value:any) => updateSetting('speed', value)"
           :disabled="isDisabledAll"
           has-tick-mark
           is-show-legend
@@ -52,11 +54,12 @@
           type="dual-slider"
           :data="arraySpeed"
         />
-        <vi-typography type="subtitle-small">{{
+        <vi-typography class="mt-24" type="subtitle-small">{{
           $t('landing-editor-modal-tts_subtitle_pitch')
         }}</vi-typography>
         <vi-progress
-          v-model="audioSelecting.setting.pitch"
+          :modelValue="mapPitch[audioSelecting.setting.pitch as keyof typeof mapPitch]"
+          @update:modelValue="(value:any) => updateSetting('pitch', value)"
           :disabled="isDisabledAll"
           has-tick-mark
           is-show-legend
@@ -66,13 +69,13 @@
         />
       </div>
 
-      <div class="box-demo">
+      <div class="box-demo" :class="{ disabled: isDisabledAll }">
         <vi-typography type="body-small">{{
           $t('landing-editor-modal-tts_preview_hint')
         }}</vi-typography>
         <div class="custom-audio">
           <vi-audio
-            :audio-file="audioSelecting.setting.listPhrase?.[0]?.audioUrl"
+            :audio-file="demoUri"
             width="100%"
             :show-timer="false"
             :is-show-audio-size="false"
@@ -104,7 +107,7 @@
               $t('landing-editor-modal-tts_sentence_number', { num: index + 1 })
             "
             :is-count="true"
-            :max="50"
+            :max="300"
             :placeholder="$t('landing-editor-modal-tts_placeholder_enter_text')"
           >
             <template #end-label-icon>
@@ -182,32 +185,41 @@ const isDisabledAll = computed(() => {
 });
 
 const mapSpeed = {
-  慢: 0.5,
-  中: 1,
-  快: 1.5,
+  0.5: '慢',
+  1: '中',
+  1.5: '快',
 };
 const mapPitch = {
-  低: 0.5,
-  中: 1,
-  高: 1.5,
+  0.5: '低',
+  1: '中',
+  1.5: '高',
 };
 
-const arraySpeed = [0.5, 1, 1.5];
-const arrayPitch = [0.5, 1, 1.5];
+const arraySpeed = ['慢', '中', '快'];
+const arrayPitch = ['低', '中', '高'];
 
 const itemPhrase = {
   text: '',
   audio: '',
   id: null,
 };
-const { getVoiceModelList, getListDemos, createDemo } = useEditorStore();
+const { getVoiceModelList, createDemo } = useEditorStore();
 
-const listModel = ref<{ text: string; value: string }[]>([]);
+const listModel = ref<{ text: string; value: string; demoUri?: string }[]>([]);
+const demoUri = ref<string>('');
 
 const popupElement = ref<HTMLElement>();
+
 const addPhrase = () => {
   audioSelecting.value.setting.listPhrase.push(_.cloneDeep(itemPhrase));
 };
+
+const updateSetting = (key: string, speed: any) => {
+  const objMap = key === 'speed' ? mapSpeed : mapPitch;
+  const entry = Object.entries(objMap).find(([_, value]) => value === speed);
+  audioSelecting.value.setting[key] = entry?.[0];
+};
+
 const handleDeletePhrase = (index: number) => {
   emit(
     'remove-material',
@@ -223,8 +235,8 @@ const handleCreateDemo = async (index: number) => {
     const res = await createDemo(
       audioSelecting.value.setting.voiceModelId.value as string,
       {
-        pitch: audioSelecting.value.setting.pitch,
-        speed: audioSelecting.value.setting.speed,
+        pitch: Number(audioSelecting.value.setting.pitch),
+        speed: Number(audioSelecting.value.setting.speed),
         text: audioSelecting.value.setting.listPhrase[index].text,
       }
     );
@@ -242,18 +254,25 @@ const fetchListVoiceModel = async () => {
   listModel.value = listModelApi.map((item: any) => ({
     text: item.name,
     value: item.id,
+    demoUri: item.demoUri,
   }));
 };
 
-// watch(
-//   () => audioSelecting.value?.setting?.voiceModelId.value,
-//   async () => {
-//     if (!audioSelecting.value?.setting?.voiceModelId.value) return;
-//     const res = await getListDemos(
-//       audioSelecting.value.setting.voiceModelId.value
-//     );
-//   }
-// );
+watch(
+  () => audioSelecting.value?.setting?.voiceModelId.value,
+  async () => {
+    if (!audioSelecting.value?.setting?.voiceModelId.value) {
+      demoUri.value = '';
+      return;
+    }
+    demoUri.value =
+      listModel.value.find(
+        (item: any) =>
+          item.value === audioSelecting.value.setting.voiceModelId.value
+      )?.demoUri || '';
+  },
+  { immediate: true }
+);
 
 useCheckHeightPopup(props, popupElement, emit);
 
@@ -329,6 +348,10 @@ onMounted(() => {
             gap: 0;
           }
         }
+      }
+      &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
       }
     }
     .text-randomly {

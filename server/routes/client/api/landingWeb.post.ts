@@ -1,10 +1,10 @@
 import { type H3Event, parseCookies, setCookie } from 'h3';
 import jwt from 'jsonwebtoken';
+import { MethodEnum } from '~/stores/interface/api';
 import {
   convertCookieObjectToString,
   getOriginDomain,
 } from '~/utils/cookieHelper';
-import requestHelper from '~/utils/requestHelper';
 
 const COOKIE_NAME = 'landing_web_session';
 const COOKIE_MAX_AGE_SECONDS = 5 * 60;
@@ -25,7 +25,7 @@ function generateToken() {
   });
 }
 
-export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
+export default defineEventHandler(async (event: H3Event) => {
   const cookie = parseCookies(event);
   let token = cookie[COOKIE_NAME];
 
@@ -59,18 +59,26 @@ export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
   const headers = {
     ...payload.headers,
     'X-Path': `${useRuntimeConfig().urlFeHost}/event`,
+    'Content-Type': 'application/json',
   };
+
   if (token) {
     headers.Cookie = convertCookieObjectToString({
       [COOKIE_NAME]: token,
     });
   }
 
-  const response = await requestHelper<ResponseDataType>({
-    ...payload,
-    headers,
-    baseURL: `${useRuntimeConfig().public.apiLandingHost}/web`,
-  });
+  const response = await $fetch(
+    `${
+      useRuntimeConfig().public.apiLandingHost
+    }/web/api/v1/projects/published-content?tenantName=${encodeURIComponent(
+      payload.params.tenantName
+    )}&eventEnglishName=${payload.params.eventEnglishName}`,
+    {
+      method: MethodEnum.GET,
+      headers,
+    }
+  );
 
   return response;
 });

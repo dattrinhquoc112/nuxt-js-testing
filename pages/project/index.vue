@@ -9,6 +9,7 @@
         modalMetric.warningLimitCapacity = false;
       "
     />
+
     <div class="header">
       <vi-typography type="subtitle-large">{{
         $t('app-navigation-menu-projects')

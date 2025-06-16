@@ -23,7 +23,7 @@
     @scroll-editor="handleHiddenAllControl"
   >
     <vi-alert
-      v-if="isExceedLimit && isOpenAlert"
+      v-if="isOpenAlert"
       v-model="isOpenAlert"
       :text-title="$t('landing-common-message-storage_near_limit')"
       :text-content="
@@ -50,6 +50,7 @@
         :is-show-list-section="isShowListSection"
         @close-section="isShowListSection = ''"
         @handle-add-section="handleAddSection"
+        @handle-exceed-limit="isOpenAlert = true"
       />
       <div class="section-snapshot">
         <editor-section-render
@@ -103,23 +104,27 @@ import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
 import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
-import {
-  SIDE_BAR_ACTION,
-  RWD_MODE,
-  METRICS_KEY,
-  THRESH_HOLD,
-} from '@/constants/common';
+import { SIDE_BAR_ACTION, RWD_MODE, METRICS_KEY } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMetric from '@/composables/metric';
+import _ from 'lodash';
+import useMaterials from '~/composables/materials';
 
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const activeSidebarButton = ref();
 provide('activeSidebarButton', activeSidebarButton);
 const { tenantMetric, getTenantMetric } = useMetric();
-const isOpenAlert = ref(true);
+const isOpenAlert = ref(false);
+const materialList = ref();
+const editorID = ref('');
+const { isExceedLimit } = useMaterials({
+  listMaterial: materialList,
+  editorID,
+});
+
 const { getProject, editProject, publishProject } = useProjectStore();
 
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
@@ -147,10 +152,10 @@ const isShowActivitySettingModal = ref(false);
 const handleEvent = () => {};
 const projectName = ref();
 const route = useRoute();
-const editorID = ref('');
+
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const project = ref();
-const materialList = ref();
+
 watch(
   () => editorRef.value?.listMaterials,
   (newVal) => {
@@ -165,25 +170,7 @@ const configVersion = ref({
   keyAction: '',
   type: '',
 });
-const isExceedLimit = computed(() => {
-  const totalMaterialSize = materialList.value?.reduce(
-    (sum: number, item: any) => sum + (item?.fileSize ?? 0),
-    0
-  );
-  const totalCapacity = tenantMetric.value?.metrics.find(
-    (item) => item.metric === METRICS_KEY.TOTAL_CAPACITY
-  );
-  if (!totalMaterialSize || !totalCapacity) {
-    return false;
-  }
-  const totalKbSize = convertToKB(`${totalMaterialSize}B`) || 0;
-  const totalCapacityKb =
-    convertToKB(`${totalCapacity.value}${totalCapacity.unit}`) || 0;
-  if (totalKbSize > totalCapacityKb * THRESH_HOLD) {
-    return true;
-  }
-  return false;
-});
+
 const handleGetProjectDetail = async (id: any) => {
   const detailProject = await getProject(id);
   if (detailProject) {
@@ -285,10 +272,7 @@ const handleSaveTemplate = async (messageSuccess: string = '') => {
   }
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
-  window.VIUIKit.VIMessage({
-    title: messageSuccess || t('landing-common-message-saved'),
-    width: '348px',
-  });
+  toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
 };
 
 const handleClickSideBar = (keyAction: string) => {
@@ -335,10 +319,7 @@ const handleUpdateToNewVersion = async () => {
   await editorRef.value.fetchContentProject();
   setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
-  window.VIUIKit.VIMessage({
-    title: t('landing-editor-message-version_updated'),
-    width: '348px',
-  });
+  toastMessage(t('landing-editor-message-version_updated'));
   listAction[configVersion.value.type]?.(configVersion.value.keyAction);
 };
 
@@ -380,7 +361,17 @@ const limitFileSize = computed(() => {
   }
   return 0;
 });
-onMounted(() => {
+watch(
+  () => isExceedLimit.value,
+  (newVal) => {
+    if (newVal) {
+      isOpenAlert.value = true;
+    } else {
+      isOpenAlert.value = false;
+    }
+  }
+);
+onMounted(async () => {
   getTenantMetric();
 });
 

@@ -55,6 +55,7 @@
     />
 
     <editor-popup-setting-image
+      v-if="isShowPopup.imageSetting"
       :class="classPopupSetting"
       :isShow="isShowPopup.imageSetting"
       :positionControlCurrent="positionControlCurrent"
@@ -68,6 +69,8 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
     />
     <editor-popup-setting-link
+      v-if="isShowPopup.addLink"
+      :isShow="isShowPopup.addLink"
       :link="
         objectSelecting &&
         typeof objectSelecting === 'object' &&
@@ -84,6 +87,7 @@
     />
 
     <editor-popup-setting-audio
+      v-if="isShowPopup.audioSetting"
       :isShow="isShowPopup.audioSetting"
       :positionControlCurrent="positionControlCurrent"
       v-model="objectSelecting"
@@ -94,6 +98,7 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
     />
     <editor-popup-setting-text
+      v-if="isShowPopup.textSetting"
       :isShow="isShowPopup.textSetting"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingText"
@@ -103,6 +108,7 @@
       @change-size="handleChangeSize"
     />
     <editor-popup-setting-color
+      v-if="isShowPopup.colorSetting"
       :class="classPopupSetting"
       :isShow="isShowPopup.colorSetting"
       :positionControlCurrent="positionControlCurrent"
@@ -164,7 +170,11 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['closeSection', 'handleAddSection']);
+const emit = defineEmits([
+  'closeSection',
+  'handleAddSection',
+  'handleExceedLimit',
+]);
 const isOpenReachLimitNoti = ref(false);
 const modelValue = ref(true);
 const showSelectAITools = ref(false);
@@ -197,6 +207,7 @@ const idParam = Array.isArray(route.query?.id)
 const limitSize = ref(0);
 const handleExceedLimit = () => {
   isOpenReachLimitNoti.value = true;
+  emit('handleExceedLimit');
 };
 
 const {
@@ -298,7 +309,7 @@ watch(buttonColor, () => {
   if (keyElementSelected.value === 'buttonExternal') {
     const button = obj as BUTTON_EXTERNAL_ITEM;
     button.style.backgroundColor = colorChange;
-    const oppositeColor = getOppositeColor(buttonColor.value);
+    const oppositeColor = getReadableTextColor(buttonColor.value);
     button.style.color = `rgba(${oppositeColor.r},${oppositeColor.g},${
       oppositeColor.b
     },${oppositeColor.a / 100})`;
@@ -314,7 +325,7 @@ watch(buttonColor, () => {
     bg.color = colorChange;
     checkMaterials({
       objSelecting: bg,
-      type: 'DELETE,',
+      type: 'DELETE',
     });
     bg.urlVideo = '';
     bg.urlImage = '';
@@ -362,7 +373,7 @@ const handleResetFile = () => {
     obj = objectSelecting.value as BACKGROUND_SECTION;
     checkMaterials({
       objSelecting: obj,
-      type: 'DELETE,',
+      type: 'DELETE',
     });
     if (obj.urlImage === templateCurrent?.backgroundSection?.urlImage) {
       obj.urlImage = '';
@@ -378,7 +389,7 @@ const handleResetFile = () => {
     obj = objectSelecting.value as BOX_IMAGE;
     checkMaterials({
       objSelecting: obj,
-      type: 'DELETE,',
+      type: 'DELETE',
     });
     if (obj.urlImage === templateCurrent?.boxImage?.urlImage) {
       obj.urlImage = '';
@@ -392,7 +403,7 @@ const handleResetFile = () => {
     obj = objectSelecting.value as AUDIO_SETTING;
     checkMaterials({
       objSelecting: obj,
-      type: 'DELETE,',
+      type: 'DELETE',
     });
     if (obj.urlImage === templateCurrent?.listAudio?.[0]?.audio.urlImage) {
       obj.urlImage = '';

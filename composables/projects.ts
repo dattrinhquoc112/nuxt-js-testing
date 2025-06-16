@@ -9,7 +9,7 @@ export default function useProjects() {
   const getProjectUrl = (eventEnglishName?: string): string => {
     if (eventEnglishName && tenantName) {
       const host = window.location.origin;
-      return new URL(`${host}/event/${tenantName}/${eventEnglishName}`).href;
+      return `${host}/event/${tenantName}/${eventEnglishName}`;
     }
     return '';
   };
@@ -27,8 +27,8 @@ export default function useProjects() {
 
   const handleKeyword = (newValue: string, maxKeywords = 10): string => {
     let keywords = newValue
+      .trim()
       .split(',')
-      .map((k) => k.trim())
       .filter((k) => k !== '');
 
     if (keywords.length > maxKeywords) {
