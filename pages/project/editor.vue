@@ -111,7 +111,6 @@ import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMetric from '@/composables/metric';
-import _ from 'lodash';
 import useMaterials from '~/composables/materials';
 
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
