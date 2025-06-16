@@ -19,7 +19,7 @@ export const useApiStore = defineStore('api', () => {
     switch (error?.data?.statusCode) {
       case HTTP_ERRORS.UNAUTHORIZED:
         if (!pathNotAllow.includes(route.path)) {
-          navigateTo('/auth/logout');
+          // navigateTo('/auth/logout');
         }
         break;
       default:
