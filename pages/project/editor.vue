@@ -46,6 +46,7 @@
         ref="editorRef"
         :limitFileSize
         :rwd-mode="RWDMode"
+        :is-exceed-limit="isExceedLimit"
         :list-template="listTemplateCurrent"
         :is-show-list-section="isShowListSection"
         @close-section="isShowListSection = ''"
