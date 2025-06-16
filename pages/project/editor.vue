@@ -111,7 +111,6 @@ import { useEditorStore } from '~/stores/editor';
 import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMetric from '@/composables/metric';
-import _ from 'lodash';
 import useMaterials from '~/composables/materials';
 
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
