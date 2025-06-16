@@ -78,7 +78,6 @@
           ? objectSelecting.link
           : ''
       "
-      :isShow="isShowPopup.addLink"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingLink"
       @move-popup-to-top="handleMoveTopPopup"
