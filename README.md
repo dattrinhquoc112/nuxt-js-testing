@@ -21,6 +21,15 @@ Use Vyin-ai-ui-kit
 1. Doc dev : https://dev-ui-kit-aiaas-platform.vyin.ai/
 
 ## Setup
+ Because the login flow is handled within the [aiaas-platform-client](https://gitlab.gamania.com/bdds/alice/aiaas-platform/aiaas-platform-frontend-client) project, you must use one of the following methods for local development to get/set cookie values in localhost：
+
+  login and OTP flow doc：https://gitlab.gamania.com/bdds/alice/aiaas-platform/aiaas-platform-frontend-client/-/wikis/OTP-flowchart
+    
+  You can use the following methods (Choose 1 out of 2):
+
+  1. Manually set the cookie in aiaas-voice-clone-frontend after logging in from the development environment to obtain the cookie.
+
+  2. Run aiaas-platform-client locally and log in first to use aiaas-voice-clone-frontend.
 
 ### Environment
 
