@@ -164,7 +164,11 @@ const props = defineProps({
   },
 });
 
-const emit = defineEmits(['closeSection', 'handleAddSection']);
+const emit = defineEmits([
+  'closeSection',
+  'handleAddSection',
+  'handleExceedLimit',
+]);
 const isOpenReachLimitNoti = ref(false);
 const modelValue = ref(true);
 const showSelectAITools = ref(false);
@@ -197,6 +201,7 @@ const idParam = Array.isArray(route.query?.id)
 const limitSize = ref(0);
 const handleExceedLimit = () => {
   isOpenReachLimitNoti.value = true;
+  emit('handleExceedLimit');
 };
 
 const {

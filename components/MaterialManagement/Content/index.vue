@@ -32,8 +32,9 @@ import type { PropType } from 'vue';
 import { METRICS_KEY } from '~/constants/common';
 import type { ITenantMetric } from '~/types/tenant';
 
+const metrics = inject<any>(PROVIDE.METRIC);
 const { t } = useI18n();
-const props = defineProps({
+defineProps({
   tenantMetric: {
     type: Object as PropType<ITenantMetric>,
     required: true,
@@ -44,35 +45,21 @@ const props = defineProps({
   },
 });
 const MetricsMapping = computed(() => {
-  const { metrics } = props.tenantMetric;
-  const totalCapacity = metrics.find(
-    (item) => item.metric === METRICS_KEY.TOTAL_CAPACITY
-  );
-  const totalCapacityUsage = metrics.find(
-    (item) => item.metric === METRICS_KEY.TOTAL_CAPACITY_USED
-  );
-  // TODO: need to update
-  const usedProject = props.materialList.reduce(
-    (sum, item: any) => sum + (item?.fileSize ?? 0),
-    0
-  );
   const metricsList = {
     [METRICS_KEY.TOTAL_CAPACITY]: {
       label: t('landing-editor-section-material_total_capacity'),
-      valueText: `${totalCapacity?.value}${totalCapacity?.unit}`,
-      value: convertToKB(`${totalCapacity?.value}${totalCapacity?.unit}`),
+      value: metrics?.totalCapacity?.value.value ?? '0',
+      valueText: metrics?.totalCapacity?.value.displayValue ?? '0',
     },
     [METRICS_KEY.TOTAL_CAPACITY_USED]: {
       label: t('landing-editor-section-material_total_usage'),
-      valueText: `${totalCapacityUsage?.value}${totalCapacityUsage?.unit}`,
-      value: convertToKB(
-        `${totalCapacityUsage?.value}${totalCapacityUsage?.unit}`
-      ),
+      value: metrics?.totalCapacityUsed?.value.value ?? '0',
+      valueText: metrics?.totalCapacityUsed?.value.displayValue ?? '0',
     },
     [METRICS_KEY.TOTAL_CAPACITY_USED_IN_PROJECT]: {
       label: t('landing-editor-section-material_project_usage'),
-      valueText: `${convertFileSize(usedProject)}`,
-      value: convertToKB(`${convertFileSize(usedProject)}`),
+      value: metrics?.totalCapacityUsedInPJ?.value.value ?? '0',
+      valueText: metrics?.totalCapacityUsedInPJ?.value.displayValue ?? '0',
       color: '#1EDD00',
     },
   };
