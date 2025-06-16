@@ -111,6 +111,7 @@
       :class="classPopupSetting"
       :isShow="isShowPopup.colorSetting"
       :positionControlCurrent="positionControlCurrent"
+      :elementSelected="objectSelecting"
       @close="closePopupSettingColor"
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
