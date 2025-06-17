@@ -216,15 +216,18 @@ watch(
     immediate: true,
   }
 );
-const handleSaveTemplate = async (messageSuccess: string = '') => {
-  setLoading('updateContent', true);
+const handleSaveTemplate = async (
+  messageSuccess: string = '',
+  loading: any = 'updateContent'
+) => {
+  setLoading(loading, true);
   await editorRef.value.handleSaveTemplate();
   const file = await handleGetThumbnailSnapshot();
   const fileUri = file?.fileUri;
   if (fileUri) {
     await editProject(editorID.value, { thumbnail: fileUri });
   }
-  setLoading('updateContent', false);
+  setLoading(loading, false);
   isShowModal.confirmReplace = false;
   toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
 };
@@ -240,7 +243,10 @@ const handleCheckConditionPublish = async () => {
   const isFinishedSetupAudio = true;
   if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
     try {
-      handleSaveTemplate(t('landing-editor-message-progress_saved'));
+      await handleSaveTemplate(
+        t('landing-editor-message-progress_saved'),
+        'publish'
+      );
       await publishProject(editorID.value);
       toastMessage(t('landing-project_mgmt-menu-published'));
       navigateTo(ROUTE.PROJECT_LIST);

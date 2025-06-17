@@ -632,8 +632,8 @@ const initProject = async () => {
     model.ogTitle = props.project.ogTitle || '';
     model.ogDescription = props.project.ogDescription || '';
     // Image
-    model.ogImageUri = props.project.ogImageUri;
-    modelOGImage.imageURL = props.project.ogImageUri;
+    model.ogImageUri = props.project.ogImageUri || '';
+    modelOGImage.imageURL = props.project.ogImageUri || '';
   }
 };
 
