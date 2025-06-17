@@ -20,15 +20,20 @@ const eventEnglishName = route.params.eventEnglishName as string;
 definePageMeta({
   layout: 'public',
 });
+const { sectionsPublic, tenantID, isPublish } = useEventStore();
+let handleClickEvent: ((audioId: number) => void) | undefined;
 
-const { sectionsPublic, tenantID } = useEventStore();
+if (isPublish) {
+  ({ handleClickEvent } = useSDKTracking({
+    pageName: eventEnglishName,
+    tenantID,
+  }));
+}
 const { rwdMode } = useCheckRWD();
-const { handleClickEvent } = useSDKTracking({
-  pageName: eventEnglishName,
-  tenantID,
-});
 
 const handleAudioClick = (audioId: number) => {
-  handleClickEvent(audioId);
+  if (handleClickEvent) {
+    handleClickEvent(audioId);
+  }
 };
 </script>
