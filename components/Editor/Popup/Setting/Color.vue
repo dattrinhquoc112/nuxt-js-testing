@@ -89,6 +89,9 @@
 import useCheckHeightPopup from '~/composables/checkHeightPopupSetting';
 
 const props = defineProps({
+  elementSelected: {
+    type: Object as PropType<any>,
+  },
   positionControlCurrent: {
     type: Object,
     default: () => ({}),
@@ -141,19 +144,20 @@ watch(hex, () => {
   }
 });
 
-watch(
-  () => props.isShow,
-  () => {
-    if (!props.isShow) {
-      hue.value = 180;
-      saturation.value = 50;
-      lightness.value = 50;
-      opacity.value = 100;
-      hex.value = '#FF6E00';
-      rgb.value = { r: 255, g: 110, b: 0 };
+onMounted(() => {
+  if (props?.elementSelected?.color) {
+    const rbga = parseRgbaString(props.elementSelected.color);
+    if (rbga) {
+      const { r, b, g, a } = rbga;
+      const [h, s, l] = rgbToHsl(r, b, g);
+      hex.value = rgbToHex(r, b, g);
+      hue.value = h;
+      saturation.value = s;
+      lightness.value = l;
+      opacity.value = a * 100;
     }
   }
-);
+});
 
 const isDragging = ref(false);
 
@@ -184,14 +188,16 @@ function stopDrag(): void {
   window.removeEventListener('mouseup', stopDrag);
 }
 
-function hexToRgb(hex: string): { r: number; g: number; b: number } | null {
+function hexToRgb(
+  hexValue: string
+): { r: number; g: number; b: number } | null {
   const hexPattern = /^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/;
 
-  if (!hexPattern.test(hex)) {
+  if (!hexPattern.test(hexValue)) {
     return null;
   }
 
-  let hexConvert = hex.slice(1);
+  let hexConvert = hexValue.slice(1);
 
   if (hexConvert.length === 3) {
     hexConvert = hexConvert
@@ -251,6 +257,58 @@ function rgbToHex(r: number, g: number, b: number): string {
       .join('')
       .toUpperCase()
   );
+}
+
+function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
+  const rNorm = r / 255;
+  const gNorm = g / 255;
+  const bNorm = b / 255;
+
+  const max = Math.max(rNorm, gNorm, bNorm);
+  const min = Math.min(rNorm, gNorm, bNorm);
+  const delta = max - min;
+
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (delta !== 0) {
+    s = l > 0.5 ? delta / (2 - max - min) : delta / (max + min);
+
+    switch (max) {
+      case rNorm:
+        h = (gNorm - bNorm) / delta + (gNorm < bNorm ? 6 : 0);
+        break;
+      case gNorm:
+        h = (bNorm - rNorm) / delta + 2;
+        break;
+      case bNorm:
+        h = (rNorm - gNorm) / delta + 4;
+        break;
+      default:
+        break;
+    }
+
+    h /= 6;
+  }
+
+  return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+}
+
+function parseRgbaString(rgba: string) {
+  const regex =
+    /^rgba?\(\s*(\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})\s*(?:,\s*(\d*\.?\d+)\s*)?\)$/i;
+
+  const match = rgba.match(regex);
+
+  if (!match) return null;
+
+  const r = parseInt(match[1], 10);
+  const g = parseInt(match[2], 10);
+  const b = parseInt(match[3], 10);
+  const a = match[4] !== undefined ? parseFloat(match[4]) : 1;
+
+  return { r, g, b, a };
 }
 
 const onInputPercent = (event: Event) => {
