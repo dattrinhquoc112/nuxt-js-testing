@@ -8,7 +8,7 @@
           width="65px"
           type="standard-default"
           @click="onAction('copy')"
-          :disabled="loading.copy"
+          :disabled="loading.copy || !PERMISSION.isEditor"
           >{{ $t('landing-project_mgmt-button-clone_project') }}</vi-button
         >
         <vi-button
@@ -18,6 +18,7 @@
           width="65px"
           type="dangerous-default"
           @click="onAction('unpublish')"
+          :disabled="!PERMISSION.isEditor"
           >{{ $t('landing-project_mgmt-button-unpublish') }}</vi-button
         >
         <vi-button
@@ -25,6 +26,7 @@
           width="65px"
           type="dangerous-default"
           @click="onAction('close')"
+          :disabled="!PERMISSION.isEditor"
           >{{ $t('landing-project_mgmt-button-close_event') }}</vi-button
         >
       </div>
@@ -78,6 +80,7 @@
 </template>
 
 <script setup lang="ts">
+import useCheckPermission from '~/composables/checkPermission';
 import { useProjectStore } from '~/stores/project';
 import type { IProject } from '~/types/project';
 
@@ -94,6 +97,8 @@ const route = useRoute();
 const id = route.params.id as string;
 
 const { t } = useI18n();
+
+const { PERMISSION } = useCheckPermission();
 
 const { getProject, copyProject, unpublishProject, closeProject } =
   useProjectStore();
@@ -184,6 +189,9 @@ const onCloseProject = async () => {
 };
 
 const onAction = (action: string) => {
+  if (!PERMISSION.value.isEditor) {
+    return;
+  }
   switch (action) {
     case 'copy':
       onCopy();

@@ -19,6 +19,7 @@
         class="ml-auto"
         icon-before="ic_add"
         @click="onAction(undefined, 'create')"
+        :disabled="!PERMISSION.isEditor"
         >{{ $t('landing-project_mgmt-button-create') }}</vi-button
       >
     </div>
@@ -89,6 +90,7 @@
             :is-loading="isLoadingCreate"
             type="standard-default"
             @click="onAction(undefined, 'create')"
+            :disabled="!PERMISSION.isEditor"
           >
             {{ t('landing-project_mgmt-button-create') }}
           </vi-button>
@@ -154,6 +156,7 @@
               <div
                 class="action-container"
                 v-click-outside="() => onShowAction(item.id, false)"
+                v-if="PERMISSION.isEditor"
               >
                 <div
                   class="action-btn"
@@ -217,6 +220,7 @@ import { useProjectStore } from '~/stores/project';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
 import { TEMPLATES_SECTION } from '~/types/templates';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
+import useCheckPermission from '~/composables/checkPermission';
 
 interface Model {
   page: number;
@@ -240,6 +244,7 @@ const sections = ref([
   TEMPLATES_SECTION[TEMPLATES_SECTION.length - 1],
 ]);
 const { handleSaveTemplate, setIDWebEditor } = useWebEditor(sections, '');
+const { PERMISSION } = useCheckPermission();
 
 const isOpenReachLimitNoti = ref(false);
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
@@ -361,6 +366,9 @@ const onEditProject = async (payload: IUpdateProjectPayload) => {
 };
 
 const onAction = async (project?: IProject, action = '') => {
+  if (!PERMISSION.value.isEditor) {
+    return;
+  }
   onShowAction(project?.id || '', false);
   switch (action) {
     case 'create':
@@ -394,7 +402,9 @@ const onAction = async (project?: IProject, action = '') => {
 const onClickProject = (item: IProject) => {
   // NOTE: DRAFT is PENDING_PUBLISH, PUBLISHED is other
   if (item.status === 'PENDING_PUBLISH') {
-    navigateTo(`/project/editor?id=${item.id}`);
+    if (PERMISSION.value.isEditor) {
+      navigateTo(`/project/editor?id=${item.id}`);
+    }
   } else {
     navigateTo(`/project/${item.id}`);
   }

@@ -32,6 +32,7 @@
           type="standard-default"
           size="small"
           width="81px"
+          :disabled="disabled"
         >
           {{ $t('landing-project_mgmt-button-upload_image_button') }}
         </vi-button>
@@ -56,6 +57,10 @@ const props = defineProps({
     default: '',
   },
   required: {
+    type: Boolean,
+    default: false,
+  },
+  disabled: {
     type: Boolean,
     default: false,
   },
