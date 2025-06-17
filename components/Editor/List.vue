@@ -45,6 +45,7 @@
 </template>
 
 <script lang="ts" setup>
+import useCheckPermission from '~/composables/checkPermission';
 import { RWD_MODE } from '~/constants/common';
 
 const props = defineProps({
@@ -88,8 +89,10 @@ const hoverPosition = ref<{ index: number; zone: string } | null>(null);
 const boxControlElement = computed(() =>
   document.getElementById('boxControlElement')
 );
+const { PERMISSION } = useCheckPermission();
+
 const isDisabledEditor = computed(() => {
-  return props.rwdMode === RWD_MODE.MOBILE;
+  return props.rwdMode === RWD_MODE.MOBILE || !PERMISSION.value.isEditor;
 });
 
 const onHoverSection = (e: MouseEvent, index: number) => {
