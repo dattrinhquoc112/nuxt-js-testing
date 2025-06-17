@@ -548,7 +548,7 @@ const onEditProject = async () => {
     const res = await uploadFile(model.ogImageFile);
     payload.ogImage = {
       thumbnail: res?.fileUri,
-      fileUri: res?.fileUri,
+      fileUri: getImage(res?.fileUri),
       fileSize: model.ogImageFile.size,
     };
   }
@@ -620,8 +620,8 @@ const initProject = async () => {
     model.ogTitle = props.project.ogTitle || '';
     model.ogDescription = props.project.ogDescription || '';
     // Image
-    model.ogImageUri = getImage(props.project.ogImageUri);
-    modelOGImage.imageURL = getImage(props.project.ogImageUri);
+    model.ogImageUri = props.project.ogImageUri;
+    modelOGImage.imageURL = props.project.ogImageUri;
   }
 };
 

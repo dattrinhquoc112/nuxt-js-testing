@@ -216,6 +216,18 @@ watch(
     immediate: true,
   }
 );
+const handleSaveTemplate = async (messageSuccess: string = '') => {
+  setLoading('updateContent', true);
+  await editorRef.value.handleSaveTemplate();
+  const file = await handleGetThumbnailSnapshot();
+  const fileUri = file?.fileUri;
+  if (fileUri) {
+    await editProject(editorID.value, { thumbnail: fileUri });
+  }
+  setLoading('updateContent', false);
+  isShowModal.confirmReplace = false;
+  toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
+};
 
 const handleCheckConditionPublish = async () => {
   errCode.eventEnglishName = '';
@@ -228,6 +240,7 @@ const handleCheckConditionPublish = async () => {
   const isFinishedSetupAudio = true;
   if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
     try {
+      handleSaveTemplate(t('landing-editor-message-progress_saved'));
       await publishProject(editorID.value);
       toastMessage(t('landing-project_mgmt-menu-published'));
       navigateTo(ROUTE.PROJECT_LIST);
@@ -258,19 +271,6 @@ const handleEditEditor = async (name: string) => {
       toastMessage(t('landing-common-message-saved'));
     }
   }
-};
-
-const handleSaveTemplate = async (messageSuccess: string = '') => {
-  setLoading('updateContent', true);
-  await editorRef.value.handleSaveTemplate();
-  const file = await handleGetThumbnailSnapshot();
-  const fileUri = file?.fileUri;
-  if (fileUri) {
-    await editProject(editorID.value, { thumbnail: fileUri });
-  }
-  setLoading('updateContent', false);
-  isShowModal.confirmReplace = false;
-  toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
 };
 
 const handleClickSideBar = (keyAction: string) => {
