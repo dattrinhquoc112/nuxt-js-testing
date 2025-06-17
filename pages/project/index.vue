@@ -405,9 +405,7 @@ const onAction = async (project?: IProject, action = '') => {
 const onClickProject = (item: IProject) => {
   // NOTE: DRAFT is PENDING_PUBLISH, PUBLISHED is other
   if (item.status === 'PENDING_PUBLISH') {
-    if (PERMISSION.value.isEditor) {
-      navigateTo(`/project/editor?id=${item.id}`);
-    }
+    navigateTo(`/project/editor?id=${item.id}`);
   } else {
     navigateTo(`/project/${item.id}`);
   }
