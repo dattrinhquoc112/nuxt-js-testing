@@ -135,7 +135,10 @@
                 <vi-typography type="subtitle-large" class="period-time">
                   {{ getPeriodTime(item) }}
                 </vi-typography>
-                <vi-typography type="caption-large-300" class="long-time">
+                <vi-typography
+                  type="caption-large-300"
+                  class="long-time text-align-right"
+                >
                   {{ getLeftDays(item) }}
                 </vi-typography>
               </div>
@@ -458,6 +461,9 @@ watch(
   display: flex;
   flex-direction: column;
 }
+.text-align-right {
+  text-align: right;
+}
 .list-page {
   display: flex;
   flex-direction: column;
@@ -521,7 +527,6 @@ watch(
           line-height: 18px;
           letter-spacing: 0.03px;
           color: $neutral-white-alpha-60;
-          text-align: right;
         }
       }
       .wrapper-time-edit {
