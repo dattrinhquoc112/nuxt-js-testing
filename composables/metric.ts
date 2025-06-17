@@ -126,7 +126,6 @@ export default function useMetric() {
         (totalCapacity.value && totalCapacityUsed.value) ||
         !totalCapacityUsed.value
       ) {
-        const threshold = 0.75;
         const totalCapacityKb = convertToKB(
           `${totalCapacity.value}${totalCapacity.unit}`
         );
@@ -136,7 +135,7 @@ export default function useMetric() {
         if (
           totalCapacityUsedKb &&
           totalCapacityKb &&
-          totalCapacityUsedKb > totalCapacityKb * threshold
+          totalCapacityUsedKb > totalCapacityKb
         ) {
           return true;
         }
