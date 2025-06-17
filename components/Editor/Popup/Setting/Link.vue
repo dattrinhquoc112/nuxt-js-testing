@@ -53,9 +53,13 @@ const linkRef = ref();
 const { t } = useI18n();
 const messageError = ref('');
 
-function isValidURL(url: string) {
-  const regex = /^(https?:\/\/)?([a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(:\d+)?(\/\S*)?$/;
-  return regex.test(url);
+function isValidURL(url: string): boolean {
+  try {
+    new URL(url);
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 const props = defineProps({
@@ -75,6 +79,7 @@ const props = defineProps({
 
 watch(linkRef, (newVal) => {
   const isValidLink = isValidURL(newVal);
+  console.log(newVal);
   if (!isValidLink) {
     messageError.value = t('error_fe-data-validation-input_format_invalid');
     emit('change-link', '');

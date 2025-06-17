@@ -83,14 +83,18 @@
             type="standard-subtle"
             icon-before="ic_step_back"
             no-text
-            :disabled="!historyStatus?.undoButtonEnable"
+            :disabled="
+              !historyStatus?.undoButtonEnable || rwdMode === RWD_MODE.MOBILE
+            "
             @click="$emit('handleUndo')"
           ></vi-button>
           <vi-button
             type="standard-subtle"
             icon-before="ic_step_next"
             no-text
-            :disabled="!historyStatus?.redoButtonEnable"
+            :disabled="
+              !historyStatus?.redoButtonEnable || rwdMode === RWD_MODE.MOBILE
+            "
             @click="$emit('handleRedo')"
           ></vi-button>
         </div>

@@ -45,6 +45,8 @@
 </template>
 
 <script lang="ts" setup>
+import { RWD_MODE } from '~/constants/common';
+
 const props = defineProps({
   templateSelected: {
     type: Object,
@@ -82,23 +84,27 @@ const labelElementSelecting = ref<HTMLElement>();
 const typeLabel = ref({
   isButtonHref: false,
 });
-const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
-  null
-);
+const hoverPosition = ref<{ index: number; zone: string } | null>(null);
 const boxControlElement = computed(() =>
   document.getElementById('boxControlElement')
 );
+const isDisabledEditor = computed(() => {
+  return props.rwdMode === RWD_MODE.MOBILE;
+});
 
 const onHoverSection = (e: MouseEvent, index: number) => {
-  if (index === 0 || index === props.sections.length - 1) {
-    hoverPosition.value = null;
-    emit('set-hover-position', null);
-    return;
-  }
+  if (isDisabledEditor.value) return;
   if (!props.templateSelected) return;
   const rect = (e.currentTarget as HTMLElement).getBoundingClientRect();
   const halfway = rect.top + rect.height / 2;
-  const zone = e.clientY < halfway ? 'top' : 'bottom';
+  let zone = '';
+  if (index === 0) {
+    zone = 'bottom';
+  } else if (index === props.sections.length - 1) {
+    zone = 'top';
+  } else {
+    zone = e.clientY < halfway ? 'top' : 'bottom';
+  }
   hoverPosition.value = { index, zone };
   emit('set-hover-position', hoverPosition.value);
 };
@@ -225,6 +231,7 @@ const getPositionForLeftImage = (coordinates: any) => {
 };
 
 const handleShowOption = (event: any, index: number) => {
+  if (isDisabledEditor.value) return;
   if (event.target?.closest('.section-wrap')) {
     emit('set-index-section-selected', index);
     if (event.target?.classList.contains('section-wrap')) {
@@ -365,6 +372,7 @@ const initHover = () => {
 
   const handleHover = (e: MouseEvent) => {
     if (props.templateSelected?.id) return;
+    if (isDisabledEditor.value) return;
     const target = e.target as HTMLElement;
     const listItemNotHover = ['.icon-play', '.icon-sound'];
     if (listItemNotHover.some((item) => Boolean(target.closest(item)))) {
@@ -382,6 +390,7 @@ const initHover = () => {
   };
 
   const handleOut = (e: MouseEvent) => {
+    if (isDisabledEditor.value) return;
     const target = e.target as HTMLElement;
     target.style.border = defaultBorder;
     handleRemoveLabel();
