@@ -38,6 +38,7 @@
                       width="100%"
                       :error="Boolean(errorMsg) || Boolean(serverErrorMsg.date)"
                       :hint="errorMsg || serverErrorMsg.date"
+                      :disabled="!PERMISSION.isEditor"
                       @focus="model.isShowDate = true"
                       readonly
                     />
@@ -73,6 +74,7 @@
                   :hint="errorMsg || serverErrorMsg.eventEnglishName"
                   :max="50"
                   is-count
+                  :disabled="!PERMISSION.isEditor"
                 />
               </template>
             </vi-form-item>
@@ -111,6 +113,7 @@
                     :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_\-\^\[\]\$]+$/"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
+                    :disabled="!PERMISSION.isEditor"
                   />
                 </template>
               </vi-form-item>
@@ -133,6 +136,7 @@
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
                     :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_\-\^\[\]\$]+$/"
+                    :disabled="!PERMISSION.isEditor"
                   />
                 </template>
               </vi-form-item>
@@ -157,6 +161,7 @@
                     :count-exclude-pattern="/[\s\,]/g"
                     @blur="onChangeKeyWord"
                     is-count
+                    :disabled="!PERMISSION.isEditor"
                   />
                 </template>
               </vi-form-item>
@@ -205,6 +210,7 @@
                 @change="onChangeOGImage"
                 :label="$t('landing-project_mgmt-title-upload_image_title')"
                 required
+                :disabled="!PERMISSION.isEditor"
               />
               <vi-form-item prop="ogTitle">
                 <template #default="{ errorMsg }">
@@ -224,6 +230,7 @@
                     width="100%"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
+                    :disabled="!PERMISSION.isEditor"
                   />
                 </template>
               </vi-form-item>
@@ -245,6 +252,7 @@
                     height="210px"
                     :error="Boolean(errorMsg)"
                     :hint="errorMsg"
+                    :disabled="!PERMISSION.isEditor"
                   />
                 </template>
               </vi-form-item>
@@ -308,6 +316,7 @@ import useProjects from '~/composables/projects';
 import { useProjectStore } from '~/stores/project';
 import { useUploadStore } from '~/stores/upload';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
+import useCheckPermission from '~/composables/checkPermission';
 
 interface Model {
   dates: string[] | Date[] | number[];
@@ -376,6 +385,8 @@ const serverErrorMsg = reactive({
   date: '',
 });
 
+const { PERMISSION } = useCheckPermission();
+
 const disabledSubmit = () => {
   let isChanged = false;
   if (props.project) {
@@ -401,7 +412,8 @@ const disabledSubmit = () => {
       new Date(model.dates[1]).getTime() > new Date(model.dates[0]).getTime()
     ) ||
     !isChanged ||
-    loading.update
+    loading.update ||
+    !PERMISSION.value.isEditor
   );
 };
 
