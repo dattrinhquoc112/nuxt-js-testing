@@ -41,6 +41,7 @@
         width="fit-content"
         @click="modal.open"
         size="small"
+        :disabled="!PERMISSION.isEditor"
       >
         <vi-typography type="subtitle-small">{{
           $t('landing-project_mgmt-button-edit_info')
@@ -85,6 +86,7 @@
   />
 </template>
 <script setup lang="ts">
+import useCheckPermission from '~/composables/checkPermission';
 import useProjects from '~/composables/projects';
 import { useProjectStore } from '~/stores/project';
 import type { IProject } from '~/types/project';
@@ -104,6 +106,7 @@ const { t } = useI18n();
 
 const { getStatus, getImage } = useProjects();
 const { editProject } = useProjectStore();
+const { PERMISSION } = useCheckPermission();
 
 const modal = reactive({
   show: false,
@@ -118,7 +121,7 @@ const modal = reactive({
 });
 
 async function onEditProject(name: string) {
-  if (props.project?.id) {
+  if (props.project?.id && PERMISSION.value.isEditor) {
     await editProject(props.project?.id, { name });
     toastMessage(t('landing-common-message-saved'));
     emit('update:project', {
