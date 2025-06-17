@@ -23,6 +23,7 @@
             :max="50"
             :allowed-regex="/^[\p{L}\p{N} _-]*$/u"
             size="large"
+            :disabled="!PERMISSION.isEditor"
           />
         </template>
       </vi-form-item>
@@ -31,10 +32,12 @@
       <div class="modal-footer">
         <vi-button
           type-button="button"
-          @click="emit('edit', model.name)"
+          @click="PERMISSION.isEditor ? emit('edit', model.name) : null"
           type="standard-primary"
           width="fit-content"
-          :disabled="!model.name || model.name === props.value"
+          :disabled="
+            !model.name || model.name === props.value || !PERMISSION.isEditor
+          "
           >{{ $t('common-action-button-button_confirm') }}</vi-button
         >
         <vi-button
@@ -49,6 +52,8 @@
   </vi-modal>
 </template>
 <script lang="ts" setup>
+import useCheckPermission from '~/composables/checkPermission';
+
 const props = defineProps({
   show: {
     type: Boolean,
@@ -64,6 +69,7 @@ const { t } = useI18n();
 const model = ref({
   name: '',
 });
+const { PERMISSION } = useCheckPermission();
 watch(
   () => props.value,
   (newValue) => {

@@ -24,8 +24,8 @@
     >
       <vi-icon
         :name="itemControl.icon"
-        :size="itemControl?.size || 24"
-        :color="itemControl?.color ? itemControl?.color : '#fff'"
+        :size="itemControl?.size ?? 24"
+        :color="itemControl?.color ?? '#fff'"
       />
     </div>
   </div>
@@ -118,7 +118,6 @@ const listOptionControl = computed<
       {
         icon: 'ic_ai_option',
         fn: 'showPopupSettingAudio',
-        size: 16,
       },
     ];
   }
