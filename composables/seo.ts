@@ -1,9 +1,11 @@
 import { useEventStore } from '~/stores/event';
 import { MethodEnum } from '~/stores/interface/api';
 import { getRequestHeaders, H3Event } from 'h3';
+import useProjects from './projects';
 
 export default function useSeo() {
   const route = useRoute();
+  const { getImage } = useProjects();
   const tenantName = route.params.tenantName as string;
   const eventEnglishName = route.params.eventEnglishName as string;
   const { setSessionPublic, setTenantID } = useEventStore();
@@ -22,7 +24,8 @@ export default function useSeo() {
     }
 
     if (seo.ogImageUri) {
-      metaTags.push({ property: 'og:image', content: seo.ogImageUri });
+      const uri = getImage(seo.ogImageUri);
+      metaTags.push({ property: 'og:image', content: uri || '' });
     }
 
     useHead({
