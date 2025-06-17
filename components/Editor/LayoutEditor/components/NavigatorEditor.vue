@@ -49,6 +49,7 @@
             >
               <vi-button
                 type="standard-default"
+                :disabled="!PERMISSION.isEditor"
                 class="no-rounded"
                 width="fit-content"
                 @click="
@@ -134,6 +135,7 @@
             :is-loading="loading.updateContent"
             type="standard-primary"
             @click="$emit('handleStoreChanges')"
+            :disabled="!PERMISSION.isEditor"
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
               {{ $t('landing-editor-button-save_changes') }}
@@ -144,6 +146,7 @@
             type="standard-primary"
             @click="$emit('handleRelease')"
             :is-loading="loading.publish"
+            :disabled="!PERMISSION.isEditor"
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
               {{ $t('landing-editor-button-publish') }}
@@ -158,6 +161,7 @@
 import { useEditorStore } from '~/stores/editor';
 
 import { RWD_MODE } from '~/constants/common';
+import useCheckPermission from '~/composables/checkPermission';
 
 const isOpenSettingEvent = ref(false);
 defineProps<{
@@ -177,6 +181,7 @@ const emit = defineEmits<{
   handleActivitySettings: [];
 }>();
 const { loading } = useEditorStore();
+const { PERMISSION } = useCheckPermission();
 
 const handleSwitchLayout = (device: string) => {
   emit('handleSwitchLayout', device);
