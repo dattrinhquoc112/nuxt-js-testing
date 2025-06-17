@@ -98,7 +98,7 @@ export default function useMetric() {
 
     metricInfo.isLimitedProject =
       dataProjectCount.value >= dataProjectCount.total;
-    metricInfo.isLimitedCapacity = dataCapacity.value >= dataCapacity.total;
+    metricInfo.isLimitedCapacity = dataCapacity.percent >= 100;
 
     metrics.value.push(dataProjectCount);
     metrics.value.push(dataCapacity);
