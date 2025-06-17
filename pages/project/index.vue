@@ -159,7 +159,6 @@
               <div
                 class="action-container"
                 v-click-outside="() => onShowAction(item.id, false)"
-                v-if="PERMISSION.isEditor"
               >
                 <div
                   class="action-btn"
@@ -327,6 +326,9 @@ const fetchProjectList = debounce(async () => {
 }, 500);
 
 const onShowAction = (projectID: string, show = true) => {
+  if (!PERMISSION.value.isEditor) {
+    return;
+  }
   actionRef[projectID] = show;
 };
 

@@ -6,7 +6,7 @@ export default function useSeo() {
   const route = useRoute();
   const tenantName = route.params.tenantName as string;
   const eventEnglishName = route.params.eventEnglishName as string;
-  const { setSessionPublic, setTenantID } = useEventStore();
+  const { setSessionPublic, setTenantID, setIsPublish } = useEventStore();
 
   function applySeoTags(seo: any) {
     const metaTags = [
@@ -56,9 +56,19 @@ export default function useSeo() {
     const sectionsPublic = data.value.data.sections.map(
       (item: any) => item.settings.generalSettings
     );
+
     setSessionPublic(sectionsPublic);
     setTenantID(data.value.data.tenantId);
     applySeoTags(data.value.data);
+
+    const { startTime, endTime, status } = data.value.data;
+    const now = new Date();
+    const startTimeDate = new Date(startTime);
+    const endTimeDate = new Date(endTime);
+    const isWithinRange = now >= startTimeDate && now <= endTimeDate;
+    if (status === 'STARTED' && isWithinRange) {
+      setIsPublish(true);
+    }
   };
   if (route.meta.layout === 'public' && tenantName && eventEnglishName) {
     fetchContentPublic();
