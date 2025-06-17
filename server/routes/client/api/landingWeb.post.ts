@@ -9,11 +9,12 @@ import {
 const COOKIE_NAME = 'landing_web_session';
 const COOKIE_MAX_AGE_SECONDS = 5 * 60;
 
-function generateToken() {
+function generateToken({ scope }: { scope: any }) {
   const payload = {
     iss: 'aiaas',
     aud: 'landing',
     type: 'LANDING_WEB_ACCESS',
+    scope,
   };
 
   const { jwtSecretKey } = useRuntimeConfig();
@@ -42,7 +43,12 @@ export default defineEventHandler(async (event: H3Event) => {
   }
 
   if (isExpired) {
-    token = generateToken();
+    let scope = '';
+    if (cookie.INFO_USER) {
+      scope = JSON.parse(cookie.INFO_USER).scope;
+    }
+    token = generateToken({ scope });
+
     const host = event.node.req.headers.host || '';
     const domain = getOriginDomain(host);
     setCookie(event, COOKIE_NAME, token, {

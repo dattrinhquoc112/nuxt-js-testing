@@ -1,5 +1,6 @@
 import { useEventStore } from '~/stores/event';
 import { MethodEnum } from '~/stores/interface/api';
+import { getRequestHeaders, H3Event } from 'h3';
 
 export default function useSeo() {
   const route = useRoute();
@@ -31,6 +32,7 @@ export default function useSeo() {
   }
 
   const fetchContentPublic = async () => {
+    const event = useRequestEvent();
     const { data }: { data: any } = await useAsyncData(
       `landingWeb-${tenantName}-${eventEnglishName}`,
       () =>
@@ -43,6 +45,9 @@ export default function useSeo() {
               tenantName,
               eventEnglishName,
             },
+          },
+          headers: {
+            cookie: getRequestHeaders(event as H3Event).cookie || '',
           },
         }),
       { server: true }
