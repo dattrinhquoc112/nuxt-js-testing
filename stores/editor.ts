@@ -7,6 +7,7 @@ export const useEditorStore = defineStore('editor', () => {
   const apiStore = useApiStore();
   const loading = reactive({
     updateContent: false,
+    publish: false,
   });
 
   const setLoading = (key: keyof typeof loading, val: boolean) => {

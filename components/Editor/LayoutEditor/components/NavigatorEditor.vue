@@ -143,6 +143,7 @@
             width="fit-content"
             type="standard-primary"
             @click="$emit('handleRelease')"
+            :is-loading="loading.publish"
           >
             <vi-typography type="subtitle-large" class="cursor-pointer">
               {{ $t('landing-editor-button-publish') }}
