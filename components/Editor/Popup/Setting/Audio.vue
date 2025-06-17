@@ -104,7 +104,9 @@
             size="large"
             :disabled="isDisabledAll"
             :label="
-              $t('landing-editor-modal-tts_sentence_number', { num: index + 1 })
+              $t('landing-editor-modal-tts_sentence_number', {
+                num: $t(`${index + 1}`),
+              })
             "
             :is-count="true"
             :max="300"

@@ -24,7 +24,7 @@
     >
       <vi-icon
         :name="itemControl.icon"
-        size="24"
+        :size="itemControl?.size || 24"
         :color="itemControl?.color ? itemControl?.color : '#fff'"
       />
     </div>
@@ -72,6 +72,7 @@ const listOptionControl = computed<
     classStyle?: string;
     color?: string;
     disabled?: boolean;
+    size?: number;
   }[]
 >(() => {
   if (
@@ -115,9 +116,9 @@ const listOptionControl = computed<
         fn: 'showPopupChangeImage',
       },
       {
-        icon: 'ic_ai_section',
+        icon: 'ic_ai_option',
         fn: 'showPopupSettingAudio',
-        classStyle: 'box-ai-icon',
+        size: 16,
       },
     ];
   }

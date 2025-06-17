@@ -54,6 +54,9 @@ const { t } = useI18n();
 const messageError = ref('');
 
 function isValidURL(url: string): boolean {
+  if (!url) {
+    return true;
+  }
   try {
     new URL(url);
     return true;
@@ -79,7 +82,6 @@ const props = defineProps({
 
 watch(linkRef, (newVal) => {
   const isValidLink = isValidURL(newVal);
-  console.log(newVal);
   if (!isValidLink) {
     messageError.value = t('error_fe-data-validation-input_format_invalid');
     emit('change-link', '');
