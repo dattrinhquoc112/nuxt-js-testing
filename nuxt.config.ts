@@ -18,6 +18,8 @@ export default defineNuxtConfig({
       apiRedirectUri: process.env.NUXT_API_REDIRECT_URI,
       apiHost: process.env.NUXT_PUBLIC_API_HOST,
       contactLink: process.env.NUXT_PUBLIC_CONTACT_LINK,
+      apiLandingHost: process.env.NUXT_PUBLIC_API_LANDING_HOST,
+      apiPlatformHost: process.env.NUXT_PUBLIC_API_HOST,
     },
   },
 
@@ -80,7 +82,7 @@ export default defineNuxtConfig({
       crossOriginOpenerPolicy: 'same-origin-allow-popups',
       crossOriginResourcePolicy: 'same-origin',
       contentSecurityPolicy: {
-        'default-src': ["'self'"],
+        'default-src': ["'self'", import.meta.env.NUXT_API_URL_UPLOAD],
         'script-src': [
           "'self'",
           "'unsafe-inline'",
@@ -96,14 +98,17 @@ export default defineNuxtConfig({
           import.meta.env.VITE_APP_UI_KIT_LINK,
           import.meta.env.NUXT_PUBLIC_API_HOST,
           import.meta.env.NUXT_API_URL_UPLOAD,
+          import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
         ],
         'img-src': [
           "'self'",
           'data:',
           'blob:',
+          import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
           import.meta.env.NUXT_API_URL_GET_AVATAR,
           'https://content.voiceclone.dev.vyin.ai',
         ],
+        'media-src': ['blob:'],
         'object-src': ["'none'"],
         'frame-src': ["'self'"],
         'frame-ancestors': ["'none'"],

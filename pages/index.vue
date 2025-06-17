@@ -1,9 +1,5 @@
-<template>
-  <div />
-</template>
-
 <script setup lang="ts">
-definePageMeta({
-  layout: 'app',
+onMounted(() => {
+  navigateTo('/project');
 });
 </script>

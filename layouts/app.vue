@@ -1,16 +1,24 @@
 <template>
   <div class="layout-app">
-    <vi-menu class="navbar-left" :list-option="navOptions">
+    <vi-menu
+      class="navbar-left"
+      :list-option="navOptions"
+      v-model:is-expand="isExpand"
+      :text-back="$t('app-navigation-button-back')"
+      app-name="APP Name"
+      type="app"
+      @click:buttonBack="onBack()"
+    >
       <template #logo>
         <nuxt-link to="/">
-          <img src="@/assets/images/logo.png" alt="" />
+          <img class="logo" src="@/assets/images/logo.png" alt="" />
         </nuxt-link>
       </template>
       <template #icon-right>
         <vi-icon name="ic_sidemenu" size="24" color="#fff" />
       </template>
       <template #icon-back>
-        <img src="@/assets/images/logo.png" alt="" />
+        <vi-icon name="ic_chevron_left" size="16" />
       </template>
       <template #avatar>
         <div class="avatar">
@@ -28,7 +36,9 @@
       </template>
       <template #username>{{ getUserFullName() }} </template>
       <template #tenant-name> {{ tenantDetail?.alias }} </template>
-
+      <template #footer>
+        <project-free-trial-plan v-if="isExpand" :tenantMetric="tenantMetric" />
+      </template>
       <template #menu-user>
         <vi-user
           :user-name="userDetail?.username"
@@ -53,6 +63,7 @@
 </template>
 
 <script setup lang="ts">
+import useMetric from '~/composables/metric';
 import { useAuthStore } from '~/stores/auth';
 import type {
   ITenantDetail,
@@ -65,9 +76,11 @@ import { useUserStore } from '~/stores/user';
 const { t } = useI18n();
 const userDetail = ref<IUser>();
 const tenantDetail = ref<ITenantDetail>();
+const isExpand = ref(true);
 const { getDetailInfoUser } = useUserStore();
-const { getTenantByID } = useTenantStore();
+const { getTenantByID, setCurrentTenantInfo } = useTenantStore();
 const { getInfoUserFromCookie } = useAuthStore();
+const { tenantMetric, getTenantMetric } = useMetric();
 
 const isShowAvatar = ref(true);
 const onAvatarError = () => {
@@ -77,30 +90,9 @@ const onAvatarError = () => {
 const navOptions = [
   {
     id: 1,
-    text: t('common-navigation-menu-section_apps'),
-    nameIcon: 'ic_ai_apps',
-    link: '/dashboard',
-  },
-  {
-    id: 2,
-    text: t('common-navigation-menu-section_tenant_mgmt'),
-    nameIcon: 'ic_tanent_management',
-    link: '/settings',
-  },
-  {
-    id: 3,
-    text: t('common-navigation-menu-section_plan_mgmt'),
-    nameIcon: 'ic_plan',
-    link: '/traffic-plan',
-  },
-  {
-    id: 4,
-    text: t('common-navigation-menu-section_faq'),
-    nameIcon: 'ic_help',
-    link: '/faq',
-    style: {
-      marginTop: 'auto',
-    },
+    text: '專案列表',
+    nameIcon: 'ic_project',
+    link: '/project',
   },
 ];
 const navUsers = [
@@ -131,6 +123,7 @@ const fetchTenantInfo = async () => {
   if (tenantId) {
     const res = await getTenantByID(tenantId);
     tenantDetail.value = res.data;
+    setCurrentTenantInfo(res.data);
   }
 };
 
@@ -141,9 +134,14 @@ const getUserFullName = () => {
   ].join(' ');
 };
 
+const onBack = () => {
+  window.location.href = import.meta.env.VITE_APP_PLATFORM_URL;
+};
+
 onMounted(() => {
   fetchCurrentUser().then(() => {
     fetchTenantInfo();
+    getTenantMetric();
   });
 });
 provide(PROVIDE.USER_INFO, userDetail);
@@ -164,6 +162,11 @@ provide(PROVIDE.USER_INFO, userDetail);
   .content {
     flex: 1;
     background-color: rgba(3, 12, 17, 0.6);
+  }
+
+  .logo {
+    width: 40px;
+    height: 40px;
   }
 
   .navbar-left {
