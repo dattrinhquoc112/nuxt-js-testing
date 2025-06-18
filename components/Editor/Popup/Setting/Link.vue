@@ -95,6 +95,9 @@ watch(
   () => props.link,
   (newVal) => {
     linkRef.value = newVal;
+  },
+  {
+    immediate: true,
   }
 );
 
