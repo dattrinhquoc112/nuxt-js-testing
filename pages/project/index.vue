@@ -337,9 +337,21 @@ const onCopyProject = async (project: IProject) => {
   if (isLimit) {
     isOpenReachLimitNoti.value = true;
   } else {
-    await copyProject(project.id, `${project.name}_copy`);
-    fetchProjectList();
-    toastMessage(t('landing-common-message-copied'));
+    try {
+      const newName = `${project.name}_copy`;
+      if (newName.length > 50) {
+        toastMessage(
+          t('error_fe-data-validation-input_length_exceeded'),
+          'error'
+        );
+      } else {
+        await copyProject(project.id, newName);
+        fetchProjectList();
+        toastMessage(t('landing-common-message-copied'));
+      }
+    } catch (error) {
+      toastMessage(t('landing-common-message-copied-error'), 'error');
+    }
   }
 };
 const onCreateProject = async () => {
