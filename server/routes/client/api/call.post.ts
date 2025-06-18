@@ -6,6 +6,9 @@ import {
 import landingRequestHelper from '~/utils/landingRequestHelper';
 import { MethodEnum } from '~/stores/interface/api';
 import requestFetch from '@/utils/requestFetch';
+import { getOriginDomain } from '@/utils/cookieHelper';
+import { KEY_LOCAL_STORAGE } from '@/utils/constants';
+import jwtDecode from '@/utils/jwtDecode';
 
 export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
   const cookie = parseCookies(event);
@@ -27,7 +30,27 @@ export default defineEventHandler(async <ResponseDataType>(event: H3Event) => {
     if (newHeaders['set-cookie']) {
       const newCookie = parseSetCookie(newHeaders['set-cookie']);
       cookieAuthSession = newCookie.value;
-      setCookie(event, newCookie.name, newCookie.value, newCookie.options);
+
+      const host = event.node.req.headers.host || '';
+      const domain = getOriginDomain(host);
+
+      setCookie(event, newCookie.name, cookieAuthSession, {
+        ...newCookie.options,
+        domain: domain !== 'localhost' ? `.${domain}` : undefined,
+      });
+
+      setCookie(
+        event,
+        KEY_LOCAL_STORAGE.INFO_USER,
+        JSON.stringify(jwtDecode(cookieAuthSession)),
+        {
+          httpOnly: false,
+          sameSite: 'strict',
+          secure: true,
+          path: '/',
+          domain: domain !== 'localhost' ? `.${domain}` : undefined,
+        }
+      );
     }
   }
 
