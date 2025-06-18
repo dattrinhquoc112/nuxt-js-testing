@@ -52,10 +52,10 @@
               :src="getImage(audio.audio.urlImage)"
               alt=""
             />
-            <div class="icon-play">
+            <div @click.stop class="icon-play">
               <vi-audio
                 width="100%"
-                @click:play-icon="
+                @click:play-icon.stop="
                   emit('handle-play-audio', audio.audio.setting.voiceModelId)
                 "
                 :audio-file="getAudioRandom[audioIndex]"

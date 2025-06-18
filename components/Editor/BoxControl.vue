@@ -185,7 +185,6 @@ const listOptionControl = computed<
   display: flex;
   align-items: center;
   z-index: 15;
-  transition: top linear 0.05s;
 
   &.for-section-wrap {
     width: 56px;

@@ -29,6 +29,7 @@
     />
 
     <editor-list
+      ref="editorListRef"
       :rwd-mode="rwdMode"
       :templateSelected="templateSelected"
       :classElementSelected="classElementSelected"
@@ -195,6 +196,7 @@ const buttonColor = ref<RGBA>({
 const indexSectionSelected = ref<number>();
 const classElementSelected = ref<string>();
 const indexAudioSelected = ref<number>();
+const editorListRef = ref<any>();
 type SectionKeys = keyof SECTION_ITEM | keyof AUDIO_ITEM;
 const keyElementSelected = ref<SectionKeys>();
 const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
@@ -429,6 +431,7 @@ const handleChangeText = (event: MouseEvent) => {
   element.textContent = '';
   element.appendChild(textarea);
   textarea.focus();
+  editorListRef.value?.calcPositionLabel();
 
   textarea.addEventListener('blur', () => {
     const obj = objectSelecting.value as TEXT_ITEM;
@@ -480,6 +483,7 @@ const handleChangeLink = (link: string) => {
   obj.link = link;
 };
 const calcPositionControl = (distance: number) => {
+  editorListRef.value?.calcPositionLabel();
   handleSetPositionControl({
     pageX: positionControlCurrent.value.pageX,
     pageY: positionControlCurrent.value.pageY - distance,
