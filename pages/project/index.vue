@@ -615,9 +615,9 @@ watch(
 }
 .blur-container {
   position: relative;
-
   overflow: hidden;
   border-radius: 4px;
+  width: 100%;
 }
 .img-wrapper {
   position: absolute;
