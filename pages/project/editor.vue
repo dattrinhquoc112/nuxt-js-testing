@@ -20,7 +20,6 @@
     @handle-activity-settings="isShowActivitySettingModal = true"
     @handle-edit-info="isShowEditInfoModal = true"
     :project-name="webEditorName"
-    @scroll-editor="handleHiddenAllControl"
   >
     <vi-alert
       v-if="isOpenAlert"
@@ -39,6 +38,7 @@
       <vi-icon name="ic_alert" size="24" color="#fff" />
     </vi-alert>
     <vi-scroll
+      id="editor_content"
       class="editor__content"
       :class="{ 'editor__content--mobile': RWDMode === RWD_MODE.MOBILE }"
     >
@@ -146,6 +146,7 @@ const isShowModal = reactive({
   confirmReplace: false,
 });
 const editorRef = ref();
+let scrollTopEditor = 0;
 const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
 const isShowEditInfoModal = ref(false);
 const isShowActivitySettingModal = ref(false);
@@ -329,8 +330,16 @@ const handleUpdateToNewVersion = async () => {
   listAction[configVersion.value.type]?.(configVersion.value.keyAction);
 };
 
-const handleHiddenAllControl = () => {
-  editorRef.value?.hiddenBoxControl();
+const editorContentElement = computed(() =>
+  document.querySelector('#editor_content')
+);
+
+const calcPositionControl = () => {
+  if (editorContentElement.value?.scrollTop === undefined) return;
+  editorRef.value?.calcPositionControl(
+    editorContentElement.value.scrollTop - scrollTopEditor
+  );
+  scrollTopEditor = editorContentElement.value.scrollTop;
 };
 
 const handleLeave = () => {
@@ -377,8 +386,17 @@ watch(
     }
   }
 );
+
 onMounted(async () => {
   getTenantMetric();
+  if (!editorContentElement.value) return;
+  scrollTopEditor = editorContentElement.value.scrollTop;
+  editorContentElement.value.addEventListener('scroll', calcPositionControl);
+});
+
+onUnmounted(() => {
+  if (!editorContentElement.value) return;
+  editorContentElement.value.removeEventListener('scroll', calcPositionControl);
 });
 
 watch(
