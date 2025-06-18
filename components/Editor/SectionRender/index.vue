@@ -74,11 +74,13 @@ const emit = defineEmits([
 ]);
 
 const getLinkForButton = computed(() => {
-  if (!props.isPublic && !props.readOnly) return {};
+  if (
+    (!props.isPublic && !props.readOnly) ||
+    !props.section?.buttonExternal?.link
+  )
+    return {};
   return {
-    href: props.section?.buttonExternal?.link
-      ? props.section?.buttonExternal?.link
-      : '#',
+    href: props.section?.buttonExternal.link,
     target: '_blank',
   };
 });

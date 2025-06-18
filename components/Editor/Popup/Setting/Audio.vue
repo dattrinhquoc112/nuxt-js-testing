@@ -308,7 +308,6 @@ onMounted(() => {
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25),
     0px 0px 4px 0px rgba(0, 0, 0, 0.15);
   transform: translateX(50%);
-  transition: top linear 0.05s;
   .header {
     padding: 16px 16px 8px 16px;
     display: flex;

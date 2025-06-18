@@ -1,38 +1,36 @@
 <template>
   <div class="bg-black">
-    <div class="editor__bg">
-      <NavigatorEditor
-        :rwdMode="rwdMode"
-        :projectName="projectName"
-        :historyStatus="historyStatus"
-        @handle-undo="$emit('handleUndo')"
-        @handle-redo="$emit('handleRedo')"
-        @handleSwitchLayout="
-          (e) => {
-            $emit('handleSwitchLayout', e);
-          }
-        "
-        @handle-activity-settings="$emit('handleActivitySettings')"
-        @handle-edit-info="$emit('handleEditInfo')"
-        @handle-play="$emit('handlePlay')"
-        @handle-store-changes="$emit('handleStoreChanges')"
-        @handle-release="$emit('handleRelease')"
-        @handle-back="$emit('handleBack')"
-      />
-      <div ref="editorContainer" class="editor__container">
-        <div v-show="rwdMode === RWD_MODE.DESKTOP">
-          <SideBarEditor
-            @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
-            :isShowListSection="isShowListSection"
-          />
-        </div>
-        <vi-scroll class="editor__content">
-          <slot />
-        </vi-scroll>
+    <NavigatorEditor
+      :rwdMode="rwdMode"
+      :projectName="projectName"
+      :historyStatus="historyStatus"
+      @handle-undo="$emit('handleUndo')"
+      @handle-redo="$emit('handleRedo')"
+      @handleSwitchLayout="
+        (e) => {
+          $emit('handleSwitchLayout', e);
+        }
+      "
+      @handle-activity-settings="$emit('handleActivitySettings')"
+      @handle-edit-info="$emit('handleEditInfo')"
+      @handle-play="$emit('handlePlay')"
+      @handle-store-changes="$emit('handleStoreChanges')"
+      @handle-release="$emit('handleRelease')"
+      @handle-back="$emit('handleBack')"
+    />
+    <div ref="editorContainer" class="editor__container">
+      <div v-show="rwdMode === RWD_MODE.DESKTOP">
+        <SideBarEditor
+          @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
+          :isShowListSection="isShowListSection"
+        />
       </div>
+      <vi-scroll class="editor__content">
+        <slot />
+      </vi-scroll>
     </div>
-    <Tutorial :tutorial-type="TUTORIAL_TYPE.WEB_EDITOR" />
   </div>
+  <Tutorial :tutorial-type="TUTORIAL_TYPE.WEB_EDITOR" />
 </template>
 <script setup lang="ts">
 import NavigatorEditor from '@/components/Editor/LayoutEditor/components/NavigatorEditor.vue';
@@ -71,16 +69,6 @@ const editorContainer = ref<HTMLElement>();
   &__content {
     width: 100%;
     height: calc(100vh - 64px);
-  }
-  &__bg {
-    background: linear-gradient(0deg, #030c11 0%, rgba(3, 12, 17, 0) 100%),
-      linear-gradient(
-        270deg,
-        rgba(130, 136, 255, 0.4) 0%,
-        rgba(90, 216, 255, 0.4) 50%,
-        rgba(225, 96, 255, 0.4) 100%
-      ),
-      $brand-navy-900-main;
   }
   &__container {
     display: flex;
