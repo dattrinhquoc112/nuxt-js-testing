@@ -35,7 +35,7 @@
       class="label-element-selecting"
       :class="{
         'button-href': typeLabel.isButtonHref,
-        'border-audio': typeLabel.isBorderAudio,
+        'border-section': typeLabel.borderSection,
       }"
     >
       <div class="text-label" v-if="typeLabel.isButtonHref">
@@ -43,6 +43,11 @@
           {{ $t('landing-editor-section-section_button') }}
         </vi-typography>
         <vi-icon name="ic_link" size="16" color="#fff"></vi-icon>
+      </div>
+      <div class="text-label-section" v-if="typeLabel.borderSection">
+        <vi-typography type="caption-large-300">
+          {{ $t('landing-editor-menu-title_section') }}
+        </vi-typography>
       </div>
       <div class="border-audio" v-if="typeLabel.isBorderAudio">
         <div class="text-label-audio">
@@ -103,6 +108,7 @@ const labelElementSelecting = ref<HTMLElement>();
 const typeLabel = ref({
   isButtonHref: false,
   isBorderAudio: false,
+  borderSection: false,
 });
 const hoverPosition = ref<{ index: number; zone: string } | null>(null);
 const boxControlElement = computed(() =>
@@ -274,8 +280,11 @@ const handleSetLabel = (target: HTMLElement) => {
   if (!target) return;
   isShowLabelElement.value = true;
   typeLabel.value.isBorderAudio = false;
+  typeLabel.value.borderSection = false;
   typeLabel.value.isButtonHref = false;
-  if (target.classList.contains('button-href')) {
+  if (target.classList.contains('section-wrap')) {
+    typeLabel.value.borderSection = true;
+  } else if (target.classList.contains('button-href')) {
     typeLabel.value.isButtonHref = true;
   } else if (target.closest('.audio-image')) {
     typeLabel.value.isBorderAudio = true;
@@ -526,6 +535,9 @@ onMounted(initHover);
     &.button-href {
       border: 2px solid #1edd00;
     }
+    &.border-section {
+      border: 2px solid $brand-magenta-400-main;
+    }
     .border-audio {
       width: 100%;
       margin-top: -20px;
@@ -553,7 +565,8 @@ onMounted(initHover);
         background: linear-gradient(66deg, #0078d8 15.31%, #ff2cf0 84.69%);
       }
     }
-    .text-label {
+    .text-label,
+    .text-label-section {
       display: flex;
       gap: 4px;
       align-items: center;
@@ -561,6 +574,11 @@ onMounted(initHover);
       padding: 1px 6px;
       position: absolute;
       transform: translate(-2px, -100%);
+    }
+    .text-label-section {
+      background-color: $brand-magenta-400-main;
+      right: 0;
+      transform: translate(2px, -100%);
     }
   }
   :deep(.selected) {

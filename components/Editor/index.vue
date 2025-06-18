@@ -478,7 +478,7 @@ const handleChangeSize = (size: string) => {
 
 const handleChangeLink = (link: string) => {
   const obj = objectSelecting.value as BUTTON_EXTERNAL_ITEM;
-  if (!obj || !link) return;
+  if (!obj) return;
   obj.link = link;
 };
 const calcPositionControl = (distance: number) => {
