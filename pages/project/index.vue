@@ -173,6 +173,9 @@
                   <div
                     @click.stop="() => onAction(item, 'edit')"
                     class="action-item"
+                    :class="{
+                      disabled: !PERMISSION.isEditor,
+                    }"
                   >
                     <vi-typography class="cursor-pointer" type="body-large">
                       {{ t('landing-project_mgmt-button-edit') }}
@@ -181,6 +184,9 @@
                   <div
                     @click.stop="() => onAction(item, 'copy')"
                     class="action-item"
+                    :class="{
+                      disabled: !PERMISSION.isEditor,
+                    }"
                   >
                     <vi-typography class="cursor-pointer" type="body-large">
                       {{ $t('landing-project_mgmt-button-copy') }}
@@ -326,9 +332,6 @@ const fetchProjectList = debounce(async () => {
 }, 500);
 
 const onShowAction = (projectID: string, show = true) => {
-  if (!PERMISSION.value.isEditor) {
-    return;
-  }
   actionRef[projectID] = show;
 };
 
@@ -606,6 +609,10 @@ watch(
     cursor: pointer;
     &:hover {
       background-color: $neutral-white-alpha-10;
+    }
+    &.disabled {
+      background-color: $brand-navy-900-main;
+      color: $neutral-white-alpha-30;
     }
   }
 }
