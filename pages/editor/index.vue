@@ -1,20 +1,27 @@
 <template>
   <LayoutEditor
     @handle-undo="handleUndo"
+    :rwd-mode="RWDMode"
     :history-status="historyStatus"
     @handle-redo="handleRedo"
-    @handle-switcher-layout="handleEvent"
-    @handle-play="handleEvent"
+    @handleSwitchLayout="(e) => SwitchToRWD(e)"
+    @handle-play="handlePreview"
     @handle-store-changes="handleEvent"
     @handle-release="handleEvent"
     @click-sidebar="handleClickSideBar"
     @handle-back="handleBack"
   >
-    <editor
-      ref="editorRef"
-      :is-show-list-section="isShowListSection"
-      @close-section="isShowListSection = false"
-    />
+    <vi-scroll
+      class="editor__content"
+      :class="{ 'editor__content--mobile': RWDMode === RWD_MODE.MOBILE }"
+    >
+      <editor
+        :rwd-mode="RWDMode"
+        ref="editorRef"
+        :is-show-list-section="isShowListSection"
+        @close-section="isShowListSection = false"
+      />
+    </vi-scroll>
   </LayoutEditor>
 
   <vi-modal
@@ -24,7 +31,7 @@
     size="small"
   >
     <vi-typography type="body-small" class="editor-leave__title">
-      離開將遺失目前進度，是否儲存編輯？
+      {{ $t('landing-editor-modal-save_before_leave_message.1') }}
     </vi-typography>
     <template #footer>
       <div class="editor-leave__footer">
@@ -33,14 +40,14 @@
           width="fit-content"
           @click="handleLeave"
         >
-          不儲存直接離開
+          {{ $t('landing-editor-button-leave_without_saving') }}
         </vi-button>
         <vi-button
           type="standard-primary"
           width="fit-content"
           @click="handleSaveDraft"
         >
-          儲存進度
+          {{ $t('landing-editor-button-save_progress') }}
         </vi-button>
       </div>
     </template>
@@ -49,14 +56,19 @@
 
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
+import { RWD_MODE } from '~/constants/common';
+import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
+import { ROUTE } from '@/constants/route';
 
 definePageMeta({
   layout: 'editor',
 });
+const RWDMode = ref(RWD_MODE.DESKTOP);
 const isShowListSection = ref(false);
 const historyStatus = ref();
 const isShowModal = ref(false);
 const editorRef = ref();
+
 const handleEvent = () => {};
 watch(
   () => editorRef.value?.historyStatus,
@@ -64,27 +76,37 @@ watch(
     historyStatus.value = newVal;
   }
 );
+
+const handlePreview = () => {
+  const sections = editorRef.value?.sections;
+  sessionStorage.setItem(WEB_EDITOR_PREVIEW, JSON.stringify(sections));
+  window.open(ROUTE.EDITOR_PREVIEW, '_blank');
+};
 const handleClickSideBar = (keyAction: string) => {
   if (keyAction === 'toggle-section') {
     isShowListSection.value = !isShowListSection.value;
   }
 };
 
+const SwitchToRWD = (e: any) => {
+  RWDMode.value = e;
+};
+
 const handleLeave = () => {
   isShowModal.value = false;
-  navigateTo('/project-list');
+  navigateTo(ROUTE.PROJECT_LIST);
 };
 
 const handleSaveDraft = () => {
   // TODO: implement save draft logic
   isShowModal.value = false;
-  navigateTo('/project-list');
+  navigateTo(ROUTE.PROJECT_LIST);
   alert('Draft saved successfully!');
 };
 const handleBack = () => {
   const isSectionDirty = editorRef.value?.isSectionDirty();
   if (isSectionDirty) {
-    navigateTo('/project-list');
+    navigateTo(ROUTE.PROJECT_LIST);
   } else {
     isShowModal.value = true;
   }
@@ -106,6 +128,19 @@ const handleRedo = () => {
   }
   &__title {
     margin-bottom: 16px;
+  }
+}
+
+.editor {
+  &__content {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    height: calc(100vh - 64px);
+    &--mobile {
+      width: 375px;
+    }
   }
 }
 </style>

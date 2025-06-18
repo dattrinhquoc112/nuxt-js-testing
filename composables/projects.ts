@@ -1,7 +1,6 @@
 import { useTenantStore } from '~/stores/tenant';
 import { useUploadStore } from '~/stores/upload';
 import type { IProject } from '~/types/project';
-import { useUploadStore } from '~/stores/upload';
 
 export default function useProjects() {
   const { t } = useI18n();

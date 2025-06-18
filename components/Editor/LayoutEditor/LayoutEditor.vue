@@ -5,7 +5,11 @@
         :historyStatus="historyStatus"
         @handle-undo="$emit('handleUndo')"
         @handle-redo="$emit('handleRedo')"
-        @handle-switcher-layout="$emit('handleSwitchLayout')"
+        @handleSwitchLayout="
+          (e) => {
+            $emit('handleSwitchLayout', e);
+          }
+        "
         @handle-play="$emit('handlePlay')"
         @hanlde-store-changes="$emit('hanldeStoreChanges')"
         @handle-release="$emit('handleRelease')"
@@ -13,6 +17,7 @@
       />
       <div class="editor__container">
         <SideBarEditor
+          v-show="rwdMode === RWD_MODE.DESKTOP"
           @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
         />
         <vi-scroll class="editor__content">
@@ -26,7 +31,7 @@
 <script setup lang="ts">
 import NavigatorEditor from '@/components/Editor/LayoutEditor/components/NavigatorEditor.vue';
 import SideBarEditor from '@/components/Editor/LayoutEditor/components/SideBarEditor.vue';
-import { TUTORIAL_TYPE } from '@/constants/common';
+import { RWD_MODE, TUTORIAL_TYPE } from '@/constants/common';
 
 import { defineProps } from 'vue';
 
@@ -35,12 +40,13 @@ defineProps<{
     redoButtonEnable: boolean;
     undoButtonEnable: boolean;
   };
+  rwdMode: string;
 }>();
 
 defineEmits<{
   handleUndo: [];
   handleRedo: [];
-  handleSwitchLayout: [];
+  handleSwitchLayout: [mode: string];
   handlePlay: [];
   hanldeStoreChanges: [];
   handleRelease: [];

@@ -8,6 +8,7 @@
     />
 
     <editor-list
+      :rwd-mode="rwdMode"
       :templateSelected="templateSelected"
       :classElementSelected="classElementSelected"
       :sections="sections"
@@ -40,6 +41,7 @@
       @change-video="handleChangeVideo"
     />
     <editor-setting-link
+      :link="objectSelecting?.link"
       :isShow="isShowPopup.addLink"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingLink"
@@ -79,6 +81,7 @@ import { DEBOUND_TIME_SAVE_HISTORY } from '@/constants/common';
 let debounceTimer: any = null;
 const MAX_HISTORY = 20;
 const iSaveHistory = ref(false);
+
 definePageMeta({
   layout: 'default',
 });
@@ -86,6 +89,10 @@ defineProps({
   isShowListSection: {
     type: Boolean,
     default: true,
+  },
+  rwdMode: {
+    type: String,
+    default: '',
   },
 });
 const emit = defineEmits(['closeSection']);
@@ -447,6 +454,7 @@ defineExpose({
   undo,
   historyStatus,
   isSectionDirty,
+  sections,
 });
 </script>
 

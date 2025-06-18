@@ -15,7 +15,9 @@
     <div class="header">
       <vi-icon name="ic_link" size="24" color="#fff"></vi-icon>
       <div class="ml-8 mr-auto neutral-white-alpha-90-text">
-        <vi-typography type="subtitle-large">Link Setting</vi-typography>
+        <vi-typography type="subtitle-large">
+          {{ $t('landing-editor-modal-link_setting') }}
+        </vi-typography>
       </div>
       <vi-icon
         class="neutral-white-alpha-60-text cursor-pointer"
@@ -26,9 +28,9 @@
     </div>
     <div class="pa-16">
       <vi-input
-        v-model.trim="link"
+        v-model.trim="linkRef"
         width="100%"
-        placeholder="請貼上網址連結"
+        :placeholder="$t('landing-editor-modal-link_placeholder')"
         size="small"
       />
     </div>
@@ -44,13 +46,7 @@ const emit = defineEmits([
   'move-popup-to-bottom',
   'change-link',
 ]);
-const link = ref();
-
-watch(link, () => {
-  // handle validate link
-  emit('change-link', link.value);
-});
-
+const linkRef = ref();
 const props = defineProps({
   positionControlCurrent: {
     type: Object,
@@ -60,7 +56,22 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  link: {
+    type: String,
+    default: '',
+  },
 });
+watch(linkRef, () => {
+  // handle validate link
+  emit('change-link', linkRef.value);
+});
+watch(
+  () => props.link,
+  (newVal) => {
+    linkRef.value = newVal;
+  }
+);
+
 const popupElement = ref<HTMLElement>();
 useCheckHeightPopup(props, popupElement, emit);
 </script>
