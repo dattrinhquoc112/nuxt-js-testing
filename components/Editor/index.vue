@@ -479,6 +479,12 @@ const handleChangeLink = (link: string) => {
   if (!obj || !link) return;
   obj.link = link;
 };
+const calcPositionControl = (distance: number) => {
+  handleSetPositionControl({
+    pageX: positionControlCurrent.value.pageX,
+    pageY: positionControlCurrent.value.pageY - distance,
+  });
+};
 
 const handleMoveTopPopup = () => {
   if (!selectedElement.value) return;
@@ -490,10 +496,10 @@ const handleMoveTopPopup = () => {
     const coordinates = selectedElement.value.getBoundingClientRect();
     const pageY = coordinates.top - 12;
     const pageX = coordinates.left + coordinates.width / 2;
-    positionControlCurrent.value = {
+    handleSetPositionControl({
       pageY,
       pageX,
-    };
+    });
   }
   boxControlElement.value?.classList.remove('show-on-bottom');
   boxControlElement.value?.classList.add('show-on-top');
@@ -508,10 +514,10 @@ const handleMoveBottomPopup = () => {
     const coordinates = selectedElement.value.getBoundingClientRect();
     const pageY = coordinates.bottom + 12;
     const pageX = coordinates.left + coordinates.width / 2;
-    positionControlCurrent.value = {
+    handleSetPositionControl({
       pageY,
       pageX,
-    };
+    });
   }
   boxControlElement.value?.classList.remove('show-on-top');
   boxControlElement.value?.classList.add('show-on-bottom');
@@ -657,6 +663,7 @@ const showPopupSettingColor = () => {
 };
 const showPopupSettingAudio = () => {
   isShowControl.value = false;
+  positionControlCurrent.value.pageY = 80;
   isShowPopup.value.audioSetting = true;
 };
 const closePopupSettingAudio = () => {
@@ -715,6 +722,7 @@ defineExpose({
   sections,
   checkChanges,
   listMaterials,
+  calcPositionControl,
 });
 </script>
 

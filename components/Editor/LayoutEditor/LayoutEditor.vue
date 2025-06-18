@@ -26,7 +26,7 @@
             :isShowListSection="isShowListSection"
           />
         </div>
-        <vi-scroll id="editor_content" class="editor__content">
+        <vi-scroll class="editor__content">
           <slot />
         </vi-scroll>
       </div>
@@ -51,7 +51,7 @@ defineProps<{
   rwdMode: string;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
   handleUndo: [];
   handleRedo: [];
   handleSwitchLayout: [mode: string];
@@ -60,35 +60,10 @@ const emit = defineEmits<{
   handleRelease: [];
   clickSidebar: [string];
   handleBack: [];
-  scrollEditor: [];
   handleEditInfo: [];
   handleActivitySettings: [];
 }>();
 const editorContainer = ref<HTMLElement>();
-
-const editorContentElement = computed(() =>
-  editorContainer.value?.querySelector('#editor_content')
-);
-
-const handleScrollEditorContent = () => {
-  emit('scrollEditor');
-};
-
-onMounted(() => {
-  if (!editorContentElement.value) return;
-  editorContentElement.value.addEventListener(
-    'scroll',
-    handleScrollEditorContent
-  );
-});
-
-onUnmounted(() => {
-  if (!editorContentElement.value) return;
-  editorContentElement.value.removeEventListener(
-    'scroll',
-    handleScrollEditorContent
-  );
-});
 </script>
 
 <style lang="scss" scoped>
