@@ -166,9 +166,7 @@ const onCopy = async () => {
       toastMessage(t('landing-common-message-copied'));
       navigateTo(`/project`);
     }
-  } catch (error: any) {
-    toastMessage(t('landing-common-message-copied-error'), 'error');
-  }
+  } catch (_) {}
   loading.copy = false;
 };
 

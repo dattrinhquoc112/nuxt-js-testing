@@ -352,9 +352,7 @@ const onCopyProject = async (project: IProject) => {
         fetchProjectList();
         toastMessage(t('landing-common-message-copied'));
       }
-    } catch (error) {
-      toastMessage(t('landing-common-message-copied-error'), 'error');
-    }
+    } catch (_) {}
   }
 };
 const onCreateProject = async () => {
