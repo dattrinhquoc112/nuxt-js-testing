@@ -108,6 +108,23 @@ export interface IResendOTPResponse extends IApiCommon {
   };
 }
 
+export const LANGUAGE_TYPE = {
+  TRADITIONAL_CHINESE: 'TRADITIONAL_CHINESE',
+  ENGLISH: 'ENGLISH',
+};
+
+export interface IUserPayload {
+  avatarFileKey?: string;
+  username?: string;
+  firstName?: string;
+  lastName?: string;
+  mobileCountryCode?: number | string;
+  mobileNumber?: string;
+  languageType?: string;
+  currentPassword?: string;
+  newPassword?: string;
+}
+
 export interface IUser {
   id: string;
   username: string;
@@ -118,6 +135,7 @@ export interface IUser {
   mobileCountryCode: number | string | null;
   mobileNumber: string | null;
   countryId: string | null;
+  languageType?: string; // ENGLISH - TRADITIONAL_CHINESE;
   isEmailVerified: boolean;
   isEnabled: boolean;
   isBlocked: boolean;

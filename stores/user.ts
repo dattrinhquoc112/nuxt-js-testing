@@ -2,7 +2,10 @@ import { defineStore } from 'pinia';
 import { useApiStore } from '@/stores/api';
 import { MethodEnum } from './interface/api';
 import { useAuthStore } from './auth';
-import type { IUserInfoResponse } from './interface/response/share';
+import type {
+  IUserInfoResponse,
+  IUserPayload,
+} from './interface/response/share';
 import type { RequestAcceptInvitationPayload } from './interface/request/shared';
 
 export const useUserStore = defineStore('user', () => {
@@ -11,12 +14,31 @@ export const useUserStore = defineStore('user', () => {
   const userInfo = getInfoUserFromCookie();
 
   async function getDetailInfoUser() {
+    if (!getInfoUserFromCookie()?.sub) {
+      return null;
+    }
     return apiStore.apiRequest<IUserInfoResponse>({
       method: MethodEnum.GET,
       endpoint: `/api/v1/users/${getInfoUserFromCookie()?.sub}`,
       proxy: true,
       platform: true,
     });
+  }
+
+  async function updateUser(
+    data: IUserPayload,
+    id = getInfoUserFromCookie()?.sub || ''
+  ) {
+    if (id) {
+      return apiStore.apiRequest<IUserInfoResponse>({
+        method: MethodEnum.PATCH,
+        endpoint: `/api/v1/users/${id}`,
+        data,
+        proxy: true,
+        platform: true,
+      });
+    }
+    return null;
   }
 
   function registrationCheck(email: string) {
@@ -38,10 +60,11 @@ export const useUserStore = defineStore('user', () => {
   }
 
   return {
+    userInfo,
     registrationCheck,
     acceptInvitation,
-    userInfo,
     getDetailInfoUser,
+    updateUser,
   };
 });
 

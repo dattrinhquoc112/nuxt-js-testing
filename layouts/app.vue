@@ -64,6 +64,7 @@
 
 <script setup lang="ts">
 import useMetric from '~/composables/metric';
+import useSwitchLanguage from '~/composables/switchLanguage';
 import { useAuthStore } from '~/stores/auth';
 import type {
   ITenantDetail,
@@ -77,6 +78,7 @@ const { t } = useI18n();
 const userDetail = ref<IUser>();
 const tenantDetail = ref<ITenantDetail>();
 const isExpand = ref(true);
+const { init } = useSwitchLanguage();
 const { getDetailInfoUser } = useUserStore();
 const { getTenantByID, setCurrentTenantInfo } = useTenantStore();
 const { getInfoUserFromCookie } = useAuthStore();
@@ -116,6 +118,7 @@ const navUsers = [
 const fetchCurrentUser = async () => {
   const response: IUserInfoResponse = await getDetailInfoUser();
   userDetail.value = response.data;
+  init(userDetail.value);
 };
 
 const fetchTenantInfo = async () => {
