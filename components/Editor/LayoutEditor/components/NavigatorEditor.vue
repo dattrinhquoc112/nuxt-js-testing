@@ -196,6 +196,12 @@ const navigateProjectList = () => {
 .editor-layout {
   height: 64px;
   border-bottom: 1px solid $neutral-white-alpha-7;
+  background-image: url(@/assets/images/image-bg.svg);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: relative;
+  z-index: 20;
 
   &__left {
     display: flex;
