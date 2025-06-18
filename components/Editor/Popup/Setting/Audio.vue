@@ -108,7 +108,7 @@
             :disabled="isDisabledAll"
             :label="
               $t('landing-editor-modal-tts_sentence_number', {
-                num: $t(`${index + 1}`),
+                num: index + 1,
               })
             "
             :is-count="true"
