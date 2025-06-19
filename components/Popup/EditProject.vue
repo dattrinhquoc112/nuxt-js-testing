@@ -17,13 +17,14 @@
               $t('landing-project_mgmt-placeholder-placeholder_project_name')
             "
             width="100%"
-            :error="Boolean(errorMsg)"
+            :error="errorField('name', errorMsg)"
             :hint="errorMsg"
             is-count
             :max="50"
             :allowed-regex="/^[\p{L}\p{N} _-]*$/u"
             size="large"
             :disabled="!PERMISSION.isEditor"
+            @blur="onBlur"
           />
         </template>
       </vi-form-item>
@@ -32,12 +33,10 @@
       <div class="modal-footer">
         <vi-button
           type-button="button"
-          @click="PERMISSION.isEditor ? emit('edit', model.name) : null"
+          @click="onSubmit"
           type="standard-primary"
           width="fit-content"
-          :disabled="
-            !model.name || model.name === props.value || !PERMISSION.isEditor
-          "
+          :disabled="isDisabled()"
           >{{ $t('common-action-button-button_confirm') }}</vi-button
         >
         <vi-button
@@ -53,6 +52,7 @@
 </template>
 <script lang="ts" setup>
 import useCheckPermission from '~/composables/checkPermission';
+import useFormValidation from '~/composables/formValidation';
 
 const props = defineProps({
   show: {
@@ -66,14 +66,33 @@ const props = defineProps({
 });
 const emit = defineEmits(['close', 'edit']);
 const { t } = useI18n();
-const model = ref({
+const model = reactive({
   name: '',
 });
+
 const { PERMISSION } = useCheckPermission();
+const { isValidForm, errorField } = useFormValidation();
+
+const isDisabled = () => {
+  return (
+    !model.name ||
+    model.name === props.value ||
+    !PERMISSION.value.isEditor ||
+    !isValidForm.value
+  );
+};
+const onSubmit = () => {
+  if (isDisabled()) return;
+  emit('edit', model.name);
+};
+
+const onBlur = () => {
+  model.name = model.name.trim();
+};
 watch(
   () => props.value,
   (newValue) => {
-    model.value.name = newValue;
+    model.name = newValue;
   },
   { immediate: true }
 );

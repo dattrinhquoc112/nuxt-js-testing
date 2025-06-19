@@ -1,28 +1,28 @@
-import { useTenantStore } from '~/stores/tenant';
 import { useUploadStore } from '~/stores/upload';
+import { nanoid } from 'nanoid';
 
 export default function useProjects() {
   const { t } = useI18n();
-  const { getCurrentTenantInfo } = useTenantStore();
   const { getFileURL } = useUploadStore();
-  const tenantName = getCurrentTenantInfo()?.name;
-  const getProjectUrl = (eventEnglishName?: string): string => {
-    if (eventEnglishName && tenantName) {
-      const host = window.location.origin;
-      return `${host}/event/${tenantName}/${eventEnglishName}`;
-    }
-    return '';
+
+  const generateSlug = (eventName: string): string => {
+    const slug = eventName
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+
+    return slug;
   };
 
-  const handleEventEnglishName = (input: string): string => {
-    const leadingSpaces = input.match(/^(\s*)/)?.[0] ?? '';
-    const trailingSpaces = input.match(/(\s*)$/)?.[0] ?? '';
-
-    const trimmedCore = input.trim();
-
-    const replaced = trimmedCore.toLowerCase().replace(/[^a-z0-9\-._~]/g, '-');
-
-    return leadingSpaces + replaced + trailingSpaces;
+  const getProjectUrl = (eventEnglishName?: string): string => {
+    if (eventEnglishName?.trim()) {
+      const host = window.location.origin;
+      const slug = generateSlug(eventEnglishName);
+      const id = nanoid(6);
+      return `${host}/event/${slug}-${id}`;
+    }
+    return '';
   };
 
   const handleKeyword = (newValue: string, maxKeywords = 10): string => {
@@ -70,7 +70,6 @@ export default function useProjects() {
     getProjectUrl,
     getStatus,
     getImage,
-    handleEventEnglishName,
     handleKeyword,
   };
 }
