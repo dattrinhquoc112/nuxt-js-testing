@@ -1,5 +1,5 @@
 <template>
-  <vi-scroll class="wrap">
+  <vi-scroll class="wrap" v-click-outside="handleClosePopupTemplate">
     <div class="header">
       <vi-icon
         name="ic_section"
@@ -104,6 +104,12 @@ defineProps({
   },
 });
 const { PERMISSION } = useCheckPermission();
+
+const handleClosePopupTemplate = (event: MouseEvent) => {
+  const target = event.target as HTMLElement;
+  if (target.closest('tool-tip-open-template')) return;
+  emit('close');
+};
 </script>
 
 <style lang="scss" scoped>
@@ -111,7 +117,7 @@ const { PERMISSION } = useCheckPermission();
   position: fixed;
   top: 88px;
   left: 72px;
-  z-index: 30;
+  z-index: 31;
   min-height: calc(100vh - 112px);
   max-height: calc(100vh - 112px);
   padding: 16px;
