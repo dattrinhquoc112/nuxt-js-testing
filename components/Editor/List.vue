@@ -3,6 +3,7 @@
     <div
       v-for="(section, index) in sections"
       :key="index"
+      ref="listSectionRef"
       class="section"
       :class="sectionClass(index)"
       @mousemove="onHoverSection($event, index)"
@@ -50,16 +51,18 @@
         </vi-typography>
       </div>
       <div class="border-audio" v-if="typeLabel.isBorderAudio">
-        <div class="text-label-audio">
-          <vi-typography type="caption-large-300">
-            {{ $t('landing-editor-section-section_media') }}
-          </vi-typography>
-        </div>
-        <div class="audio-box">
-          <vi-icon name="ic_ai_section" size="16" color="#fff"></vi-icon>
-          <vi-typography type="caption-large-300">
-            {{ $t('landing-editor-section-ai_section_audio') }}
-          </vi-typography>
+        <div class="wrap-label-audio">
+          <div class="text-label-audio">
+            <vi-typography type="caption-large-300">
+              {{ $t('landing-editor-section-section_media') }}
+            </vi-typography>
+          </div>
+          <div class="audio-box">
+            <vi-icon name="ic_ai_section" size="16" color="#fff"></vi-icon>
+            <vi-typography type="caption-large-300">
+              {{ $t('landing-editor-section-ai_section_audio') }}
+            </vi-typography>
+          </div>
         </div>
       </div>
     </div>
@@ -69,6 +72,7 @@
 <script lang="ts" setup>
 import useCheckPermission from '~/composables/checkPermission';
 import { RWD_MODE } from '~/constants/common';
+import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
 
 const props = defineProps({
   templateSelected: {
@@ -100,11 +104,13 @@ const emit = defineEmits([
   'handle-change-text',
   'set-hover-position',
   'set-index-audio',
+  'show-popup-setting-audio',
 ]);
 
 const isShowLabelElement = ref<Boolean>(false);
 const elementSelected = ref<HTMLElement>();
 const labelElementSelecting = ref<HTMLElement>();
+const listSectionRef = ref<HTMLElement[]>();
 const typeLabel = ref({
   isButtonHref: false,
   isBorderAudio: false,
@@ -403,6 +409,39 @@ const handleShowOption = (event: any, index: number) => {
 //   isShowLabelElement.value = false;
 // };
 
+const scrollToSetupAudio = () => {
+  props.sections.forEach((sectionItem: SECTION_ITEM, indexSection: number) => {
+    if (sectionItem.id === 'audio-section') {
+      sectionItem.listAudio?.forEach((item: AUDIO_ITEM, audioIndex: number) => {
+        if (
+          !item.audio.setting.voiceModelId?.value ||
+          !item.audio.setting.listPhrase?.length ||
+          !item.audio.setting.listPhrase.every((itemVoice) => itemVoice.id)
+        ) {
+          const sectionElement = listSectionRef.value?.[indexSection];
+          const itemAudioElement = sectionElement
+            ?.querySelectorAll('.card-audio')
+            ?.[audioIndex]?.querySelector('.audio-image');
+
+          sectionElement?.scrollIntoView({
+            block: 'end',
+            inline: 'nearest',
+          });
+
+          setTimeout(() => {
+            if (itemAudioElement) {
+              (itemAudioElement as HTMLElement).click();
+              setTimeout(() => {
+                emit('show-popup-setting-audio');
+              });
+            }
+          });
+        }
+      });
+    }
+  });
+};
+
 const initHover = () => {
   const editor = document.getElementById('editor');
   let defaultBorder = '';
@@ -442,6 +481,7 @@ const initHover = () => {
 
 defineExpose({
   calcPositionLabel,
+  scrollToSetupAudio,
 });
 onMounted(initHover);
 </script>
@@ -546,23 +586,24 @@ onMounted(initHover);
       background-position: center;
       background-size: cover;
       background-repeat: no-repeat;
-      .text-label-audio {
-        background-color: $brand-green-200-main;
-        padding: 1px 6px;
+      .wrap-label-audio {
         position: absolute;
-        top: 0;
         transform: translateY(-100%);
-      }
-      .audio-box {
-        position: absolute;
         top: 0;
-        left: 40px;
-        padding: 1px 6px;
-        transform: translateY(-100%);
         display: flex;
         align-items: center;
-        gap: 4px;
-        background: linear-gradient(66deg, #0078d8 15.31%, #ff2cf0 84.69%);
+        gap: 2px;
+        .text-label-audio {
+          background-color: $brand-green-200-main;
+          padding: 1px 6px;
+        }
+        .audio-box {
+          padding: 1px 6px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+          background: linear-gradient(66deg, #0078d8 15.31%, #ff2cf0 84.69%);
+        }
       }
     }
     .text-label,

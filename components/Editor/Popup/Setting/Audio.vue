@@ -125,7 +125,13 @@
               ></vi-icon>
             </template>
           </vi-input>
-          <div class="audio-box" :class="{ disabled: isDisabledAll }">
+          <div
+            class="audio-box"
+            :class="{
+              disabled: isDisabledAll,
+              disabledPlay: !item.text,
+            }"
+          >
             <div class="custom-audio">
               <vi-audio
                 @click:play-icon.stop="handleCreateDemo(index)"
@@ -288,6 +294,21 @@ watch(
   { immediate: true }
 );
 
+watch(
+  () => audioSelecting.value?.setting?.listPhrase,
+  () => {
+    audioSelecting.value?.setting?.listPhrase.forEach((item: any) => {
+      if (!item.text) {
+        emit('remove-material', [item]);
+        item.text = '';
+        item.audioUrl = '';
+        item.id = '';
+      }
+    });
+  },
+  { deep: true }
+);
+
 useCheckHeightPopup(props, popupElement, emit);
 
 onMounted(() => {
@@ -412,6 +433,17 @@ onMounted(() => {
           &.disabled {
             pointer-events: none;
             opacity: 0.5;
+          }
+          &.disabledPlay {
+            pointer-events: none;
+            :deep() {
+              input[type='range'] {
+                opacity: 0.5;
+              }
+              .control-buttons {
+                opacity: 0.5;
+              }
+            }
           }
         }
       }

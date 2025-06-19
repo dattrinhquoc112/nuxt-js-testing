@@ -46,6 +46,7 @@
       @handle-change-text="handleChangeText"
       @set-hover-position="(val) => (hoverPosition = val)"
       @set-index-audio="(val) => (indexAudioSelected = val)"
+      @show-popup-setting-audio="showPopupSettingAudio"
     />
     <editor-box-control
       :positionControlCurrent="positionControlCurrent"
@@ -237,6 +238,7 @@ const {
   listMaterials,
   addMaterialAudio,
   removeMaterialAudio,
+  checkIsFinishedSetupAudio,
 } = useWebEditor(sections, idParam, limitSize, {
   handleExceedLimit: () => handleUploadExceedLimit(1),
   handleExceed75PercentLimit: () => handleUploadExceedLimit(0.75),
@@ -282,6 +284,7 @@ watch(
   },
   { immediate: true }
 );
+
 const objectSelecting = computed<OBJ_SECTION_ITEM>(() => {
   const sectionIndex = indexSectionSelected.value;
   const key = keyElementSelected.value;
@@ -729,6 +732,9 @@ const historyStatus = computed(() => ({
 onMounted(() => {
   fetchContentProject();
 });
+const scrollToSetupAudio = () => {
+  editorListRef.value?.scrollToSetupAudio();
+};
 
 defineExpose({
   redo,
@@ -741,6 +747,8 @@ defineExpose({
   checkChanges,
   listMaterials,
   calcPositionControl,
+  checkIsFinishedSetupAudio,
+  scrollToSetupAudio,
 });
 </script>
 
