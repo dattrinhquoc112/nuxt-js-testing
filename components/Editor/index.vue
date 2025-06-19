@@ -752,6 +752,8 @@ defineExpose({
   listMaterials,
   calcPositionControl,
   handleChangeHistoryWhenSaveTemplate,
+  checkIsFinishedSetupAudio,
+  scrollToSetupAudio,
 });
 </script>
 
