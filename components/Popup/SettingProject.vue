@@ -279,7 +279,7 @@
               <custom-image
                 v-if="model.ogImageUri"
                 class="og-image"
-                :src="model.ogImageUri"
+                :src="getImage(model.ogImageUri)"
                 alt="image"
               />
               <vi-typography
@@ -607,7 +607,7 @@ const onEditProject = async () => {
     const res = await uploadFile(model.ogImageFile);
     payload.ogImage = {
       thumbnail: res?.fileUri,
-      fileUri: getImage(res?.fileUri),
+      fileUri: res?.fileUri,
       fileSize: model.ogImageFile.size,
     };
   }
@@ -729,7 +729,7 @@ const initProject = async () => {
     model.ogDescription = props.project.ogDescription || '';
     // Image
     model.ogImageUri = props.project.ogImageUri || '';
-    modelOGImage.imageURL = props.project.ogImageUri || '';
+    modelOGImage.imageURL = getImage(props.project.ogImageUri || '');
   }
 };
 
