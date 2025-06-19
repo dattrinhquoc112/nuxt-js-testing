@@ -282,6 +282,11 @@ watch(
   },
   { immediate: true }
 );
+const handleChangeHistoryWhenSaveTemplate = () => {
+  history.value = [];
+  currentIndex.value = 0;
+  history.value = [_.cloneDeep(sections.value)];
+};
 const objectSelecting = computed<OBJ_SECTION_ITEM>(() => {
   const sectionIndex = indexSectionSelected.value;
   const key = keyElementSelected.value;
@@ -741,6 +746,7 @@ defineExpose({
   checkChanges,
   listMaterials,
   calcPositionControl,
+  handleChangeHistoryWhenSaveTemplate,
 });
 </script>
 
