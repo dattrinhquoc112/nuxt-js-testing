@@ -1,5 +1,8 @@
 <template>
-  <SideBarItemContainer v-show="modelValue">
+  <SideBarItemContainer
+    v-show="modelValue"
+    v-click-outside="() => $emit('update:modelValue', false)"
+  >
     <template #title>
       <CommonCloseContainer
         :label="$t('landing-editor-menu-section_materials')"
