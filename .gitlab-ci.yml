@@ -128,8 +128,7 @@ deploy-image-uat:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
       when: manual
-  needs:
-    - rollout-dev
+  needs: []
 
 rollout-uat:
   extends: .rollout
