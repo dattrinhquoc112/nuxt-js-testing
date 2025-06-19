@@ -1,12 +1,12 @@
 <template>
-  <vi-modal
-    :modal-title="$t('landing-project_mgmt-title-event_settings')"
-    :is-show="show"
-    @close="onClose"
-    size="large"
-    :close-on-click-modal="false"
-  >
-    <vi-form :model="model" :rules="rules" @submit="() => {}">
+  <vi-form :model="model" :rules="rules" @submit="() => {}">
+    <vi-modal
+      :modal-title="$t('landing-project_mgmt-title-event_settings')"
+      :is-show="show"
+      @close="onClose"
+      size="large"
+      :close-on-click-modal="false"
+    >
       <div class="modal-content">
         <div class="section-column">
           <div class="grid-two">
@@ -36,7 +36,10 @@
                       @keydown="(event: KeyboardEvent) => event.preventDefault()"
                       required
                       width="100%"
-                      :error="Boolean(errorMsg) || Boolean(serverErrorMsg.date)"
+                      :error="
+                        errorField('date', errorMsg) ||
+                        Boolean(serverErrorMsg.date)
+                      "
                       :hint="errorMsg || serverErrorMsg.date"
                       :disabled="!PERMISSION.isEditor"
                       @focus="model.isShowDate = true"
@@ -64,11 +67,11 @@
                     )
                   "
                   required
-                  @change="onChangeEventEnglishName"
+                  :allowed-regex="/^[a-zA-Z0-9\-._~ ]+$/"
                   @blur="onBlurEventEnglishName"
                   width="100%"
                   :error="
-                    Boolean(errorMsg) ||
+                    errorField('eventEnglishName', errorMsg) ||
                     Boolean(serverErrorMsg.eventEnglishName)
                   "
                   :hint="errorMsg || serverErrorMsg.eventEnglishName"
@@ -111,7 +114,7 @@
                     is-count
                     width="100%"
                     :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_\-\^\[\]\$]+$/"
-                    :error="Boolean(errorMsg)"
+                    :error="errorField('metaTitle', errorMsg)"
                     :hint="errorMsg"
                     :disabled="!PERMISSION.isEditor"
                   />
@@ -133,7 +136,7 @@
                     is-count
                     width="100%"
                     height="210px"
-                    :error="Boolean(errorMsg)"
+                    :error="errorField('metaDescription', errorMsg)"
                     :hint="errorMsg"
                     :allowed-regex="/^[a-zA-Z0-9 ,.'&+/_\-\^\[\]\$]+$/"
                     :disabled="!PERMISSION.isEditor"
@@ -155,10 +158,9 @@
                     "
                     width="100%"
                     height="210px"
-                    :error="Boolean(errorMsg)"
+                    :error="errorField('metaKeyword', errorMsg)"
                     :hint="errorMsg"
                     :max="150"
-                    :count-exclude-pattern="/[\s\,]/g"
                     @blur="onChangeKeyWord"
                     @keydown="onMetaKeywordKeydown"
                     is-count
@@ -213,6 +215,20 @@
                 required
                 :disabled="!PERMISSION.isEditor"
               />
+              <vi-form-item prop="ogImageUri">
+                <template #default="{ errorMsg }">
+                  <vi-input
+                    class="image-input"
+                    v-model="model.ogImageUri"
+                    type="text"
+                    required
+                    width="100%"
+                    :error="errorField('ogImage', errorMsg)"
+                    :hint="errorMsg"
+                    :disabled="!PERMISSION.isEditor"
+                  />
+                </template>
+              </vi-form-item>
               <vi-form-item prop="ogTitle">
                 <template #default="{ errorMsg }">
                   <vi-input
@@ -229,7 +245,7 @@
                     :max="95"
                     is-count
                     width="100%"
-                    :error="Boolean(errorMsg)"
+                    :error="errorField('ogTitle', errorMsg)"
                     :hint="errorMsg"
                     :disabled="!PERMISSION.isEditor"
                   />
@@ -251,7 +267,7 @@
                     is-count
                     width="100%"
                     height="210px"
-                    :error="Boolean(errorMsg)"
+                    :error="errorField('ogDescription', errorMsg)"
                     :hint="errorMsg"
                     :disabled="!PERMISSION.isEditor"
                   />
@@ -289,28 +305,27 @@
           </div>
         </div>
       </div>
-    </vi-form>
-    <template #footer>
-      <div class="modal-footer">
-        <vi-button
-          type-button="button"
-          @click="onEditProject"
-          type="standard-primary"
-          width="fit-content"
-          :disabled="disabledSubmit()"
-          :is-loading="loading.update"
-          >{{ $t('common-action-button-button_confirm') }}</vi-button
-        >
-        <vi-button
-          type-button="button"
-          @click="onClose"
-          type="standard-default"
-          width="fit-content"
-          >{{ $t('common-action-button-button_cancel') }}</vi-button
-        >
-      </div>
-    </template>
-  </vi-modal>
+      <template #footer>
+        <div class="modal-footer">
+          <vi-button
+            @click="onEditProject"
+            type="standard-primary"
+            width="fit-content"
+            :disabled="disabledSubmit()"
+            :is-loading="loading.update"
+            >{{ $t('common-action-button-button_confirm') }}</vi-button
+          >
+          <vi-button
+            type-button="button"
+            @click="onClose"
+            type="standard-default"
+            width="fit-content"
+            >{{ $t('common-action-button-button_cancel') }}</vi-button
+          >
+        </div>
+      </template>
+    </vi-modal>
+  </vi-form>
 </template>
 <script lang="ts" setup>
 import useProjects from '~/composables/projects';
@@ -318,6 +333,7 @@ import { useProjectStore } from '~/stores/project';
 import { useUploadStore } from '~/stores/upload';
 import type { IProject, IUpdateProjectPayload } from '~/types/project';
 import useCheckPermission from '~/composables/checkPermission';
+import useFormValidation from '~/composables/formValidation';
 
 interface Model {
   dates: string[] | Date[] | number[];
@@ -387,6 +403,7 @@ const serverErrorMsg = reactive({
 });
 
 const { PERMISSION } = useCheckPermission();
+const { isValidForm, errorField } = useFormValidation();
 
 const disabledSubmit = () => {
   let isChanged = false;
@@ -410,11 +427,13 @@ const disabledSubmit = () => {
       model.eventEnglishName &&
       model.metaTitle &&
       model.ogTitle &&
+      model.ogImageUri &&
       new Date(model.dates[1]).getTime() > new Date(model.dates[0]).getTime()
     ) ||
     !isChanged ||
     loading.update ||
-    !PERMISSION.value.isEditor
+    !PERMISSION.value.isEditor ||
+    !isValidForm.value
   );
 };
 
@@ -553,10 +572,18 @@ const rules = {
       trigger: 'change',
     },
   ],
+  ogImageUri: [
+    {
+      required: true,
+      message: t('error_fe-data-validation-field_required_empty', {
+        field_name: t('landing-project_mgmt-title-upload_image_title'),
+      }),
+      trigger: 'change',
+    },
+  ],
 };
 
-const { getProjectUrl, getImage, handleEventEnglishName, handleKeyword } =
-  useProjects();
+const { getProjectUrl, getImage, handleKeyword } = useProjects();
 const { editProject } = useProjectStore();
 const { uploadFile } = useUploadStore();
 
@@ -611,11 +638,6 @@ const onChangeOGImage = (obj: { url: string; file: File }) => {
   model.ogImageUri = obj.url;
   model.ogImageFile = obj.file;
 };
-
-const onChangeEventEnglishName = debounce((value: string) => {
-  model.eventEnglishName = handleEventEnglishName(value);
-  serverErrorMsg.eventEnglishName = '';
-}, 300);
 
 const onBlurEventEnglishName = () => {
   model.eventEnglishName = model.eventEnglishName.trim();
@@ -773,6 +795,14 @@ watch(
   align-self: stretch;
   border-radius: 4px;
   border: 1px solid $neutral-white-alpha-10;
+}
+.image-input {
+  :deep {
+    .label-container,
+    .input-wrapper {
+      display: none;
+    }
+  }
 }
 .result-preview {
   display: flex;
