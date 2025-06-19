@@ -9,7 +9,6 @@ export const useEditorStore = defineStore('editor', () => {
     updateContent: false,
     publish: false,
   });
-
   const setLoading = (key: keyof typeof loading, val: boolean) => {
     loading[key] = val;
   };
@@ -48,5 +47,12 @@ export const useEditorStore = defineStore('editor', () => {
     });
   }
 
-  return { getVoiceModelList, getListDemos, createDemo, loading, setLoading };
+  return {
+    getVoiceModelList,
+    getListDemos,
+    createDemo,
+    loading,
+
+    setLoading,
+  };
 });
