@@ -250,14 +250,9 @@ const handleCheckConditionPublish = async () => {
     project.value?.eventEnglishName &&
     project.value.startTime &&
     project.value.endTime;
-  const isFinishedSetupAudio = true;
-  if (isExceedLimit.value) {
-    isOpenReachLimitNoti.value = true;
-  } else if (
-    !!isFinishSetupEvent &&
-    !!isFinishedSetupAudio &&
-    !isExceedLimit.value
-  ) {
+  const isFinishedSetupAudio = editorRef.value.checkIsFinishedSetupAudio();
+
+  if (!!isFinishSetupEvent && !!isFinishedSetupAudio && !isExceedLimit.value) {
     try {
       await handleSaveTemplate(
         t('landing-editor-message-progress_saved'),
@@ -278,8 +273,12 @@ const handleCheckConditionPublish = async () => {
         isOpenReminderPU.value = true;
       }
     }
-  } else {
+  } else if (isExceedLimit.value) {
+    isOpenReachLimitNoti.value = true;
+  } else if (!isFinishSetupEvent) {
     isOpenReminderPU.value = true;
+  } else if (!isFinishedSetupAudio) {
+    editorRef.value?.scrollToSetupAudio();
   }
 };
 
