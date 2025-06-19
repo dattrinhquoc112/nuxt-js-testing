@@ -77,9 +77,9 @@ export default defineEventHandler(async (event: H3Event) => {
   const response = await $fetch(
     `${
       useRuntimeConfig().public.apiLandingHost
-    }/web/api/v1/projects/published-content?tenantName=${encodeURIComponent(
-      payload.params.tenantName
-    )}&eventEnglishName=${payload.params.eventEnglishName}`,
+    }/web/api/v1/projects/published-content?eventEnglishName=${
+      payload.params.eventEnglishName
+    }`,
     {
       method: MethodEnum.GET,
       headers,

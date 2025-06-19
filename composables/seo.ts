@@ -4,7 +4,6 @@ import { getRequestHeaders, H3Event } from 'h3';
 
 export default function useSeo() {
   const route = useRoute();
-  const tenantName = route.params.tenantName as string;
   const eventEnglishName = route.params.eventEnglishName as string;
   const { setSessionPublic, setTenantID, setIsPublish } = useEventStore();
 
@@ -34,7 +33,7 @@ export default function useSeo() {
   const fetchContentPublic = async () => {
     const event = useRequestEvent();
     const { data }: { data: any } = await useAsyncData(
-      `landingWeb-${tenantName}-${eventEnglishName}`,
+      `landingWeb-${eventEnglishName}`,
       () =>
         $fetch('/client/api/landingWeb', {
           method: MethodEnum.POST,
@@ -42,7 +41,6 @@ export default function useSeo() {
             method: MethodEnum.GET,
             endpoint: `/api/v1/projects/published-content`,
             params: {
-              tenantName,
               eventEnglishName,
             },
           },
@@ -70,7 +68,7 @@ export default function useSeo() {
       setIsPublish(true);
     }
   };
-  if (route.meta.layout === 'public' && tenantName && eventEnglishName) {
+  if (route.meta.layout === 'public' && eventEnglishName) {
     fetchContentPublic();
   }
 }
