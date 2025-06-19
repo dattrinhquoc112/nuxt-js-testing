@@ -191,6 +191,7 @@ watch(
 const handleExceedLimit = () => {
   isOpenReachLimitNoti.value = true;
   activeSidebarButton.value = '';
+  isOpenAlert.value = true;
 };
 const handleExceedPercentLimit = () => {
   isOpenAlert.value = true;
