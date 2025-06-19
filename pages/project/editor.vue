@@ -106,12 +106,12 @@
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
+import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
 import { SIDE_BAR_ACTION, RWD_MODE, METRICS_KEY } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
-import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMetric from '@/composables/metric';
 import useMaterials from '~/composables/materials';
@@ -154,6 +154,8 @@ let scrollTopEditor = 0;
 const listTemplateCurrent = ref<any[]>(TEMPLATES_SECTION);
 const isShowEditInfoModal = ref(false);
 const isShowActivitySettingModal = ref(false);
+const handleEvent = () => {};
+const projectName = ref();
 const route = useRoute();
 
 const webEditorName = ref(t('landing-editor-title-untitled_project'));

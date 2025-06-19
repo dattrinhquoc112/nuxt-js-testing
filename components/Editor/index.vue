@@ -160,13 +160,13 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  listTemplate: {
-    type: Array as PropType<any>,
-    default: () => [],
-  },
   rwdMode: {
     type: String,
     default: '',
+  },
+  listTemplate: {
+    type: Array as PropType<any>,
+    default: () => [],
   },
   limitFileSize: {
     type: Number,
@@ -357,7 +357,6 @@ watch(buttonColor, () => {
     other.style.color = colorChange;
   }
 });
-
 const handleChangeVideo = ({
   objectUrl: urlVideo,
   file,
@@ -743,8 +742,8 @@ defineExpose({
   historyStatus,
   hiddenBoxControl,
   handleSaveTemplate,
-  fetchContentProject,
   sections,
+  fetchContentProject,
   checkChanges,
   listMaterials,
   calcPositionControl,

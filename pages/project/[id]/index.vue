@@ -92,7 +92,6 @@ interface Model {
 
 definePageMeta({
   layout: 'app',
-  middleware: ['auth'],
 });
 
 const route = useRoute();

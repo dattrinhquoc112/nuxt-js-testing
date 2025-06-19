@@ -220,8 +220,8 @@
 </template>
 
 <script lang="ts" setup>
-import Tutorial from '@/components/Tutorial/Tutorial.vue';
 import useMetric from '~/composables/metric';
+import Tutorial from '@/components/Tutorial/Tutorial.vue';
 import useProjects from '~/composables/projects';
 import { TUTORIAL_TYPE, RWD_MODE } from '~/constants/common';
 import { useProjectStore } from '~/stores/project';
