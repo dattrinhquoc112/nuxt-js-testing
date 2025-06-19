@@ -4,6 +4,7 @@
     :isShowListSection="isShowListSection"
     @handle-undo="handleUndo"
     :history-status="historyStatus"
+    :disableUndoRedo
     @handle-redo="handleRedo"
     @handle-switch-layout="
       (keyAction) =>
@@ -116,6 +117,7 @@ import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMetric from '@/composables/metric';
 import useMaterials from '~/composables/materials';
 
+const disableUndoRedo = ref(false);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const activeSidebarButton = ref();
 const isOpenReachLimitNoti = ref(false);
@@ -233,12 +235,15 @@ const handleSaveTemplate = async (
   loading: any = 'updateContent'
 ) => {
   setLoading(loading, true);
+  disableUndoRedo.value = true;
   await editorRef.value.handleSaveTemplate();
   const file = await handleGetThumbnailSnapshot();
   const fileUri = file?.fileUri;
   if (fileUri) {
     await editProject(editorID.value, { thumbnail: fileUri });
   }
+  await editorRef.value.handleChangeHistoryWhenSaveTemplate();
+  disableUndoRedo.value = false;
   setLoading(loading, false);
   isShowModal.confirmReplace = false;
   toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
