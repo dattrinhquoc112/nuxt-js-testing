@@ -142,7 +142,7 @@ rollout-uat:
     GCLOUD_PROJECT_ID: ${GCP_UAT_PROJECT_ID}
     GKE_CLUSTER_NAME: ${GKE_UAT_CLUSTER_NAME}
     GCP_SA_KEY_FOR_GIT_CICD: $GCP_UAT_SA_KEY_FOR_GIT_CICD
-    RELEASE_NAME: landing-frontend
+    RELEASE_NAME: landing
     RELEASE_NS: landing-page
     CHAR_VALUES_FILE: ./chart/app/values-uat.yaml
   rules:
