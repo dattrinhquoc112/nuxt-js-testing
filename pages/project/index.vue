@@ -159,7 +159,6 @@
               <div
                 class="action-container"
                 v-click-outside="() => onShowAction(item.id, false)"
-                v-if="PERMISSION.isEditor"
               >
                 <div
                   class="action-btn"
@@ -174,6 +173,9 @@
                   <div
                     @click.stop="() => onAction(item, 'edit')"
                     class="action-item"
+                    :class="{
+                      disabled: !PERMISSION.isEditor,
+                    }"
                   >
                     <vi-typography class="cursor-pointer" type="body-large">
                       {{ t('landing-project_mgmt-button-edit') }}
@@ -182,6 +184,9 @@
                   <div
                     @click.stop="() => onAction(item, 'copy')"
                     class="action-item"
+                    :class="{
+                      disabled: !PERMISSION.isEditor,
+                    }"
                   >
                     <vi-typography class="cursor-pointer" type="body-large">
                       {{ $t('landing-project_mgmt-button-copy') }}
@@ -331,13 +336,27 @@ const onShowAction = (projectID: string, show = true) => {
 };
 
 const onCopyProject = async (project: IProject) => {
-  const isLimit = await checkReachLimit();
-  if (isLimit) {
-    isOpenReachLimitNoti.value = true;
-  } else {
-    await copyProject(project.id, `${project.name}_copy`);
-    fetchProjectList();
-    toastMessage(t('landing-common-message-copied'));
+  try {
+    const newName = `${project.name}_copy`;
+    if (newName.length > 50) {
+      toastMessage(
+        t('error_fe-data-validation-input_length_exceeded'),
+        'error'
+      );
+    } else {
+      try {
+        await copyProject(project.id, newName);
+        fetchProjectList();
+        toastMessage(t('landing-common-message-copied'));
+      } catch (error: any) {
+        const errCode = error?.data?.data?.detail;
+        if (errCode === 'LD_CAPACITY_EXCEED_MAXIMUM') {
+          isOpenReachLimitNoti.value = true;
+        }
+      }
+    }
+  } catch (err) {
+    console.log(err, 'err');
   }
 };
 const onCreateProject = async () => {
@@ -355,7 +374,9 @@ const onCreateProject = async () => {
       }
       isLoadingCreate.value = false;
       navigateTo(`/project/editor?id=${id}`);
-    } catch (err) {}
+    } catch (error: any) {
+      console.log(error?.data?.data, 'err');
+    }
   }
 };
 const onEditProject = async (payload: IUpdateProjectPayload) => {
@@ -405,9 +426,7 @@ const onAction = async (project?: IProject, action = '') => {
 const onClickProject = (item: IProject) => {
   // NOTE: DRAFT is PENDING_PUBLISH, PUBLISHED is other
   if (item.status === 'PENDING_PUBLISH') {
-    if (PERMISSION.value.isEditor) {
-      navigateTo(`/project/editor?id=${item.id}`);
-    }
+    navigateTo(`/project/editor?id=${item.id}`);
   } else {
     navigateTo(`/project/${item.id}`);
   }
@@ -595,6 +614,10 @@ watch(
     &:hover {
       background-color: $neutral-white-alpha-10;
     }
+    &.disabled {
+      background-color: $brand-navy-900-main;
+      color: $neutral-white-alpha-30;
+    }
   }
 }
 
@@ -603,9 +626,9 @@ watch(
 }
 .blur-container {
   position: relative;
-
   overflow: hidden;
   border-radius: 4px;
+  width: 100%;
 }
 .img-wrapper {
   position: absolute;

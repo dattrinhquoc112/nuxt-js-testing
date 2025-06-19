@@ -33,13 +33,35 @@
       v-show="isShowLabelElement"
       ref="labelElementSelecting"
       class="label-element-selecting"
+      :class="{
+        'button-href': typeLabel.isButtonHref,
+        'border-section': typeLabel.borderSection,
+      }"
     >
-      <template v-if="typeLabel.isButtonHref">
+      <div class="text-label" v-if="typeLabel.isButtonHref">
         <vi-typography type="caption-large-300">
           {{ $t('landing-editor-section-section_button') }}
         </vi-typography>
         <vi-icon name="ic_link" size="16" color="#fff"></vi-icon>
-      </template>
+      </div>
+      <div class="text-label-section" v-if="typeLabel.borderSection">
+        <vi-typography type="caption-large-300">
+          {{ $t('landing-editor-menu-title_section') }}
+        </vi-typography>
+      </div>
+      <div class="border-audio" v-if="typeLabel.isBorderAudio">
+        <div class="text-label-audio">
+          <vi-typography type="caption-large-300">
+            {{ $t('landing-editor-section-section_media') }}
+          </vi-typography>
+        </div>
+        <div class="audio-box">
+          <vi-icon name="ic_ai_section" size="16" color="#fff"></vi-icon>
+          <vi-typography type="caption-large-300">
+            {{ $t('landing-editor-section-ai_section_audio') }}
+          </vi-typography>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -81,9 +103,12 @@ const emit = defineEmits([
 ]);
 
 const isShowLabelElement = ref<Boolean>(false);
+const elementSelected = ref<HTMLElement>();
 const labelElementSelecting = ref<HTMLElement>();
 const typeLabel = ref({
   isButtonHref: false,
+  isBorderAudio: false,
+  borderSection: false,
 });
 const hoverPosition = ref<{ index: number; zone: string } | null>(null);
 const boxControlElement = computed(() =>
@@ -233,30 +258,64 @@ const getPositionForLeftImage = (coordinates: any) => {
   return { pageY, pageX };
 };
 
+const calcPositionLabel = (target: HTMLElement | null = null) => {
+  if (!labelElementSelecting.value) return;
+  let coordinates: DOMRect | undefined;
+  if (target) {
+    coordinates = target.getBoundingClientRect();
+  } else if (elementSelected.value) {
+    coordinates = elementSelected.value.getBoundingClientRect();
+  } else {
+    return;
+  }
+  if (labelElementSelecting.value && coordinates) {
+    labelElementSelecting.value.style.left = `${coordinates.left}px`;
+    labelElementSelecting.value.style.top = `${coordinates.top}px`;
+    labelElementSelecting.value.style.width = `${coordinates.width}px`;
+    labelElementSelecting.value.style.height = `${coordinates.height}px`;
+  }
+};
+
+const handleSetLabel = (target: HTMLElement) => {
+  if (!target) return;
+  isShowLabelElement.value = true;
+  typeLabel.value.isBorderAudio = false;
+  typeLabel.value.borderSection = false;
+  typeLabel.value.isButtonHref = false;
+  if (target.classList.contains('section-wrap')) {
+    typeLabel.value.borderSection = true;
+  } else if (target.classList.contains('button-href')) {
+    typeLabel.value.isButtonHref = true;
+  } else if (target.closest('.audio-image')) {
+    typeLabel.value.isBorderAudio = true;
+  }
+  calcPositionLabel(target);
+};
+
 const handleShowOption = (event: any, index: number) => {
   if (isDisabledEditor.value) return;
   if (event.target?.closest('.section-wrap')) {
+    handleSetLabel(event.target);
     emit('set-index-section-selected', index);
+    elementSelected.value = event.target;
+    emit('set-selected-element', event.target);
     if (event.target?.classList.contains('section-wrap')) {
       if (event.target?.classList.contains('section-logo')) {
         emit('set-class-element-selected', 'section-logo');
         emit('set-key-element-selected', 'logo');
         nextTick(() => {
-          emit('set-selected-element', event.target);
           handleSetPosition(event.target, getPositionForSectionLogo);
         });
       } else if (event.target?.classList.contains('section-copyright')) {
         emit('set-class-element-selected', 'section-copyright');
         emit('set-key-element-selected', 'copyright');
         nextTick(() => {
-          emit('set-selected-element', event.target);
           handleSetPosition(event.target, getPositionForSectionCopyright);
         });
       } else {
         emit('set-class-element-selected', 'section-wrap');
         emit('set-key-element-selected', 'backgroundSection');
         nextTick(() => {
-          emit('set-selected-element', event.target);
           handleSetPosition(event.target, getPositionForSection);
         });
       }
@@ -265,7 +324,6 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-class-element-selected', 'section-logo-image');
       emit('set-key-element-selected', 'logo');
       nextTick(() => {
-        emit('set-selected-element', event.target);
         handleSetPosition(event.target, getPositionForImageLogo);
       });
     }
@@ -273,7 +331,6 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-class-element-selected', 'button-href');
       emit('set-key-element-selected', 'buttonExternal');
       nextTick(() => {
-        emit('set-selected-element', event.target);
         handleSetPosition(event.target, getPositionForButtonHref);
       });
     }
@@ -281,7 +338,6 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-class-element-selected', 'text-title');
       emit('set-key-element-selected', 'textTitle');
       nextTick(() => {
-        emit('set-selected-element', event.target);
         handleSetPosition(event.target, getPositionForText);
       });
     }
@@ -289,7 +345,6 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-class-element-selected', 'text-head');
       emit('set-key-element-selected', 'textProduct');
       nextTick(() => {
-        emit('set-selected-element', event.target);
         handleSetPosition(event.target, getPositionForText);
       });
     }
@@ -297,7 +352,6 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-class-element-selected', 'text-des');
       emit('set-key-element-selected', 'textDes');
       nextTick(() => {
-        emit('set-selected-element', event.target);
         handleSetPosition(event.target, getPositionForText);
       });
     }
@@ -305,7 +359,6 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-class-element-selected', 'box-image');
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
-        emit('set-selected-element', event.target);
         handleSetPosition(event.target, getPositionForRightImage);
       });
     }
@@ -313,7 +366,6 @@ const handleShowOption = (event: any, index: number) => {
       emit('set-class-element-selected', 'box-image');
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
-        emit('set-selected-element', event.target);
         handleSetPosition(event.target, getPositionForLeftImage);
       });
     }
@@ -324,7 +376,6 @@ const handleShowOption = (event: any, index: number) => {
         emit('set-class-element-selected', 'audio-image');
         emit('set-key-element-selected', 'audio');
         nextTick(() => {
-          emit('set-selected-element', event.target);
           handleSetPosition(event.target, getPositionForAudioImage);
         });
       }
@@ -332,7 +383,6 @@ const handleShowOption = (event: any, index: number) => {
         emit('set-class-element-selected', 'audio-text-subtitle');
         emit('set-key-element-selected', 'textSubtitle');
         nextTick(() => {
-          emit('set-selected-element', event.target);
           handleSetPosition(event.target, getPositionForText);
         });
       }
@@ -340,7 +390,6 @@ const handleShowOption = (event: any, index: number) => {
         emit('set-class-element-selected', 'audio-text-subtitle');
         emit('set-key-element-selected', 'textProduction');
         nextTick(() => {
-          emit('set-selected-element', event.target);
           handleSetPosition(event.target, getPositionForText);
         });
       }
@@ -350,24 +399,9 @@ const handleShowOption = (event: any, index: number) => {
   }
 };
 
-const handleSetLabel = (target: HTMLElement) => {
-  const coordinates = target.getBoundingClientRect();
-  const pageY = coordinates.top;
-  const pageX = coordinates.left;
-  if (target.classList.contains('button-href')) {
-    typeLabel.value.isButtonHref = true;
-    isShowLabelElement.value = true;
-  } else {
-    typeLabel.value.isButtonHref = false;
-  }
-  if (!labelElementSelecting.value) return;
-  labelElementSelecting.value.style.left = `${pageX}px`;
-  labelElementSelecting.value.style.top = `${pageY}px`;
-};
-
-const handleRemoveLabel = () => {
-  isShowLabelElement.value = false;
-};
+// const handleRemoveLabel = () => {
+//   isShowLabelElement.value = false;
+// };
 
 const initHover = () => {
   const editor = document.getElementById('editor');
@@ -386,9 +420,13 @@ const initHover = () => {
 
     defaultBorder = target.style.border;
 
-    if (editor && target !== editor && editor.contains(target)) {
+    if (
+      editor &&
+      target !== editor &&
+      editor.contains(target) &&
+      target !== elementSelected.value
+    ) {
       target.style.border = '2px solid #1EDD00';
-      handleSetLabel(target);
     }
   };
 
@@ -396,12 +434,15 @@ const initHover = () => {
     if (isDisabledEditor.value) return;
     const target = e.target as HTMLElement;
     target.style.border = defaultBorder;
-    handleRemoveLabel();
   };
 
   editor?.addEventListener('mouseover', handleHover);
   editor?.addEventListener('mouseout', handleOut);
 };
+
+defineExpose({
+  calcPositionLabel,
+});
 onMounted(initHover);
 </script>
 
@@ -488,14 +529,57 @@ onMounted(initHover);
     }
   }
   .label-element-selecting {
-    display: flex;
-    gap: 4px;
-    align-items: center;
     position: fixed;
-    width: fit-content;
-    background-color: $brand-green-200-main;
-    padding: 1px 6px;
-    transform: translateY(-100%);
+    z-index: 30;
+    pointer-events: none;
+    &.button-href {
+      border: 2px solid #1edd00;
+    }
+    &.border-section {
+      border: 2px solid $brand-magenta-400-main;
+    }
+    .border-audio {
+      width: 100%;
+      margin-top: -20px;
+      height: calc(100% + 20px);
+      background-image: url(@/assets/images/border-audio.svg);
+      background-position: center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      .text-label-audio {
+        background-color: $brand-green-200-main;
+        padding: 1px 6px;
+        position: absolute;
+        top: 0;
+        transform: translateY(-100%);
+      }
+      .audio-box {
+        position: absolute;
+        top: 0;
+        left: 40px;
+        padding: 1px 6px;
+        transform: translateY(-100%);
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: linear-gradient(66deg, #0078d8 15.31%, #ff2cf0 84.69%);
+      }
+    }
+    .text-label,
+    .text-label-section {
+      display: flex;
+      gap: 4px;
+      align-items: center;
+      background-color: $brand-green-200-main;
+      padding: 1px 6px;
+      position: absolute;
+      transform: translate(-2px, -100%);
+    }
+    .text-label-section {
+      background-color: $brand-magenta-400-main;
+      right: 0;
+      transform: translate(2px, -100%);
+    }
   }
   :deep(.selected) {
     outline: 2px solid rgba(30, 221, 0, 1);

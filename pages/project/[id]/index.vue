@@ -154,12 +154,18 @@ const onCopy = async () => {
   if (!model.project || loading.copy) return;
   loading.copy = true;
   try {
-    await copyProject(model.project.id, `${model.project.name}_copy`);
-    toastMessage(t('landing-common-message-copied'));
-    navigateTo(`/project`);
-  } catch (error: any) {
-    toastMessage(t('landing-common-message-copied-error'), 'error');
-  }
+    const newName = `${model.project.name}_copy`;
+    if (newName.length > 50) {
+      toastMessage(
+        t('error_fe-data-validation-input_length_exceeded'),
+        'error'
+      );
+    } else {
+      await copyProject(model.project.id, newName);
+      toastMessage(t('landing-common-message-copied'));
+      navigateTo(`/project`);
+    }
+  } catch (_) {}
   loading.copy = false;
 };
 

@@ -160,6 +160,7 @@
                     :max="150"
                     :count-exclude-pattern="/[\s\,]/g"
                     @blur="onChangeKeyWord"
+                    @keydown="onMetaKeywordKeydown"
                     is-count
                     :disabled="!PERMISSION.isEditor"
                   />
@@ -485,8 +486,25 @@ const rules = {
   ],
   metaKeyword: [
     {
-      regex:
-        /^$|^([\p{L}\p{N} .'\[\]\^&+/_$-]{1,25})(,([\p{L}\p{N} .'\[\]\^&+/_$-]{1,25})){0,9},?$/u,
+      callback: (value: string) => {
+        if (!value) return true;
+
+        const keywords = value
+          .split(',')
+          .map((k) => k.trim())
+          .filter((k) => k.length > 0);
+
+        if (keywords.length > 10) return false;
+
+        const allowedCharRegex = /^[\p{L}\p{N} .'\[\]\^&+/_$-]+$/u;
+
+        for (const keyword of keywords) {
+          if (!allowedCharRegex.test(keyword)) return false;
+          if (keyword.length > 25) return false;
+        }
+
+        return true;
+      },
       message: t('error_fe-data-validation-input_format_invalid'),
       trigger: 'change',
     },
@@ -605,6 +623,59 @@ const onBlurEventEnglishName = () => {
 
 const onChangeKeyWord = () => {
   model.metaKeyword = handleKeyword(model.metaKeyword);
+};
+
+const allowedKeyRegex = /^[\p{L}\p{N} .'\[\]\^&+/_$-]$/u;
+
+const onMetaKeywordKeydown = (e: KeyboardEvent) => {
+  if (
+    e.ctrlKey ||
+    e.metaKey ||
+    e.altKey ||
+    [
+      'Backspace',
+      'Tab',
+      'Enter',
+      'Delete',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowUp',
+      'ArrowDown',
+      'Home',
+      'End',
+    ].includes(e.key)
+  ) {
+    return;
+  }
+
+  const val = model.metaKeyword || '';
+  const cursorPos = (e.target as HTMLTextAreaElement).selectionStart;
+  const beforeCursor = val.slice(0, cursorPos);
+  const afterCursor = val.slice(cursorPos);
+
+  const newChar = e.key;
+  const newValue = beforeCursor + newChar + afterCursor;
+
+  const keywords = newValue
+    .split(',')
+    .map((k) => k.trim())
+    .filter((k) => k !== '');
+
+  if (keywords.length > 10) {
+    e.preventDefault();
+    return;
+  }
+
+  const currentKeywordIndex = beforeCursor.split(',').length - 1;
+  const currentKeyword = keywords[currentKeywordIndex] || '';
+
+  if (currentKeyword.length > 25 && allowedKeyRegex.test(newChar)) {
+    e.preventDefault();
+    return;
+  }
+  if (!allowedKeyRegex.test(newChar) && newChar !== ',') {
+    e.preventDefault();
+  }
 };
 
 const initProject = async () => {

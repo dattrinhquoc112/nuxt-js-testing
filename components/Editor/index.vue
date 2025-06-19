@@ -4,9 +4,11 @@
   >
     <editor-template-selector
       v-if="
-        isShowListSection === SIDE_BAR_ACTION.CLICKED_SESSION ||
-        (isShowListSection === SIDE_BAR_ACTION.CLICKED_AI_TOOLS &&
-          showSelectAITools)
+        ((isShowListSection === SIDE_BAR_ACTION.CLICKED_SESSION ||
+          (isShowListSection === SIDE_BAR_ACTION.CLICKED_AI_TOOLS &&
+            showSelectAITools)) &&
+          activeSidebarButton === SIDEBAR_BUTTONS[0]) ||
+        activeSidebarButton === SIDEBAR_BUTTONS[1]
       "
       :type="isShowListSection"
       :templateSelected="templateSelected"
@@ -27,8 +29,8 @@
       @handleOpenAITools="showSelectAITools = true"
       @handleCloseTooltip="emit('closeSection')"
     />
-
     <editor-list
+      ref="editorListRef"
       :rwd-mode="rwdMode"
       :templateSelected="templateSelected"
       :classElementSelected="classElementSelected"
@@ -117,7 +119,6 @@
       @move-popup-to-bottom="handleMoveBottomPopup"
       @change-color="(rgba:RGBA) => (buttonColor = rgba)"
     />
-    <popup-reach-limit-noti v-model="isOpenReachLimitNoti" />
   </div>
 </template>
 
@@ -147,9 +148,11 @@ import {
   type COPYRIGHT_ITEM,
 } from '~/types/templates';
 
+const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 definePageMeta({
   layout: 'default',
 });
+const activeSidebarButton = inject<Ref<String>>('activeSidebarButton');
 
 const props = defineProps({
   isShowListSection: {
@@ -172,14 +175,18 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  isExceed75PercentLimit: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const emit = defineEmits([
   'closeSection',
-  'handleAddSection',
   'handleExceedLimit',
+  'handleExceedPercentLimit',
+  'handleUploadExceedLimit',
 ]);
-const isOpenReachLimitNoti = ref(false);
 const modelValue = ref(true);
 const showSelectAITools = ref(false);
 let debounceTimer: any = null;
@@ -195,6 +202,7 @@ const buttonColor = ref<RGBA>({
 const indexSectionSelected = ref<number>();
 const classElementSelected = ref<string>();
 const indexAudioSelected = ref<number>();
+const editorListRef = ref<any>();
 type SectionKeys = keyof SECTION_ITEM | keyof AUDIO_ITEM;
 const keyElementSelected = ref<SectionKeys>();
 const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
@@ -209,9 +217,13 @@ const idParam = Array.isArray(route.query?.id)
   ? route.query.id[0] || ''
   : route.query?.id || '';
 const limitSize = ref(0);
-const handleExceedLimit = () => {
-  isOpenReachLimitNoti.value = true;
-  emit('handleExceedLimit');
+const handleUploadExceedLimit = (percent: number) => {
+  if (percent === 1) {
+    emit('handleExceedLimit');
+  }
+  if (percent === 0.75) {
+    emit('handleExceedPercentLimit');
+  }
 };
 
 const {
@@ -226,7 +238,8 @@ const {
   addMaterialAudio,
   removeMaterialAudio,
 } = useWebEditor(sections, idParam, limitSize, {
-  handleExceedLimit,
+  handleExceedLimit: () => handleUploadExceedLimit(1),
+  handleExceed75PercentLimit: () => handleUploadExceedLimit(0.75),
   indexSectionSelected,
 });
 
@@ -334,8 +347,8 @@ watch(buttonColor, () => {
     bg.urlVideo = '';
     bg.urlImage = '';
     bg.file = null;
-    revokeObjectURL(bg.urlVideo);
-    revokeObjectURL(bg.urlImage);
+    // revokeObjectURL(bg.urlVideo);
+    // revokeObjectURL(bg.urlImage);
   } else {
     const other = obj as TEXT_ITEM;
     other.style.color = colorChange;
@@ -356,8 +369,8 @@ const handleChangeVideo = ({
     file,
   });
   if (isOverStorage) return;
-  revokeObjectURL(obj.urlVideo);
-  revokeObjectURL(obj.urlImage);
+  // revokeObjectURL(obj.urlVideo);
+  // revokeObjectURL(obj.urlImage);
   obj.urlImage = '';
   obj.urlVideo = urlVideo;
   obj.file = file;
@@ -428,6 +441,7 @@ const handleChangeText = (event: MouseEvent) => {
   element.textContent = '';
   element.appendChild(textarea);
   textarea.focus();
+  editorListRef.value?.calcPositionLabel();
 
   textarea.addEventListener('blur', () => {
     const obj = objectSelecting.value as TEXT_ITEM;
@@ -451,8 +465,8 @@ const handleChangeImage = ({
     file,
   });
   if (isOverStorage) return;
-  revokeObjectURL(obj.urlImage);
-  revokeObjectURL(obj.urlVideo);
+  // revokeObjectURL(obj.urlImage);
+  // revokeObjectURL(obj.urlVideo);
   obj.urlVideo = '';
   obj.file = file;
   obj.urlImage = urlImage;
@@ -475,8 +489,15 @@ const handleChangeSize = (size: string) => {
 
 const handleChangeLink = (link: string) => {
   const obj = objectSelecting.value as BUTTON_EXTERNAL_ITEM;
-  if (!obj || !link) return;
+  if (!obj) return;
   obj.link = link;
+};
+const calcPositionControl = (distance: number) => {
+  editorListRef.value?.calcPositionLabel();
+  handleSetPositionControl({
+    pageX: positionControlCurrent.value.pageX,
+    pageY: positionControlCurrent.value.pageY - distance,
+  });
 };
 
 const handleMoveTopPopup = () => {
@@ -489,10 +510,10 @@ const handleMoveTopPopup = () => {
     const coordinates = selectedElement.value.getBoundingClientRect();
     const pageY = coordinates.top - 12;
     const pageX = coordinates.left + coordinates.width / 2;
-    positionControlCurrent.value = {
+    handleSetPositionControl({
       pageY,
       pageX,
-    };
+    });
   }
   boxControlElement.value?.classList.remove('show-on-bottom');
   boxControlElement.value?.classList.add('show-on-top');
@@ -507,10 +528,10 @@ const handleMoveBottomPopup = () => {
     const coordinates = selectedElement.value.getBoundingClientRect();
     const pageY = coordinates.bottom + 12;
     const pageX = coordinates.left + coordinates.width / 2;
-    positionControlCurrent.value = {
+    handleSetPositionControl({
       pageY,
       pageX,
-    };
+    });
   }
   boxControlElement.value?.classList.remove('show-on-top');
   boxControlElement.value?.classList.add('show-on-bottom');
@@ -633,8 +654,9 @@ const onClickTemplate = (template: any) => {
 
 const onClickAddSection = (index: number) => {
   if (props.isExceedLimit) {
-    emit('handleAddSection');
-  } else if (templateSelected.value && !props.isExceedLimit) {
+    emit('handleExceedLimit');
+  }
+  if (templateSelected.value && !props.isExceedLimit) {
     const newIndex = hoverPosition.value?.zone === 'bottom' ? index + 1 : index;
     sections.value.splice(
       newIndex,
@@ -643,6 +665,9 @@ const onClickAddSection = (index: number) => {
     );
     iSaveHistory.value = true;
     templateSelected.value = undefined;
+    if (props.isExceed75PercentLimit) {
+      emit('handleExceedPercentLimit');
+    }
   }
 };
 const showPopupSettingText = () => {
@@ -656,6 +681,7 @@ const showPopupSettingColor = () => {
 };
 const showPopupSettingAudio = () => {
   isShowControl.value = false;
+  positionControlCurrent.value.pageY = 80;
   isShowPopup.value.audioSetting = true;
 };
 const closePopupSettingAudio = () => {
@@ -714,6 +740,7 @@ defineExpose({
   fetchContentProject,
   checkChanges,
   listMaterials,
+  calcPositionControl,
 });
 </script>
 

@@ -185,7 +185,7 @@ const handleChange = (event: Event) => {
 <style lang="scss" scoped>
 .popup-setting-image {
   position: fixed;
-  z-index: 20;
+  z-index: 30;
   width: 322px;
   padding-bottom: 16px;
   border-radius: 8px;

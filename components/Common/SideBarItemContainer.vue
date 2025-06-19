@@ -3,13 +3,20 @@
     <div class="sidebar-item--title">
       <slot name="title"></slot>
     </div>
-    <div class="sidebar-item--content">
+    <div
+      class="sidebar-item--content"
+      :class="{ disabled: !PERMISSION.isEditor }"
+    >
       <slot name="content"> </slot>
     </div>
   </div>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import useCheckPermission from '~/composables/checkPermission';
+
+const { PERMISSION } = useCheckPermission();
+</script>
 
 <style scoped lang="scss">
 .sidebar-item {
@@ -47,6 +54,10 @@
     color: white;
     text-align: left;
     text-wrap: auto;
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
     & img {
       width: 100%;
     }

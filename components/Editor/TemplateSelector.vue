@@ -40,7 +40,7 @@
         >Hero</vi-typography
       >
     </div>
-    <div class="templates">
+    <div class="templates" :class="{ disabled: !PERMISSION.isEditor }">
       <div
         v-for="(template, index) in listTemplate.slice(0, 4)"
         :key="index"
@@ -84,6 +84,7 @@
 </template>
 
 <script lang="ts" setup>
+import useCheckPermission from '~/composables/checkPermission';
 import { SIDE_BAR_ACTION } from '~/constants/common';
 
 const emit = defineEmits(['click-template', 'close', 'handleBack']);
@@ -102,6 +103,7 @@ defineProps({
     default: '',
   },
 });
+const { PERMISSION } = useCheckPermission();
 </script>
 
 <style lang="scss" scoped>
@@ -132,6 +134,10 @@ defineProps({
     display: flex;
     flex-direction: column;
     gap: 16px;
+    &.disabled {
+      pointer-events: none;
+      opacity: 0.5;
+    }
     .template {
       border-radius: 10px;
       display: flex;

@@ -8,6 +8,9 @@
       left: positionControlCurrent?.pageX
         ? `${positionControlCurrent?.pageX}px`
         : '',
+      top: positionControlCurrent?.pageY
+        ? `${positionControlCurrent?.pageY}px`
+        : '',
     }"
   >
     <div class="header">
@@ -105,7 +108,7 @@
             :disabled="isDisabledAll"
             :label="
               $t('landing-editor-modal-tts_sentence_number', {
-                num: $t(`${index + 1}`),
+                num: index + 1,
               })
             "
             :is-count="true"
@@ -185,20 +188,29 @@ const audioSelecting = defineModel<any>();
 const isDisabledAll = computed(() => {
   return !audioSelecting.value?.setting?.voiceModelId?.value;
 });
+const { t } = useI18n();
 
 const mapSpeed = {
-  0.5: '慢',
-  1: '中',
-  1.5: '快',
+  0.5: t('landing-editor-modal-tts_option_speed_slow'),
+  1: t('landing-editor-modal-tts_option_normal'),
+  1.5: t('landing-editor-modal-tts_option_speed_high'),
 };
 const mapPitch = {
-  0.5: '低',
-  1: '中',
-  1.5: '高',
+  0.5: t('landing-editor-modal-tts_option_pitch_low'),
+  1: t('landing-editor-modal-tts_option_normal'),
+  1.5: t('landing-editor-modal-tts_option_pitch_high'),
 };
 
-const arraySpeed = ['慢', '中', '快'];
-const arrayPitch = ['低', '中', '高'];
+const arraySpeed = [
+  t('landing-editor-modal-tts_option_speed_slow'),
+  t('landing-editor-modal-tts_option_normal'),
+  t('landing-editor-modal-tts_option_speed_high'),
+];
+const arrayPitch = [
+  t('landing-editor-modal-tts_option_pitch_low'),
+  t('landing-editor-modal-tts_option_normal'),
+  t('landing-editor-modal-tts_option_pitch_high'),
+];
 
 const itemPhrase = {
   text: '',
@@ -296,7 +308,6 @@ onMounted(() => {
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25),
     0px 0px 4px 0px rgba(0, 0, 0, 0.15);
   transform: translateX(50%);
-  top: 80px;
   .header {
     padding: 16px 16px 8px 16px;
     display: flex;
@@ -336,6 +347,12 @@ onMounted(() => {
       padding: 12px 16px;
       border-radius: 4px;
       border: 1px solid $neutral-white-alpha-7;
+      :deep() {
+        .progress .list-legend .item {
+          width: fit-content;
+          text-align: center;
+        }
+      }
     }
     .box-demo {
       padding: 8px 12px 16px;

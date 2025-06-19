@@ -95,6 +95,9 @@ watch(
   () => props.link,
   (newVal) => {
     linkRef.value = newVal;
+  },
+  {
+    immediate: true,
   }
 );
 
@@ -114,7 +117,6 @@ useCheckHeightPopup(props, popupElement, emit);
   background: $brand-navy-800;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25),
     0px 0px 4px 0px rgba(0, 0, 0, 0.15);
-
   &.show-on-top {
     transform: translateX(-50%) translateY(-100%);
   }
