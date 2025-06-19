@@ -433,7 +433,9 @@ const disabledSubmit = () => {
     !isChanged ||
     loading.update ||
     !PERMISSION.value.isEditor ||
-    !isValidForm.value
+    !isValidForm.value ||
+    Boolean(serverErrorMsg.date) ||
+    Boolean(serverErrorMsg.eventEnglishName)
   );
 };
 
@@ -632,6 +634,7 @@ const onEditProject = async () => {
   } else {
     emit('submit', payload);
   }
+  loading.update = false;
 };
 
 const onChangeOGImage = (obj: { url: string; file: File }) => {
