@@ -44,7 +44,7 @@
     >
       <editor
         ref="editorRef"
-        :limitFileSize
+        :limit-file-size="limitFileSize"
         :rwd-mode="RWDMode"
         :is-exceed-limit="isExceedLimit"
         :is-exceed-75-percent-limit="isExceed75PercentLimit"

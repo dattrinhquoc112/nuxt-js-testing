@@ -30,6 +30,7 @@
       @handleCloseTooltip="emit('closeSection')"
     />
     <editor-list
+      ref="editorListRef"
       :rwd-mode="rwdMode"
       :templateSelected="templateSelected"
       :classElementSelected="classElementSelected"
@@ -201,6 +202,7 @@ const buttonColor = ref<RGBA>({
 const indexSectionSelected = ref<number>();
 const classElementSelected = ref<string>();
 const indexAudioSelected = ref<number>();
+const editorListRef = ref<any>();
 type SectionKeys = keyof SECTION_ITEM | keyof AUDIO_ITEM;
 const keyElementSelected = ref<SectionKeys>();
 const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
@@ -440,6 +442,7 @@ const handleChangeText = (event: MouseEvent) => {
   element.textContent = '';
   element.appendChild(textarea);
   textarea.focus();
+  editorListRef.value?.calcPositionLabel();
 
   textarea.addEventListener('blur', () => {
     const obj = objectSelecting.value as TEXT_ITEM;
@@ -487,10 +490,11 @@ const handleChangeSize = (size: string) => {
 
 const handleChangeLink = (link: string) => {
   const obj = objectSelecting.value as BUTTON_EXTERNAL_ITEM;
-  if (!obj || !link) return;
+  if (!obj) return;
   obj.link = link;
 };
 const calcPositionControl = (distance: number) => {
+  editorListRef.value?.calcPositionLabel();
   handleSetPositionControl({
     pageX: positionControlCurrent.value.pageX,
     pageY: positionControlCurrent.value.pageY - distance,

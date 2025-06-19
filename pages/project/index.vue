@@ -173,6 +173,9 @@
                   <div
                     @click.stop="() => onAction(item, 'edit')"
                     class="action-item"
+                    :class="{
+                      disabled: !PERMISSION.isEditor,
+                    }"
                   >
                     <vi-typography class="cursor-pointer" type="body-large">
                       {{ t('landing-project_mgmt-button-edit') }}
@@ -181,6 +184,9 @@
                   <div
                     @click.stop="() => onAction(item, 'copy')"
                     class="action-item"
+                    :class="{
+                      disabled: !PERMISSION.isEditor,
+                    }"
                   >
                     <vi-typography class="cursor-pointer" type="body-large">
                       {{ $t('landing-project_mgmt-button-copy') }}
@@ -326,9 +332,6 @@ const fetchProjectList = debounce(async () => {
 }, 500);
 
 const onShowAction = (projectID: string, show = true) => {
-  if (!PERMISSION.value.isEditor) {
-    return;
-  }
   actionRef[projectID] = show;
 };
 
@@ -337,9 +340,19 @@ const onCopyProject = async (project: IProject) => {
   if (isLimit) {
     isOpenReachLimitNoti.value = true;
   } else {
-    await copyProject(project.id, `${project.name}_copy`);
-    fetchProjectList();
-    toastMessage(t('landing-common-message-copied'));
+    try {
+      const newName = `${project.name}_copy`;
+      if (newName.length > 50) {
+        toastMessage(
+          t('error_fe-data-validation-input_length_exceeded'),
+          'error'
+        );
+      } else {
+        await copyProject(project.id, newName);
+        fetchProjectList();
+        toastMessage(t('landing-common-message-copied'));
+      }
+    } catch (_) {}
   }
 };
 const onCreateProject = async () => {
@@ -595,6 +608,10 @@ watch(
     &:hover {
       background-color: $neutral-white-alpha-10;
     }
+    &.disabled {
+      background-color: $brand-navy-900-main;
+      color: $neutral-white-alpha-30;
+    }
   }
 }
 
@@ -603,9 +620,9 @@ watch(
 }
 .blur-container {
   position: relative;
-
   overflow: hidden;
   border-radius: 4px;
+  width: 100%;
 }
 .img-wrapper {
   position: absolute;

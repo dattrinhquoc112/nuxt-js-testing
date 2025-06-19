@@ -185,7 +185,7 @@ const handleChange = (event: Event) => {
 <style lang="scss" scoped>
 .popup-setting-image {
   position: fixed;
-  z-index: 20;
+  z-index: 30;
   width: 322px;
   padding-bottom: 16px;
   border-radius: 8px;
@@ -193,7 +193,6 @@ const handleChange = (event: Event) => {
   background: $brand-navy-800;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25),
     0px 0px 4px 0px rgba(0, 0, 0, 0.15);
-  transition: top linear 0.05s;
   :deep() {
     .input-container {
       gap: 0;
