@@ -131,7 +131,6 @@ html {
 }
 .section-wrap {
   width: 100%;
-  padding-top: calc(600 / 1376 * 100%);
   position: relative;
   .video-background {
     width: 100%;
@@ -187,6 +186,8 @@ html {
   &.section-copyright {
     padding-top: 259px;
     .content-copyright {
+      font-size: 18px;
+      font-weight: 400;
       position: absolute;
       top: 50%;
       left: 50%;
@@ -294,14 +295,15 @@ html {
 
   &.section-two {
     aspect-ratio: 172 / 75;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     .left {
-      position: absolute;
-      width: 50%;
-      top: 50%;
-      left: 0;
+      padding: 40px;
+      display: flex;
+      justify-content: center;
+      flex-direction: column;
       color: #000;
       z-index: 10;
-      transform: translateY(-50%);
       .text-des,
       .text-head,
       .text-title {
@@ -323,11 +325,6 @@ html {
       }
     }
     .right {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 50%;
-      height: 100%;
       display: flex;
       padding: 40px;
       z-index: 10;
@@ -368,14 +365,22 @@ html {
     &--mobile {
       aspect-ratio: 15 / 32;
       padding: 0;
+      grid-template-columns: 1fr;
+      grid-template-rows: 1fr 1fr;
       & .left {
+        padding: 0;
         position: unset;
         transform: unset;
         width: 100%;
-        height: 50%;
         display: flex;
         flex-direction: column;
         justify-content: center;
+        & .text-head {
+          margin: 40px 40px 0px 40px;
+        }
+        & .text-title {
+          padding: 0px 40px;
+        }
       }
       & .right {
         padding: 20px;

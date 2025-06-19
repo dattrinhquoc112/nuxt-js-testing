@@ -47,11 +47,13 @@
         :limit-file-size="limitFileSize"
         :rwd-mode="RWDMode"
         :is-exceed-limit="isExceedLimit"
+        :is-exceed-75-percent-limit="isExceed75PercentLimit"
         :list-template="listTemplateCurrent"
         :is-show-list-section="isShowListSection"
         @close-section="isShowListSection = ''"
-        @handle-add-section="handleAddSection"
-        @handle-exceed-limit="isOpenAlert = true"
+        @handle-upload-exceed-limit="isOpenAlert = true"
+        @handle-exceed-percent-limit="handleExceedPercentLimit"
+        @handleExceedLimit="handleExceedLimit"
       />
       <div class="section-snapshot">
         <editor-section-render
@@ -98,6 +100,7 @@
     @handle-save-current="handleSaveTemplate"
     @handle-update-new="handleUpdateToNewVersion"
   />
+  <popup-reach-limit-noti v-model="isOpenReachLimitNoti" />
 </template>
 
 <script setup lang="ts">
@@ -115,12 +118,13 @@ import useMaterials from '~/composables/materials';
 
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const activeSidebarButton = ref();
+const isOpenReachLimitNoti = ref(false);
 provide('activeSidebarButton', activeSidebarButton);
 const { tenantMetric, getTenantMetric } = useMetric();
 const isOpenAlert = ref(false);
 const materialList = ref();
 const editorID = ref('');
-const { isExceedLimit } = useMaterials({
+const { isExceedLimit, isExceed75PercentLimit } = useMaterials({
   listMaterial: materialList,
   editorID,
 });
@@ -186,10 +190,15 @@ watch(
     historyStatus.value = newVal;
   }
 );
-const handleAddSection = () => {
+const handleExceedLimit = () => {
+  isOpenReachLimitNoti.value = true;
+  activeSidebarButton.value = '';
   isOpenAlert.value = true;
 };
-
+const handleExceedPercentLimit = () => {
+  isOpenAlert.value = true;
+  activeSidebarButton.value = '';
+};
 const sectionSnapshot = computed(() => {
   return editorRef.value?.sections[1];
 });
@@ -244,7 +253,13 @@ const handleCheckConditionPublish = async () => {
     project.value.startTime &&
     project.value.endTime;
   const isFinishedSetupAudio = true;
-  if (!!isFinishSetupEvent && !!isFinishedSetupAudio) {
+  if (isExceedLimit.value) {
+    isOpenReachLimitNoti.value = true;
+  } else if (
+    !!isFinishSetupEvent &&
+    !!isFinishedSetupAudio &&
+    !isExceedLimit.value
+  ) {
     try {
       await handleSaveTemplate(
         t('landing-editor-message-progress_saved'),
@@ -377,7 +392,7 @@ const limitFileSize = computed(() => {
   return 0;
 });
 watch(
-  () => isExceedLimit.value,
+  () => isExceed75PercentLimit.value,
   (newVal) => {
     if (newVal) {
       isOpenAlert.value = true;
@@ -431,7 +446,7 @@ watch(
     // overflow: hidden;
     height: calc(100vh - 64px);
     &--mobile {
-      width: 375px;
+      width: fit-content;
     }
   }
 }

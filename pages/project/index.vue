@@ -336,23 +336,27 @@ const onShowAction = (projectID: string, show = true) => {
 };
 
 const onCopyProject = async (project: IProject) => {
-  const isLimit = await checkReachLimit();
-  if (isLimit) {
-    isOpenReachLimitNoti.value = true;
-  } else {
-    try {
-      const newName = `${project.name}_copy`;
-      if (newName.length > 50) {
-        toastMessage(
-          t('error_fe-data-validation-input_length_exceeded'),
-          'error'
-        );
-      } else {
+  try {
+    const newName = `${project.name}_copy`;
+    if (newName.length > 50) {
+      toastMessage(
+        t('error_fe-data-validation-input_length_exceeded'),
+        'error'
+      );
+    } else {
+      try {
         await copyProject(project.id, newName);
         fetchProjectList();
         toastMessage(t('landing-common-message-copied'));
+      } catch (error: any) {
+        const errCode = error?.data?.data?.detail;
+        if (errCode === 'LD_CAPACITY_EXCEED_MAXIMUM') {
+          isOpenReachLimitNoti.value = true;
+        }
       }
-    } catch (_) {}
+    }
+  } catch (err) {
+    console.log(err, 'err');
   }
 };
 const onCreateProject = async () => {
@@ -370,7 +374,9 @@ const onCreateProject = async () => {
       }
       isLoadingCreate.value = false;
       navigateTo(`/project/editor?id=${id}`);
-    } catch (err) {}
+    } catch (error: any) {
+      console.log(error?.data?.data, 'err');
+    }
   }
 };
 const onEditProject = async (payload: IUpdateProjectPayload) => {

@@ -12,6 +12,7 @@ export const useWebEditor = (
   limitFileSize?: Ref<number>,
   options?: {
     handleExceedLimit: () => void;
+    handleExceed75PercentLimit: () => void;
     indexSectionSelected: Ref<number | undefined>;
   }
 ) => {
@@ -52,16 +53,23 @@ export const useWebEditor = (
 
     // Handle upload a new material
     if (!materialOld && type !== 'DELETE') {
-      const isLimit = checkReachLimit(
+      const isReach75PercentLimit = checkReachLimit(
         listMaterials.value,
         limitFileSize?.value || 0,
         convertToKB(`${file?.size}B`) || 0,
         THRESH_HOLD
       );
+      const isLimit = checkReachLimit(
+        listMaterials.value,
+        limitFileSize?.value || 0,
+        convertToKB(`${file?.size}B`) || 0,
+        1
+      );
       if (isLimit) {
         options?.handleExceedLimit();
       } else {
         if (options?.indexSectionSelected?.value === undefined) return isLimit;
+
         listMaterials.value.push({
           indexSection: options.indexSectionSelected.value,
           type: 'MEDIA',
@@ -69,6 +77,9 @@ export const useWebEditor = (
           fileUri: newFileUri,
           fileSize: file?.size,
         });
+        if (isReach75PercentLimit) {
+          options?.handleExceed75PercentLimit();
+        }
       }
       return isLimit;
     }
@@ -84,17 +95,26 @@ export const useWebEditor = (
       listMaterials.value,
       limitFileSize?.value || 0,
       convertToKB(`${differenceValue}B`) || 0,
+      1
+    );
+    const isReach75PercentLimit = checkReachLimit(
+      listMaterials.value,
+      limitFileSize?.value || 0,
+      convertToKB(`${file?.size}B`) || 0,
       THRESH_HOLD
     );
     if (isLimit) {
       options?.handleExceedLimit();
-      return true;
     }
+
     materialOld.fileUri = newFileUri;
     materialOld.fileSize = file?.size;
     if (file) {
       const [, ext] = file.type.split('/');
       materialOld.extension = ext;
+    }
+    if (isReach75PercentLimit) {
+      options?.handleExceed75PercentLimit();
     }
     return false;
   };
@@ -346,12 +366,17 @@ export const useWebEditor = (
     if (!fileSize) {
       return;
     }
-
-    const isLimit = checkReachLimit(
+    const isReach75PercentLimit = checkReachLimit(
       listMaterials.value,
       limitFileSize?.value || 0,
       convertToKB(`${fileSize}B`) || 0,
       THRESH_HOLD
+    );
+    const isLimit = checkReachLimit(
+      listMaterials.value,
+      limitFileSize?.value || 0,
+      convertToKB(`${fileSize}B`) || 0,
+      1
     );
     if (isLimit) {
       options?.handleExceedLimit();
@@ -363,6 +388,9 @@ export const useWebEditor = (
         fileUri: data.audioUrl,
         fileSize: convertToKB(`${fileSize}B`),
       });
+      if (isReach75PercentLimit) {
+        options?.handleExceed75PercentLimit();
+      }
     }
   };
 
