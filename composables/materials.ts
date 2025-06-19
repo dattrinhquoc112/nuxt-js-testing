@@ -81,6 +81,12 @@ export default function useMaterials({
 
   const isExceedLimit = computed(() => {
     return (
+      (totalCapacityUsed.value?.value ?? 0) >= (totalCapacity.value?.value ?? 0)
+    );
+  });
+
+  const isExceed75PercentLimit = computed(() => {
+    return (
       (totalCapacityUsed.value?.value ?? 0) >
       (totalCapacity.value?.value ?? 0) * THRESH_HOLD
     );
@@ -91,6 +97,7 @@ export default function useMaterials({
     totalCapacityUsedInPJ,
     initMaterial,
     isExceedLimit,
+    isExceed75PercentLimit,
   });
   onMounted(() => {
     getTenantMetric();
@@ -101,5 +108,6 @@ export default function useMaterials({
     totalCapacityUsedInPJ,
     initMaterial,
     isExceedLimit,
+    isExceed75PercentLimit,
   };
 }

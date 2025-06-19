@@ -47,14 +47,17 @@ export const useProjectStore = defineStore('project', () => {
   }
 
   async function copyProject(id: string, newName: string) {
-    return apiStore.apiRequest({
-      method: MethodEnum.POST,
-      endpoint: `/api/v1/projects/${id}/copy`,
-      proxy: true,
-      data: {
-        newName,
+    return apiStore.apiRequest(
+      {
+        method: MethodEnum.POST,
+        endpoint: `/api/v1/projects/${id}/copy`,
+        proxy: true,
+        data: {
+          newName,
+        },
       },
-    });
+      { showErrorMsg: false }
+    );
   }
 
   async function editProject(id: string, data: IUpdateProjectPayload) {

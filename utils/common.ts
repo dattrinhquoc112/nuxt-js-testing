@@ -89,5 +89,5 @@ export const checkReachLimit = (
     0
   );
   const totalMaterial = totalListMaterial + currentFileSize;
-  return totalMaterial >= limit;
+  return totalMaterial >= limit * threshHold;
 };

@@ -28,23 +28,37 @@
     </vi-tooltip>
 
     <div class="ai-tool">
-      <vi-button
-        type="standard-subtle"
-        size="extra-large"
-        width="fit-content"
-        class="mt-4"
-        no-text
-        icon-before="ic_ai_section"
-        :class="{
-          active: activeSidebarButton === SIDEBAR_BUTTONS[1],
-        }"
-        @click="
-          () => {
-            activeSidebarButton = SIDEBAR_BUTTONS[1];
-            handleAction(SIDEBAR_BUTTONS[1], SIDE_BAR_ACTION.CLICKED_AI_TOOLS);
-          }
-        "
-      />
+      <vi-tooltip
+        position="right"
+        align="start"
+        :arrow-visible="false"
+        :full-width="false"
+        :delay-time="2000"
+      >
+        <vi-button
+          type="standard-subtle"
+          size="extra-large"
+          width="fit-content"
+          class="mt-4"
+          no-text
+          icon-before="ic_ai_section"
+          :class="{
+            active: activeSidebarButton === SIDEBAR_BUTTONS[1],
+          }"
+          @click="
+            () => {
+              activeSidebarButton = SIDEBAR_BUTTONS[1];
+              handleAction(
+                SIDEBAR_BUTTONS[1],
+                SIDE_BAR_ACTION.CLICKED_AI_TOOLS
+              );
+            }
+          "
+        />
+        <template #content>
+          <ToolTipSection />
+        </template>
+      </vi-tooltip>
       <vi-button
         type="standard-subtle"
         size="extra-large"
@@ -74,6 +88,7 @@ import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
 const isOpenMaterialManagement = ref(false);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
+
 const activeSidebarButton = inject<Ref<String>>('activeSidebarButton');
 const emit = defineEmits(['click-sidebar']);
 
