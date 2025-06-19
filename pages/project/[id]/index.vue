@@ -77,6 +77,7 @@
       </template>
     </vi-modal>
   </div>
+  <popup-reach-limit-noti v-model="isOpenReachLimitNoti" />
 </template>
 
 <script setup lang="ts">
@@ -84,6 +85,7 @@ import useCheckPermission from '~/composables/checkPermission';
 import { useProjectStore } from '~/stores/project';
 import type { IProject } from '~/types/project';
 
+const isOpenReachLimitNoti = ref(false);
 interface Model {
   project?: IProject;
 }
@@ -161,10 +163,17 @@ const onCopy = async () => {
         t('error_fe-data-validation-input_length_exceeded'),
         'error'
       );
+      try {
+        await copyProject(model.project.id, newName);
+        toastMessage(t('landing-common-message-copied'));
+        navigateTo(`/project`);
+      } catch (error: any) {
+        const errCode = error?.data?.data?.detail;
+        if (errCode === 'LD_CAPACITY_EXCEED_MAXIMUM') {
+          isOpenReachLimitNoti.value = true;
+        }
+      }
     } else {
-      await copyProject(model.project.id, newName);
-      toastMessage(t('landing-common-message-copied'));
-      navigateTo(`/project`);
     }
   } catch (_) {}
   loading.copy = false;
