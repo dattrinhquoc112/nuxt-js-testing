@@ -230,10 +230,14 @@ export const useWebEditor = (
               if (
                 !item.audio.setting.voiceModelId?.value ||
                 !item.audio.setting.listPhrase?.length ||
-                !item.audio.setting.listPhrase?.[0]?.id
+                !item.audio.setting.listPhrase.some((itemVoice) => itemVoice.id)
               ) {
                 return [];
               }
+              item.audio.setting.listPhrase =
+                item.audio.setting.listPhrase.filter((s) =>
+                  Boolean(s.audioUrl && s.id)
+                );
               return {
                 order: orderAudio.toString(),
                 audioAppProjectId: item.audio.setting.voiceModelId.value,
@@ -337,8 +341,8 @@ export const useWebEditor = (
   };
 
   const deleteIndexMaterial = (indexDelete: number) => {
-    listMaterials.value.splice(0).forEach((item: MATERIAL_ITEM) => {
-      if (!item.indexSection) return;
+    listMaterials.value.slice(0).forEach((item: MATERIAL_ITEM) => {
+      if (item.indexSection === undefined) return;
 
       if (item.indexSection === indexDelete) {
         listMaterials.value.splice(listMaterials.value.indexOf(item), 1);
@@ -346,6 +350,27 @@ export const useWebEditor = (
       if (item.indexSection > indexDelete) {
         item.indexSection -= 1;
       }
+    });
+  };
+
+  const checkIsFinishedSetupAudio = () => {
+    return sections.value.every((section: SECTION_ITEM) => {
+      if (section.id === 'audio-section') {
+        let isSettingAudio: boolean = false;
+        if (!section.listAudio?.length) return false;
+        isSettingAudio = section.listAudio?.every((item: AUDIO_ITEM) => {
+          if (
+            !item.audio.setting.voiceModelId?.value ||
+            !item.audio.setting.listPhrase?.length ||
+            !item.audio.setting.listPhrase.every((itemVoice) => itemVoice.id)
+          ) {
+            return false;
+          }
+          return true;
+        });
+        return isSettingAudio;
+      }
+      return true;
     });
   };
 
@@ -402,7 +427,7 @@ export const useWebEditor = (
       isLoading: boolean;
     }[]
   ) => {
-    listMaterials.value.forEach((item) => {
+    listMaterials.value.slice(0).forEach((item) => {
       if (item.type === 'AUDIO_TTS' && item.fileUri === data[0].audioUrl) {
         listMaterials.value.splice(listMaterials.value.indexOf(item), 1);
       }
@@ -421,5 +446,6 @@ export const useWebEditor = (
     listMaterials,
     addMaterialAudio,
     removeMaterialAudio,
+    checkIsFinishedSetupAudio,
   };
 };

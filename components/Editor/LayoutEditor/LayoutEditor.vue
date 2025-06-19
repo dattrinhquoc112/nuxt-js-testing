@@ -4,6 +4,7 @@
       :rwdMode="rwdMode"
       :projectName="projectName"
       :historyStatus="historyStatus"
+      :disableUndoRedo
       @handle-undo="$emit('handleUndo')"
       @handle-redo="$emit('handleRedo')"
       @handleSwitchLayout="
@@ -47,6 +48,7 @@ defineProps<{
   projectName: string;
   isShowListSection: string;
   rwdMode: string;
+  disableUndoRedo: boolean;
 }>();
 
 defineEmits<{

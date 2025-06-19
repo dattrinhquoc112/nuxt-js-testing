@@ -85,7 +85,9 @@
             icon-before="ic_step_back"
             no-text
             :disabled="
-              !historyStatus?.undoButtonEnable || rwdMode === RWD_MODE.MOBILE
+              !historyStatus?.undoButtonEnable ||
+              rwdMode === RWD_MODE.MOBILE ||
+              disableUndoRedo
             "
             @click="$emit('handleUndo')"
           ></vi-button>
@@ -94,7 +96,9 @@
             icon-before="ic_step_next"
             no-text
             :disabled="
-              !historyStatus?.redoButtonEnable || rwdMode === RWD_MODE.MOBILE
+              !historyStatus?.redoButtonEnable ||
+              rwdMode === RWD_MODE.MOBILE ||
+              disableUndoRedo
             "
             @click="$emit('handleRedo')"
           ></vi-button>
@@ -168,6 +172,7 @@ defineProps<{
   historyStatus: any;
   projectName: string;
   rwdMode: string;
+  disableUndoRedo: boolean;
 }>();
 const emit = defineEmits<{
   handleUndo: [];
