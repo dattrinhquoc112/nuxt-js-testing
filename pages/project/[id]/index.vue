@@ -163,6 +163,7 @@ const onCopy = async () => {
         t('error_fe-data-validation-input_length_exceeded'),
         'error'
       );
+    } else {
       try {
         await copyProject(model.project.id, newName);
         toastMessage(t('landing-common-message-copied'));
@@ -173,7 +174,6 @@ const onCopy = async () => {
           isOpenReachLimitNoti.value = true;
         }
       }
-    } else {
     }
   } catch (_) {}
   loading.copy = false;
