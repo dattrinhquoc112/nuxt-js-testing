@@ -9,13 +9,22 @@ import { checkReachLimit } from '~/utils/common';
 export const useWebEditor = (
   sections: Ref<any[]>,
   IDWebEditor: string,
-  limitFileSize?: Ref<number>,
+  limitFileSize?: any,
+  currentSizeRef?: any,
   options?: {
     handleExceedLimit: () => void;
     handleExceed75PercentLimit: () => void;
     indexSectionSelected: Ref<number | undefined>;
   }
 ) => {
+  const currentSize = ref({ value: 0 });
+  watch(
+    () => currentSizeRef.value,
+    (newVal) => {
+      currentSize.value = newVal;
+    }
+  );
+
   const idWebEditorRef = ref(IDWebEditor);
   const initSections = ref();
   const { uploadFile } = useUploadStore();
@@ -44,6 +53,7 @@ export const useWebEditor = (
     file?: File | null;
     type?: string;
   }): Boolean => {
+    console.log(currentSize.value, 'run 1');
     const materialOld = listMaterials.value.find(
       (item) =>
         Boolean(item.fileUri) &&
@@ -54,15 +64,15 @@ export const useWebEditor = (
     // Handle upload a new material
     if (!materialOld && type !== 'DELETE') {
       const isReach75PercentLimit = checkReachLimit(
-        listMaterials.value,
-        limitFileSize?.value || 0,
-        convertToKB(`${file?.size}B`) || 0,
+        currentSize?.value?.value || 0,
+        limitFileSize?.value?.value || 0,
+        file?.size || 0,
         THRESH_HOLD
       );
       const isLimit = checkReachLimit(
-        listMaterials.value,
-        limitFileSize?.value || 0,
-        convertToKB(`${file?.size}B`) || 0,
+        currentSize?.value?.value || 0,
+        limitFileSize?.value?.value || 0,
+        file?.size || 0,
         1
       );
       if (isLimit) {
@@ -92,15 +102,15 @@ export const useWebEditor = (
     // Handle change a material
     const differenceValue = (file?.size || 0) - (materialOld.fileSize ?? 0);
     const isLimit = checkReachLimit(
-      listMaterials.value,
-      limitFileSize?.value || 0,
-      convertToKB(`${differenceValue}B`) || 0,
+      currentSize?.value?.value || 0,
+      limitFileSize?.value?.value || 0,
+      differenceValue || 0,
       1
     );
     const isReach75PercentLimit = checkReachLimit(
-      listMaterials.value,
-      limitFileSize?.value || 0,
-      convertToKB(`${file?.size}B`) || 0,
+      currentSize?.value?.value || 0,
+      limitFileSize?.value?.value || 0,
+      file?.size || 0,
       THRESH_HOLD
     );
     if (isLimit) {
@@ -392,14 +402,14 @@ export const useWebEditor = (
       return;
     }
     const isReach75PercentLimit = checkReachLimit(
-      listMaterials.value,
-      limitFileSize?.value || 0,
+      currentSize?.value?.value || 0,
+      limitFileSize?.value?.value || 0,
       convertToKB(`${fileSize}B`) || 0,
       THRESH_HOLD
     );
     const isLimit = checkReachLimit(
-      listMaterials.value,
-      limitFileSize?.value || 0,
+      currentSize?.value?.value || 0,
+      limitFileSize?.value?.value || 0,
       convertToKB(`${fileSize}B`) || 0,
       1
     );

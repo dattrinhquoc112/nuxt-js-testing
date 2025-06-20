@@ -172,6 +172,10 @@ const props = defineProps({
     type: Number,
     default: 0,
   },
+  currentFileSize: {
+    type: Number,
+    default: 0,
+  },
   isExceedLimit: {
     type: Boolean,
     default: false,
@@ -217,7 +221,6 @@ const route = useRoute();
 const idParam = Array.isArray(route.query?.id)
   ? route.query.id[0] || ''
   : route.query?.id || '';
-const limitSize = ref(0);
 const handleUploadExceedLimit = (percent: number) => {
   if (percent === 1) {
     emit('handleExceedLimit');
@@ -226,7 +229,12 @@ const handleUploadExceedLimit = (percent: number) => {
     emit('handleExceedPercentLimit');
   }
 };
-
+const limitSize = computed(() => {
+  return props.limitFileSize;
+});
+const currentSize = computed(() => {
+  return props.currentFileSize;
+});
 const {
   fetchContentProject,
   handleSaveTemplate,
@@ -239,22 +247,14 @@ const {
   addMaterialAudio,
   removeMaterialAudio,
   checkIsFinishedSetupAudio,
-} = useWebEditor(sections, idParam, limitSize, {
+} = useWebEditor(sections, idParam, limitSize, currentSize, {
   handleExceedLimit: () => handleUploadExceedLimit(1),
   handleExceed75PercentLimit: () => handleUploadExceedLimit(0.75),
   indexSectionSelected,
 });
 
 const currentIndex = ref<number>(0);
-watch(
-  () => props.limitFileSize,
-  (newVal) => {
-    limitSize.value = newVal;
-  },
-  {
-    immediate: true,
-  }
-);
+
 const hoverPosition = ref<{ index: number; zone: 'top' | 'bottom' } | null>(
   null
 );
