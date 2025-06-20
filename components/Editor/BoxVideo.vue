@@ -1,6 +1,6 @@
 <template>
   <div v-if="urlVideo" :key="urlVideo" class="video-wrap">
-    <video autoplay :muted="isMuted" loop playsinline>
+    <video class="tag-video-src" autoplay :muted="isMuted" loop playsinline>
       <source :src="getImage(urlVideo)" />
     </video>
     <div class="icon-sound" @click="isMuted = !isMuted">
