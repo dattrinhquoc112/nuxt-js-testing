@@ -53,7 +53,6 @@ export const useWebEditor = (
     file?: File | null;
     type?: string;
   }): Boolean => {
-    console.log(currentSize.value, 'run 1');
     const materialOld = listMaterials.value.find(
       (item) =>
         Boolean(item.fileUri) &&

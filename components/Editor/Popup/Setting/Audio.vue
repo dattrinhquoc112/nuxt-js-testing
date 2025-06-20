@@ -178,6 +178,7 @@ const emit = defineEmits([
   'close',
   'move-popup-to-top',
   'move-popup-to-bottom',
+  'handle-show-pu-limit',
 ]);
 
 const props = defineProps({
@@ -186,6 +187,10 @@ const props = defineProps({
     default: () => ({}),
   },
   isShow: {
+    type: Boolean,
+    default: false,
+  },
+  isExceedLimit: {
     type: Boolean,
     default: false,
   },
@@ -247,6 +252,11 @@ const handleDeletePhrase = (index: number) => {
   );
 };
 const handleCreateDemo = async (index: number) => {
+  if (props.isExceedLimit) {
+    audioSelecting.value.setting.listPhrase[index].text = '';
+    emit('handle-show-pu-limit');
+    return;
+  }
   if (audioSelecting.value.setting.listPhrase[index].audioUrl) return;
   if (!audioSelecting.value.setting.voiceModelId.value) return;
   try {
