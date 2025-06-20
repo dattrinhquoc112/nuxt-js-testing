@@ -45,7 +45,8 @@
     >
       <editor
         ref="editorRef"
-        :limit-file-size="limitFileSize"
+        :limit-file-size="totalCapacity"
+        :current-file-size="totalCapacityUsedRef"
         :rwd-mode="RWDMode"
         :is-exceed-limit="isExceedLimit"
         :is-exceed-75-percent-limit="isExceed75PercentLimit"
@@ -108,13 +109,12 @@
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
 import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
 import { ROUTE } from '@/constants/route';
-import { SIDE_BAR_ACTION, RWD_MODE, METRICS_KEY } from '@/constants/common';
+import { SIDE_BAR_ACTION, RWD_MODE } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
 import { WEB_EDITOR_PREVIEW } from '~/constants/storage';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
-import useMetric from '@/composables/metric';
 import useMaterials from '~/composables/materials';
 
 const disableUndoRedo = ref(false);
@@ -122,15 +122,21 @@ const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const activeSidebarButton = ref();
 const isOpenReachLimitNoti = ref(false);
 provide('activeSidebarButton', activeSidebarButton);
-const { tenantMetric, getTenantMetric } = useMetric();
 const isOpenAlert = ref(false);
 const materialList = ref();
 const editorID = ref('');
-const { isExceedLimit, isExceed75PercentLimit } = useMaterials({
+const {
+  isExceedLimit,
+  isExceed75PercentLimit,
+  totalCapacity,
+  totalCapacityUsed,
+} = useMaterials({
   listMaterial: materialList,
   editorID,
 });
-
+const totalCapacityUsedRef = computed(() => {
+  return totalCapacityUsed.value;
+});
 const { getProject, editProject, publishProject } = useProjectStore();
 
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
@@ -386,16 +392,7 @@ const handleUndo = () => {
 const handleRedo = () => {
   editorRef.value?.redo();
 };
-const limitFileSize = computed(() => {
-  const limitFileSizeRes = tenantMetric.value?.metrics.find(
-    (item) => item.metric === METRICS_KEY.TOTAL_CAPACITY
-  );
-  if (limitFileSizeRes) {
-    const totalCapacity = `${limitFileSizeRes.value}${limitFileSizeRes.unit} `;
-    return convertToKB(totalCapacity);
-  }
-  return 0;
-});
+
 watch(
   () => isExceed75PercentLimit.value,
   (newVal) => {
@@ -408,7 +405,6 @@ watch(
 );
 
 onMounted(async () => {
-  getTenantMetric();
   if (!editorContentElement.value) return;
   scrollTopEditor = editorContentElement.value.scrollTop;
   editorContentElement.value.addEventListener('scroll', calcPositionControl);
