@@ -19,7 +19,7 @@ export const useWebEditor = (
 ) => {
   const currentSize = ref({ value: 0 });
   watch(
-    () => currentSizeRef.value,
+    () => currentSizeRef?.value,
     (newVal) => {
       currentSize.value = newVal;
     }
