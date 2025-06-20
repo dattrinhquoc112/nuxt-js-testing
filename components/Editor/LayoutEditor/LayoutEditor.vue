@@ -22,6 +22,7 @@
     <div ref="editorContainer" class="editor__container">
       <div v-show="rwdMode === RWD_MODE.DESKTOP">
         <SideBarEditor
+          v-show="rwdMode === RWD_MODE.DESKTOP"
           @click-sidebar="(keyAction) => $emit('clickSidebar', keyAction)"
           :isShowListSection="isShowListSection"
         />

@@ -9,7 +9,7 @@ COPY .env.${BUILD_ENV} .env
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+RUN npm run build:${BUILD_ENV}
 
 RUN chown -R app:app /app
 USER app

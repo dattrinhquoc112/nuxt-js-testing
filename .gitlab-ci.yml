@@ -12,13 +12,13 @@ variables:
 stages:
   - code-review
   - dev
-#  - uat
+  - uat
 #  - prod
 
 .deploy-image:
   image:
     name: gcr.io/kaniko-project/executor:debug
-    entrypoint: ['']
+    entrypoint: [ '' ]
   before_script:
     - echo ${GOOGLE_APPLICATION_CREDENTIALS}
     - echo ${GAR_HOST}
@@ -62,9 +62,9 @@ ai-code-review:
   stage: code-review
   image:
     name: codiumai/pr-agent:0.24
-    entrypoint: ['']
+    entrypoint: [ '' ]
   allow_failure: true
-  needs: [] # run parallel
+  needs: [ ] # run parallel
   tags:
     - shared-runners-no-root
   rules:
@@ -118,35 +118,42 @@ rollout-dev:
   needs:
     - deploy-image-dev
 
-# deploy-image-uat:
-#   extends: .deploy-image
-#   stage: uat
-#   environment: UAT
-#   variables:
-#     GOOGLE_APPLICATION_CREDENTIALS: $GCP_UAT_SA_KEY_FOR_GIT_CICD
-#     BUILD_ENV: uat
-#   rules:
-#     - if: $CI_COMMIT_TAG =~ /UAT/
-#     - if: $CI_COMMIT_BRANCH == "main"
-#   needs: []
+deploy-image-uat:
+  extends: .deploy-image
+  stage: uat
+  environment: UAT
+  variables:
+    GOOGLE_APPLICATION_CREDENTIALS: $GCP_UAT_SA_KEY_FOR_GIT_CICD
+    BUILD_ENV: uat
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG =~ /UAT/
+    - if: $CI_COMMIT_BRANCH == "uat"
+      changes:
+        - '**/*'
+  needs: []
 
-# rollout-uat:
-#   extends: .rollout
-#   stage: uat
-#   environment: UAT
-#   variables:
-#     GKE_REGION: ${GKE_UAT_REGION}
-#     GCLOUD_PROJECT_ID: ${GCP_UAT_PROJECT_ID}
-#     GKE_CLUSTER_NAME: ${GKE_UAT_CLUSTER_NAME}
-#     GCP_SA_KEY_FOR_GIT_CICD: $GCP_UAT_SA_KEY_FOR_GIT_CICD
-#     RELEASE_NAME: aiaas-platform-frontend
-#     RELEASE_NS: aiaas-platform
-#     CHAR_VALUES_FILE: ./chart/app/values-uat.yaml
-#   rules:
-#     - if: $CI_COMMIT_TAG =~ /UAT/
-#     - if: $CI_COMMIT_BRANCH == "main"
-#   needs:
-#     - deploy-image-uat
+rollout-uat:
+  extends: .rollout
+  stage: uat
+  environment: UAT
+  variables:
+    GKE_REGION: ${GKE_UAT_REGION}
+    GCLOUD_PROJECT_ID: ${GCP_UAT_PROJECT_ID}
+    GKE_CLUSTER_NAME: ${GKE_UAT_CLUSTER_NAME}
+    GCP_SA_KEY_FOR_GIT_CICD: $GCP_UAT_SA_KEY_FOR_GIT_CICD
+    RELEASE_NAME: landing-frontend
+    RELEASE_NS: landing
+    CHAR_VALUES_FILE: ./chart/app/values-uat.yaml
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_TAG =~ /UAT/
+    - if: $CI_COMMIT_BRANCH == "uat"
+      changes:
+        - '**/*'
+  needs:
+    - deploy-image-uat
+
 #deploy-image-prod:
 #  extends: .deploy-image
 #  stage: prod
