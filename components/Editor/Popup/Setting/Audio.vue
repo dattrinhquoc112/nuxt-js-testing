@@ -26,7 +26,7 @@
         class="neutral-white-alpha-60-text cursor-pointer"
         name="ic_close"
         size="24"
-        @click="emit('close')"
+        @click="handleClose"
       ></vi-icon>
     </div>
     <vi-scroll class="box-setting">
@@ -145,7 +145,10 @@
                 :is-show-control-buttons="
                   !audioSelecting.setting.listPhrase[index].isLoading
                 "
+                :is-audio-playing="currentlyPlayingAudio === item.audioUrl"
                 :show-file-info="false"
+                @play="handlePlay"
+                @pause="handlePause"
               />
             </div>
           </div>
@@ -232,7 +235,7 @@ const { getVoiceModelList, createDemo } = useEditorStore();
 
 const listModel = ref<{ text: string; value: string; demoUri?: string }[]>([]);
 const demoUri = ref<string>('');
-
+const currentlyPlayingAudio = ref<string | null>(null);
 const popupElement = ref<HTMLElement>();
 
 const addPhrase = () => {
@@ -243,6 +246,13 @@ const updateSetting = (key: string, speed: any) => {
   const objMap = key === 'speed' ? mapSpeed : mapPitch;
   const entry = Object.entries(objMap).find(([_, value]) => value === speed);
   audioSelecting.value.setting[key] = entry?.[0];
+};
+const handlePlay = (audioFile: string) => {
+  currentlyPlayingAudio.value = audioFile;
+};
+
+const handlePause = () => {
+  currentlyPlayingAudio.value = null;
 };
 
 const handleDeletePhrase = (index: number) => {
@@ -277,6 +287,11 @@ const handleCreateDemo = async (index: number) => {
   } finally {
     audioSelecting.value.setting.listPhrase[index].isLoading = false;
   }
+};
+
+const handleClose = () => {
+  handlePause();
+  emit('close');
 };
 
 const fetchListVoiceModel = async () => {

@@ -109,7 +109,7 @@ const listOptionControl = computed<
       },
     ];
   }
-  if (props.classElementSelected === 'audio-image') {
+  if (props.classElementSelected === 'audio-background') {
     return [
       {
         icon: 'ic_picture',
@@ -202,7 +202,7 @@ const listOptionControl = computed<
   &.for-section-copyright,
   &.for-section-logo,
   &.for-section-logo-image,
-  &.for-audio-image,
+  &.for-audio-background,
   &.for-text-head {
     transform: translateX(-50%);
     &.show-on-top {

@@ -51,6 +51,7 @@
       :class="section?.id === 'section-two-reverse' ? 'reverse' : ''"
     >
       <img
+        class="tag-right-section-image"
         @click.stop="clickParent"
         v-if="section.boxImage.urlImage"
         :src="getImage(section.boxImage.urlImage)"
