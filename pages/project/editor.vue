@@ -237,7 +237,8 @@ watch(
 );
 const handleSaveTemplate = async (
   messageSuccess: string = '',
-  loading: any = 'updateContent'
+  loading: any = 'updateContent',
+  showToast = true
 ) => {
   setLoading(loading, true);
   disableUndoRedo.value = true;
@@ -251,7 +252,8 @@ const handleSaveTemplate = async (
   disableUndoRedo.value = false;
   setLoading(loading, false);
   isShowModal.confirmReplace = false;
-  toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
+  showToast &&
+    toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
 };
 
 const handleCheckConditionPublish = async () => {
@@ -268,7 +270,8 @@ const handleCheckConditionPublish = async () => {
     try {
       await handleSaveTemplate(
         t('landing-editor-message-progress_saved'),
-        'publish'
+        'publish',
+        false
       );
       await publishProject(editorID.value);
       toastMessage(t('landing-project_mgmt-menu-published'));

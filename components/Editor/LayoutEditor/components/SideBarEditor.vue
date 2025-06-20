@@ -1,6 +1,7 @@
 <template>
   <div class="sidebar-editor">
     <vi-tooltip
+      class="tool-tip-open-template"
       position="right"
       align="start"
       :arrow-visible="false"
@@ -29,6 +30,7 @@
 
     <div class="ai-tool">
       <vi-tooltip
+        class="tool-tip-open-template"
         position="right"
         align="start"
         :arrow-visible="false"
