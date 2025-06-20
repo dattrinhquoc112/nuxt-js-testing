@@ -39,7 +39,7 @@
           class="card-audio"
           :data-index="audioIndex"
         >
-          <div class="audio-image">
+          <div class="audio-background">
             <editor-box-video
               v-if="audio.audio.urlVideo"
               class="video-background"
@@ -48,6 +48,7 @@
             />
             <img
               v-if="audio.audio.urlImage"
+              class="image-background"
               @click.stop="clickParent"
               :src="getImage(audio.audio.urlImage)"
               alt=""

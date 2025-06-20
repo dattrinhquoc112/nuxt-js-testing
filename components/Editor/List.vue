@@ -30,48 +30,25 @@
         @handle-change-text="(event) => emit('handle-change-text', event)"
       />
     </div>
-    <div
-      v-show="isShowLabelElement"
+
+    <editor-label-element
+      ref="labelElementSelectingHover"
+      :is-show="isShowLabelHoverElement"
+      :type-label="typeLabelHover"
+    />
+    <editor-label-element
       ref="labelElementSelecting"
-      class="label-element-selecting"
-      :class="{
-        'button-href': typeLabel.isButtonHref,
-        'border-section': typeLabel.borderSection,
-      }"
-    >
-      <div class="text-label" v-if="typeLabel.isButtonHref">
-        <vi-typography type="caption-large-300">
-          {{ $t('landing-editor-section-section_button') }}
-        </vi-typography>
-        <vi-icon name="ic_link" size="16" color="#fff"></vi-icon>
-      </div>
-      <div class="text-label-section" v-if="typeLabel.borderSection">
-        <vi-typography type="caption-large-300">
-          {{ $t('landing-editor-menu-title_section') }}
-        </vi-typography>
-      </div>
-      <div class="border-audio" v-if="typeLabel.isBorderAudio">
-        <div class="wrap-label-audio">
-          <div class="text-label-audio">
-            <vi-typography type="caption-large-300">
-              {{ $t('landing-editor-section-section_media') }}
-            </vi-typography>
-          </div>
-          <div class="audio-box">
-            <vi-icon name="ic_ai_section" size="16" color="#fff"></vi-icon>
-            <vi-typography type="caption-large-300">
-              {{ $t('landing-editor-section-ai_section_audio') }}
-            </vi-typography>
-          </div>
-        </div>
-      </div>
-    </div>
+      :is-show="isShowLabelElement"
+      :type-label="typeLabel"
+    />
+    <editor-label-element :is-show="isShowLabelElement" />
   </div>
 </template>
 
 <script lang="ts" setup>
 import useCheckPermission from '~/composables/checkPermission';
 import { RWD_MODE } from '~/constants/common';
+import type { ILabelElement } from '~/types/common';
 import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
 
 const props = defineProps({
@@ -107,14 +84,28 @@ const emit = defineEmits([
   'show-popup-setting-audio',
 ]);
 
-const isShowLabelElement = ref<Boolean>(false);
+const isShowLabelElement = ref<boolean>(false);
+const isShowLabelHoverElement = ref<boolean>(false);
+const elementHover = ref<HTMLElement>();
 const elementSelected = ref<HTMLElement>();
-const labelElementSelecting = ref<HTMLElement>();
+const labelElementSelecting = ref<any>();
+const labelElementSelectingHover = ref<any>();
 const listSectionRef = ref<HTMLElement[]>();
-const typeLabel = ref({
+
+const initStatusLabel: ILabelElement = {
   isButtonHref: false,
   isBorderAudio: false,
+  isTextTitle: false,
   borderSection: false,
+  isLogo: false,
+  isElementRest: false,
+  isImageRightSection: false,
+};
+const typeLabel = ref<ILabelElement>({
+  ...initStatusLabel,
+});
+const typeLabelHover = ref<ILabelElement>({
+  ...initStatusLabel,
 });
 const hoverPosition = ref<{ index: number; zone: string } | null>(null);
 const boxControlElement = computed(() =>
@@ -157,9 +148,16 @@ const sectionClass = (index: number) => {
   };
 };
 
+const handleRemoveAllLabel = () => {
+  isShowLabelElement.value = false;
+  isShowLabelHoverElement.value = false;
+  elementSelected.value = undefined;
+};
+
 const hiddenBoxControl = () => {
   emit('set-show-control', false);
   emit('hidden-all-popup-setting');
+  handleRemoveAllLabel();
 };
 const hiddenBoxControlWhenClick = (event: MouseEvent) => {
   const listClassNotHide = [
@@ -264,38 +262,86 @@ const getPositionForLeftImage = (coordinates: any) => {
   return { pageY, pageX };
 };
 
-const calcPositionLabel = (target: HTMLElement | null = null) => {
-  if (!labelElementSelecting.value) return;
+const calcPosition = (
+  target: HTMLElement | null = null,
+  isHover: boolean = false
+) => {
+  const labelElement = isHover
+    ? labelElementSelectingHover.value
+    : labelElementSelecting.value;
+  if (!labelElement) return;
+
   let coordinates: DOMRect | undefined;
   if (target) {
     coordinates = target.getBoundingClientRect();
-  } else if (elementSelected.value) {
-    coordinates = elementSelected.value.getBoundingClientRect();
+  } else if (isHover ? elementHover.value : elementSelected.value) {
+    coordinates = (
+      isHover ? elementHover.value : elementSelected.value
+    )?.getBoundingClientRect();
   } else {
     return;
   }
-  if (labelElementSelecting.value && coordinates) {
-    labelElementSelecting.value.style.left = `${coordinates.left}px`;
-    labelElementSelecting.value.style.top = `${coordinates.top}px`;
-    labelElementSelecting.value.style.width = `${coordinates.width}px`;
-    labelElementSelecting.value.style.height = `${coordinates.height}px`;
+
+  if (labelElement && coordinates) {
+    labelElement.setPosition(coordinates);
   }
 };
 
-const handleSetLabel = (target: HTMLElement) => {
-  if (!target) return;
-  isShowLabelElement.value = true;
-  typeLabel.value.isBorderAudio = false;
-  typeLabel.value.borderSection = false;
-  typeLabel.value.isButtonHref = false;
-  if (target.classList.contains('section-wrap')) {
-    typeLabel.value.borderSection = true;
-  } else if (target.classList.contains('button-href')) {
-    typeLabel.value.isButtonHref = true;
-  } else if (target.closest('.audio-image')) {
-    typeLabel.value.isBorderAudio = true;
+const handleShowLabel = (target: HTMLElement, isHover: boolean = false) => {
+  const label = isHover ? typeLabelHover : typeLabel;
+  const isShowLabel = isHover ? isShowLabelHoverElement : isShowLabelElement;
+
+  label.value = { ...initStatusLabel };
+  isShowLabel.value = false;
+
+  if (
+    !target ||
+    (isHover && elementHover.value === target) ||
+    (!isHover && elementSelected.value === target)
+  )
+    return;
+
+  isShowLabel.value = true;
+  if (isHover) {
+    elementHover.value = target;
   }
-  calcPositionLabel(target);
+
+  const classAudio = isHover ? 'image-background' : 'audio-background';
+
+  if (
+    target.classList.contains('section-wrap') ||
+    target.classList.contains('tag-video-src')
+  ) {
+    label.value.borderSection = true;
+  } else if (target.classList.contains('button-href')) {
+    label.value.isButtonHref = true;
+  } else if (target.classList.contains('text-title')) {
+    label.value.isTextTitle = true;
+  } else if (target.classList.contains('section-logo-image')) {
+    label.value.isLogo = true;
+  } else if (target.classList.contains('text-head')) {
+    label.value.isElementRest = true;
+  } else if (target.classList.contains('audio-text-subtitle')) {
+    label.value.isElementRest = true;
+  } else if (target.classList.contains('audio-text-product')) {
+    label.value.isElementRest = true;
+  } else if (target.classList.contains('tag-right-section-image')) {
+    label.value.isImageRightSection = true;
+  } else if (target.classList.contains('text-des')) {
+    label.value.isImageRightSection = true;
+  } else if (target.classList.contains(classAudio)) {
+    label.value.isBorderAudio = true;
+  }
+
+  calcPosition(target, isHover);
+};
+
+const handleSetLabel = (target: HTMLElement) => {
+  handleShowLabel(target, false);
+};
+
+const handleShowLabelHover = (target: HTMLElement) => {
+  handleShowLabel(target, true);
 };
 
 const handleShowOption = (event: any, index: number) => {
@@ -378,8 +424,8 @@ const handleShowOption = (event: any, index: number) => {
     if (event.target?.closest('.card-audio')) {
       const indexAudio = event.target?.closest('.card-audio')?.dataset.index;
       emit('set-index-audio', Number(indexAudio));
-      if (event.target?.classList.contains('audio-image')) {
-        emit('set-class-element-selected', 'audio-image');
+      if (event.target?.classList.contains('audio-background')) {
+        emit('set-class-element-selected', 'audio-background');
         emit('set-key-element-selected', 'audio');
         nextTick(() => {
           handleSetPosition(event.target, getPositionForAudioImage);
@@ -405,10 +451,6 @@ const handleShowOption = (event: any, index: number) => {
   }
 };
 
-// const handleRemoveLabel = () => {
-//   isShowLabelElement.value = false;
-// };
-
 const scrollToSetupAudio = () => {
   props.sections.forEach((sectionItem: SECTION_ITEM, indexSection: number) => {
     if (sectionItem.id === 'audio-section') {
@@ -421,7 +463,7 @@ const scrollToSetupAudio = () => {
           const sectionElement = listSectionRef.value?.[indexSection];
           const itemAudioElement = sectionElement
             ?.querySelectorAll('.card-audio')
-            ?.[audioIndex]?.querySelector('.audio-image');
+            ?.[audioIndex]?.querySelector('.audio-background');
 
           sectionElement?.scrollIntoView({
             block: 'end',
@@ -444,12 +486,12 @@ const scrollToSetupAudio = () => {
 
 const initHover = () => {
   const editor = document.getElementById('editor');
-  let defaultBorder = '';
 
   const handleHover = (e: MouseEvent) => {
     if (props.templateSelected?.id) return;
     if (isDisabledEditor.value) return;
     const target = e.target as HTMLElement;
+
     const listItemNotHover = ['.icon-play', '.icon-sound'];
     if (listItemNotHover.some((item) => Boolean(target.closest(item)))) {
       return;
@@ -457,22 +499,13 @@ const initHover = () => {
 
     if (props.templateSelected.value) return;
 
-    defaultBorder = target.style.border;
-
-    if (
-      editor &&
-      target !== editor &&
-      editor.contains(target) &&
-      target !== elementSelected.value
-    ) {
-      target.style.border = '2px solid #1EDD00';
+    if (editor && target !== editor && editor.contains(target)) {
+      handleShowLabelHover(target);
     }
   };
 
-  const handleOut = (e: MouseEvent) => {
-    if (isDisabledEditor.value) return;
-    const target = e.target as HTMLElement;
-    target.style.border = defaultBorder;
+  const handleOut = () => {
+    isShowLabelHoverElement.value = false;
   };
 
   editor?.addEventListener('mouseover', handleHover);
@@ -480,7 +513,7 @@ const initHover = () => {
 };
 
 defineExpose({
-  calcPositionLabel,
+  calcPosition,
   scrollToSetupAudio,
 });
 onMounted(initHover);
@@ -568,60 +601,7 @@ onMounted(initHover);
       }
     }
   }
-  .label-element-selecting {
-    position: fixed;
-    z-index: 30;
-    pointer-events: none;
-    &.button-href {
-      border: 2px solid #1edd00;
-    }
-    &.border-section {
-      border: 2px solid $brand-magenta-400-main;
-    }
-    .border-audio {
-      width: 100%;
-      margin-top: -20px;
-      height: calc(100% + 20px);
-      background-image: url(@/assets/images/border-audio.svg);
-      background-position: center;
-      background-size: cover;
-      background-repeat: no-repeat;
-      .wrap-label-audio {
-        position: absolute;
-        transform: translateY(-100%);
-        top: 0;
-        display: flex;
-        align-items: center;
-        gap: 2px;
-        .text-label-audio {
-          background-color: $brand-green-200-main;
-          padding: 1px 6px;
-        }
-        .audio-box {
-          padding: 1px 6px;
-          display: flex;
-          align-items: center;
-          gap: 4px;
-          background: linear-gradient(66deg, #0078d8 15.31%, #ff2cf0 84.69%);
-        }
-      }
-    }
-    .text-label,
-    .text-label-section {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      background-color: $brand-green-200-main;
-      padding: 1px 6px;
-      position: absolute;
-      transform: translate(-2px, -100%);
-    }
-    .text-label-section {
-      background-color: $brand-magenta-400-main;
-      right: 0;
-      transform: translate(2px, -100%);
-    }
-  }
+
   :deep(.selected) {
     outline: 2px solid rgba(30, 221, 0, 1);
   }
