@@ -11,7 +11,7 @@
         checkVersionAndUpdate({ keyAction }, ACTION_LIST.SWITCH_RWD)
     "
     @handle-play="checkVersionAndUpdate({}, ACTION_LIST.PREVIEW)"
-    @handle-release="handleCheckConditionPublish"
+    @handle-release="handlePublish"
     @handle-store-changes="checkVersionAndUpdate({}, ACTION_LIST.SAVE)"
     @click-sidebar="
       (keyAction) =>
@@ -94,7 +94,7 @@
     :is-show="isShowModal.confirmSave"
     @close="isShowModal.confirmSave = false"
     @handle-leave="handleLeave"
-    @handle-save-draft="handleSaveDraft"
+    @handle-save-draft="checkVersionAndUpdate({}, ACTION_LIST.BACK)"
   />
   <editor-popup-confirm-replace-content
     :is-show="isShowModal.confirmReplace"
@@ -256,44 +256,53 @@ const handleSaveTemplate = async (
     toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
 };
 
-const handleCheckConditionPublish = async () => {
-  errCode.eventEnglishName = '';
-  const isFinishSetupEvent =
-    project.value?.metaTitle &&
-    project.value?.ogTitle &&
-    project.value?.eventEnglishName &&
-    project.value.startTime &&
-    project.value.endTime;
-  const isFinishedSetupAudio = editorRef.value.checkIsFinishedSetupAudio();
+const handlePublish = async () => {
+  const isLatestVersion = await checkIsLatestVersion();
+  if (!isLatestVersion) {
+    isShowModal.confirmReplace = true;
+  } else {
+    errCode.eventEnglishName = '';
+    const isFinishSetupEvent =
+      project.value?.metaTitle &&
+      project.value?.ogTitle &&
+      project.value?.eventEnglishName &&
+      project.value.startTime &&
+      project.value.endTime;
+    const isFinishedSetupAudio = editorRef.value.checkIsFinishedSetupAudio();
 
-  if (!!isFinishSetupEvent && !!isFinishedSetupAudio && !isExceedLimit.value) {
-    try {
-      await handleSaveTemplate(
-        t('landing-editor-message-progress_saved'),
-        'publish',
-        false
-      );
-      await publishProject(editorID.value);
-      toastMessage(t('landing-project_mgmt-menu-published'));
-      navigateTo(ROUTE.PROJECT_LIST);
-    } catch (error: any) {
-      errCode.eventEnglishName = error?.data?.data?.detail;
-      if (
-        errCode.eventEnglishName &&
-        errCode.eventEnglishName === 'LD_PROJECT_URL_DUPLICATED'
-      ) {
-        errCode.eventEnglishName = t(
-          'landing-error-action-project_duplicate_name'
+    if (
+      !!isFinishSetupEvent &&
+      !!isFinishedSetupAudio &&
+      !isExceedLimit.value
+    ) {
+      try {
+        await handleSaveTemplate(
+          t('landing-editor-message-progress_saved'),
+          'publish',
+          false
         );
-        isOpenReminderPU.value = true;
+        await publishProject(editorID.value);
+        toastMessage(t('landing-project_mgmt-menu-published'));
+        navigateTo(ROUTE.PROJECT_LIST);
+      } catch (error: any) {
+        errCode.eventEnglishName = error?.data?.data?.detail;
+        if (
+          errCode.eventEnglishName &&
+          errCode.eventEnglishName === 'LD_PROJECT_URL_DUPLICATED'
+        ) {
+          errCode.eventEnglishName = t(
+            'landing-error-action-project_duplicate_name'
+          );
+          isOpenReminderPU.value = true;
+        }
       }
+    } else if (isExceedLimit.value) {
+      isOpenReachLimitNoti.value = true;
+    } else if (!isFinishSetupEvent) {
+      isOpenReminderPU.value = true;
+    } else if (!isFinishedSetupAudio) {
+      editorRef.value?.scrollToSetupAudio();
     }
-  } else if (isExceedLimit.value) {
-    isOpenReachLimitNoti.value = true;
-  } else if (!isFinishSetupEvent) {
-    isOpenReminderPU.value = true;
-  } else if (!isFinishedSetupAudio) {
-    editorRef.value?.scrollToSetupAudio();
   }
 };
 
@@ -318,11 +327,18 @@ const handleClickSideBar = (keyAction: string) => {
     listTemplateCurrent.value = TEMPLATES_AUDIO;
   }
 };
+
+const handleSaveDraft = async () => {
+  isShowModal.confirmSave = false;
+  await handleSaveTemplate(t('landing-editor-message-progress_saved'));
+  navigateTo(ROUTE.PROJECT_LIST);
+};
 const ACTION_LIST = {
   SAVE: 'save',
   SHOW_SECTION: 'show-section',
   SWITCH_RWD: 'switch-RWD',
   PREVIEW: 'preview',
+  BACK: 'back',
 };
 const listAction = {
   [ACTION_LIST.SAVE]: handleSaveTemplate,
@@ -330,6 +346,7 @@ const listAction = {
     handleClickSideBar(keyAction),
   [ACTION_LIST.SWITCH_RWD]: (keyAction: string) => SwitchToRWD(keyAction),
   [ACTION_LIST.PREVIEW]: handlePreview,
+  [ACTION_LIST.BACK]: handleSaveDraft,
 };
 const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
   configVersion.value = {
@@ -374,11 +391,6 @@ const handleLeave = () => {
   isShowModal.confirmSave = false;
 };
 
-const handleSaveDraft = async () => {
-  isShowModal.confirmSave = false;
-  await handleSaveTemplate(t('landing-editor-message-progress_saved'));
-  navigateTo(ROUTE.PROJECT_LIST);
-};
 const handleBack = () => {
   const isSectionDirty = editorRef.value.checkChanges();
   if (isSectionDirty) {
