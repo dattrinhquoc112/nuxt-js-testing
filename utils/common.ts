@@ -78,16 +78,11 @@ export const getFileName = (url: string): string[] => {
 };
 
 export const checkReachLimit = (
-  materialList: MATERIAL_ITEM[],
+  currentSize: number,
   limit: number,
   currentFileSize: number,
   threshHold: number
 ): Boolean => {
-  const totalListMaterial = materialList.reduce(
-    (prevItem, currentItem: MATERIAL_ITEM) =>
-      prevItem + (convertToKB(`${currentItem.fileSize}B`) ?? 0),
-    0
-  );
-  const totalMaterial = totalListMaterial + currentFileSize;
+  const totalMaterial = currentSize + currentFileSize;
   return totalMaterial >= limit * threshHold;
 };

@@ -202,7 +202,6 @@
     <popup-edit-project
       v-if="modal.show"
       :show="modal.show"
-      :title="modal.title"
       :value="model.project?.name"
       @close="modal.close"
       @edit="modal.confirm"
@@ -259,13 +258,7 @@ const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 const { getStatus, getImage } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
-const {
-  metricInfo,
-  modalMetric,
-  getTenantMetric,
-  handleModal,
-  checkReachLimit,
-} = useMetric();
+const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();
 
 const refetchMetric = inject(PROVIDE.FETCH_METRIC) as () => void;
 
