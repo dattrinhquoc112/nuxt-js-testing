@@ -64,7 +64,7 @@ export default function useSDKTracking(sdkInfo: {
         },
         clickInfo: {
           sec: 'ai',
-          type: 'audio_tta',
+          type: 'voiceclone_tts',
           audio_id: audioId,
         },
       })
