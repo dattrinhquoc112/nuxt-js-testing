@@ -240,20 +240,24 @@ const handleSaveTemplate = async (
   loading: any = 'updateContent',
   showToast = true
 ) => {
-  setLoading(loading, true);
-  disableUndoRedo.value = true;
-  await editorRef.value.handleSaveTemplate();
-  const file = await handleGetThumbnailSnapshot();
-  const fileUri = file?.fileUri;
-  if (fileUri) {
-    await editProject(editorID.value, { thumbnail: fileUri });
+  try {
+    setLoading(loading, true);
+    disableUndoRedo.value = true;
+    await editorRef.value.handleSaveTemplate();
+    const file = await handleGetThumbnailSnapshot();
+    const fileUri = file?.fileUri;
+    if (fileUri) {
+      await editProject(editorID.value, { thumbnail: fileUri });
+    }
+    await editorRef.value.handleChangeHistoryWhenSaveTemplate();
+    isShowModal.confirmReplace = false;
+    disableUndoRedo.value = false;
+  } catch (error) {
+  } finally {
+    setLoading(loading, false);
+    showToast &&
+      toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
   }
-  await editorRef.value.handleChangeHistoryWhenSaveTemplate();
-  disableUndoRedo.value = false;
-  setLoading(loading, false);
-  isShowModal.confirmReplace = false;
-  showToast &&
-    toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
 };
 
 const handlePublish = async () => {

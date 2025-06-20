@@ -92,7 +92,9 @@
       v-if="isShowPopup.audioSetting"
       :isShow="isShowPopup.audioSetting"
       :positionControlCurrent="positionControlCurrent"
+      :isExceedLimit
       v-model="objectSelecting"
+      @handle-show-pu-limit="$emit('handleExceedLimit')"
       @add-material="addMaterialAudio"
       @remove-material="removeMaterialAudio"
       @close="closePopupSettingAudio"
