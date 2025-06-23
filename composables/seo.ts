@@ -21,7 +21,10 @@ export default function useSeo() {
     }
 
     if (seo.ogImageUri) {
-      metaTags.push({ property: 'og:image', content: seo.ogImageUri });
+      metaTags.push({
+        property: 'og:image',
+        content: getImage(seo.ogImageUri),
+      });
     }
 
     useHead({
