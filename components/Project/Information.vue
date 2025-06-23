@@ -79,7 +79,6 @@
   <popup-edit-project
     v-if="modal.show"
     :show="modal.show"
-    :title="modal.title"
     :value="project?.name"
     @close="modal.close"
     @edit="modal.confirm"
