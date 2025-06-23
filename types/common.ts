@@ -52,3 +52,12 @@ export interface IPermission {
   isAllow?: boolean;
   isUser?: boolean;
 }
+export interface ILabelElement {
+  isButtonHref: boolean;
+  isBorderAudio: boolean;
+  isTextTitle: boolean;
+  borderSection: boolean;
+  isLogo: boolean;
+  isImageRightSection: boolean;
+  isElementRest: boolean;
+}
