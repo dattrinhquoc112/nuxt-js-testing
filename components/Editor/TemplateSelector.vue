@@ -122,7 +122,7 @@ const { PERMISSION } = useCheckPermission();
 const handleClosePopupTemplate = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
   if (target.closest('tool-tip-open-template')) return;
-  emit('close');
+  editorStore.setActiveSideBar('');
 };
 const onHandleBack = () => {
   editorStore.setActiveSideBar(SIDE_BAR_ACTION.CLICKED_AI_TOOLS_TUTORIAL);

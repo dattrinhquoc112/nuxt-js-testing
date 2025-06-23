@@ -1,5 +1,5 @@
 <template>
-  <SideBarItemContainer>
+  <SideBarItemContainer v-click-outside="handleCloseTooltip">
     <template #title>
       <common-close-container
         @handle-close="handleCloseTooltip"
