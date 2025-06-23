@@ -186,6 +186,7 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+ 
 });
 
 const emit = defineEmits([
@@ -450,7 +451,7 @@ const handleChangeText = (event: MouseEvent) => {
   element.textContent = '';
   element.appendChild(textarea);
   textarea.focus();
-  editorListRef.value?.calcPositionLabel();
+  editorListRef.value?.calcPosition();
 
   textarea.addEventListener('blur', () => {
     const obj = objectSelecting.value as TEXT_ITEM;
@@ -502,7 +503,8 @@ const handleChangeLink = (link: string) => {
   obj.link = link;
 };
 const calcPositionControl = (distance: number) => {
-  editorListRef.value?.calcPositionLabel();
+  editorListRef.value?.calcPosition();
+  editorListRef.value?.calcPosition(null, true);
   handleSetPositionControl({
     pageX: positionControlCurrent.value.pageX,
     pageY: positionControlCurrent.value.pageY - distance,
