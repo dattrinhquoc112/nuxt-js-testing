@@ -130,9 +130,6 @@ html {
   top: 0;
 }
 .section-wrap {
-  width: 100%;
-  padding-top: calc(600 / 1376 * 100%);
-  position: relative;
   .video-background {
     width: 100%;
     position: absolute;
@@ -198,8 +195,11 @@ html {
   }
   &.section-one {
     aspect-ratio: 172 / 75;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     .content--destop {
-      position: absolute;
+      margin: 40px;
       z-index: 10;
       .button-href {
         cursor: pointer;
@@ -209,9 +209,6 @@ html {
         width: fit-content;
       }
       &.center {
-        left: 50%;
-        top: 50%;
-        transform: translate(-50%, -50%);
         .text-des,
         .text-head {
           margin-bottom: 8px;
@@ -256,7 +253,7 @@ html {
         padding: 40px;
         .text-des,
         .text-head {
-          margin-bottom: 8px;
+          margin-bottom: 24px;
         }
         .text-title {
           overflow: wrap;
@@ -380,7 +377,6 @@ html {
         flex-direction: column;
         justify-content: center;
         & .text-head {
-          margin: 40px 40px 0px 40px;
         }
         & .text-title {
           padding: 0px 40px;
