@@ -44,8 +44,8 @@
       class="editor__content"
       :class="{
         'editor__content--mobile': RWDMode === RWD_MODE.MOBILE,
-        height: `calc(100vh - 64px - ${isOpenAlert ? 70 : 0}px)`,
       }"
+      :style="`height: calc(100vh - 64px - ${isOpenAlert ? 70 : 0}px);`"
     >
       <editor
         ref="editorRef"
