@@ -13,7 +13,7 @@
     "
     @handle-play="checkVersionAndUpdate({}, ACTION_LIST.PREVIEW)"
     @handle-release="handlePublish"
-    @handle-store-changes="checkVersionAndUpdate({}, ACTION_LIST.SAVE)"
+    @handle-store-changes="handleSaveChanges"
     @click-sidebar="
       (keyAction) =>
         checkVersionAndUpdate({ keyAction }, ACTION_LIST.SHOW_SECTION)
@@ -108,12 +108,7 @@
   <editor-popup-confirm-replace-content
     :is-show="isShowModal.confirmReplace"
     @close="isShowModal.confirmReplace = false"
-    @handle-save-current="
-      async () => {
-        await handleSaveTemplate();
-        handleBeforeAction();
-      }
-    "
+    @handle-save-current="handleSaveCurrentTemplate"
     @handle-update-new="handleUpdateToNewVersion"
   />
   <popup-reach-limit-noti v-model="isOpenReachLimitNoti" />
@@ -275,7 +270,14 @@ const handleSaveTemplate = async (
       toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
   }
 };
-
+const handleSaveChanges = async () => {
+  const isLatestVersion = await checkIsLatestVersion();
+  if (!isLatestVersion) {
+    isShowModal.confirmReplace = true;
+  } else {
+    handleSaveTemplate();
+  }
+};
 const handlePublish = async () => {
   const isLatestVersion = await checkIsLatestVersion();
   if (!isLatestVersion) {
@@ -357,7 +359,6 @@ const ACTION_LIST = {
   BACK: 'back',
 };
 const listAction = {
-  [ACTION_LIST.SAVE]: handleSaveTemplate,
   [ACTION_LIST.SWITCH_RWD]: (keyAction: string) => SwitchToRWD(keyAction),
   [ACTION_LIST.PREVIEW]: handlePreview,
   [ACTION_LIST.BACK]: handleSaveDraft,
@@ -391,11 +392,18 @@ const handleBeforeAction = () => {
     isInSideBarAction ? configVersion.value.keyAction : ''
   );
 };
+
+const handleSaveCurrentTemplate = async () => {
+  isShowModal.confirmReplace = false;
+  await handleSaveTemplate();
+  handleBeforeAction();
+};
+
 const handleUpdateToNewVersion = async () => {
+  isShowModal.confirmReplace = false;
   editorStore.setLoading('updateContent', true);
   await editorRef.value.fetchContentProject();
   editorStore.setLoading('updateContent', false);
-  isShowModal.confirmReplace = false;
   toastMessage(t('landing-editor-message-version_updated'));
   handleBeforeAction();
 };
