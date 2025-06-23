@@ -4,11 +4,11 @@
   >
     <editor-template-selector
       v-if="
-        ((isShowListSection === SIDE_BAR_ACTION.CLICKED_SESSION ||
-          (isShowListSection === SIDE_BAR_ACTION.CLICKED_AI_TOOLS &&
-            showSelectAITools)) &&
-          activeSidebarButton === SIDEBAR_BUTTONS[0]) ||
-        activeSidebarButton === SIDEBAR_BUTTONS[1]
+        isShowListSection === SIDE_BAR_ACTION.CLICKED_SESSION ||
+        (isShowListSection === SIDE_BAR_ACTION.CLICKED_AI_TOOLS &&
+          showSelectAITools) ||
+        (activeSidebarButton === SIDEBAR_BUTTONS[0] && showSelectAITools) ||
+        (activeSidebarButton === SIDEBAR_BUTTONS[1] && showSelectAITools)
       "
       :type="isShowListSection"
       :templateSelected="templateSelected"
@@ -186,7 +186,6 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
- 
 });
 
 const emit = defineEmits([
@@ -286,6 +285,14 @@ watch(
     }
   },
   { immediate: true }
+);
+
+watch(
+  () => props.isShowListSection,
+  (newVal) => {
+    modelValue.value = true;
+    showSelectAITools.value = false;
+  }
 );
 const handleChangeHistoryWhenSaveTemplate = () => {
   history.value = [];
