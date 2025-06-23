@@ -7,6 +7,15 @@ export default function useSeo() {
   const eventEnglishName = route.params.eventEnglishName as string;
   const { setSessionPublic, setTenantID, setIsPublish } = useEventStore();
 
+  function htmlEncode(str: string) {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+  }
+
   function applySeoTags(seo: any) {
     const metaTags = [
       { name: 'description', content: seo.metaDescription || '' },
@@ -17,7 +26,10 @@ export default function useSeo() {
     ];
 
     if (seo.metaKeyword) {
-      metaTags.push({ name: 'keywords', content: seo.metaKeyword });
+      metaTags.push({
+        name: 'keywords',
+        content: htmlEncode(seo.metaKeyword),
+      });
     }
 
     if (seo.ogImageUri) {
