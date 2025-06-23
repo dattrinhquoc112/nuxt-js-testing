@@ -86,3 +86,22 @@ export const checkReachLimit = (
   const totalMaterial = currentSize + currentFileSize;
   return totalMaterial >= limit * threshHold;
 };
+
+export function getFileURL(path: string) {
+  return `/client/api/call?endpoint=/api/v1${path}`;
+}
+export const getImage = (uri?: string) => {
+  if (!uri) return '';
+
+  if (uri.startsWith('blob:')) {
+    return uri;
+  }
+  const match = uri?.match(/^gs:\/\/[^/]+\/(.+)$/);
+  const path = match ? match[1] : '';
+  if (!path) {
+    return uri;
+  }
+  const endpoint = `/general/media?fileKey=${path}`;
+  const url = getFileURL(endpoint);
+  return url;
+};
