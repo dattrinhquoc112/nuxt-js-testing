@@ -65,7 +65,7 @@ const editorStore = useEditorStore();
 const isShowModal = ref(false);
 const openTutorialModal = async () => {
   const res = await getVoiceModelList();
-  if (res.data.length === 0) {
+  if (res.data.length > 0) {
     editorStore.setActiveSideBar(SIDE_BAR_ACTION.CLICKED_AI_TOOLS_LIST);
   } else {
     isShowModal.value = true;
