@@ -10,17 +10,14 @@
     >
       <vi-button
         :class="{
-          active: activeSidebarButton === SIDEBAR_BUTTONS[0],
+          active: activeSideBar === SIDE_BAR_ACTION.CLICKED_SESSION,
         }"
         no-text
         icon-before="ic_section"
         type="standard-subtle"
         size="extra-large"
         width="fit-content"
-        @click="
-          () =>
-            handleAction(SIDEBAR_BUTTONS[0], SIDE_BAR_ACTION.CLICKED_SESSION)
-        "
+        @click="() => handleAction(SIDE_BAR_ACTION.CLICKED_SESSION)"
       >
       </vi-button>
       <template #content>
@@ -45,15 +42,13 @@
           no-text
           icon-before="ic_ai_section"
           :class="{
-            active: activeSidebarButton === SIDEBAR_BUTTONS[1],
+            active:
+              activeSideBar === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_TUTORIAL ||
+              activeSideBar === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_LIST,
           }"
           @click="
             () => {
-              activeSidebarButton = SIDEBAR_BUTTONS[1];
-              handleAction(
-                SIDEBAR_BUTTONS[1],
-                SIDE_BAR_ACTION.CLICKED_AI_TOOLS
-              );
+              handleAction(SIDE_BAR_ACTION.CLICKED_AI_TOOLS_TUTORIAL);
             }
           "
         />
@@ -69,63 +64,41 @@
         no-text
         @click="
           () => {
-            activeSidebarButton = SIDEBAR_BUTTONS[2];
-            isOpenMaterialManagement = true;
-            handleAction(SIDEBAR_BUTTONS[2], SIDE_BAR_ACTION.CLICKED_CAPACITY);
+            handleAction(SIDE_BAR_ACTION.CLICKED_CAPACITY);
           }
         "
         class="mt-auto"
         :class="{
-          active: activeSidebarButton === SIDEBAR_BUTTONS[2],
+          active: activeSideBar === SIDE_BAR_ACTION.CLICKED_CAPACITY,
         }"
       >
       </vi-button>
     </div>
   </div>
-  <material-management v-model="isOpenMaterialManagement" />
+  <material-management
+    v-model="isOpenMaterialManagement"
+    v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_CAPACITY"
+  />
 </template>
 <script setup lang="ts">
 import { SIDE_BAR_ACTION } from '~/constants/common';
+import { useEditorStore } from '~/stores/editor';
+import { storeToRefs } from 'pinia';
 import ToolTipSection from '../../ToolTipSection/ToolTipSection.vue';
 
 const isOpenMaterialManagement = ref(false);
-const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 
-const activeSidebarButton = inject<Ref<String>>('activeSidebarButton');
 const emit = defineEmits(['click-sidebar']);
-
-const props = defineProps({
+const editorStore = useEditorStore();
+const { activeSideBar } = storeToRefs(editorStore);
+defineProps({
   isShowListSection: {
     type: String,
     default: '',
   },
 });
-watch(
-  () => activeSidebarButton?.value,
-  (newVal) => {
-    if (newVal && newVal === SIDEBAR_BUTTONS[2]) {
-      isOpenMaterialManagement.value = true;
-    }
-  }
-);
-watch(isOpenMaterialManagement, (newVal) => {
-  if (!newVal && activeSidebarButton) {
-    activeSidebarButton.value = '';
-  }
-});
-watch(
-  () => props.isShowListSection,
-  (newVal) => {
-    if (newVal === '' && activeSidebarButton) {
-      activeSidebarButton.value = '';
-    }
-  }
-);
 
-const handleAction = (keyIcon: string, keyAction: any) => {
-  if (activeSidebarButton) {
-    activeSidebarButton.value = keyIcon;
-  }
+const handleAction = (keyAction: any) => {
   emit('click-sidebar', keyAction);
 };
 </script>

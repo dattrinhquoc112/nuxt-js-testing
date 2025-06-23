@@ -64,7 +64,15 @@
       </div>
       <div class="box-button">
         <vi-button
-          @click="inputFile?.click()"
+          @click="
+            () => {
+              if (isExceedLimit) {
+                emit('handle-show-pu-limit');
+                return;
+              }
+              inputFile?.click();
+            }
+          "
           type="standard-default"
           size="small"
           >{{ $t('landing-editor-button-media_upload') }}</vi-button
@@ -88,6 +96,7 @@ const emit = defineEmits([
   'change-image',
   'change-video',
   'reset-file',
+  'handle-show-pu-limit',
 ]);
 
 const props = defineProps({
@@ -104,6 +113,10 @@ const props = defineProps({
     default: false,
   },
   isAudio: {
+    type: Boolean,
+    default: false,
+  },
+  isExceedLimit: {
     type: Boolean,
     default: false,
   },
