@@ -1,5 +1,5 @@
 <template>
-  <SideBarItemContainer v-show="modelValue">
+  <SideBarItemContainer>
     <template #title>
       <common-close-container
         @handle-close="handleCloseTooltip"
@@ -57,24 +57,16 @@
 </template>
 <script setup lang="ts">
 import { useEditorStore } from '~/stores/editor';
+import { SIDE_BAR_ACTION } from '~/constants/common';
 import SideBarItemContainer from '../Common/SideBarItemContainer.vue';
 
-defineProps({
-  modelValue: Boolean,
-});
-const emit = defineEmits<{
-  openTutorialModal: [];
-  handleCloseTooltip: [];
-  handleOpenAITools: [];
-  'update:modelValue': [e: Boolean];
-}>();
 const { getVoiceModelList } = useEditorStore();
+const editorStore = useEditorStore();
 const isShowModal = ref(false);
 const openTutorialModal = async () => {
   const res = await getVoiceModelList();
-  if (res.data.length > 0) {
-    emit('handleOpenAITools');
-    emit('update:modelValue', false);
+  if (res.data.length === 0) {
+    editorStore.setActiveSideBar(SIDE_BAR_ACTION.CLICKED_AI_TOOLS_LIST);
   } else {
     isShowModal.value = true;
   }
@@ -84,10 +76,9 @@ const handleNavigatePage = () => {
   const audioListURL = `${audioDomain}/project-list`;
   openLink(audioListURL);
   isShowModal.value = false;
-  emit('handleCloseTooltip');
 };
 const handleCloseTooltip = () => {
-  emit('handleCloseTooltip');
+  editorStore.setActiveSideBar('');
 };
 </script>
 <style scoped lang="scss">

@@ -7,8 +7,9 @@
     :disableUndoRedo
     @handle-redo="handleRedo"
     @handle-switch-layout="
-      (keyAction) =>
-        checkVersionAndUpdate({ keyAction }, ACTION_LIST.SWITCH_RWD)
+      (keyAction) => {
+        checkVersionAndUpdate({ keyAction }, ACTION_LIST.SWITCH_RWD);
+      }
     "
     @handle-play="checkVersionAndUpdate({}, ACTION_LIST.PREVIEW)"
     @handle-release="handlePublish"
@@ -104,7 +105,12 @@
   <editor-popup-confirm-replace-content
     :is-show="isShowModal.confirmReplace"
     @close="isShowModal.confirmReplace = false"
-    @handle-save-current="handleSaveTemplate"
+    @handle-save-current="
+      async () => {
+        await handleSaveTemplate();
+        handleBeforeAction();
+      }
+    "
     @handle-update-new="handleUpdateToNewVersion"
   />
   <popup-reach-limit-noti v-model="isOpenReachLimitNoti" />
@@ -112,7 +118,7 @@
 
 <script setup lang="ts">
 import LayoutEditor from '@/components/Editor/LayoutEditor/LayoutEditor.vue';
-import { TEMPLATES_SECTION, TEMPLATES_AUDIO } from '@/types/templates';
+import { TEMPLATES_SECTION } from '@/types/templates';
 import { WEB_EDITOR_PREVIEW } from '@/constants/storage';
 import { ROUTE } from '@/constants/route';
 import { SIDE_BAR_ACTION, RWD_MODE } from '@/constants/common';
@@ -121,6 +127,7 @@ import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMaterials from '~/composables/materials';
+import { storeToRefs } from 'pinia';
 
 const disableUndoRedo = ref(false);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
@@ -154,7 +161,9 @@ const isOpenSettingAudioPU = ref(false);
 const errCode = reactive({
   eventEnglishName: '',
 });
-const { setLoading } = useEditorStore();
+
+const editorStore = useEditorStore();
+
 const { checkIsLatestVersion } = useProjectStore();
 const { t } = useI18n();
 const isShowListSection = ref('');
@@ -247,7 +256,7 @@ const handleSaveTemplate = async (
   showToast = true
 ) => {
   try {
-    setLoading(loading, true);
+    editorStore.setLoading(loading, true);
     disableUndoRedo.value = true;
     await editorRef.value.handleSaveTemplate();
     const file = await handleGetThumbnailSnapshot();
@@ -260,7 +269,7 @@ const handleSaveTemplate = async (
     disableUndoRedo.value = false;
   } catch (error) {
   } finally {
-    setLoading(loading, false);
+    editorStore.setLoading(loading, false);
     showToast &&
       toastMessage(messageSuccess || t('landing-editor-message-version_saved'));
   }
@@ -333,21 +342,12 @@ const handleEditEditor = async (name: string) => {
   }
 };
 
-const handleClickSideBar = (keyAction: string) => {
-  isShowListSection.value = keyAction;
-  if (keyAction === SIDE_BAR_ACTION.CLICKED_SESSION) {
-    listTemplateCurrent.value = TEMPLATES_SECTION;
-  }
-  if (keyAction === SIDE_BAR_ACTION.CLICKED_AI_TOOLS) {
-    listTemplateCurrent.value = TEMPLATES_AUDIO;
-  }
-};
-
 const handleSaveDraft = async () => {
   isShowModal.confirmSave = false;
   await handleSaveTemplate(t('landing-editor-message-progress_saved'));
   navigateTo(ROUTE.PROJECT_LIST);
 };
+
 const ACTION_LIST = {
   SAVE: 'save',
   SHOW_SECTION: 'show-section',
@@ -357,8 +357,6 @@ const ACTION_LIST = {
 };
 const listAction = {
   [ACTION_LIST.SAVE]: handleSaveTemplate,
-  [ACTION_LIST.SHOW_SECTION]: (keyAction: string) =>
-    handleClickSideBar(keyAction),
   [ACTION_LIST.SWITCH_RWD]: (keyAction: string) => SwitchToRWD(keyAction),
   [ACTION_LIST.PREVIEW]: handlePreview,
   [ACTION_LIST.BACK]: handleSaveDraft,
@@ -368,25 +366,37 @@ const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
     keyAction,
     type,
   };
+
   try {
     const isLatestVersion = await checkIsLatestVersion();
     if (!isLatestVersion) {
       isShowModal.confirmReplace = true;
     } else {
       listAction[type]?.(keyAction);
+      const isInSideBarAction =
+        Object.values(SIDE_BAR_ACTION).includes(keyAction);
+      editorStore.setActiveSideBar(isInSideBarAction ? keyAction : '');
     }
   } catch (error) {
     return Promise.reject(error);
   }
 };
-
+const handleBeforeAction = () => {
+  listAction[configVersion.value.type]?.(configVersion.value.keyAction);
+  const isInSideBarAction = Object.values(SIDE_BAR_ACTION).includes(
+    configVersion.value.keyAction
+  );
+  editorStore.setActiveSideBar(
+    isInSideBarAction ? configVersion.value.keyAction : ''
+  );
+};
 const handleUpdateToNewVersion = async () => {
-  setLoading('updateContent', true);
+  editorStore.setLoading('updateContent', true);
   await editorRef.value.fetchContentProject();
-  setLoading('updateContent', false);
+  editorStore.setLoading('updateContent', false);
   isShowModal.confirmReplace = false;
   toastMessage(t('landing-editor-message-version_updated'));
-  listAction[configVersion.value.type]?.(configVersion.value.keyAction);
+  handleBeforeAction();
 };
 
 const editorContentElement = computed(() =>

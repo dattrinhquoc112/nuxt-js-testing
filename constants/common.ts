@@ -18,6 +18,8 @@ export const MESSAGE_TYPES = {
 export const SIDE_BAR_ACTION = {
   CLICKED_SESSION: 'clicked_session',
   CLICKED_AI_TOOLS: 'clicked_ai_tools',
+  CLICKED_AI_TOOLS_TUTORIAL: 'clicked_ai_tools_tutorial',
+  CLICKED_AI_TOOLS_LIST: 'clicked_ai_tools_list',
   CLICKED_CAPACITY: 'clicked_capacity',
 };
 export type MessageType = (typeof MESSAGE_TYPES)[keyof typeof MESSAGE_TYPES];
