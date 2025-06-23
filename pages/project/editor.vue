@@ -90,6 +90,11 @@
       }
     "
   />
+  <EditorReminderPU
+    v-model:model="isOpenSettingAudioPU"
+    @handle-click="handleScrollToSettingAudio"
+  />
+
   <editor-popup-confirm-save
     :is-show="isShowModal.confirmSave"
     @close="isShowModal.confirmSave = false"
@@ -145,6 +150,7 @@ definePageMeta({
 });
 const RWDMode = ref(RWD_MODE.DESKTOP);
 const isOpenReminderPU = ref(false);
+const isOpenSettingAudioPU = ref(false);
 const errCode = reactive({
   eventEnglishName: '',
 });
@@ -304,9 +310,14 @@ const handlePublish = async () => {
     } else if (!isFinishSetupEvent) {
       isOpenReminderPU.value = true;
     } else if (!isFinishedSetupAudio) {
-      editorRef.value?.scrollToSetupAudio();
+      isOpenSettingAudioPU.value = true;
     }
   }
+};
+
+const handleScrollToSettingAudio = () => {
+  isOpenSettingAudioPU.value = false;
+  editorRef.value?.scrollToSetupAudio();
 };
 
 const handleEditEditor = async (name: string) => {
