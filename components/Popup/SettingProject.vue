@@ -69,6 +69,7 @@
                   required
                   :allowed-regex="/^[a-zA-Z0-9\-._~ ]+$/"
                   @blur="onBlurEventEnglishName"
+                  @change="onChangeEventEnglishName"
                   width="100%"
                   :error="
                     errorField('eventEnglishName', errorMsg) ||
@@ -648,6 +649,10 @@ const onBlurEventEnglishName = () => {
 
 const onChangeKeyWord = () => {
   model.metaKeyword = handleKeyword(model.metaKeyword);
+};
+
+const onChangeEventEnglishName = () => {
+  serverErrorMsg.eventEnglishName = '';
 };
 
 const allowedKeyRegex = /^[\p{L}\p{N} .'\[\]\^&+/_$-]$/u;
