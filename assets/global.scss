@@ -130,6 +130,7 @@ html {
   top: 0;
 }
 .section-wrap {
+  position: relative;
   .video-background {
     width: 100%;
     position: absolute;
@@ -199,6 +200,7 @@ html {
     justify-content: center;
     align-items: center;
     .content--destop {
+      position: absolute;
       margin: 40px;
       z-index: 10;
       .button-href {
