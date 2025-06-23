@@ -162,6 +162,7 @@
                     :error="errorField('metaKeyword', errorMsg)"
                     :hint="errorMsg"
                     :max="150"
+                    :allowed-regex="allowedKeyRegex"
                     @blur="onChangeKeyWord"
                     @keydown="onMetaKeywordKeydown"
                     is-count
@@ -655,7 +656,7 @@ const onChangeEventEnglishName = () => {
   serverErrorMsg.eventEnglishName = '';
 };
 
-const allowedKeyRegex = /^[\p{L}\p{N} .'\[\]\^&+/_$-]$/u;
+const allowedKeyRegex = /^[a-zA-Z0-9 ,.'&+/_-]+$/;
 
 const onMetaKeywordKeydown = (e: KeyboardEvent) => {
   if (
