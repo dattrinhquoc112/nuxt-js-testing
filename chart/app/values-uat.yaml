@@ -1,0 +1,39 @@
+replicaCount: 1
+
+image:
+  repository: asia-east1-docker.pkg.dev/data-alice-prod-001/prod-alice-gar/aiaas-platform-backend-v2
+  pullPolicy: IfNotPresent
+
+podSecurityContext:
+  runAsUser: 1001
+
+resources:
+  requests:
+    cpu: 500m
+    memory: 512Mi
+  limits:
+    cpu: 2000m
+    memory: 2Gi
+
+container:
+  ports:
+    containerPort: 3000
+  livenessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    httpGet:
+      path: /health
+      port: http
+  readinessProbe:
+    initialDelaySeconds: 60
+    periodSeconds: 10
+    httpGet:
+      path: /health
+      port: http
+  startupProbe:
+    initialDelaySeconds: 40
+    periodSeconds: 5
+    failureThreshold: 100
+    httpGet:
+      path: /health
+      port: http
