@@ -20,6 +20,7 @@ export default defineNuxtConfig({
       contactLink: process.env.NUXT_PUBLIC_CONTACT_LINK,
       apiLandingHost: process.env.NUXT_PUBLIC_API_LANDING_HOST,
       apiPlatformHost: process.env.NUXT_PUBLIC_API_HOST,
+      platformHost: process.env.VITE_APP_PLATFORM_URL,
     },
   },
 
