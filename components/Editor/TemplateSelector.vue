@@ -5,22 +5,22 @@
         name="ic_section"
         size="24"
         color="#fff"
-        v-if="type === SIDE_BAR_ACTION.CLICKED_SESSION"
+        v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_SESSION"
       ></vi-icon>
 
       <vi-icon
         name="ic_chevron_left"
-        @click="emit('handleBack')"
+        @click="onHandleBack"
         size="24"
         color="#fff"
         class="cursor-pointer"
-        v-if="type === SIDE_BAR_ACTION.CLICKED_AI_TOOLS"
+        v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_LIST"
       ></vi-icon>
 
       <div class="ml-8 mr-auto neutral-white-alpha-90-text">
         <vi-typography type="subtitle-large">
           {{
-            type === SIDE_BAR_ACTION.CLICKED_SESSION
+            activeSideBar === SIDE_BAR_ACTION.CLICKED_SESSION
               ? $t('landing-editor-menu-title_section')
               : $t('landing-editor-section-title_audio_tts')
           }}
@@ -30,13 +30,13 @@
         class="neutral-white-alpha-60-text cursor-pointer"
         name="ic_close"
         size="24"
-        @click="emit('close')"
+        @click="handleClose"
       ></vi-icon>
     </div>
     <div class="neutral-white-alpha-60-text mb-16">
       <vi-typography
         type="subtitle-large"
-        v-if="type === SIDE_BAR_ACTION.CLICKED_SESSION"
+        v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_SESSION"
         >Hero</vi-typography
       >
     </div>
@@ -55,7 +55,7 @@
       <div class="neutral-white-alpha-60-text mb-16">
         <vi-typography
           type="subtitle-large"
-          v-if="type === SIDE_BAR_ACTION.CLICKED_SESSION"
+          v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_SESSION"
           >Gallery / Showcase</vi-typography
         >
       </div>
@@ -75,7 +75,7 @@
       <div class="neutral-white-alpha-60-text mb-16">
         <vi-typography
           type="subtitle-large"
-          v-if="type === SIDE_BAR_ACTION.CLICKED_SESSION"
+          v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_SESSION"
           >Features / Benefits</vi-typography
         >
       </div>
@@ -84,31 +84,51 @@
 </template>
 
 <script lang="ts" setup>
+import { storeToRefs } from 'pinia';
 import useCheckPermission from '~/composables/checkPermission';
 import { SIDE_BAR_ACTION } from '~/constants/common';
+import { useEditorStore } from '~/stores/editor';
+import {
+  TEMPLATES_SECTION,
+  TEMPLATES_AUDIO,
+  type SECTION_ITEM,
+} from '@/types/templates';
 
-const emit = defineEmits(['click-template', 'close', 'handleBack']);
-
+const emit = defineEmits(['click-template', 'close']);
+const editorStore = useEditorStore();
+const { activeSideBar } = storeToRefs(editorStore);
+const listTemplate = ref<SECTION_ITEM[]>([]);
 defineProps({
   templateSelected: {
     type: Object,
     default: () => ({}),
   },
-  listTemplate: {
-    type: Array as PropType<any>,
-    default: () => [],
-  },
-  type: {
-    type: String,
-    default: '',
-  },
 });
+
+watch(
+  activeSideBar,
+  (newVal) => {
+    if (newVal === SIDE_BAR_ACTION.CLICKED_SESSION) {
+      listTemplate.value = TEMPLATES_SECTION;
+    }
+    if (newVal === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_LIST) {
+      listTemplate.value = TEMPLATES_AUDIO;
+    }
+  },
+  { immediate: true }
+);
 const { PERMISSION } = useCheckPermission();
 
 const handleClosePopupTemplate = (event: MouseEvent) => {
   const target = event.target as HTMLElement;
   if (target.closest('tool-tip-open-template')) return;
   emit('close');
+};
+const onHandleBack = () => {
+  editorStore.setActiveSideBar(SIDE_BAR_ACTION.CLICKED_AI_TOOLS_TUTORIAL);
+};
+const handleClose = () => {
+  editorStore.setActiveSideBar('');
 };
 </script>
 
