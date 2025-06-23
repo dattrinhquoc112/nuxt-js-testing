@@ -26,6 +26,7 @@ export default defineNuxtConfig({
       apiPlatformHost: process.env.NUXT_PUBLIC_API_HOST,
       apiAudioHost: process.env.NUXT_PUBLIC_AUDIO_HOST,
       clientAudioHost: process.env.NUXT_PUBLIC_AUDIO_CLIENT,
+      platformHost: process.env.VITE_APP_PLATFORM_URL,
     },
   },
 
