@@ -1,9 +1,7 @@
-import { useUploadStore } from '~/stores/upload';
 import { nanoid } from 'nanoid';
 
 export default function useProjects() {
   const { t } = useI18n();
-  const { getFileURL } = useUploadStore();
 
   const generateSlug = (eventName: string): string => {
     const slug = eventName
@@ -50,26 +48,9 @@ export default function useProjects() {
     return trans[status];
   };
 
-  const getImage = (uri?: string) => {
-    if (!uri) return '';
-
-    if (uri.startsWith('blob:')) {
-      return uri;
-    }
-    const match = uri?.match(/^gs:\/\/[^/]+\/(.+)$/);
-    const path = match ? match[1] : '';
-    if (!path) {
-      return uri;
-    }
-    const endpoint = `/general/media?fileKey=${path}`;
-    const url = getFileURL(endpoint);
-    return url;
-  };
-
   return {
     getProjectUrl,
     getStatus,
-    getImage,
     handleKeyword,
   };
 }

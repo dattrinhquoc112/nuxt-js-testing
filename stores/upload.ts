@@ -33,13 +33,8 @@ export const useUploadStore = defineStore('upload', () => {
     }
   }
 
-  function getFileURL(path: string) {
-    return `/client/api/call?endpoint=/api/v1${path}`;
-  }
-
   return {
     uploadFile,
-    getFileURL,
   };
 });
 

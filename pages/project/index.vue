@@ -255,7 +255,7 @@ const { PERMISSION } = useCheckPermission();
 
 const isOpenReachLimitNoti = ref(false);
 const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
-const { getStatus, getImage } = useProjects();
+const { getStatus } = useProjects();
 const { getProjectList, copyProject, editProject, createProject } =
   useProjectStore();
 const { metricInfo, modalMetric, getTenantMetric, handleModal } = useMetric();

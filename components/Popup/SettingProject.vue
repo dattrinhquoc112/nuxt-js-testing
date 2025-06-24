@@ -587,7 +587,7 @@ const rules = {
   ],
 };
 
-const { getProjectUrl, getImage, handleKeyword } = useProjects();
+const { getProjectUrl, handleKeyword } = useProjects();
 const { editProject } = useProjectStore();
 const { uploadFile } = useUploadStore();
 
