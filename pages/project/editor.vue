@@ -23,22 +23,23 @@
     @handle-edit-info="isShowEditInfoModal = true"
     :project-name="webEditorName"
   >
-    <vi-alert
-      v-if="isOpenAlert"
-      v-model="isOpenAlert"
-      :text-title="$t('landing-common-message-storage_near_limit')"
-      :text-content="
-        $t('landing-common-message-storage_warning', { percent: '75' })
-      "
-      @handle-content-click="
-        () => {
-          isOpenAlert = false;
-          activeSidebarButton = SIDEBAR_BUTTONS[2];
-        }
-      "
-    >
-      <vi-icon name="ic_alert" size="24" color="#fff" />
-    </vi-alert>
+    <div v-if="isOpenAlert" class="alert">
+      <vi-alert
+        v-model="isOpenAlert"
+        :text-title="$t('landing-common-message-storage_near_limit')"
+        :text-content="
+          $t('landing-common-message-storage_warning', { percent: '75' })
+        "
+        @handle-content-click="
+          () => {
+            isOpenAlert = false;
+            activeSidebarButton = SIDEBAR_BUTTONS[2];
+          }
+        "
+      >
+        <vi-icon name="ic_alert" size="24" color="#fff" />
+      </vi-alert>
+    </div>
     <vi-scroll
       id="editor_content"
       class="editor__content"
@@ -125,7 +126,6 @@ import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMaterials from '~/composables/materials';
-import { storeToRefs } from 'pinia';
 
 const disableUndoRedo = ref(false);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
@@ -263,7 +263,6 @@ const handleSaveTemplate = async (
       await editProject(editorID.value, { thumbnail: fileUri });
     }
     await editorRef.value.handleChangeHistoryWhenSaveTemplate();
-    isShowModal.confirmReplace = false;
     disableUndoRedo.value = false;
   } catch (error) {
   } finally {
@@ -277,7 +276,7 @@ const handleSaveChanges = async () => {
   if (!isLatestVersion) {
     isShowModal.confirmReplace = true;
   } else {
-    handleSaveTemplate();
+    await handleSaveTemplate();
   }
 };
 const handlePublish = async () => {
@@ -385,8 +384,8 @@ const checkVersionAndUpdate = async ({ keyAction = '' }, type: string = '') => {
     return Promise.reject(error);
   }
 };
-const handleBeforeAction = () => {
-  listAction[configVersion.value.type]?.(configVersion.value.keyAction);
+const handleBeforeAction = async () => {
+  await listAction[configVersion.value.type]?.(configVersion.value.keyAction);
   const isInSideBarAction = Object.values(SIDE_BAR_ACTION).includes(
     configVersion.value.keyAction
   );
@@ -396,18 +395,18 @@ const handleBeforeAction = () => {
 };
 
 const handleSaveCurrentTemplate = async () => {
-  isShowModal.confirmReplace = false;
   await handleSaveTemplate();
-  handleBeforeAction();
+  await handleBeforeAction();
+  isShowModal.confirmReplace = false;
 };
 
 const handleUpdateToNewVersion = async () => {
-  isShowModal.confirmReplace = false;
   editorStore.setLoading('updateContent', true);
   await editorRef.value.fetchContentProject();
   editorStore.setLoading('updateContent', false);
   toastMessage(t('landing-editor-message-version_updated'));
-  handleBeforeAction();
+  await handleBeforeAction();
+  isShowModal.confirmReplace = false;
 };
 
 const editorContentElement = computed(() =>
@@ -498,5 +497,10 @@ watch(
       width: fit-content;
     }
   }
+}
+.alert {
+  position: relative;
+  z-index: 50;
+  background-color: $neutral-black-alpha-100;
 }
 </style>
