@@ -12,7 +12,7 @@ const description = 'description';
 const ogTitle = 'title og';
 const ogDescription = 'description og';
 const ogImage = getImage(
-  'gs://dev-landing-external-bucket/tenant/1/material/0c20f0dc-5b20-42d1-818e-116097687776.png'
+  'gs://dev-landing-external-bucket/tenant/1/material/66b58a47-6578-429f-ac89-22316e13198f.png'
 );
 console.log(ogImage);
 const ogUrl = window.location.href;
