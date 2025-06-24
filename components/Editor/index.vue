@@ -273,6 +273,14 @@ watch(
   },
   { immediate: true }
 );
+
+watch(
+  () => props.isShowListSection,
+  (newVal) => {
+    modelValue.value = true;
+    showSelectAITools.value = false;
+  }
+);
 const handleChangeHistoryWhenSaveTemplate = () => {
   history.value = [];
   currentIndex.value = 0;
