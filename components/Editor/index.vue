@@ -13,8 +13,6 @@
 
     <AIToolsTutorial
       v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_TUTORIAL"
-      @handleOpenAITools="showSelectAITools = true"
-      @handleCloseTooltip="emit('closeSection')"
     />
     <editor-list
       ref="editorListRef"
@@ -182,7 +180,6 @@ const emit = defineEmits([
   'handleExceedPercentLimit',
   'handleUploadExceedLimit',
 ]);
-const showSelectAITools = ref(false);
 let debounceTimer: any = null;
 const iSaveHistory = ref(false);
 
@@ -274,13 +271,6 @@ watch(
   { immediate: true }
 );
 
-watch(
-  () => props.isShowListSection,
-  (newVal) => {
-    modelValue.value = true;
-    showSelectAITools.value = false;
-  }
-);
 const handleChangeHistoryWhenSaveTemplate = () => {
   history.value = [];
   currentIndex.value = 0;
