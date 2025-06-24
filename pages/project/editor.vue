@@ -277,7 +277,7 @@ const handleSaveChanges = async () => {
   if (!isLatestVersion) {
     isShowModal.confirmReplace = true;
   } else {
-    await handleSaveTemplate();
+    await handleSaveTemplate(t('landing-common-message-saved'));
   }
 };
 const handlePublish = async () => {
