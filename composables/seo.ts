@@ -74,7 +74,6 @@ export default function useSeo() {
     setSessionPublic(sectionsPublic);
     setTenantID(data.value.data.tenantId);
     applySeoTags(data.value.data);
-    console.log(data.value.data);
 
     const { startTime, endTime, status } = data.value.data;
     const now = new Date();
