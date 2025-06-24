@@ -61,9 +61,9 @@ export default defineNuxtConfig({
       ],
       script: [
         {
-          src: 'https://sdk.stg.gamania.dev/webtrackingsdk.min.js.gz', // Đường dẫn tới script bên ngoài
-          async: true, // Tải script không đồng bộ
-          defer: true, // Chờ cho đến khi DOM được phân tích cú pháp
+          src: 'https://sdk.stg.gamania.dev/webtrackingsdk.min.js.gz',
+          async: true,
+          defer: true,
         },
       ],
     },
