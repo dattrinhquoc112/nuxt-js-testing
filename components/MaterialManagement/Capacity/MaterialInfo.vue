@@ -33,9 +33,6 @@
   </div>
 </template>
 <script setup lang="ts">
-import useProjects from '~/composables/projects';
-
-const { getImage } = useProjects();
 interface MaterialItem {
   extension: string;
   type: string;

@@ -31,8 +31,6 @@
 </template>
 
 <script setup lang="ts">
-import useProjects from '~/composables/projects';
-
 defineProps({
   urlVideo: {
     type: String,
@@ -45,6 +43,4 @@ const isLoading = ref(true);
 const onVideoLoaded = () => {
   isLoading.value = false;
 };
-
-const { getImage } = useProjects();
 </script>

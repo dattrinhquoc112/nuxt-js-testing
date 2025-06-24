@@ -129,6 +129,7 @@ export default defineNuxtConfig({
           import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
           import.meta.env.NUXT_API_URL_GET_AVATAR,
           'https://content.voiceclone.dev.vyin.ai',
+          'https://content.aiaas-platform.dev.vyin.ai',
           'https://vyin-landing-page.sotatek.works/',
         ],
         'media-src': [

@@ -103,7 +103,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const { getStatus, getImage } = useProjects();
+const { getStatus } = useProjects();
 const { editProject } = useProjectStore();
 const { PERMISSION } = useCheckPermission();
 

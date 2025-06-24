@@ -22,6 +22,7 @@ export default function useSeo() {
       { property: 'og:title', content: seo.ogTitle || '' },
       { property: 'og:description', content: seo.ogDescription || '' },
       { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: seo.name },
       { name: 'robots', content: 'index, follow' },
     ];
 
@@ -73,6 +74,7 @@ export default function useSeo() {
     setSessionPublic(sectionsPublic);
     setTenantID(data.value.data.tenantId);
     applySeoTags(data.value.data);
+    console.log(data.value.data);
 
     const { startTime, endTime, status } = data.value.data;
     const now = new Date();

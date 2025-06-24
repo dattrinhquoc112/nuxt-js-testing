@@ -66,7 +66,6 @@
 </template>
 
 <script setup lang="ts">
-import useProjects from '~/composables/projects';
 import { RWD_MODE } from '@/constants/common';
 
 defineProps({
@@ -83,8 +82,6 @@ defineProps({
     default: () => ({}),
   },
 });
-
-const { getImage } = useProjects();
 
 const emit = defineEmits(['show-option', 'handle-change-text']);
 
