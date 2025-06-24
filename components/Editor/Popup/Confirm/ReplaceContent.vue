@@ -13,6 +13,7 @@
         <vi-button
           type="standard-primary"
           width="fit-content"
+          :disabled="loading.updateContent"
           @click="$emit('handle-save-current')"
         >
           {{ $t('landing-editor-button-save_current_version') }}
@@ -20,6 +21,7 @@
         <vi-button
           type="standard-primary"
           width="fit-content"
+          :disabled="loading.updateContent"
           @click="$emit('handle-update-new')"
         >
           {{ $t('landing-editor-button-update_to_new_version') }}
@@ -30,6 +32,8 @@
 </template>
 
 <script setup lang="ts">
+import { useEditorStore } from '~/stores/editor';
+
 defineProps({
   isShow: {
     type: Boolean,
@@ -37,6 +41,7 @@ defineProps({
   },
 });
 defineEmits(['close', 'handle-save-current', 'handle-update-new']);
+const { loading } = useEditorStore();
 </script>
 
 <style lang="scss" scoped></style>

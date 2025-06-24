@@ -100,6 +100,7 @@
     />
     <editor-popup-setting-color
       v-if="isShowPopup.colorSetting"
+      :keyElementSelected="keyElementSelected"
       :class="classPopupSetting"
       :isShow="isShowPopup.colorSetting"
       :positionControlCurrent="positionControlCurrent"

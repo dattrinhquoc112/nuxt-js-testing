@@ -100,6 +100,10 @@ const props = defineProps({
     type: Boolean,
     default: false,
   },
+  keyElementSelected: {
+    type: String,
+    default: '',
+  },
 });
 
 const emit = defineEmits([
@@ -145,16 +149,45 @@ watch(hex, () => {
 });
 
 onMounted(() => {
-  if (props?.elementSelected?.color) {
-    const rbga = parseRgbaString(props.elementSelected.color);
+  let colorCurrent = '';
+
+  if (props.keyElementSelected === 'buttonExternal') {
+    colorCurrent = props?.elementSelected?.style?.backgroundColor;
+  } else if (
+    props.keyElementSelected === 'logo' ||
+    props.keyElementSelected === 'copyright'
+  ) {
+    colorCurrent = props?.elementSelected?.backgroundColor;
+  } else if (props.keyElementSelected === 'backgroundSection') {
+    colorCurrent = props?.elementSelected?.color;
+  } else {
+    colorCurrent = props?.elementSelected?.style?.color;
+  }
+  if (colorCurrent) {
+    let rbga: {
+      r: number;
+      g: number;
+      b: number;
+      a?: number;
+    } | null = null;
+
+    if (isHexColor(colorCurrent)) {
+      rbga = hexToRgb(colorCurrent);
+      if (rbga) rbga.a = 100;
+    } else {
+      rbga = parseRgbaString(colorCurrent);
+    }
     if (rbga) {
-      const { r, b, g, a } = rbga;
-      const [h, s, l] = rgbToHsl(r, b, g);
-      hex.value = rgbToHex(r, b, g);
+      const { r, b, g } = rbga;
+      const [h, s, l] = rgbToHsl(r, g, b);
+      hex.value = rgbToHex(r, g, b);
       hue.value = h;
       saturation.value = s;
       lightness.value = l;
-      opacity.value = a * 100;
+
+      if (rbga?.a) {
+        opacity.value = rbga.a * 100;
+      }
     }
   }
 });
@@ -293,6 +326,11 @@ function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
   }
 
   return [Math.round(h * 360), Math.round(s * 100), Math.round(l * 100)];
+}
+
+function isHexColor(color: string) {
+  const hexRegex = /^#([0-9A-Fa-f]{6}|[0-9A-Fa-f]{3})$/;
+  return hexRegex.test(color);
 }
 
 function parseRgbaString(rgba: string) {

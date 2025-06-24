@@ -4,6 +4,7 @@ import { useUploadStore } from '@/stores/upload';
 import { useProjectStore } from '~/stores/project';
 import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
 import { THRESH_HOLD } from '~/constants/common';
+import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import { checkReachLimit } from '~/utils/common';
 
 export const useWebEditor = (
@@ -41,6 +42,7 @@ export const useWebEditor = (
 
   const { updateContentProject, getContentProject, setVersionContent } =
     useProjectStore();
+  const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 
   const checkMaterials = ({
     objSelecting,
@@ -321,7 +323,15 @@ export const useWebEditor = (
     mapDataToSection(data);
   };
 
-  const handleSaveTemplate = async () => {
+  const handleSaveTemplate = async ({
+    isGetThumbnail = false,
+  }: {
+    isGetThumbnail?: boolean;
+  }) => {
+    let file = null;
+    if (isGetThumbnail) {
+      file = await handleGetThumbnailSnapshot();
+    }
     await Promise.all([
       uploadAllImage('logo'),
       uploadAllImage('backgroundSection'),
@@ -331,6 +341,7 @@ export const useWebEditor = (
     const payload = convertDataSections();
     const res = await updateContentProject(idWebEditorRef.value, payload);
     mapDataToSection(res);
+    return file;
   };
   const setIDWebEditor = (id: string) => {
     idWebEditorRef.value = id;

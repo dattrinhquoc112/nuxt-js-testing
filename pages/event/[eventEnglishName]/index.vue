@@ -16,10 +16,6 @@ import useCheckRWD from '~/composables/checkRwd';
 
 const route = useRoute();
 const eventEnglishName = route.params.eventEnglishName as string;
-const pageName = eventEnglishName.substring(
-  0,
-  eventEnglishName.lastIndexOf('-')
-);
 definePageMeta({
   layout: 'public',
 });
@@ -28,7 +24,7 @@ let handleClickEvent: ((audioId: number) => void) | undefined;
 
 if (isPublish) {
   ({ handleClickEvent } = useSDKTracking({
-    pageName,
+    pageName: eventEnglishName,
     tenantID,
   }));
 }

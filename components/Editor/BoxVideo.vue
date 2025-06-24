@@ -1,6 +1,21 @@
 <template>
   <div v-if="urlVideo" :key="urlVideo" class="video-wrap">
-    <video class="tag-video-src" autoplay :muted="isMuted" loop playsinline>
+    <vi-spin
+      v-if="isLoading"
+      icon-size="30px"
+      :loading="isLoading"
+      height="100%"
+      width="100%"
+    />
+    <video
+      v-show="!isLoading"
+      class="tag-video-src"
+      autoplay
+      :muted="isMuted"
+      loop
+      playsinline
+      @canplay="onVideoLoaded"
+    >
       <source :src="getImage(urlVideo)" />
     </video>
     <div class="icon-sound" @click="isMuted = !isMuted">
@@ -25,6 +40,11 @@ defineProps({
   },
 });
 const isMuted = ref(true);
+const isLoading = ref(true);
+
+const onVideoLoaded = () => {
+  isLoading.value = false;
+};
 
 const { getImage } = useProjects();
 </script>

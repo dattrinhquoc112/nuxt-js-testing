@@ -35,13 +35,7 @@
           <img src="/assets/images/input_video.png" alt="" />
         </div>
       </div>
-      <input
-        ref="inputFile"
-        type="file"
-        :accept="getAcceptFile"
-        @change="handleChange"
-        hidden
-      />
+      <input ref="inputFile" type="file" @change="handleChange" hidden />
       <div v-if="errorMessage" class="system-danger-danger-text">
         <vi-typography type="caption-large-300">
           {{ errorMessage }}

@@ -359,7 +359,7 @@ const onCreateProject = async () => {
     const { id } = res.data;
     setIDWebEditor(id);
     try {
-      handleSaveTemplate();
+      handleSaveTemplate({});
       const file = await handleGetThumbnailSnapshot();
       const fileUri = file?.fileUri;
       if (fileUri) {
