@@ -13,8 +13,6 @@
 
     <AIToolsTutorial
       v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_TUTORIAL"
-      @handleOpenAITools="showSelectAITools = true"
-      @handleCloseTooltip="emit('closeSection')"
     />
     <editor-list
       ref="editorListRef"
@@ -183,7 +181,6 @@ const emit = defineEmits([
   'handleExceedPercentLimit',
   'handleUploadExceedLimit',
 ]);
-const showSelectAITools = ref(false);
 let debounceTimer: any = null;
 const iSaveHistory = ref(false);
 
@@ -344,8 +341,6 @@ watch(buttonColor, () => {
     bg.urlVideo = '';
     bg.urlImage = '';
     bg.file = null;
-    // revokeObjectURL(bg.urlVideo);
-    // revokeObjectURL(bg.urlImage);
   } else {
     const other = obj as TEXT_ITEM;
     other.style.color = colorChange;
@@ -366,8 +361,6 @@ const handleChangeVideo = ({
     file,
   });
   if (isOverStorage) return;
-  // revokeObjectURL(obj.urlVideo);
-  // revokeObjectURL(obj.urlImage);
   obj.urlImage = '';
   obj.urlVideo = urlVideo;
   obj.file = file;
@@ -462,8 +455,6 @@ const handleChangeImage = ({
     file,
   });
   if (isOverStorage) return;
-  // revokeObjectURL(obj.urlImage);
-  // revokeObjectURL(obj.urlVideo);
   obj.urlVideo = '';
   obj.file = file;
   obj.urlImage = urlImage;
@@ -616,7 +607,6 @@ watch(
   { deep: true }
 );
 
-// Undo
 const undo = () => {
   if (currentIndex.value > 0) {
     iSaveHistory.value = false;
@@ -627,7 +617,6 @@ const undo = () => {
   }
 };
 
-// Redo
 const redo = () => {
   if (currentIndex.value < history.value.length) {
     iSaveHistory.value = false;

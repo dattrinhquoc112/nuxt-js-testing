@@ -6,11 +6,14 @@
       section?.id === 'section-one-right'
     "
     @click.stop="(event) => emit('show-option', event)"
-    class="section-wrap section-one"
     :class="[
       section.backgroundSection.class,
+      'section-wrap section-one',
       {
         'section-one--mobile': rwdMode === RWD_MODE.MOBILE,
+        'section-wrap--center': section?.id === 'section-one-center',
+        'section-wrap--left': section?.id === 'section-one-left',
+        'section-wrap--right': section?.id === 'section-one-right',
       },
     ]"
     :style="`--bg-image:url(${getImage(
