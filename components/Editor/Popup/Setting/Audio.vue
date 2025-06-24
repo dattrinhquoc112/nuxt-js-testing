@@ -321,8 +321,7 @@ const handleCheckFirst = async (index: number) => {
   const itemPhraseCurrent = audioSelecting.value.setting.listPhrase[index];
   if (!itemPhraseCurrent.audioUrl || !itemPhraseCurrent.textOld) {
     handleCreateDemo(index);
-  }
-  if (itemPhraseCurrent.text !== itemPhraseCurrent.textOld) {
+  } else if (itemPhraseCurrent.text !== itemPhraseCurrent.textOld) {
     currentlyPlayingAudio.value = itemPhraseCurrent.audioUrl;
     isAllowPlay.value = false;
     handleCreateDemo(index, true);

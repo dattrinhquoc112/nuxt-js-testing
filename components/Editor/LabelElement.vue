@@ -89,7 +89,7 @@ defineExpose({
 <style lang="scss" scoped>
 .label-element-selecting {
   position: fixed;
-  z-index: 30;
+  z-index: 10;
   pointer-events: none;
   &.button-href {
     border: 2px solid #1edd00;
