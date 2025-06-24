@@ -1,5 +1,3 @@
-import type { MATERIAL_ITEM } from '~/types/templates';
-
 export const convertFileSize = (bytes: number): string => {
   const KB = 1024;
   const MB = 1024 * KB;
@@ -88,7 +86,7 @@ export const checkReachLimit = (
 };
 
 export function getFileURL(path: string) {
-  return `/client/api/call?endpoint=/api/v1${path}`;
+  return `${useRuntimeConfig().public.apiLandingHost}/api/v1${path}`;
 }
 export const getImage = (uri?: string) => {
   if (!uri) return '';

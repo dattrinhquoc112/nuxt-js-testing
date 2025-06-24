@@ -16,15 +16,12 @@
 </template>
 
 <script setup lang="ts">
-import useProjects from '~/composables/projects';
-
 defineProps({
   section: {
     type: Object as PropType<any>,
     default: () => ({}),
   },
 });
-const { getImage } = useProjects();
 
 const emit = defineEmits(['show-option']);
 </script>
