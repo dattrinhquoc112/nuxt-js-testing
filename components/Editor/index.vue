@@ -4,28 +4,15 @@
   >
     <editor-template-selector
       v-if="
-        isShowListSection === SIDE_BAR_ACTION.CLICKED_SESSION ||
-        (isShowListSection === SIDE_BAR_ACTION.CLICKED_AI_TOOLS &&
-          showSelectAITools) ||
-        (activeSidebarButton === SIDEBAR_BUTTONS[0] && showSelectAITools) ||
-        (activeSidebarButton === SIDEBAR_BUTTONS[1] && showSelectAITools)
+        activeSideBar === SIDE_BAR_ACTION.CLICKED_SESSION ||
+        activeSideBar === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_LIST
       "
-      :type="isShowListSection"
       :templateSelected="templateSelected"
-      :list-template="listTemplate"
       @click-template="onClickTemplate"
-      @close="emit('closeSection')"
-      @handleBack="
-        () => {
-          modelValue = true;
-          showSelectAITools = false;
-        }
-      "
     />
 
     <AIToolsTutorial
-      v-model="modelValue"
-      v-if="isShowListSection === SIDE_BAR_ACTION.CLICKED_AI_TOOLS"
+      v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_TUTORIAL"
       @handleOpenAITools="showSelectAITools = true"
       @handleCloseTooltip="emit('closeSection')"
     />
@@ -59,11 +46,13 @@
 
     <editor-popup-setting-image
       v-if="isShowPopup.imageSetting"
+      :isExceedLimit
       :class="classPopupSetting"
       :isShow="isShowPopup.imageSetting"
       :positionControlCurrent="positionControlCurrent"
       :is-logo="keyElementSelected === 'logo'"
       :is-audio="keyElementSelected === 'audio'"
+      @handle-show-pu-limit="$emit('handleExceedLimit')"
       @reset-file="handleResetFile"
       @close="closePopupChangeImage"
       @change-image="handleChangeImage"
@@ -150,12 +139,14 @@ import {
   type LOGO_ITEM,
   type COPYRIGHT_ITEM,
 } from '~/types/templates';
+import { useEditorStore } from '~/stores/editor';
+import { storeToRefs } from 'pinia';
 
-const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
+const editorStore = useEditorStore();
+const { activeSideBar } = storeToRefs(editorStore);
 definePageMeta({
   layout: 'default',
 });
-const activeSidebarButton = inject<Ref<String>>('activeSidebarButton');
 
 const props = defineProps({
   isShowListSection: {
@@ -166,10 +157,7 @@ const props = defineProps({
     type: String,
     default: '',
   },
-  listTemplate: {
-    type: Array as PropType<any>,
-    default: () => [],
-  },
+
   limitFileSize: {
     type: Number,
     default: 0,
@@ -194,7 +182,6 @@ const emit = defineEmits([
   'handleExceedPercentLimit',
   'handleUploadExceedLimit',
 ]);
-const modelValue = ref(true);
 const showSelectAITools = ref(false);
 let debounceTimer: any = null;
 const iSaveHistory = ref(false);

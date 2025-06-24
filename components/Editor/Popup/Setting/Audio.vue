@@ -105,7 +105,7 @@
             v-model="item.text"
             type="textarea"
             size="large"
-            :disabled="isDisabledAll"
+            :disabled="isDisabledAll || item.isLoading"
             :label="
               $t('landing-editor-modal-tts_sentence_number', {
                 num: index + 1,
@@ -128,23 +128,20 @@
           <div
             class="audio-box"
             :class="{
-              disabled: isDisabledAll,
+              disabled: isDisabledAll || item.isLoading,
               disabledPlay: !item.text,
             }"
           >
             <div class="custom-audio">
               <vi-audio
-                @click:play-icon.stop="handleCreateDemo(index)"
+                @click:play-icon.stop="handleCheckFirst(index)"
                 :audio-file="item?.audioUrl"
+                :key="item.text"
                 width="100%"
                 :show-timer="false"
                 :is-show-audio-size="false"
-                :is-show-status="
-                  audioSelecting.setting.listPhrase[index].isLoading
-                "
-                :is-show-control-buttons="
-                  !audioSelecting.setting.listPhrase[index].isLoading
-                "
+                :is-show-status="item.isLoading"
+                :is-show-control-buttons="!item.isLoading"
                 :is-audio-playing="currentlyPlayingAudio === item.audioUrl"
                 :show-file-info="false"
                 @play="handlePlay"
@@ -236,19 +233,76 @@ const { getVoiceModelList, createDemo } = useEditorStore();
 const listModel = ref<{ text: string; value: string; demoUri?: string }[]>([]);
 const demoUri = ref<string>('');
 const currentlyPlayingAudio = ref<string | null>(null);
+const isAllowPlay = ref(true);
 const popupElement = ref<HTMLElement>();
 
 const addPhrase = () => {
   audioSelecting.value.setting.listPhrase.push(_.cloneDeep(itemPhrase));
 };
 
+const handleCreateDemo = async (index: number, isUpdate = false) => {
+  const itemPhraseCurrent = audioSelecting.value.setting.listPhrase[index];
+  const pitchCurrent = Number(audioSelecting.value.setting.pitch);
+  const speedCurrent = Number(audioSelecting.value.setting.speed);
+  try {
+    itemPhraseCurrent.isLoading = true;
+
+    if (!isUpdate && props.isExceedLimit) {
+      itemPhraseCurrent.text = '';
+      emit('handle-show-pu-limit');
+      return;
+    }
+
+    if (!itemPhraseCurrent.text) return;
+
+    const res = await createDemo(
+      audioSelecting.value.setting.voiceModelId.value as string,
+      {
+        pitch: pitchCurrent,
+        speed: speedCurrent,
+        text: itemPhraseCurrent.text,
+      }
+    );
+    if (isUpdate) {
+      emit('remove-material', [itemPhraseCurrent]);
+      isAllowPlay.value = true;
+    }
+    itemPhraseCurrent.id = res.data?.demoId;
+    itemPhraseCurrent.audioUrl = res.data?.demoUri;
+    itemPhraseCurrent.textOld = itemPhraseCurrent.text;
+    emit('add-material', itemPhraseCurrent);
+  } catch (error) {
+  } finally {
+    itemPhraseCurrent.isLoading = false;
+  }
+};
+
+const updateAllListPhrase = () => {
+  Promise.all(
+    audioSelecting.value.setting.listPhrase.map((item: any, index: number) => {
+      if (item.textOld) {
+        return handleCreateDemo(index, true);
+      }
+      return handleCreateDemo(index);
+    })
+  );
+};
+
 const updateSetting = (key: string, speed: any) => {
   const objMap = key === 'speed' ? mapSpeed : mapPitch;
   const entry = Object.entries(objMap).find(([_, value]) => value === speed);
   audioSelecting.value.setting[key] = entry?.[0];
+  updateAllListPhrase();
 };
+
 const handlePlay = (audioFile: string) => {
-  currentlyPlayingAudio.value = audioFile;
+  if (isAllowPlay.value) {
+    currentlyPlayingAudio.value = audioFile;
+  } else {
+    setTimeout(() => {
+      currentlyPlayingAudio.value = null;
+    });
+  }
 };
 
 const handlePause = () => {
@@ -261,31 +315,17 @@ const handleDeletePhrase = (index: number) => {
     audioSelecting.value.setting.listPhrase.splice(index, 1)
   );
 };
-const handleCreateDemo = async (index: number) => {
-  if (props.isExceedLimit) {
-    audioSelecting.value.setting.listPhrase[index].text = '';
-    emit('handle-show-pu-limit');
-    return;
-  }
-  if (audioSelecting.value.setting.listPhrase[index].audioUrl) return;
-  if (!audioSelecting.value.setting.voiceModelId.value) return;
-  try {
-    audioSelecting.value.setting.listPhrase[index].isLoading = true;
 
-    const res = await createDemo(
-      audioSelecting.value.setting.voiceModelId.value as string,
-      {
-        pitch: Number(audioSelecting.value.setting.pitch),
-        speed: Number(audioSelecting.value.setting.speed),
-        text: audioSelecting.value.setting.listPhrase[index].text,
-      }
-    );
-    audioSelecting.value.setting.listPhrase[index].id = res.data?.demoId;
-    audioSelecting.value.setting.listPhrase[index].audioUrl = res.data?.demoUri;
-    emit('add-material', audioSelecting.value.setting.listPhrase[index]);
-  } catch (error) {
-  } finally {
-    audioSelecting.value.setting.listPhrase[index].isLoading = false;
+const handleCheckFirst = async (index: number) => {
+  if (!audioSelecting.value.setting.voiceModelId.value) return;
+  const itemPhraseCurrent = audioSelecting.value.setting.listPhrase[index];
+  if (!itemPhraseCurrent.audioUrl || !itemPhraseCurrent.textOld) {
+    handleCreateDemo(index);
+  }
+  if (itemPhraseCurrent.text !== itemPhraseCurrent.textOld) {
+    currentlyPlayingAudio.value = itemPhraseCurrent.audioUrl;
+    isAllowPlay.value = false;
+    handleCreateDemo(index, true);
   }
 };
 
@@ -328,6 +368,7 @@ watch(
         item.text = '';
         item.audioUrl = '';
         item.id = '';
+        item.textOld = '';
       }
     });
   },

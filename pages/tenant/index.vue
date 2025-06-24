@@ -20,7 +20,7 @@
         >
           <div class="item-name neutral-white-alpha-100-text">
             <vi-typography class="ellipsis-text-line" type="subtitle-large">{{
-              item.name
+              item.alias
             }}</vi-typography>
           </div>
           <div class="neutral-white-alpha-60-text">
@@ -40,9 +40,15 @@
         $t('auth-tenant_mgmt-description-description_no_team')
       }}</vi-typography>
     </div>
-    <vi-button class="btn-create" @click="navigateTo('/tenant/create')">{{
-      $t('auth-account-action-button_create_team')
-    }}</vi-button>
+    <vi-button
+      class="btn-create"
+      @click="
+        navigateTo(`${useRuntimeConfig().public.platformHost}/tenant/create`, {
+          external: true,
+        })
+      "
+      >{{ $t('auth-account-action-button_create_team') }}</vi-button
+    >
     <vi-button
       class="btn-signin-other"
       type="standard-subtle"

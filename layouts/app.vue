@@ -34,7 +34,7 @@
           </div>
         </div>
       </template>
-      <template #username>{{ getUserFullName() }} </template>
+      <template #username>{{ userDetail?.username }} </template>
       <template #tenant-name> {{ tenantDetail?.alias }} </template>
       <template #footer>
         <project-free-trial-plan v-if="isExpand" :tenantMetric="tenantMetric" />
@@ -43,7 +43,7 @@
         <vi-user
           :user-name="userDetail?.username"
           :user-email="userDetail?.email"
-          :fullname="getUserFullName()"
+          :fullname="userDetail?.username"
           :tenant-name="tenantDetail?.alias"
           :tenant-role="
             tenantDetail?.roleOfTheTenant.name
@@ -128,13 +128,6 @@ const fetchTenantInfo = async () => {
     tenantDetail.value = res.data;
     setCurrentTenantInfo(res.data);
   }
-};
-
-const getUserFullName = () => {
-  return [
-    userDetail?.value?.firstName || '',
-    userDetail?.value?.lastName || '',
-  ].join(' ');
 };
 
 const onBack = () => {

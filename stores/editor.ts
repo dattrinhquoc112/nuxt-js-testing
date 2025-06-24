@@ -9,10 +9,14 @@ export const useEditorStore = defineStore('editor', () => {
     updateContent: false,
     publish: false,
   });
+  const activeSideBar = ref('');
   const setLoading = (key: keyof typeof loading, val: boolean) => {
     loading[key] = val;
   };
 
+  const setActiveSideBar = (activeSidebar2: string) => {
+    activeSideBar.value = activeSidebar2;
+  };
   async function getVoiceModelList() {
     return apiStore.apiRequest({
       method: MethodEnum.GET,
@@ -52,7 +56,8 @@ export const useEditorStore = defineStore('editor', () => {
     getListDemos,
     createDemo,
     loading,
-
+    activeSideBar,
+    setActiveSideBar,
     setLoading,
   };
 });
