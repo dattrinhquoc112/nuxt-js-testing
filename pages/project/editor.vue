@@ -256,8 +256,9 @@ const handleSaveTemplate = async (
   try {
     editorStore.setLoading(loading, true);
     disableUndoRedo.value = true;
-    await editorRef.value.handleSaveTemplate();
-    const file = await handleGetThumbnailSnapshot();
+    const file = await editorRef.value.handleSaveTemplate({
+      isGetThumbnail: true,
+    });
     const fileUri = file?.fileUri;
     if (fileUri) {
       await editProject(editorID.value, { thumbnail: fileUri });
