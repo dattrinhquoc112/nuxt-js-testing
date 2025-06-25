@@ -4,12 +4,11 @@
       class="material-info--img"
       :style="{
         background: `linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('${getImage(
-          material.fileUri
+          material.thumbnail || material.fileUri
         )}') center/cover no-repeat`,
         backgroundColor: 'lightgray',
       }"
     ></div>
-
     <div
       class="material-info--file"
       :title="
@@ -33,12 +32,8 @@
   </div>
 </template>
 <script setup lang="ts">
-interface MaterialItem {
-  extension: string;
-  type: string;
-  fileUri: string;
-  fileSize: number;
-}
+import type { MaterialItem } from '~/types/material';
+
 
 defineProps<{
   material: MaterialItem;
