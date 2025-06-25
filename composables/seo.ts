@@ -2,7 +2,7 @@ import { useEventStore } from '~/stores/event';
 import { MethodEnum } from '~/stores/interface/api';
 import { getRequestHeaders, H3Event } from 'h3';
 
-export default function useSeo() {
+export default async function useSeo() {
   const route = useRoute();
   const eventEnglishName = route.params.eventEnglishName as string;
   const { setSessionPublic, setTenantID, setIsPublish } = useEventStore();
@@ -28,7 +28,6 @@ export default function useSeo() {
       },
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: seo.name || '' },
-      { property: 'og:url', content: window.location.href },
     ];
 
     if (seo.ogImageUri) {
@@ -64,7 +63,6 @@ export default function useSeo() {
     useHead({
       title: seo.metaTitle || seo.ogTitle || '',
       meta: metaTags,
-      link: [{ rel: 'canonical', href: window.location.href }],
     });
   }
 
