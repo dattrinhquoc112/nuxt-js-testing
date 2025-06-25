@@ -423,10 +423,18 @@ const handleResetFile = () => {
 };
 const handleChangeText = (event: MouseEvent) => {
   const element = event.target as HTMLElement;
-  const { width } = element.getBoundingClientRect();
+  const obj = objectSelecting.value as TEXT_ITEM;
+  if (!obj) return;
+  const { width, height } = element.getBoundingClientRect();
   const textarea = document.createElement('textarea');
-  textarea.style.width = `${width}px`;
-  textarea.classList.add('input-enter-button');
+  textarea.style.width = `${width + 10}px`;
+  textarea.style.height = `${height + 10}px`;
+  textarea.style.outline = `none`;
+  textarea.style.backgroundColor = `transparent`;
+  textarea.style.border = `none`;
+  textarea.style.color = obj.style.color || '#000';
+  textarea.style.resize = `none`;
+  textarea.style.textAlign = obj.style.textAlign || 'center';
   textarea.value = element.textContent as string;
   element.textContent = '';
   element.appendChild(textarea);
@@ -434,8 +442,6 @@ const handleChangeText = (event: MouseEvent) => {
   editorListRef.value?.calcPosition();
 
   textarea.addEventListener('blur', () => {
-    const obj = objectSelecting.value as TEXT_ITEM;
-    if (!obj) return;
     obj.text = textarea.value;
     element.textContent = textarea.value;
   });

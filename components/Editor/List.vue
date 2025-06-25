@@ -311,16 +311,16 @@ const handleShowLabel = (
 
   const classAudio = isHover ? 'image-background' : 'audio-background';
 
-  if (targetReplace.classList.contains('button-href')) {
+  if (targetReplace.closest('.button-href')) {
     label.value.isButtonHref = true;
   } else if (targetReplace.classList.contains('section-logo-image')) {
     label.value.isLogo = true;
   } else if (
-    targetReplace.classList.contains('text-title') ||
-    targetReplace.classList.contains('text-head') ||
-    targetReplace.classList.contains('audio-text-subtitle') ||
-    targetReplace.classList.contains('audio-text-product') ||
-    targetReplace.classList.contains('text-des')
+    targetReplace.closest('.text-title') ||
+    targetReplace.closest('.text-head') ||
+    targetReplace.closest('.audio-text-subtitle') ||
+    targetReplace.closest('.audio-text-product') ||
+    targetReplace.closest('.text-des')
   ) {
     label.value.isElementRest = true;
   } else if (
