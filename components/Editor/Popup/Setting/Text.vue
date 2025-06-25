@@ -52,7 +52,7 @@
         @click="emit('change-size', '48px')"
         class="text-title mt-16"
         :class="
-          objectSelecting.style.fontSize === '48px'
+          objectSelecting?.style?.fontSize === '48px'
             ? 'neutral-white-alpha-100-text'
             : 'neutral-white-alpha-40-text'
         "
@@ -63,7 +63,7 @@
         @click="emit('change-size', '28px')"
         class="text-subtitle mt-12"
         :class="
-          objectSelecting.style.fontSize === '28px'
+          objectSelecting?.style?.fontSize === '28px'
             ? 'neutral-white-alpha-100-text'
             : 'neutral-white-alpha-40-text'
         "
@@ -74,7 +74,7 @@
         @click="emit('change-size', '18px')"
         class="text-body mt-12"
         :class="
-          objectSelecting.style.fontSize === '18px'
+          objectSelecting?.style?.fontSize === '18px'
             ? 'neutral-white-alpha-100-text'
             : 'neutral-white-alpha-40-text'
         "
