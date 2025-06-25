@@ -34,7 +34,6 @@
 <script setup lang="ts">
 import type { MaterialItem } from '~/types/material';
 
-
 defineProps<{
   material: MaterialItem;
 }>();
