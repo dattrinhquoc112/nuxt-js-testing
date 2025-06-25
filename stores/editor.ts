@@ -39,16 +39,21 @@ export const useEditorStore = defineStore('editor', () => {
     });
   }
   async function createDemo(projectId: string, data: createDemoAudioPayload) {
-    return apiStore.apiRequest({
-      method: MethodEnum.POST,
-      endpoint: `/api/v1/projects/${projectId}/demos`,
-      proxy: true,
-      data: {
-        text: data.text,
-        speed: data.speed,
-        pitch: data.pitch,
+    return apiStore.apiRequest(
+      {
+        method: MethodEnum.POST,
+        endpoint: `/api/v1/projects/${projectId}/demos`,
+        proxy: true,
+        data: {
+          text: data.text,
+          speed: data.speed,
+          pitch: data.pitch,
+        },
       },
-    });
+      {
+        showErrorMsg: false,
+      }
+    );
   }
 
   return {

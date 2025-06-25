@@ -271,7 +271,11 @@ const handleCreateDemo = async (index: number, isUpdate = false) => {
     itemPhraseCurrent.audioUrl = res.data?.demoUri;
     itemPhraseCurrent.textOld = itemPhraseCurrent.text;
     emit('add-material', itemPhraseCurrent);
-  } catch (error) {
+  } catch (error: any) {
+    const KEY_MESSAGE_ERROR_NSFW_ = 'error-voiceclone-message-nsfw';
+    if (error?.data?.data?.error?.message.includes(KEY_MESSAGE_ERROR_NSFW_)) {
+      toastMessage(t('UNEXPECTED_ERROR'), 'error');
+    }
   } finally {
     itemPhraseCurrent.isLoading = false;
   }
