@@ -50,16 +50,34 @@
       </div>
       <div
         @click="emit('change-size', '48px')"
-        class="text-title neutral-white-alpha-40-text mt-16"
+        class="text-title mt-16"
+        :class="
+          objectSelecting.style.fontSize === '48px'
+            ? 'neutral-white-alpha-100-text'
+            : 'neutral-white-alpha-40-text'
+        "
       >
         Title
       </div>
-      <div @click="emit('change-size', '28px')" class="text-subtitle mt-12">
+      <div
+        @click="emit('change-size', '28px')"
+        class="text-subtitle mt-12"
+        :class="
+          objectSelecting.style.fontSize === '28px'
+            ? 'neutral-white-alpha-100-text'
+            : 'neutral-white-alpha-40-text'
+        "
+      >
         Subtitle
       </div>
       <div
         @click="emit('change-size', '18px')"
-        class="text-body neutral-white-alpha-40-text mt-12"
+        class="text-body mt-12"
+        :class="
+          objectSelecting.style.fontSize === '18px'
+            ? 'neutral-white-alpha-100-text'
+            : 'neutral-white-alpha-40-text'
+        "
       >
         Body
       </div>
@@ -69,6 +87,7 @@
 
 <script lang="ts" setup>
 import useCheckHeightPopup from '~/composables/checkHeightPopupSetting';
+import { type TEXT_ITEM } from '~/types/templates';
 
 const emit = defineEmits([
   'change-align',
@@ -85,6 +104,10 @@ const props = defineProps({
   isShow: {
     type: Boolean,
     default: false,
+  },
+  objectSelecting: {
+    type: Object as PropType<TEXT_ITEM>,
+    default: () => ({}),
   },
 });
 const popupElement = ref<HTMLElement>();
@@ -151,7 +174,6 @@ useCheckHeightPopup(props, popupElement, emit);
       font-weight: 700;
     }
     .text-subtitle {
-      color: #fff;
       font-size: 28px;
       font-weight: 600;
     }
