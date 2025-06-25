@@ -56,12 +56,12 @@
             <div @click.stop class="icon-play">
               <vi-audio
                 width="100%"
-                @click:play-icon.stop="
-                  emit('handle-play-audio', audio.audio.setting.voiceModelId)
-                "
                 :audio-file="getAudioRandom[audioIndex]"
                 :show-timer="false"
                 :is-show-audio-size="false"
+                @play="
+                  emit('handle-play-audio', audio.audio.setting.voiceModelId)
+                "
                 :is-show-status="false"
                 :show-file-info="false"
               />
