@@ -410,6 +410,7 @@ const { isValidForm, errorField } = useFormValidation();
 const disabledSubmit = () => {
   let isChanged = false;
   if (props.project) {
+    let isChangedDates = false;
     const keys = [
       'eventEnglishName',
       'metaTitle',
@@ -419,9 +420,16 @@ const disabledSubmit = () => {
       'ogImageUri',
       'ogDescription',
     ];
+    if (props.project.startTime && props.project.endTime) {
+      const dates = [
+        formatDate(props.project.startTime, 'YYYY/MM/DD HH:mm:ss'),
+        formatDate(props.project.endTime, 'YYYY/MM/DD HH:mm:ss'),
+      ];
+      isChangedDates = JSON.stringify(model.dates) !== JSON.stringify(dates);
+    }
     isChanged =
       JSON.stringify(objectByKey(model, keys)) !==
-      JSON.stringify(objectByKey(props.project, keys));
+        JSON.stringify(objectByKey(props.project, keys)) || isChangedDates;
   }
   return (
     !(

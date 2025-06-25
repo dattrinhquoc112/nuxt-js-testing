@@ -19,19 +19,17 @@ export default function useSeo() {
   function applySeoTags(seo: any) {
     const metaTags = [
       { name: 'description', content: seo.metaDescription || '' },
-      { property: 'og:title', content: seo.ogTitle || '' },
-      { property: 'og:description', content: seo.ogDescription || '' },
-      { property: 'og:type', content: 'website' },
-      { property: 'og:site_name', content: seo.name },
       { name: 'robots', content: 'index, follow' },
-    ];
 
-    if (seo.metaKeyword) {
-      metaTags.push({
-        name: 'keywords',
-        content: htmlEncode(seo.metaKeyword),
-      });
-    }
+      { property: 'og:title', content: seo.ogTitle || seo.metaTitle || '' },
+      {
+        property: 'og:description',
+        content: seo.ogDescription || seo.metaDescription || '',
+      },
+      { property: 'og:type', content: 'website' },
+      { property: 'og:site_name', content: seo.name || '' },
+      { property: 'og:url', content: window.location.href },
+    ];
 
     if (seo.ogImageUri) {
       metaTags.push({
@@ -40,9 +38,33 @@ export default function useSeo() {
       });
     }
 
+    metaTags.push(
+      { name: 'twitter:card', content: 'summary_large_image' },
+      { name: 'twitter:title', content: seo.ogTitle || seo.metaTitle || '' },
+      {
+        name: 'twitter:description',
+        content: seo.ogDescription || seo.metaDescription || '',
+      }
+    );
+
+    if (seo.ogImageUri) {
+      metaTags.push({
+        name: 'twitter:image',
+        content: getImage(seo.ogImageUri),
+      });
+    }
+
+    if (seo.metaKeyword) {
+      metaTags.push({
+        name: 'keywords',
+        content: htmlEncode(seo.metaKeyword),
+      });
+    }
+
     useHead({
-      title: seo.metaTitle || '',
+      title: seo.metaTitle || seo.ogTitle || '',
       meta: metaTags,
+      link: [{ rel: 'canonical', href: window.location.href }],
     });
   }
 
