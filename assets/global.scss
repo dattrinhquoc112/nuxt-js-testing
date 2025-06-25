@@ -213,6 +213,7 @@ html {
   &.section-one {
     aspect-ratio: 172 / 75;
     .content--destop {
+      position: relative;
       z-index: 10;
       .button-href {
         cursor: pointer;
@@ -250,6 +251,7 @@ html {
       }
     }
     .content--mobile {
+      position: relative;
       z-index: 10;
       .button-href {
         cursor: pointer;
@@ -308,6 +310,7 @@ html {
     aspect-ratio: 172 / 75;
     display: flex;
     .left {
+      position: relative;
       flex: 1;
       padding: 40px;
       color: #000;
@@ -336,6 +339,7 @@ html {
       }
     }
     .right {
+      position: relative;
       flex: 1;
       height: fit-content;
       display: flex;
