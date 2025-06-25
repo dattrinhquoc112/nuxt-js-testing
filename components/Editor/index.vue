@@ -645,7 +645,7 @@ const onClickAddSection = (index: number) => {
   if (templateSelected.value && !props.isExceedLimit) {
     const newIndex = hoverPosition.value?.zone === 'bottom' ? index + 1 : index;
     sections.value.splice(
-      newIndex, 
+      newIndex,
       0,
       JSON.parse(JSON.stringify(templateSelected.value))
     );
@@ -679,7 +679,7 @@ const showPopupChangeImage = () => {
     selectedElement.value
   ) {
     const coordinates = selectedElement.value.getBoundingClientRect();
-    const pageY = coordinates.top + coordinates.height / 2 ;
+    const pageY = coordinates.top + coordinates.height / 2;
     const pageX = coordinates.left - 20;
     handleSetPositionControl({
       pageY,
