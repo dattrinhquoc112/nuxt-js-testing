@@ -305,9 +305,8 @@ const handleSetPositionControl = (data: { pageX: number; pageY: number }) => {
 
 const classPopupSetting = computed(() => {
   if (keyElementSelected.value === 'backgroundSection') return 'for-bg-section';
-  if (keyElementSelected.value === 'boxImage') return 'for-box-image';
   if (keyElementSelected.value === 'logo') return 'for-box-logo';
-  return '';
+  return classElementSelected.value;
 });
 
 watch(buttonColor, () => {
@@ -646,7 +645,7 @@ const onClickAddSection = (index: number) => {
   if (templateSelected.value && !props.isExceedLimit) {
     const newIndex = hoverPosition.value?.zone === 'bottom' ? index + 1 : index;
     sections.value.splice(
-      newIndex,
+      newIndex, 
       0,
       JSON.parse(JSON.stringify(templateSelected.value))
     );
@@ -675,6 +674,29 @@ const closePopupSettingAudio = () => {
   isShowPopup.value.audioSetting = false;
 };
 const showPopupChangeImage = () => {
+  if (
+    classElementSelected.value === 'box-image-right' &&
+    selectedElement.value
+  ) {
+    const coordinates = selectedElement.value.getBoundingClientRect();
+    const pageY = coordinates.top + coordinates.height / 2 ;
+    const pageX = coordinates.left - 20;
+    handleSetPositionControl({
+      pageY,
+      pageX,
+    });
+  } else if (
+    classElementSelected.value === 'box-image-left' &&
+    selectedElement.value
+  ) {
+    const coordinates = selectedElement.value.getBoundingClientRect();
+    const pageY = coordinates.top + coordinates.height / 2;
+    const pageX = coordinates.right;
+    handleSetPositionControl({
+      pageY,
+      pageX,
+    });
+  }
   isShowPopup.value.imageSetting = true;
 };
 const closePopupChangeImage = () => {

@@ -131,7 +131,8 @@ const listOptionControl = computed<
   }
   if (
     props.classElementSelected === 'section-logo-image' ||
-    props.classElementSelected === 'box-image'
+    props.classElementSelected === 'box-image-left' ||
+    props.classElementSelected === 'box-image-right'
   ) {
     return [
       {
