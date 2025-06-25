@@ -68,6 +68,22 @@ const getTitle = (key: string) => {
   return title;
 };
 
+const getValue = (key: string, value: string) => {
+  let newValue = value;
+  switch (key) {
+    case 'averageStayTime':
+      newValue = convertSecondsToSmartHMS(value);
+      break;
+    case 'totalAiToolUsage':
+      break;
+    case 'totalVisits':
+      break;
+    default:
+      break;
+  }
+  return newValue;
+};
+
 const fetchProjectAnalysis = async () => {
   if (!props.project) return;
   loading.detail = true;
@@ -75,7 +91,7 @@ const fetchProjectAnalysis = async () => {
   Object.keys(res.data).forEach((key) => {
     model.value.push({
       title: getTitle(key),
-      value: res.data[key],
+      value: getValue(key, res.data[key]),
     });
   });
   loading.detail = false;
