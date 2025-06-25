@@ -23,14 +23,8 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { MaterialItem } from '~/types/material';
 import MaterialInfo from './MaterialInfo.vue';
-
-interface MaterialItem {
-  type: string;
-  fileUri: string;
-  fileSize: number;
-  extension: string;
-}
 
 const props = defineProps<{
   materialList: MaterialItem[];
