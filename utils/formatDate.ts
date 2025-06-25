@@ -53,12 +53,14 @@ export function convertSecondsToSmartHMS(value: string | number): string {
   const hasHours = hours > 0;
   const hasMinutes = minutes > 0;
 
+  if (totalSeconds === 0) return '0';
+
   const hStr = hasHours ? `${hours}h` : '';
   const mStr = hasMinutes
     ? `${hasHours ? String(minutes).padStart(2, '0') : minutes}m`
     : '';
   const sStr =
-    seconds > 0 || (!hasHours && !hasMinutes)
+    seconds > 0
       ? `${
           hasHours || hasMinutes ? String(seconds).padStart(2, '0') : seconds
         }s`
