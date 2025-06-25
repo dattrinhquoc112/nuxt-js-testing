@@ -59,6 +59,7 @@
       <editor-box-video
         class="right-section-video-background"
         @click.stop="clickParent"
+        is-type-video="box-section-two"
         :urlVideo="section.boxImage.urlVideo"
       />
     </div>

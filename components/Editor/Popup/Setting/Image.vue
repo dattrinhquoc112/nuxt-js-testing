@@ -217,8 +217,11 @@ const handleChange = (event: Event) => {
   &.for-bg-section {
     transform: translateX(calc(-100% + 56px));
   }
-  &.for-box-image {
-    transform: translateX(calc(-100% + 32px)) translateY(-50%);
+  &.box-image-right {
+    transform: translateX(calc(-100% + 50px)) translateY(-50%);
+  }
+  &.box-image-left {
+    transform: translateX(-32px) translateY(-50%);
   }
   &.for-box-logo {
     transform: translateX(-26px) translateY(0);

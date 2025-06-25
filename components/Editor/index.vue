@@ -306,9 +306,8 @@ const handleSetPositionControl = (data: { pageX: number; pageY: number }) => {
 
 const classPopupSetting = computed(() => {
   if (keyElementSelected.value === 'backgroundSection') return 'for-bg-section';
-  if (keyElementSelected.value === 'boxImage') return 'for-box-image';
   if (keyElementSelected.value === 'logo') return 'for-box-logo';
-  return '';
+  return classElementSelected.value;
 });
 
 watch(buttonColor, () => {
@@ -342,8 +341,6 @@ watch(buttonColor, () => {
     bg.urlVideo = '';
     bg.urlImage = '';
     bg.file = null;
-    // revokeObjectURL(bg.urlVideo);
-    // revokeObjectURL(bg.urlImage);
   } else {
     const other = obj as TEXT_ITEM;
     other.style.color = colorChange;
@@ -364,8 +361,6 @@ const handleChangeVideo = ({
     file,
   });
   if (isOverStorage) return;
-  // revokeObjectURL(obj.urlVideo);
-  // revokeObjectURL(obj.urlImage);
   obj.urlImage = '';
   obj.urlVideo = urlVideo;
   obj.file = file;
@@ -460,8 +455,6 @@ const handleChangeImage = ({
     file,
   });
   if (isOverStorage) return;
-  // revokeObjectURL(obj.urlImage);
-  // revokeObjectURL(obj.urlVideo);
   obj.urlVideo = '';
   obj.file = file;
   obj.urlImage = urlImage;
@@ -614,7 +607,6 @@ watch(
   { deep: true }
 );
 
-// Undo
 const undo = () => {
   if (currentIndex.value > 0) {
     iSaveHistory.value = false;
@@ -625,7 +617,6 @@ const undo = () => {
   }
 };
 
-// Redo
 const redo = () => {
   if (currentIndex.value < history.value.length) {
     iSaveHistory.value = false;
@@ -655,7 +646,7 @@ const onClickAddSection = (index: number) => {
   if (templateSelected.value && !props.isExceedLimit) {
     const newIndex = hoverPosition.value?.zone === 'bottom' ? index + 1 : index;
     sections.value.splice(
-      newIndex,
+      newIndex, 
       0,
       JSON.parse(JSON.stringify(templateSelected.value))
     );
@@ -684,6 +675,29 @@ const closePopupSettingAudio = () => {
   isShowPopup.value.audioSetting = false;
 };
 const showPopupChangeImage = () => {
+  if (
+    classElementSelected.value === 'box-image-right' &&
+    selectedElement.value
+  ) {
+    const coordinates = selectedElement.value.getBoundingClientRect();
+    const pageY = coordinates.top + coordinates.height / 2 ;
+    const pageX = coordinates.left - 20;
+    handleSetPositionControl({
+      pageY,
+      pageX,
+    });
+  } else if (
+    classElementSelected.value === 'box-image-left' &&
+    selectedElement.value
+  ) {
+    const coordinates = selectedElement.value.getBoundingClientRect();
+    const pageY = coordinates.top + coordinates.height / 2;
+    const pageX = coordinates.right;
+    handleSetPositionControl({
+      pageY,
+      pageX,
+    });
+  }
   isShowPopup.value.imageSetting = true;
 };
 const closePopupChangeImage = () => {

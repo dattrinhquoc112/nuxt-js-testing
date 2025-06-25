@@ -6,7 +6,6 @@
     :class="{
       'button-href':
         typeLabel.isButtonHref ||
-        typeLabel.isTextTitle ||
         typeLabel.isLogo ||
         typeLabel.isImageRightSection ||
         typeLabel.isElementRest,
@@ -21,10 +20,7 @@
         {{ $t('landing-editor-section-section_media') }}
       </vi-typography>
     </div>
-    <div
-      class="text-label"
-      v-if="typeLabel.isTextTitle || typeLabel.isElementRest"
-    >
+    <div class="text-label" v-if="typeLabel.isElementRest">
       <vi-typography type="caption-large-300">
         {{ $t('landing-editor-section-section_text') }}
       </vi-typography>
