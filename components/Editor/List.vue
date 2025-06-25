@@ -41,7 +41,6 @@
       :is-show="isShowLabelElement"
       :type-label="typeLabel"
     />
-    <editor-label-element :is-show="isShowLabelElement" />
   </div>
 </template>
 

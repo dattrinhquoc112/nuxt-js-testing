@@ -44,7 +44,7 @@
 
     <editor-popup-setting-image
       v-if="isShowPopup.imageSetting"
-      :isExceedLimit
+      :isExceedLimit="isExceedLimit"
       :class="classPopupSetting"
       :isShow="isShowPopup.imageSetting"
       :positionControlCurrent="positionControlCurrent"
@@ -79,7 +79,7 @@
       v-if="isShowPopup.audioSetting"
       :isShow="isShowPopup.audioSetting"
       :positionControlCurrent="positionControlCurrent"
-      :isExceedLimit
+      :isExceedLimit="isExceedLimit"
       v-model="objectSelecting"
       @handle-show-pu-limit="$emit('handleExceedLimit')"
       @add-material="addMaterialAudio"
@@ -91,6 +91,7 @@
     <editor-popup-setting-text
       v-if="isShowPopup.textSetting"
       :isShow="isShowPopup.textSetting"
+      :objectSelecting="objectSelecting as TEXT_ITEM"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingText"
       @move-popup-to-top="handleMoveTopPopup"
@@ -672,8 +673,16 @@ const showPopupSettingColor = () => {
   isShowPopup.value.colorSetting = true;
 };
 const showPopupSettingAudio = () => {
+  if (!selectedElement.value) return;
+  const coordinates = selectedElement.value.getBoundingClientRect();
   isShowControl.value = false;
   positionControlCurrent.value.pageY = 80;
+  positionControlCurrent.value.pageX = coordinates.right + 10;
+  if (document.body.clientWidth - coordinates.right > 340) {
+    positionControlCurrent.value.pageX = coordinates.right + 10;
+  } else {
+    positionControlCurrent.value.pageX = coordinates.left - 332;
+  }
   isShowPopup.value.audioSetting = true;
 };
 const closePopupSettingAudio = () => {
