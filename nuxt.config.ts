@@ -139,6 +139,7 @@ export default defineNuxtConfig({
           'https://vyin-landing-page.sotatek.works/',
           'https://content.voiceclone.dev.vyin.ai',
           import.meta.env.NUXT_PUBLIC_AUDIO_HOST,
+          import.meta.env.NUXT_PUBLIC_API_LANDING_HOST,
         ],
         'object-src': ["'none'"],
         'frame-src': ["'self'"],
