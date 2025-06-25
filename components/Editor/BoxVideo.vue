@@ -9,7 +9,7 @@
     />
     <video
       v-show="!isLoading"
-      class="tag-video-src"
+      :class="isTypeVideo"
       autoplay
       :muted="isMuted"
       loop
@@ -35,6 +35,10 @@ defineProps({
   urlVideo: {
     type: String,
     default: '',
+  },
+  isTypeVideo: {
+    type: String,
+    default: 'video-background-section',
   },
 });
 const isMuted = ref(true);

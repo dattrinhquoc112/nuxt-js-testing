@@ -122,22 +122,35 @@ html {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
+.section {
+  overflow-wrap: break-word;
+}
 .section-snapshot {
   width: 1376px;
   position: absolute;
   left: -9999px;
   top: 0;
 }
+.section-wrap--center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.section-wrap--left {
+  padding: 40px 0 40px 80px;
+  display: flex;
+  align-items: center;
+}
+.section-wrap--right {
+  padding: 40px 80px 40px 0;
+  display: flex;
+  align-items: center;
+}
 .section-wrap {
   position: relative;
   .video-background {
     width: 100%;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    height: 100%;
+
     z-index: 5;
     object-fit: contain;
     display: flex;
@@ -196,12 +209,7 @@ html {
   }
   &.section-one {
     aspect-ratio: 172 / 75;
-    display: flex;
-    justify-content: center;
-    align-items: center;
     .content--destop {
-      position: absolute;
-      margin: 40px;
       z-index: 10;
       .button-href {
         cursor: pointer;
@@ -211,6 +219,7 @@ html {
         width: fit-content;
       }
       &.center {
+        margin: 40px;
         .text-des,
         .text-head {
           margin-bottom: 8px;
@@ -223,9 +232,7 @@ html {
       }
       &.left,
       &.right {
-        width: calc(50% - 80px);
-        top: 50%;
-        transform: translateY(-50%);
+        width: 600px;
         .text-des,
         .text-head {
           margin-top: 8px;
@@ -234,11 +241,9 @@ html {
           margin-top: 36px;
         }
       }
-      &.left {
-        left: 80px;
-      }
+
       &.right {
-        left: 50%;
+        margin-left: auto;
       }
     }
     .content--mobile {
@@ -278,9 +283,11 @@ html {
       }
       &.left {
         padding: 20px 40px 20px 40px;
+        word-break: break-word;
       }
       &.right {
         padding: 20px 40px 20px 40px;
+        word-break: break-word;
       }
     }
 
@@ -296,14 +303,15 @@ html {
 
   &.section-two {
     aspect-ratio: 172 / 75;
+    display: flex;
     .left {
-      position: absolute;
-      width: 50%;
-      top: 50%;
-      left: 0;
+      flex: 1;
+      padding: 40px;
       color: #000;
       z-index: 10;
-      transform: translateY(-50%);
+      width: fit-content;
+      height: fit-content;
+      margin: auto;
       .text-des,
       .text-head,
       .text-title {
@@ -325,17 +333,17 @@ html {
       }
     }
     .right {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 50%;
-      height: 100%;
+      flex: 1;
+      height: fit-content;
       display: flex;
       padding: 40px;
+      margin: auto 0;
       z-index: 10;
       cursor: pointer;
       img {
         width: 100%;
+        margin: auto 0;
+        height: fit-content;
         object-fit: contain;
       }
       .right-section-video-background {
@@ -358,54 +366,41 @@ html {
       }
     }
     &.reverse {
-      .right {
-        right: unset;
-        left: 0;
-      }
-      .left {
-        left: unset;
-        right: 0;
-      }
+      flex-direction: row-reverse;
     }
     &--mobile {
       aspect-ratio: 15 / 32;
       padding: 0;
+      flex-direction: column !important;
       & .left {
         position: unset;
         transform: unset;
         width: 100%;
-        height: 50%;
+        margin: 0;
         display: flex;
         flex-direction: column;
         justify-content: center;
-        & .text-head {
-        }
+        word-break: break-word;
         & .text-title {
           padding: 0px 40px;
         }
       }
       & .right {
         padding: 20px;
-        height: fit-content;
+        height: 100%;
         position: unset;
         transform: unset;
-        width: 100%;
-        height: 50%;
         & img {
+          margin: auto 0 0 0 !important;
           object-fit: cover;
         }
       }
     }
   }
   &.section-audio {
-    padding-top: calc(816 / 1376 * 100%);
     .wrap-content {
-      position: absolute;
-      width: fit-content;
-      top: 50%;
-      left: 50%;
-      z-index: 10;
-      transform: translate(-50%, -50%);
+      margin: 0 200px;
+      padding: 80px 0px;
       .list-audio {
         display: flex;
         gap: 24px;
@@ -498,6 +493,10 @@ html {
       }
     }
     &--mobile {
+      & .wrap-content {
+        margin: 0;
+        padding: 80px 40px;
+      }
       padding: 0;
       & .list-audio {
         display: flex;

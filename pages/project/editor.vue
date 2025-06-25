@@ -124,7 +124,6 @@ import { SIDE_BAR_ACTION, RWD_MODE } from '@/constants/common';
 import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
-import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import useMaterials from '~/composables/materials';
 
 const disableUndoRedo = ref(false);
@@ -149,7 +148,6 @@ const totalCapacityUsedRef = computed(() => {
 });
 const { getProject, editProject, publishProject } = useProjectStore();
 
-const { handleGetThumbnailSnapshot } = useSnapshotThumbnail();
 definePageMeta({
   layout: 'editor',
 });

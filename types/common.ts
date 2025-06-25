@@ -55,7 +55,6 @@ export interface IPermission {
 export interface ILabelElement {
   isButtonHref: boolean;
   isBorderAudio: boolean;
-  isTextTitle: boolean;
   borderSection: boolean;
   isLogo: boolean;
   isImageRightSection: boolean;
