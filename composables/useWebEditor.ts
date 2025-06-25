@@ -426,10 +426,14 @@ export const useWebEditor = (
     if (isLimit) {
       options?.handleExceedLimit();
     } else {
+      let sectionCurrent;
+      if (options?.indexSectionSelected?.value !== undefined) {
+        sectionCurrent = sections.value[options.indexSectionSelected.value];
+      }
       listMaterials.value.push({
         indexSection: options?.indexSectionSelected?.value,
         type: 'AUDIO_TTS',
-        thumbnail: '',
+        thumbnail: sectionCurrent?.imageDemo,
         fileUri: data.audioUrl,
         fileSize: convertToKB(`${fileSize}B`),
       });
