@@ -171,10 +171,9 @@ import _ from 'lodash';
 import { ref } from 'vue';
 import useCheckHeightPopup from '~/composables/checkHeightPopupSetting';
 import { useEditorStore } from '~/stores/editor';
+import type { SECTION_ITEM } from '~/types/templates';
 
 const emit = defineEmits([
-  'remove-material',
-  'add-material',
   'close',
   'move-popup-to-top',
   'move-popup-to-bottom',
@@ -193,6 +192,18 @@ const props = defineProps({
   isExceedLimit: {
     type: Boolean,
     default: false,
+  },
+  addMaterialAudio: {
+    type: Function,
+    default: undefined,
+  },
+  removeMaterialAudio: {
+    type: Function,
+    default: undefined,
+  },
+  selectionCurrent: {
+    type: Object as PropType<SECTION_ITEM>,
+    default: () => ({}),
   },
 });
 const audioSelecting = defineModel<any>();
@@ -235,6 +246,7 @@ const demoUri = ref<string>('');
 const currentlyPlayingAudio = ref<string | null>(null);
 const isAllowPlay = ref(true);
 const popupElement = ref<HTMLElement>();
+const selectionCurrent = ref(_.cloneDeep(props.selectionCurrent));
 
 const addPhrase = () => {
   audioSelecting.value.setting.listPhrase.push(_.cloneDeep(itemPhrase));
@@ -255,6 +267,10 @@ const handleCreateDemo = async (index: number, isUpdate = false) => {
 
     if (!itemPhraseCurrent.text) return;
 
+    if (isUpdate) {
+      props.removeMaterialAudio?.([itemPhraseCurrent]);
+    }
+
     const res = await createDemo(
       audioSelecting.value.setting.voiceModelId.value as string,
       {
@@ -264,17 +280,19 @@ const handleCreateDemo = async (index: number, isUpdate = false) => {
       }
     );
     if (isUpdate) {
-      emit('remove-material', [itemPhraseCurrent]);
       isAllowPlay.value = true;
     }
+
     itemPhraseCurrent.id = res.data?.demoId;
     itemPhraseCurrent.audioUrl = res.data?.demoUri;
     itemPhraseCurrent.textOld = itemPhraseCurrent.text;
-    emit('add-material', itemPhraseCurrent);
+    props.addMaterialAudio?.(itemPhraseCurrent, selectionCurrent.value);
   } catch (error: any) {
     const KEY_MESSAGE_ERROR_NSFW_ = 'error-voiceclone-message-nsfw';
     if (error?.data?.data?.error?.message.includes(KEY_MESSAGE_ERROR_NSFW_)) {
       toastMessage(t('UNEXPECTED_ERROR'), 'error');
+    } else {
+      toastMessage(error.data?.message, 'error');
     }
   } finally {
     itemPhraseCurrent.isLoading = false;
@@ -314,8 +332,7 @@ const handlePause = () => {
 };
 
 const handleDeletePhrase = (index: number) => {
-  emit(
-    'remove-material',
+  props.removeMaterialAudio?.(
     audioSelecting.value.setting.listPhrase.splice(index, 1)
   );
 };
@@ -367,7 +384,7 @@ watch(
   () => {
     audioSelecting.value?.setting?.listPhrase.forEach((item: any) => {
       if (!item.text) {
-        emit('remove-material', [item]);
+        props.removeMaterialAudio?.([item]);
         item.text = '';
         item.audioUrl = '';
         item.id = '';
