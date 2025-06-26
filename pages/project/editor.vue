@@ -133,7 +133,7 @@ const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const activeSidebarButton = ref();
 const isOpenReachLimitNoti = ref(false);
 provide('activeSidebarButton', activeSidebarButton);
-const isOpenAlert = ref(true);
+const isOpenAlert = ref(false);
 const editorID = ref('');
 const editorMaterials = useMaterial();
 const { listMaterial: listMaterials } = storeToRefs(editorMaterials);
