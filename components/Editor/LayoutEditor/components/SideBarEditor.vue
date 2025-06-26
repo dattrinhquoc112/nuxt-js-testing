@@ -21,7 +21,7 @@
       >
       </vi-button>
       <template #content>
-        <ToolTipSection />
+        <ToolTipSection type="section" />
       </template>
     </vi-tooltip>
 
@@ -53,7 +53,7 @@
           "
         />
         <template #content>
-          <ToolTipSection />
+          <ToolTipSection type="audio" />
         </template>
       </vi-tooltip>
       <vi-button
