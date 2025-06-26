@@ -58,13 +58,12 @@ const videoExtensions = [
   '3gp',
   'm4v',
 ];
-const props = defineProps<{
-  material: MATERIAL_ITEM;
-import type { MaterialItem } from '~/types/material';
-
-defineProps<{
-  material: MaterialItem;
-}>();
+const props = defineProps({
+  material: {
+    type: Object as PropType<MATERIAL_ITEM>,
+    required: true,
+  },
+});
 
 const fileExtension = computed(() => {
   return getFileName(props.material.fileUri ?? '')[1]
