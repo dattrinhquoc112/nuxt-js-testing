@@ -81,8 +81,9 @@
       :isExceedLimit="isExceedLimit"
       v-model="objectSelecting"
       @handle-show-pu-limit="$emit('handleExceedLimit')"
-      @add-material="addMaterialAudio"
-      @remove-material="editorMaterials.removeMaterialAudio"
+      :selectionCurrent="selectionCurrent"
+      :addMaterialAudio="addMaterialAudio"
+      :removeMaterialAudio="editorMaterials.removeMaterialAudio"
       @close="closePopupSettingAudio"
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
@@ -288,6 +289,12 @@ const handleChangeHistoryWhenSaveTemplate = () => {
   history.value = [_.cloneDeep(sections.value)];
   historyMaterial.value = [_.cloneDeep(initListMaterial.value)];
 };
+
+const selectionCurrent = computed(() => {
+  if (indexSectionSelected.value === undefined) return undefined;
+  return sections.value[indexSectionSelected.value];
+});
+
 const objectSelecting = computed<OBJ_SECTION_ITEM>(() => {
   const sectionIndex = indexSectionSelected.value;
   const key = keyElementSelected.value;

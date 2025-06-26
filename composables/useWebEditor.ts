@@ -20,7 +20,6 @@ export const useWebEditor = (
     indexSectionSelected: Ref<number | undefined>;
   }
 ) => {
-  const route = useRoute();
   const materialStore = useMaterial();
   const { listMaterial: listMaterials } = storeToRefs(materialStore);
   const currentSize = ref({ value: 0 });
@@ -379,12 +378,15 @@ export const useWebEditor = (
     });
   };
 
-  const addMaterialAudio = async (data: {
-    id: string;
-    text: string;
-    audioUrl: string;
-    isLoading: boolean;
-  }) => {
+  const addMaterialAudio = async (
+    data: {
+      id: string;
+      text: string;
+      audioUrl: string;
+      isLoading: boolean;
+    },
+    sectionAudioSelected: SECTION_ITEM
+  ) => {
     const fileSize = await getSizeFileFromUri(data.audioUrl);
     if (!fileSize) {
       return;
@@ -404,14 +406,10 @@ export const useWebEditor = (
     if (isLimit) {
       options?.handleExceedLimit();
     } else {
-      let sectionCurrent;
-      if (options?.indexSectionSelected?.value !== undefined) {
-        sectionCurrent = sections.value[options.indexSectionSelected.value];
-      }
       materialStore.addMaterialContent({
         indexSection: options?.indexSectionSelected?.value,
         type: 'AUDIO_TTS',
-        thumbnail: sectionCurrent?.imageDemo,
+        thumbnail: sectionAudioSelected?.imageDemo,
         fileUri: data.audioUrl,
         fileSize: convertToKB(`${fileSize}B`),
       });
