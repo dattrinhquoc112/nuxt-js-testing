@@ -202,7 +202,7 @@ const navigateProjectList = () => {
   height: 64px;
   border-bottom: 1px solid $neutral-white-alpha-7;
   background-image: url(@/assets/images/image-bg.svg);
-  background-position: center;
+  background-position: top;
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;

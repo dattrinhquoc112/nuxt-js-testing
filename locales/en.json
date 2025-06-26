@@ -388,6 +388,8 @@
   "landing-editor-modal-media_description": "File formats: JPEG, PNG, MP4, MOV",
   "landing-editor-modal-media_logo_description": "Image format: JPEG, PNG, GIF\nRecommended size: 120 x 40\nFile size limit: Under 100 KB",
   "landing-editor-button-media_upload": "Upload",
+  "landing-tutorial-title-title_ai_section": "AI Tool Section",
+  "landing-tutorial-subtitle-subtitle_ai_section": "Add AI Tool sections to let your visitors experience AI applications directly on your website",
   "common-action-button-button_delete": "Delete",
   "landing-editor-section-section_text": "Text",
   "landing-editor-section-section_button": "Button",

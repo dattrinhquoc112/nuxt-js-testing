@@ -388,6 +388,8 @@
   "landing-editor-modal-media_description": "影像格式：JPEG, PNG, MP4, MOV",
   "landing-editor-modal-media_logo_description": "影像格式：JPEG, PNG, GIF\n建議尺寸：120 x 40\n建議大小：100 KB以下",
   "landing-editor-button-media_upload": "上傳",
+  "landing-tutorial-title-title_ai_section": "AI 工具區塊",
+  "landing-tutorial-subtitle-subtitle_ai_section": "添加 AI 工具區塊 (AI Tool Section) 到你的網頁中，造訪你網頁的用戶就可以體驗 AI 相關的應用",
   "common-action-button-button_delete": "刪除",
   "landing-editor-section-section_text": "文字",
   "landing-editor-section-section_button": "按鈕",
