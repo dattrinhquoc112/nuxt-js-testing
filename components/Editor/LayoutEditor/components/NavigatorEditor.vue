@@ -50,7 +50,7 @@
               <vi-button
                 type="standard-default"
                 :disabled="!PERMISSION.isEditor"
-                class="no-rounded"
+                class="no-rounded min-w-148"
                 width="fit-content"
                 @click="
                   emit('handleEditInfo');
@@ -63,7 +63,7 @@
               </vi-button>
               <vi-button
                 type="standard-default"
-                class="no-rounded"
+                class="no-rounded min-w-148"
                 width="fit-content"
                 @click="
                   emit('handleActivitySettings');
@@ -206,7 +206,7 @@ const navigateProjectList = () => {
   background-size: cover;
   background-repeat: no-repeat;
   position: relative;
-  z-index: 20;
+  z-index: 100;
 
   &__left {
     display: flex;
@@ -223,7 +223,7 @@ const navigateProjectList = () => {
     }
     &__event-list {
       position: absolute;
-      left: 40px;
+      left: 0px;
       top: 40px;
       z-index: 40;
       display: flex;
@@ -296,6 +296,12 @@ const navigateProjectList = () => {
 :deep(.no-rounded.ui-kit-button) {
   justify-content: left;
   border-radius: 0 !important;
+}
+:deep(.min-w-148) {
+  .text-button {
+    min-width: 148px;
+    text-align: left;
+  }
 }
 :deep(.navigation-item) {
   width: 33% !important;

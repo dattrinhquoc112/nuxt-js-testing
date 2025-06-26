@@ -11,6 +11,9 @@
         <div class="section-column">
           <div class="grid-two">
             <div class="section-column">
+              <vi-typography class="color-white-60" type="subtitle-large">{{
+                t('landing-project_mgmt-section-event_time')
+              }}</vi-typography>
               <vi-date-picker
                 class="w-full"
                 v-model="model.dates"
@@ -53,6 +56,9 @@
           </div>
         </div>
         <div class="section-column">
+          <vi-typography class="color-white-60" type="subtitle-large">{{
+            t('landing-project_mgmt-section-url_section')
+          }}</vi-typography>
           <div class="grid-two">
             <vi-form-item prop="eventEnglishName">
               <template #default="{ errorMsg }">
