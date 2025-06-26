@@ -59,4 +59,6 @@ export interface ILabelElement {
   isLogo: boolean;
   isImageRightSection: boolean;
   isElementRest: boolean;
+  isHeader: boolean;
+  isFooter: boolean;
 }

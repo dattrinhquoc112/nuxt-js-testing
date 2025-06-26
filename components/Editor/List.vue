@@ -39,6 +39,7 @@
     <editor-label-element
       ref="labelElementSelecting"
       :is-show="isShowLabelElement"
+      :objectSelecting="objectSelecting as BUTTON_EXTERNAL_ITEM"
       :type-label="typeLabel"
     />
   </div>
@@ -48,7 +49,11 @@
 import useCheckPermission from '~/composables/checkPermission';
 import { RWD_MODE } from '~/constants/common';
 import type { ILabelElement } from '~/types/common';
-import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
+import type {
+  AUDIO_ITEM,
+  BUTTON_EXTERNAL_ITEM,
+  SECTION_ITEM,
+} from '~/types/templates';
 
 const props = defineProps({
   templateSelected: {
@@ -66,6 +71,10 @@ const props = defineProps({
   rwdMode: {
     type: String,
     default: '',
+  },
+  objectSelecting: {
+    type: Object,
+    default: () => ({}),
   },
 });
 const emit = defineEmits([
@@ -98,6 +107,8 @@ const initStatusLabel: ILabelElement = {
   isLogo: false,
   isElementRest: false,
   isImageRightSection: false,
+  isHeader: false,
+  isFooter: false,
 };
 const typeLabel = ref<ILabelElement>({
   ...initStatusLabel,
@@ -219,13 +230,13 @@ const getPositionForSection = (coordinates: any) => {
 };
 
 const getPositionForSectionLogo = (coordinates: any) => {
-  const pageY = coordinates.bottom;
+  const pageY = coordinates.bottom + 8;
   const pageX = coordinates.left + coordinates.width / 2;
   return { pageX, pageY };
 };
 
 const getPositionForSectionCopyright = (coordinates: any) => {
-  const pageY = coordinates.top - 48;
+  const pageY = coordinates.top - 56;
   const pageX = coordinates.left + coordinates.width / 2;
   return { pageX, pageY };
 };
@@ -314,6 +325,10 @@ const handleShowLabel = (
     label.value.isButtonHref = true;
   } else if (targetReplace.classList.contains('section-logo-image')) {
     label.value.isLogo = true;
+  } else if (targetReplace.classList.contains('section-logo')) {
+    label.value.isHeader = true;
+  } else if (targetReplace.classList.contains('section-copyright')) {
+    label.value.isFooter = true;
   } else if (
     targetReplace.closest('.text-title') ||
     targetReplace.closest('.text-head') ||
