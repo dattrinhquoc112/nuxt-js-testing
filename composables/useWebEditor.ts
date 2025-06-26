@@ -6,6 +6,8 @@ import type { AUDIO_ITEM, SECTION_ITEM } from '~/types/templates';
 import { THRESH_HOLD } from '~/constants/common';
 import useSnapshotThumbnail from '@/composables/snapshotThumbnail';
 import { checkReachLimit } from '~/utils/common';
+import { useMaterial } from '~/stores/material';
+import { storeToRefs } from 'pinia';
 
 export const useWebEditor = (
   sections: Ref<any[]>,
@@ -18,6 +20,9 @@ export const useWebEditor = (
     indexSectionSelected: Ref<number | undefined>;
   }
 ) => {
+  const route = useRoute();
+  const materialStore = useMaterial();
+  const { listMaterial: listMaterials } = storeToRefs(materialStore);
   const currentSize = ref({ value: 0 });
   watch(
     () => currentSizeRef?.value,
@@ -29,16 +34,6 @@ export const useWebEditor = (
   const idWebEditorRef = ref(IDWebEditor);
   const initSections = ref();
   const { uploadFile } = useUploadStore();
-  interface MATERIAL_ITEM {
-    indexSection?: number;
-    id?: string | null;
-    type?: string;
-    thumbnail?: string;
-    fileUri?: string;
-    fileSize?: number | null;
-    extension?: string;
-  }
-  const listMaterials = ref<MATERIAL_ITEM[]>([]);
 
   const { updateContentProject, getContentProject, setVersionContent } =
     useProjectStore();
@@ -80,13 +75,14 @@ export const useWebEditor = (
         options?.handleExceedLimit();
       } else {
         if (options?.indexSectionSelected?.value === undefined) return isLimit;
-
-        listMaterials.value.push({
+        const [, ext] = file?.type.split('/') || '';
+        materialStore.addMaterialContent({
           indexSection: options.indexSectionSelected.value,
           type: 'MEDIA',
           id: null,
           fileUri: newFileUri,
           fileSize: file?.size,
+          extension: ext,
         });
         if (isReach75PercentLimit) {
           options?.handleExceed75PercentLimit();
@@ -96,8 +92,10 @@ export const useWebEditor = (
     }
     if (!materialOld) return false;
     // Handle remove a material
+
+    const materialIndex = listMaterials.value.indexOf(materialOld);
     if (type === 'DELETE') {
-      listMaterials.value.splice(listMaterials.value.indexOf(materialOld), 1);
+      materialStore.deleteMaterialContent(materialIndex);
       return false;
     }
     // Handle change a material
@@ -118,12 +116,17 @@ export const useWebEditor = (
       options?.handleExceedLimit();
     }
 
-    materialOld.fileUri = newFileUri;
-    materialOld.fileSize = file?.size;
+    let newData = {
+      ...materialOld,
+      fileUri: newFileUri,
+      fileSize: file?.size,
+    };
     if (file) {
       const [, ext] = file.type.split('/');
       materialOld.extension = ext;
+      newData = { ...newData, extension: ext };
     }
+    materialStore.updateMaterialItem(materialIndex, newData);
     if (isReach75PercentLimit) {
       options?.handleExceed75PercentLimit();
     }
@@ -147,7 +150,7 @@ export const useWebEditor = (
       findMaterial.fileUri = dataApi.fileUri;
       findMaterial.fileSize = file.size;
     } else {
-      listMaterials.value.push({
+      materialStore.addMaterialContent({
         indexSection,
         id: null,
         type,
@@ -263,7 +266,6 @@ export const useWebEditor = (
             }
           );
         }
-
         const materials = listMaterials.value
           .filter((i) => Number(i.indexSection) === index)
           .map((i) => ({
@@ -273,7 +275,6 @@ export const useWebEditor = (
             fileUri: i.fileUri,
             fileSize: i.fileSize,
           }));
-
         return {
           id: section?.idApi || null,
           template: section.id,
@@ -289,7 +290,7 @@ export const useWebEditor = (
   };
 
   const mapDataToSection = (response: any) => {
-    listMaterials.value = [];
+    materialStore.clearMaterialContent();
     if (response.data.version)
       setVersionContent({
         idProject: idWebEditorRef.value,
@@ -300,7 +301,7 @@ export const useWebEditor = (
     sections.value = response.data.sections.map(
       (item: any, indexSection: number) => {
         if (item.materials?.length) {
-          listMaterials.value = listMaterials.value.concat(
+          materialStore.concatMaterialContent(
             item.materials.map((i: any) => ({
               indexSection,
               id: i.id,
@@ -314,7 +315,7 @@ export const useWebEditor = (
         return { ...item.settings.generalSettings, idApi: item.id };
       }
     );
-
+    materialStore.syncInitMaterialsList();
     initSections.value = _.cloneDeep(sections.value);
   };
 
@@ -348,29 +349,6 @@ export const useWebEditor = (
   };
   const checkChanges = () => {
     return _.isEqual(initSections.value, sections.value);
-  };
-
-  const updateIndexMaterial = (indexBefore: number, indexAfter: number) => {
-    listMaterials.value.forEach((item: MATERIAL_ITEM) => {
-      if (item.indexSection === indexBefore) {
-        item.indexSection = indexAfter;
-      } else if (item.indexSection === indexAfter) {
-        item.indexSection = indexBefore;
-      }
-    });
-  };
-
-  const deleteIndexMaterial = (indexDelete: number) => {
-    listMaterials.value.slice(0).forEach((item: MATERIAL_ITEM) => {
-      if (item.indexSection === undefined) return;
-
-      if (item.indexSection === indexDelete) {
-        listMaterials.value.splice(listMaterials.value.indexOf(item), 1);
-      }
-      if (item.indexSection > indexDelete) {
-        item.indexSection -= 1;
-      }
-    });
   };
 
   const checkIsFinishedSetupAudio = () => {
@@ -430,7 +408,7 @@ export const useWebEditor = (
       if (options?.indexSectionSelected?.value !== undefined) {
         sectionCurrent = sections.value[options.indexSectionSelected.value];
       }
-      listMaterials.value.push({
+      materialStore.addMaterialContent({
         indexSection: options?.indexSectionSelected?.value,
         type: 'AUDIO_TTS',
         thumbnail: sectionCurrent?.imageDemo,
@@ -443,21 +421,6 @@ export const useWebEditor = (
     }
   };
 
-  const removeMaterialAudio = (
-    data: {
-      id: string;
-      text: string;
-      audioUrl: string;
-      isLoading: boolean;
-    }[]
-  ) => {
-    listMaterials.value.slice(0).forEach((item) => {
-      if (item.type === 'AUDIO_TTS' && item.fileUri === data[0].audioUrl) {
-        listMaterials.value.splice(listMaterials.value.indexOf(item), 1);
-      }
-    });
-  };
-
   return {
     handleSaveTemplate,
     fetchContentProject,
@@ -465,11 +428,8 @@ export const useWebEditor = (
     setIDWebEditor,
     checkChanges,
     initSections,
-    updateIndexMaterial,
-    deleteIndexMaterial,
     listMaterials,
     addMaterialAudio,
-    removeMaterialAudio,
     checkIsFinishedSetupAudio,
   };
 };
