@@ -78,7 +78,8 @@ const editorContainer = ref<HTMLElement>();
   }
 }
 .bg-black {
-  background: $brand-navy-900-main;
-  width: 100%;
+  background-image: url(@/assets/images/image-bg.svg);
+  background-position: top;
+  background-size: cover;
 }
 </style>
