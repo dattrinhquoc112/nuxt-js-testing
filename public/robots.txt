@@ -1,2 +1,44 @@
-User-Agent: *
+User-agent: *
 Disallow:
+
+User-agent: Googlebot
+Allow: /
+
+User-agent: bingbot
+Allow: /
+
+User-agent: facebookexternalhit
+Allow: /
+
+User-agent: facebot
+Allow: /
+
+User-agent: Twitterbot
+Allow: /
+
+User-agent: LinkedInBot
+Allow: /
+
+User-agent: Slackbot
+Allow: /
+
+User-agent: Discordbot
+Allow: /
+
+User-agent: line-poker
+Allow: /
+
+User-agent: TelegramBot
+Allow: /
+
+User-agent: WhatsApp
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: Pinterestbot
+Allow: /
+
+User-agent: Google-Structured-Data-Testing-Tool
+Allow: /

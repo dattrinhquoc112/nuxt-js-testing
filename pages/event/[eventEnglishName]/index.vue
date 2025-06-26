@@ -1,27 +1,51 @@
-<template>
-  <div>Test SEO</div>
-</template>
-<script setup>
+<script setup lang="ts">
+import { useHead, useAsyncData } from "#imports";
+
+function delay(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+const { data } = await useAsyncData(
+  "mock-seo",
+  async () => {
+    await delay(3000); // giả lập call API mất 3s
+
+    return {
+      metaTitle: "Mock Title after delay",
+      metaDescription: "Mock Description after 3s",
+      ogTitle: "OG Title Mock after delay",
+      ogDescription: "OG Description Mock after delay",
+      ogImageUri: "https://example.com/og-image.jpg",
+      name: "Mock Site Name",
+    };
+  },
+  {
+    server: true,
+  }
+);
+
 useHead({
-  title: 'Event english name',
+  title: data.value.metaTitle || data.value.ogTitle,
   meta: [
-    { name: 'description', content: 'Mô tả ngắn để hiển thị khi share link.' },
+    { name: "description", content: data.value.metaDescription },
 
-    // Open Graph
-    { property: 'og:title', content: 'Tiêu đề OG' },
-    { property: 'og:description', content: 'Mô tả OG' },
-    { property: 'og:site_name', content: 'Tên website' },
-    { property: 'og:image', content: 'https://vyin-landing-backend.sotatek.works/api/v1/general/media?fileKey=tenant/27/material/05d98293-1585-4dbc-90ec-1a9454d9f0f0.jpg' },
-    { property: 'og:image:width', content: '1200' },
-    { property: 'og:image:height', content: '630' },
-    { property: 'og:locale', content: 'vi_VN' },
-    { property: 'og:type', content: 'website' },
+    { property: "og:title", content: data.value.ogTitle },
+    { property: "og:description", content: data.value.ogDescription },
+    { property: "og:site_name", content: data.value.name },
+    { property: "og:image", content: data.value.ogImageUri },
+    { property: "og:image:width", content: "1200" },
+    { property: "og:image:height", content: "630" },
+    { property: "og:locale", content: "vi_VN" },
+    { property: "og:type", content: "website" },
 
-    // Twitter Card
-    { name: 'twitter:card', content: 'summary_large_image' },
-    { name: 'twitter:title', content: 'Tiêu đề OG' },
-    { name: 'twitter:description', content: 'Mô tả OG' },
-    { name: 'twitter:image', content: 'https://vyin-landing-backend.sotatek.works/api/v1/general/media?fileKey=tenant/27/material/05d98293-1585-4dbc-90ec-1a9454d9f0f0.jpg' },
-  ]
-})
+    { name: "twitter:card", content: "summary_large_image" },
+    { name: "twitter:title", content: data.value.ogTitle },
+    { name: "twitter:description", content: data.value.ogDescription },
+    { name: "twitter:image", content: data.value.ogImageUri },
+  ],
+});
 </script>
+
+<template>
+  <div>Page loaded after 3s (check head tags)</div>
+</template>
