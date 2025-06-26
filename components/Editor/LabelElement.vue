@@ -9,7 +9,8 @@
         typeLabel.isLogo ||
         typeLabel.isImageRightSection ||
         typeLabel.isElementRest,
-      'border-section': typeLabel.borderSection,
+      'border-section':
+        typeLabel.borderSection || typeLabel.isHeader || typeLabel.isFooter,
     }"
   >
     <div
@@ -18,6 +19,16 @@
     >
       <vi-typography type="caption-large-300">
         {{ $t('landing-editor-section-section_media') }}
+      </vi-typography>
+    </div>
+    <div class="text-label-header" v-if="typeLabel.isHeader">
+      <vi-typography type="caption-large-300">
+        {{ $t('landing-editor-field-header') }}
+      </vi-typography>
+    </div>
+    <div class="text-label-footer" v-if="typeLabel.isFooter">
+      <vi-typography type="caption-large-300">
+        {{ $t('landing-editor-field-footer') }}
       </vi-typography>
     </div>
     <div class="text-label" v-if="typeLabel.isElementRest">
@@ -29,7 +40,12 @@
       <vi-typography type="caption-large-300">
         {{ $t('landing-editor-section-section_button') }}
       </vi-typography>
-      <vi-icon name="ic_link" size="16" color="#fff"></vi-icon>
+      <vi-icon
+        v-if="objectSelecting?.link"
+        name="ic_link"
+        size="16"
+        color="#fff"
+      ></vi-icon>
     </div>
     <div class="text-label-section" v-if="typeLabel.borderSection">
       <vi-typography type="caption-large-300">
@@ -56,6 +72,7 @@
 
 <script setup lang="ts">
 import type { ILabelElement } from '~/types/common';
+import type { BUTTON_EXTERNAL_ITEM } from '~/types/templates';
 
 defineProps({
   typeLabel: {
@@ -65,6 +82,10 @@ defineProps({
   isShow: {
     type: Boolean,
     default: false,
+  },
+  objectSelecting: {
+    type: Object as PropType<BUTTON_EXTERNAL_ITEM>,
+    default: () => ({}),
   },
 });
 
@@ -135,6 +156,23 @@ defineExpose({
     background-color: $brand-magenta-400-main;
     right: 0;
     transform: translate(2px, -100%);
+  }
+  .text-label-header,
+  .text-label-footer {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    padding: 1px 6px;
+    position: absolute;
+    background-color: $brand-magenta-400-main;
+    bottom: 0;
+    left: 0;
+    transform: translate(-2px, 100%);
+  }
+  .text-label-footer {
+    top: 0;
+    bottom: unset;
+    transform: translate(-2px, -100%);
   }
 }
 </style>

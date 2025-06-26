@@ -19,6 +19,7 @@
       :templateSelected="templateSelected"
       :classElementSelected="classElementSelected"
       :sections="sections"
+      :objectSelecting="objectSelecting as BUTTON_EXTERNAL_ITEM"
       @add-section="(index) => onClickAddSection(index)"
       @set-position-control="handleSetPositionControl"
       @set-show-control="(value) => (isShowControl = value)"
