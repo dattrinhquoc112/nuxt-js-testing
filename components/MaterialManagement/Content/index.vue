@@ -31,6 +31,7 @@
 import type { PropType } from 'vue';
 import { METRICS_KEY } from '~/constants/common';
 import type { ITenantMetric } from '~/types/tenant';
+import type { MATERIAL_ITEM } from '~/types/templates';
 
 const metrics = inject<any>(PROVIDE.METRIC);
 const { t } = useI18n();
@@ -40,7 +41,8 @@ defineProps({
     required: true,
   },
   materialList: {
-    default: [],
+    type: Array as PropType<MATERIAL_ITEM[]>,
+    default: () => [],
     required: false,
   },
 });

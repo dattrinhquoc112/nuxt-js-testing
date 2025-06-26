@@ -24,9 +24,12 @@
 <script setup lang="ts">
 import useMetric from '~/composables/metric';
 import { useEditorStore } from '~/stores/editor';
+import { useMaterial } from '~/stores/material';
+import { storeToRefs } from 'pinia';
 import SideBarItemContainer from '../Common/SideBarItemContainer.vue';
 
-const materialList = inject<Ref<never[]> | undefined>('materialList');
+const materialStore = useMaterial();
+const { listMaterial: materialList } = storeToRefs(materialStore);
 const editorStore = useEditorStore();
 const { tenantMetric, getTenantMetric } = useMetric();
 

@@ -23,11 +23,12 @@
   </div>
 </template>
 <script setup lang="ts">
+import type { MATERIAL_ITEM } from '~/types/templates';
 import type { MaterialItem } from '~/types/material';
 import MaterialInfo from './MaterialInfo.vue';
 
 const props = defineProps<{
-  materialList: MaterialItem[];
+  materialList: MATERIAL_ITEM[];
 }>();
 
 const materialListMedia = computed(() => {

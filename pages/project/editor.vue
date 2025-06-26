@@ -125,22 +125,25 @@ import { useProjectStore } from '@/stores/project';
 import { toastMessage } from '#imports';
 import { useEditorStore } from '~/stores/editor';
 import useMaterials from '~/composables/materials';
+import { useMaterial } from '~/stores/material';
+import { storeToRefs } from 'pinia';
 
 const disableUndoRedo = ref(false);
 const SIDEBAR_BUTTONS = ['ic_section', 'ic_ai_section', 'ic_capacity'];
 const activeSidebarButton = ref();
 const isOpenReachLimitNoti = ref(false);
 provide('activeSidebarButton', activeSidebarButton);
-const isOpenAlert = ref(false);
-const materialList = ref();
+const isOpenAlert = ref(true);
 const editorID = ref('');
+const editorMaterials = useMaterial();
+const { listMaterial: listMaterials } = storeToRefs(editorMaterials);
 const {
   isExceedLimit,
   isExceed75PercentLimit,
   totalCapacity,
   totalCapacityUsed,
 } = useMaterials({
-  listMaterial: materialList,
+  listMaterial: listMaterials,
   editorID,
 });
 const totalCapacityUsedRef = computed(() => {
@@ -179,16 +182,6 @@ const route = useRoute();
 const webEditorName = ref(t('landing-editor-title-untitled_project'));
 const project = ref();
 
-watch(
-  () => editorRef.value?.listMaterials,
-  (newVal) => {
-    if (newVal) {
-      materialList.value = newVal;
-    }
-  },
-  { immediate: true }
-);
-provide('materialList', materialList);
 const configVersion = ref({
   keyAction: '',
   type: '',
