@@ -106,6 +106,7 @@ export interface MATERIAL_ITEM {
   thumbnail?: string;
   fileUri?: string;
   fileSize?: number | null;
+  extension: string;
 }
 export const TEMPLATES_SECTION: SECTION_ITEM[] = [
   {

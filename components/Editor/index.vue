@@ -10,7 +10,6 @@
       :templateSelected="templateSelected"
       @click-template="onClickTemplate"
     />
-
     <AIToolsTutorial
       v-if="activeSideBar === SIDE_BAR_ACTION.CLICKED_AI_TOOLS_TUTORIAL"
     />
@@ -83,7 +82,7 @@
       v-model="objectSelecting"
       @handle-show-pu-limit="$emit('handleExceedLimit')"
       @add-material="addMaterialAudio"
-      @remove-material="removeMaterialAudio"
+      @remove-material="editorMaterials.removeMaterialAudio"
       @close="closePopupSettingAudio"
       @move-popup-to-top="handleMoveTopPopup"
       @move-popup-to-bottom="handleMoveBottomPopup"
@@ -140,6 +139,7 @@ import {
 } from '~/types/templates';
 import { useEditorStore } from '~/stores/editor';
 import { storeToRefs } from 'pinia';
+import { useMaterial } from '~/stores/material';
 
 const editorStore = useEditorStore();
 const { activeSideBar } = storeToRefs(editorStore);
@@ -204,6 +204,7 @@ const positionControlCurrent = ref<{ pageX: number; pageY: number }>({
 const isChanged = ref(false);
 const sections = ref<SECTION_ITEM[] | []>([]);
 const history = ref<any[]>([]);
+const historyMaterial = ref<any[]>([]);
 const route = useRoute();
 const idParam = Array.isArray(route.query?.id)
   ? route.query.id[0] || ''
@@ -222,17 +223,15 @@ const limitSize = computed(() => {
 const currentSize = computed(() => {
   return props.currentFileSize;
 });
+const editorMaterials = useMaterial();
+const { initListMaterial, listMaterial } = storeToRefs(editorMaterials);
 const {
   fetchContentProject,
   handleSaveTemplate,
   checkMaterials,
   checkChanges,
-  updateIndexMaterial,
-  deleteIndexMaterial,
   initSections,
-  listMaterials,
   addMaterialAudio,
-  removeMaterialAudio,
   checkIsFinishedSetupAudio,
 } = useWebEditor(sections, idParam, limitSize, currentSize, {
   handleExceedLimit: () => handleUploadExceedLimit(1),
@@ -271,10 +270,22 @@ watch(
   },
   { immediate: true }
 );
+watch(
+  initListMaterial,
+  (newVal: any[]) => {
+    if (newVal) {
+      historyMaterial.value = [_.cloneDeep(newVal)];
+    }
+  },
+  { immediate: true }
+);
+
 const handleChangeHistoryWhenSaveTemplate = () => {
   history.value = [];
+  historyMaterial.value = [];
   currentIndex.value = 0;
   history.value = [_.cloneDeep(sections.value)];
+  historyMaterial.value = [_.cloneDeep(initListMaterial.value)];
 };
 const objectSelecting = computed<OBJ_SECTION_ITEM>(() => {
   const sectionIndex = indexSectionSelected.value;
@@ -543,7 +554,7 @@ const moveDown = () => {
     sections.value[indexSectionSelected.value] =
       sections.value[indexSectionSelected.value + 1];
     sections.value[indexSectionSelected.value + 1] = templateDraft;
-    updateIndexMaterial(
+    editorMaterials.updateIndexMaterial(
       indexSectionSelected.value,
       indexSectionSelected.value + 1
     );
@@ -559,7 +570,7 @@ const moveUp = () => {
     sections.value[indexSectionSelected.value] =
       sections.value[indexSectionSelected.value - 1];
     sections.value[indexSectionSelected.value - 1] = templateDraft;
-    updateIndexMaterial(
+    editorMaterials.updateIndexMaterial(
       indexSectionSelected.value,
       indexSectionSelected.value - 1
     );
@@ -589,14 +600,26 @@ watch(
       }
       if (currentIndex.value < history.value.length) {
         history.value = history.value.slice(0, currentIndex.value + 1);
+        historyMaterial.value = historyMaterial.value.slice(
+          0,
+          currentIndex.value + 1
+        );
       }
 
       debounceTimer = setTimeout(() => {
         history.value.push(JSON.parse(JSON.stringify(newVal)));
+        historyMaterial.value.push(
+          JSON.parse(JSON.stringify(listMaterial.value))
+        );
         currentIndex.value++;
         if (history.value.length > MAX_HISTORY_EDITOR + 1) {
+          historyMaterial.value.shift();
           history.value.shift();
           history.value = history.value.slice(0, currentIndex.value + 1);
+          historyMaterial.value = historyMaterial.value.slice(
+            0,
+            currentIndex.value + 1
+          );
 
           currentIndex.value--;
         }
@@ -613,6 +636,9 @@ const undo = () => {
     sections.value = JSON.parse(
       JSON.stringify(history.value[currentIndex.value])
     );
+    editorMaterials.setListMaterials(
+      JSON.parse(JSON.stringify(historyMaterial.value[currentIndex.value]))
+    );
   }
 };
 
@@ -622,6 +648,9 @@ const redo = () => {
     currentIndex.value++;
     sections.value = JSON.parse(
       JSON.stringify(history.value[currentIndex.value])
+    );
+    editorMaterials.setListMaterials(
+      JSON.parse(JSON.stringify(historyMaterial.value[currentIndex.value]))
     );
   }
 };
@@ -645,7 +674,7 @@ const onClickAddSection = (index: number) => {
   if (templateSelected.value && !props.isExceedLimit) {
     const newIndex = hoverPosition.value?.zone === 'bottom' ? index + 1 : index;
     sections.value.splice(
-      newIndex, 
+      newIndex,
       0,
       JSON.parse(JSON.stringify(templateSelected.value))
     );
@@ -679,7 +708,7 @@ const showPopupChangeImage = () => {
     selectedElement.value
   ) {
     const coordinates = selectedElement.value.getBoundingClientRect();
-    const pageY = coordinates.top + coordinates.height / 2 ;
+    const pageY = coordinates.top + coordinates.height / 2;
     const pageX = coordinates.left - 20;
     handleSetPositionControl({
       pageY,
@@ -714,7 +743,7 @@ const closePopupSettingText = () => {
 const handleDeleteSection = () => {
   if (indexSectionSelected.value === undefined) return;
   sections.value.splice(indexSectionSelected.value, 1);
-  deleteIndexMaterial(indexSectionSelected.value);
+  editorMaterials.deleteIndexMaterial(indexSectionSelected.value);
   iSaveHistory.value = true;
   hiddenBoxControl();
 };
@@ -751,7 +780,6 @@ defineExpose({
   sections,
   fetchContentProject,
   checkChanges,
-  listMaterials,
   calcPositionControl,
   handleChangeHistoryWhenSaveTemplate,
   checkIsFinishedSetupAudio,
