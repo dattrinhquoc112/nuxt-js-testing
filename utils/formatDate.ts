@@ -42,3 +42,29 @@ export default function formatDate(
 
   return formatStr.replace(pattern, (match) => map[match]);
 }
+
+export function convertSecondsToSmartHMS(value: string | number): string {
+  const totalSeconds = Math.round(Number(value));
+
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  const hasHours = hours > 0;
+  const hasMinutes = minutes > 0;
+
+  if (totalSeconds === 0) return '0';
+
+  const hStr = hasHours ? `${hours}h` : '';
+  const mStr = hasMinutes
+    ? `${hasHours ? String(minutes).padStart(2, '0') : minutes}m`
+    : '';
+  const sStr =
+    seconds > 0
+      ? `${
+          hasHours || hasMinutes ? String(seconds).padStart(2, '0') : seconds
+        }s`
+      : '';
+
+  return `${hStr}${mStr}${sStr}`;
+}

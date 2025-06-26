@@ -43,7 +43,7 @@
 
     <editor-popup-setting-image
       v-if="isShowPopup.imageSetting"
-      :isExceedLimit
+      :isExceedLimit="isExceedLimit"
       :class="classPopupSetting"
       :isShow="isShowPopup.imageSetting"
       :positionControlCurrent="positionControlCurrent"
@@ -78,7 +78,7 @@
       v-if="isShowPopup.audioSetting"
       :isShow="isShowPopup.audioSetting"
       :positionControlCurrent="positionControlCurrent"
-      :isExceedLimit
+      :isExceedLimit="isExceedLimit"
       v-model="objectSelecting"
       @handle-show-pu-limit="$emit('handleExceedLimit')"
       @add-material="addMaterialAudio"
@@ -90,6 +90,7 @@
     <editor-popup-setting-text
       v-if="isShowPopup.textSetting"
       :isShow="isShowPopup.textSetting"
+      :objectSelecting="objectSelecting as TEXT_ITEM"
       :positionControlCurrent="positionControlCurrent"
       @close="closePopupSettingText"
       @move-popup-to-top="handleMoveTopPopup"
@@ -433,10 +434,18 @@ const handleResetFile = () => {
 };
 const handleChangeText = (event: MouseEvent) => {
   const element = event.target as HTMLElement;
-  const { width } = element.getBoundingClientRect();
+  const obj = objectSelecting.value as TEXT_ITEM;
+  if (!obj) return;
+  const { width, height } = element.getBoundingClientRect();
   const textarea = document.createElement('textarea');
-  textarea.style.width = `${width}px`;
-  textarea.classList.add('input-enter-button');
+  textarea.style.width = `${width + 10}px`;
+  textarea.style.height = `${height + 10}px`;
+  textarea.style.outline = `none`;
+  textarea.style.backgroundColor = `transparent`;
+  textarea.style.border = `none`;
+  textarea.style.color = obj.style.color || '#000';
+  textarea.style.resize = `none`;
+  textarea.style.textAlign = obj.style.textAlign || 'center';
   textarea.value = element.textContent as string;
   element.textContent = '';
   element.appendChild(textarea);
@@ -444,8 +453,6 @@ const handleChangeText = (event: MouseEvent) => {
   editorListRef.value?.calcPosition();
 
   textarea.addEventListener('blur', () => {
-    const obj = objectSelecting.value as TEXT_ITEM;
-    if (!obj) return;
     obj.text = textarea.value;
     element.textContent = textarea.value;
   });
@@ -695,8 +702,16 @@ const showPopupSettingColor = () => {
   isShowPopup.value.colorSetting = true;
 };
 const showPopupSettingAudio = () => {
+  if (!selectedElement.value) return;
+  const coordinates = selectedElement.value.getBoundingClientRect();
   isShowControl.value = false;
   positionControlCurrent.value.pageY = 80;
+  positionControlCurrent.value.pageX = coordinates.right + 10;
+  if (document.body.clientWidth - coordinates.right > 340) {
+    positionControlCurrent.value.pageX = coordinates.right + 10;
+  } else {
+    positionControlCurrent.value.pageX = coordinates.left - 332;
+  }
   isShowPopup.value.audioSetting = true;
 };
 const closePopupSettingAudio = () => {

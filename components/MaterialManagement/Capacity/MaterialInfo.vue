@@ -5,7 +5,7 @@
       v-if="!isVideo"
       :style="{
         background: `linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('${getImage(
-          material.fileUri
+          material.thumbnail || material.fileUri
         )}') center/cover no-repeat`,
         backgroundColor: 'lightgray',
       }"
@@ -24,7 +24,6 @@
       </video>
       <div class="gradient-overlay"></div>
     </div>
-
     <div
       class="material-info--file"
       :title="
@@ -61,6 +60,10 @@ const videoExtensions = [
 ];
 const props = defineProps<{
   material: MATERIAL_ITEM;
+import type { MaterialItem } from '~/types/material';
+
+defineProps<{
+  material: MaterialItem;
 }>();
 
 const fileExtension = computed(() => {

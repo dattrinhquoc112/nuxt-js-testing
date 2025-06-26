@@ -41,7 +41,6 @@
       :is-show="isShowLabelElement"
       :type-label="typeLabel"
     />
-    <editor-label-element :is-show="isShowLabelElement" />
   </div>
 </template>
 
@@ -286,12 +285,16 @@ const calcPosition = (
   }
 };
 
-const handleShowLabel = (target: HTMLElement, isHover: boolean = false) => {
+const handleShowLabel = (
+  target: HTMLElement | null,
+  isHover: boolean = false
+) => {
   const label = isHover ? typeLabelHover : typeLabel;
   const isShowLabel = isHover ? isShowLabelHoverElement : isShowLabelElement;
 
   label.value = { ...initStatusLabel };
   isShowLabel.value = false;
+  let targetReplace: any = target;
 
   if (
     !target ||
@@ -302,38 +305,37 @@ const handleShowLabel = (target: HTMLElement, isHover: boolean = false) => {
 
   isShowLabel.value = true;
   if (isHover) {
-    elementHover.value = target;
+    elementHover.value = targetReplace;
   }
 
   const classAudio = isHover ? 'image-background' : 'audio-background';
 
-  if (
-    target.classList.contains('section-wrap') ||
-    target.classList.contains('video-background-section')
-  ) {
-    label.value.borderSection = true;
-  } else if (target.classList.contains('button-href')) {
+  if (targetReplace.closest('.button-href')) {
     label.value.isButtonHref = true;
-  } else if (target.classList.contains('section-logo-image')) {
+  } else if (targetReplace.classList.contains('section-logo-image')) {
     label.value.isLogo = true;
   } else if (
-    target.classList.contains('text-title') ||
-    target.classList.contains('text-head') ||
-    target.classList.contains('audio-text-subtitle') ||
-    target.classList.contains('audio-text-product') ||
-    target.classList.contains('text-des')
+    targetReplace.closest('.text-title') ||
+    targetReplace.closest('.text-head') ||
+    targetReplace.closest('.audio-text-subtitle') ||
+    targetReplace.closest('.audio-text-product') ||
+    targetReplace.closest('.text-des')
   ) {
     label.value.isElementRest = true;
   } else if (
-    target.classList.contains('tag-right-section-image') ||
-    target.classList.contains('box-section-two')
+    targetReplace.classList.contains('tag-right-section-image') ||
+    targetReplace.classList.contains('box-section-two')
   ) {
     label.value.isImageRightSection = true;
-  } else if (target.classList.contains(classAudio)) {
+  } else if (targetReplace.classList.contains(classAudio)) {
     label.value.isBorderAudio = true;
+  } else {
+    label.value.borderSection = true;
+    targetReplace = targetReplace.closest('.section-wrap');
+    elementHover.value = targetReplace;
   }
 
-  calcPosition(target, isHover);
+  calcPosition(targetReplace, isHover);
 };
 
 const handleSetLabel = (target: HTMLElement) => {
@@ -351,77 +353,19 @@ const handleShowOption = (event: any, index: number) => {
     emit('set-index-section-selected', index);
     elementSelected.value = event.target;
     emit('set-selected-element', event.target);
-    if (event.target?.classList.contains('section-wrap')) {
-      if (event.target?.classList.contains('section-logo')) {
-        emit('set-class-element-selected', 'section-logo');
-        emit('set-key-element-selected', 'logo');
-        nextTick(() => {
-          handleSetPosition(event.target, getPositionForSectionLogo);
-        });
-      } else if (event.target?.classList.contains('section-copyright')) {
-        emit('set-class-element-selected', 'section-copyright');
-        emit('set-key-element-selected', 'copyright');
-        nextTick(() => {
-          handleSetPosition(event.target, getPositionForSectionCopyright);
-        });
-      } else {
-        emit('set-class-element-selected', 'section-wrap');
-        emit('set-key-element-selected', 'backgroundSection');
-        nextTick(() => {
-          handleSetPosition(event.target, getPositionForSection);
-        });
-      }
-    }
-    if (event.target?.classList.contains('section-logo-image')) {
-      emit('set-class-element-selected', 'section-logo-image');
-      emit('set-key-element-selected', 'logo');
-      nextTick(() => {
-        handleSetPosition(event.target, getPositionForImageLogo);
-      });
-    }
-    if (event.target?.classList.contains('button-href')) {
-      emit('set-class-element-selected', 'button-href');
-      emit('set-key-element-selected', 'buttonExternal');
-      nextTick(() => {
-        handleSetPosition(event.target, getPositionForButtonHref);
-      });
-    }
-    if (event.target?.classList.contains('text-title')) {
-      emit('set-class-element-selected', 'text-title');
-      emit('set-key-element-selected', 'textTitle');
-      nextTick(() => {
-        handleSetPosition(event.target, getPositionForText);
-      });
-    }
-    if (event.target?.classList.contains('text-head')) {
-      emit('set-class-element-selected', 'text-head');
-      emit('set-key-element-selected', 'textProduct');
-      nextTick(() => {
-        handleSetPosition(event.target, getPositionForText);
-      });
-    }
-    if (event.target?.classList.contains('text-des')) {
-      emit('set-class-element-selected', 'text-des');
-      emit('set-key-element-selected', 'textDes');
-      nextTick(() => {
-        handleSetPosition(event.target, getPositionForText);
-      });
-    }
     if (event.target?.closest('.right-section-image:not(.reverse)')) {
       emit('set-class-element-selected', 'box-image-right');
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         handleSetPosition(event.target, getPositionForRightImage);
       });
-    }
-    if (event.target?.closest('.right-section-image.reverse')) {
+    } else if (event.target?.closest('.right-section-image.reverse')) {
       emit('set-class-element-selected', 'box-image-left');
       emit('set-key-element-selected', 'boxImage');
       nextTick(() => {
         handleSetPosition(event.target, getPositionForLeftImage);
       });
-    }
-    if (event.target?.closest('.card-audio')) {
+    } else if (event.target?.closest('.card-audio')) {
       const indexAudio = event.target?.closest('.card-audio')?.dataset.index;
       emit('set-index-audio', Number(indexAudio));
       if (event.target?.classList.contains('audio-background')) {
@@ -445,8 +389,71 @@ const handleShowOption = (event: any, index: number) => {
           handleSetPosition(event.target, getPositionForText);
         });
       }
+    } else if (event.target?.classList.contains('section-wrap')) {
+      if (event.target?.classList.contains('section-logo')) {
+        emit('set-class-element-selected', 'section-logo');
+        emit('set-key-element-selected', 'logo');
+        nextTick(() => {
+          handleSetPosition(event.target, getPositionForSectionLogo);
+        });
+      } else if (event.target?.classList.contains('section-copyright')) {
+        emit('set-class-element-selected', 'section-copyright');
+        emit('set-key-element-selected', 'copyright');
+        nextTick(() => {
+          handleSetPosition(event.target, getPositionForSectionCopyright);
+        });
+      } else {
+        emit('set-class-element-selected', 'section-wrap');
+        emit('set-key-element-selected', 'backgroundSection');
+        nextTick(() => {
+          handleSetPosition(event.target, getPositionForSection);
+        });
+      }
+    } else if (event.target?.classList.contains('section-logo-image')) {
+      emit('set-class-element-selected', 'section-logo-image');
+      emit('set-key-element-selected', 'logo');
+      nextTick(() => {
+        handleSetPosition(event.target, getPositionForImageLogo);
+      });
+    } else if (event.target?.classList.contains('button-href')) {
+      emit('set-class-element-selected', 'button-href');
+      emit('set-key-element-selected', 'buttonExternal');
+      nextTick(() => {
+        handleSetPosition(event.target, getPositionForButtonHref);
+      });
+    } else if (event.target?.classList.contains('text-title')) {
+      emit('set-class-element-selected', 'text-title');
+      emit('set-key-element-selected', 'textTitle');
+      nextTick(() => {
+        handleSetPosition(event.target, getPositionForText);
+      });
+    } else if (event.target?.classList.contains('text-head')) {
+      emit('set-class-element-selected', 'text-head');
+      emit('set-key-element-selected', 'textProduct');
+      nextTick(() => {
+        handleSetPosition(event.target, getPositionForText);
+      });
+    } else if (event.target?.classList.contains('text-des')) {
+      emit('set-class-element-selected', 'text-des');
+      emit('set-key-element-selected', 'textDes');
+      nextTick(() => {
+        handleSetPosition(event.target, getPositionForText);
+      });
     } else {
+      const eventTargetReplace = event.target.closest('.section-wrap');
       emit('set-index-audio', undefined);
+      emit('set-class-element-selected', 'section-wrap');
+      emit('set-key-element-selected', 'backgroundSection');
+      handleSetLabel(eventTargetReplace);
+      elementSelected.value = eventTargetReplace;
+      emit('set-selected-element', eventTargetReplace);
+
+      nextTick(() => {
+        handleSetPosition(
+          event.target.closest('.section-wrap'),
+          getPositionForSection
+        );
+      });
     }
   }
 };

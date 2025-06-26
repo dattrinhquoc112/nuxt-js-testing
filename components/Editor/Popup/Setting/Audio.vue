@@ -271,7 +271,11 @@ const handleCreateDemo = async (index: number, isUpdate = false) => {
     itemPhraseCurrent.audioUrl = res.data?.demoUri;
     itemPhraseCurrent.textOld = itemPhraseCurrent.text;
     emit('add-material', itemPhraseCurrent);
-  } catch (error) {
+  } catch (error: any) {
+    const KEY_MESSAGE_ERROR_NSFW_ = 'error-voiceclone-message-nsfw';
+    if (error?.data?.data?.error?.message.includes(KEY_MESSAGE_ERROR_NSFW_)) {
+      toastMessage(t('UNEXPECTED_ERROR'), 'error');
+    }
   } finally {
     itemPhraseCurrent.isLoading = false;
   }
@@ -393,7 +397,6 @@ onMounted(() => {
   background: $brand-navy-800;
   box-shadow: 0px 2px 8px 0px rgba(0, 0, 0, 0.25),
     0px 0px 4px 0px rgba(0, 0, 0, 0.15);
-  transform: translateX(50%);
   .header {
     padding: 16px 16px 8px 16px;
     display: flex;

@@ -11,6 +11,8 @@ import useSeo from './composables/seo';
 import { KEY_LOCAL_STORAGE } from './utils/constants';
 import { getChangeStorage } from './utils/triggerStorage';
 
+await useSeo();
+
 const { setLocale, locale } = useI18n();
 const keyReload = ref(0);
 const loaded = useState('pluginLoaded', () => false);
@@ -32,7 +34,4 @@ const handleCheckChange = () => {
 };
 
 onMounted(handleCheckChange);
-
-// use seo
-useSeo();
 </script>
